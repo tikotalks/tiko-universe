@@ -67,6 +67,9 @@ struct GlobeUniforms {
     /// read at all.
     var deepOceanColor: SIMD4<Float>
     var hasBathymetry: Int32
+    /// Draw the colour as it is, with no light on it. A lake has to match the
+    /// river running into it exactly, and the river is drawn flat.
+    var flatShading: Int32
 }
 
 /// The colours of the Earth, handed in by SwiftUI so light and dark mode stay a
@@ -667,7 +670,8 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             shadowColor: appearance.shadow,
             shadowRadius: GlobeMeshBuilder.shadowRadius,
             deepOceanColor: appearance.deepOcean,
-            hasBathymetry: bathymetry == nil ? 0 : 1
+            hasBathymetry: bathymetry == nil ? 0 : 1,
+            flatShading: 0
         )
 
         encoder.setDepthStencilState(depthState)
@@ -725,6 +729,7 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             var lakeUniforms = uniforms
             lakeUniforms.oceanColor = appearance.lake
             lakeUniforms.hasBathymetry = 0
+            lakeUniforms.flatShading = 1
             encoder.setRenderPipelineState(oceanPipeline)
             encoder.setCullMode(.none)
             encoder.setVertexBuffer(lakeVertices, offset: 0, index: 0)

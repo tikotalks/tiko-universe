@@ -150,8 +150,8 @@ struct GlobeView: View {
         }
     }
 
-    /// The mode switch. One row, large targets, an icon *and* a word each —
-    /// changing it leaves the globe exactly where it is.
+    /// The mode switch. One row, large targets, a modelled icon *and* a word
+    /// each — changing it leaves the globe exactly where it is.
     private var modeSelector: some View {
         HStack(spacing: 8) {
             ForEach(GlobeMode.allCases) { mode in
@@ -160,17 +160,22 @@ struct GlobeView: View {
                     controller.mode = mode
                 } label: {
                     VStack(spacing: 4) {
-                        Image(systemName: mode.systemImage).font(.title3)
+                        // Every icon at full strength: the pill behind the
+                        // active one is what says which mode you are in, and a
+                        // greyed-out giraffe just looks like a broken giraffe.
+                        modeIcon(mode)
+                            .frame(width: 46, height: 46)
                         Text(i18n.t(mode.labelKey))
-                            .font(.caption.weight(isActive ? .semibold : .regular))
+                            .font(.caption.weight(.semibold))
                             .lineLimit(1)
+                            .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.8))
                     }
-                    .frame(minWidth: 72, minHeight: 56)
+                    .frame(minWidth: 84, minHeight: 80)
                     .padding(.horizontal, 6)
                     .background {
                         if isActive {
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .fill(appColor.palette.primary.opacity(0.22))
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(.white.opacity(0.24))
                         }
                     }
                     .contentShape(Rectangle())
@@ -181,7 +186,10 @@ struct GlobeView: View {
             }
         }
         .padding(6)
-        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        // Solid, in the app's own colour: this is Globe's main control and it
+        // should look like a thing rather than like frosted glass.
+        .background(appColor.palette.primary, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .shadow(color: .black.opacity(0.18), radius: 14, y: 6)
         // No identifier on the row itself: SwiftUI hands a container's
         // identifier down to its children, which would leave every mode button
         // answering to the same name.
@@ -346,6 +354,19 @@ struct GlobeView: View {
         min(23, max(13, 12 + label.prominence * 9))
     }
 
+    /// A mode's own picture, from the media library. The symbol is the fallback
+    /// for a build where the artwork did not come along.
+    @ViewBuilder
+    private func modeIcon(_ mode: GlobeMode) -> some View {
+        if let image = UIImage(named: mode.artworkName) {
+            Image(uiImage: image).resizable().scaledToFit()
+        } else {
+            Image(systemName: mode.systemImage)
+                .font(.title3)
+                .foregroundStyle(.white)
+        }
+    }
+
     /// Pinch works, but a child (or a caregiver on a Mac trackpad, or anyone
     /// using Switch Control) should not have to discover it. Two big buttons do
     /// the same thing.
@@ -356,12 +377,13 @@ struct GlobeView: View {
                 zoomButton(systemImage: "plus", label: i18n.t("globe.action.zoomIn"), identifier: "globe-zoom-in", enabled: controller.canZoomIn) {
                     controller.zoomStep(by: GlobeController.zoomStepFactor)
                 }
-                Divider().frame(width: 44)
+                Rectangle().fill(.white.opacity(0.28)).frame(width: 34, height: 1)
                 zoomButton(systemImage: "minus", label: i18n.t("globe.action.zoomOut"), identifier: "globe-zoom-out", enabled: controller.canZoomOut) {
                     controller.zoomStep(by: 1 / GlobeController.zoomStepFactor)
                 }
             }
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .background(appColor.palette.primary, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .shadow(color: .black.opacity(0.18), radius: 12, y: 5)
         }
     }
 
@@ -374,8 +396,9 @@ struct GlobeView: View {
     ) -> some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.title3.weight(.semibold))
-                .frame(width: 52, height: 52)
+                .font(.title2.weight(.bold))
+                .foregroundStyle(enabled ? Color.white : Color.white.opacity(0.4))
+                .frame(width: 54, height: 54)
                 .contentShape(Rectangle())
         }
         .disabled(!enabled)

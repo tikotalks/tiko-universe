@@ -23,11 +23,15 @@ const WRITE = process.argv.includes('--write')
 const TARGET_ANIMALS = 8
 /** And the floor below which it is simply empty. */
 const FLOOR_ANIMALS = 3
+/** Places to see. Rome alone is worth more than most countries have. */
+const TARGET_LANDMARKS = 10
+const FLOOR_LANDMARKS = 4
 
 const read = async (name, dir = CONTENT_DIR) => JSON.parse(await readFile(join(dir, name), 'utf8'))
 const englishName = (entry) => entry.names?.en ?? entry.name ?? entry.id
 
 const source = await read('country-animals.json')
+const landmarkSource = await read('country-landmarks.json')
 const countries = (await read('countries.json', GENERATED_DIR)).countries
 const countryName = new Map(countries.map((country) => [country.id, country.name]))
 
@@ -39,6 +43,17 @@ const rows = Object.entries(source.countries)
     reviewed: entry.review?.state !== 'draft'
   }))
   .sort((a, b) => a.animals.length - b.animals.length || a.name.localeCompare(b.name))
+
+const landmarkRows = Object.entries(landmarkSource.countries)
+  .map(([id, entry]) => ({
+    id,
+    name: countryName.get(id) ?? id,
+    landmarks: (entry.landmarks ?? []).map(englishName)
+  }))
+  .sort((a, b) => a.landmarks.length - b.landmarks.length || a.name.localeCompare(b.name))
+const landmarksBelowTarget = landmarkRows.filter((row) => row.landmarks.length < TARGET_LANDMARKS)
+const landmarksBelowFloor = landmarkRows.filter((row) => row.landmarks.length < FLOOR_LANDMARKS)
+const landmarkTotal = landmarkRows.reduce((sum, row) => sum + row.landmarks.length, 0)
 
 const species = new Set(Object.values(source.countries).flatMap((entry) => (entry.animals ?? []).map((a) => a.id)))
 const total = rows.reduce((sum, row) => sum + row.animals.length, 0)
@@ -71,14 +86,39 @@ if (WRITE) {
   for (const row of belowTarget) {
     lines.push(`| ${row.name} | ${row.animals.length} | ${row.animals.join(', ') || '—'} |`)
   }
+  lines.push(
+    '',
+    '## Countries that need more landmarks',
+    '',
+    `A country should offer **at least ${TARGET_LANDMARKS} places to see**; ${landmarksBelowTarget.length} of`,
+    `${landmarkRows.length} are under that and ${landmarksBelowFloor.length} have fewer than ${FLOOR_LANDMARKS}.`,
+    'Italy has seven, of which two are in Rome — and Rome alone is worth more',
+    'than that. Add to `packages/geography/content/country-landmarks.json`, with',
+    'an `id`, `names.en`, `i18nKey`, `lat`/`lon`, `glyph` and an `importance`',
+    'saying how far out it deserves to show.',
+    '',
+    '| Country | Has | Already listed |',
+    '| --- | --- | --- |',
+  )
+  for (const row of landmarksBelowTarget) {
+    lines.push(`| ${row.name} | ${row.landmarks.length} | ${row.landmarks.join(', ') || '—'} |`)
+  }
   lines.push('')
   await writeFile(DOC, `${lines.join('\n')}\n`)
 }
 
 process.stdout.write(
-  `coverage: ${total} placements over ${rows.length} countries ` +
-  `(${(total / rows.length).toFixed(1)} each, ${species.size} distinct species)\n`
+  `coverage: ${total} animal placements over ${rows.length} countries ` +
+  `(${(total / rows.length).toFixed(1)} each, ${species.size} distinct species), ` +
+  `${landmarkTotal} landmarks (${(landmarkTotal / landmarkRows.length).toFixed(1)} each)\n`
 )
+if (landmarksBelowTarget.length > 0) {
+  process.stdout.write(
+    `${landmarksBelowTarget.length} countries under ${TARGET_LANDMARKS} landmarks, ` +
+    `${landmarksBelowFloor.length} under ${FLOOR_LANDMARKS}\n`
+  )
+  process.exitCode = 1
+}
 if (belowTarget.length > 0) {
   process.stdout.write(
     `${belowTarget.length} countries under ${TARGET_ANIMALS} animals, ` +

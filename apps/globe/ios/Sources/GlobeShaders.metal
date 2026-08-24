@@ -30,6 +30,8 @@ struct Uniforms {
     /// The colour over the deepest trench; `oceanColor` is the shallow end.
     float4 deepOceanColor;
     int hasBathymetry;
+    /// 1 to skip the light entirely, for water that has to match a flat line.
+    int flatShading;
 };
 
 struct OceanVertex {
@@ -145,6 +147,14 @@ fragment float4 ocean_fragment(OceanInOut in [[stage_in]],
                                texture2d<float> seaFloor [[texture(0)]]) {
     float3 normal = normalize(in.normal);
     float3 water = uniforms.oceanColor.rgb;
+
+    // A lake is a patch of the same blue the rivers are drawn in. Lighting it
+    // like the sea makes the water arriving and the water sitting still two
+    // different colours, which they are not.
+    if (uniforms.flatShading != 0) {
+        if (beyondTheHorizon(normal, uniforms)) discard_fragment();
+        return float4(water, 1.0);
+    }
 
     if (uniforms.hasBathymetry != 0) {
         constexpr sampler soundings(address::repeat, filter::linear, mip_filter::none);

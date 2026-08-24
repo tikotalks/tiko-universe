@@ -315,9 +315,13 @@ struct GlobeDetailPanel: View {
                     value: region
                 ))
             }
-            if let country = countryIDs.count == 1
-                ? geography.countries.first(where: { $0.id == countryIDs[0] })
-                : nil {
+            // The country this *occurrence* stands in, not the one country the
+            // subject happens to be listed by. A Eurasian otter marker in France
+            // was calling itself South Korean, because South Korea was the only
+            // country whose list had named it.
+            if let country = occurrence.countryID.flatMap({ id in
+                geography.countries.first(where: { $0.id == id })
+            }) {
                 rows.append(Detail(
                     label: i18n.t("globe.card.country"),
                     value: GlobeCountryNaming.name(for: country, languageCode: languageCode)

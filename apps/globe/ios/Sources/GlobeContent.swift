@@ -12,6 +12,11 @@ enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
 
     var labelKey: String { "globe.mode.\(rawValue)" }
 
+    /// The picture on the mode button: a modelled thing rather than a symbol,
+    /// which is what the rest of the globe is made of. Falls back to the symbol
+    /// if the artwork is ever missing.
+    var artworkName: String { "mode-\(rawValue)" }
+
     /// Icon for the selector. Deliberately not colour alone — every mode has a
     /// distinct shape and a written label beside it.
     var systemImage: String {

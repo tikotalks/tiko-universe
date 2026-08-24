@@ -28,6 +28,10 @@ targets:
         name: GeographyContent
         buildPhase: resources
         type: folder
+      # Globe's own chrome: the mode icons, from the same media library the
+      # animals come from, so the buttons are made of the same stuff.
+      - path: Media
+        buildPhase: resources
     dependencies:
       - package: TikoKit
         product: TikoKit

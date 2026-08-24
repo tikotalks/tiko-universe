@@ -259,3 +259,256 @@ in the wrong country is worse than an empty one.
 | Tanzania | 6 | Lion, African savanna elephant, Giraffe, Plains zebra, Blue wildebeest, Flamingo |
 | New Zealand | 7 | Kiwi, Little penguin, Tuatara, True seal, Seagull, Sea turtle, Orca |
 
+## Countries that need more landmarks
+
+A country should offer **at least 10 places to see**; 241 of
+242 are under that and 63 have fewer than 4.
+Italy has seven, of which two are in Rome — and Rome alone is worth more
+than that. Add to `packages/geography/content/country-landmarks.json`, with
+an `id`, `names.en`, `i18nKey`, `lat`/`lon`, `glyph` and an `importance`
+saying how far out it deserves to show.
+
+| Country | Has | Already listed |
+| --- | --- | --- |
+| Åland | 1 | Kastelholm Castle |
+| American Samoa | 1 | Pola Island |
+| Ashmore and Cartier Islands | 1 | Ashmore Reef |
+| Australian Indian Ocean Territories | 1 | Christmas Island Crabs |
+| British Indian Ocean Territory | 1 | Diego Garcia |
+| French Polynesia | 1 | Bora Bora |
+| French Southern and Antarctic Lands | 1 | Port-aux-Français |
+| Guam | 1 | Two Lovers Point |
+| Heard Island and McDonald Islands | 1 | Mawson Peak |
+| Kosovo | 1 | Gracanica Monastery |
+| Montserrat | 1 | Soufrière Hills |
+| New Caledonia | 1 | Heart of Voh |
+| Norfolk Island | 1 | Kingston |
+| Northern Mariana Islands | 1 | Managaha Island |
+| Palestine | 1 | Church of the Nativity |
+| Saint Barthélemy | 1 | Gustavia Harbour |
+| Saint Martin | 1 | Fort Louis |
+| Saint Pierre and Miquelon | 1 | Île aux Marins |
+| Siachen Glacier | 1 | Siachen Glacier |
+| Somaliland | 1 | Laas Geel Caves |
+| South Sudan | 1 | Boma National Park |
+| Turkish Republic of Northern Cyprus | 1 | Kyrenia Castle |
+| United States Virgin Islands | 1 | Trunk Bay |
+| Wallis and Futuna | 1 | Lake Lalolalo |
+| Western Sahara | 1 | Laayoune |
+| Antarctica | 2 | South Pole, Liotard Glacier |
+| Bermuda | 2 | Bermuda Aquarium, Museum and Zoo, Royal Naval Dockyard |
+| Comoros | 2 | La Grille, Mount Karthala |
+| Liberia | 2 | Lake Piso, Providence Island |
+| Macau | 2 | Nam Van Lake, Ruins of St Paul's |
+| Nauru | 2 | Nauru Museum, Buada Lagoon |
+| Niue | 2 | Beveridge Reef, Talava Arches |
+| Pitcairn Islands | 2 | Ducie Island, Bounty Bay |
+| Andorra | 3 | Coma Pedrosa, Port d'Envalira, Casa de la Vall |
+| Anguilla | 3 | Dog Island, Sombrero Lighthouse, Shoal Bay |
+| Antigua and Barbuda | 3 | Antigua, Mount Obama, Nelson's Dockyard |
+| Aruba | 3 | Mount Jamanota, Aruba Natural Bridge, California Lighthouse |
+| Bahrain | 3 | Qal’at al Bahrain, Al Fateh Grand Mosque, Bahrain Fort |
+| Barbados | 3 | Jama Mosque, Nidhe Israel Synagogue, Harrison's Cave |
+| British Virgin Islands | 3 | Peter Island, Whelk Point Fort, The Baths |
+| Cayman Islands | 3 | Cayman Brac, Grand Cayman, Stingray City |
+| Cook Islands | 3 | Atiu, Manuae, Muri Lagoon |
+| Curaçao | 3 | Christoffelberg, Curaçao synagogue, Queen Emma Bridge |
+| Dominica | 3 | Morne Diablotins, Morne Trois Pitons National Park, Boiling Lake |
+| Eswatini | 3 | Emlembe, Maguga Dam, Mlilwane Sanctuary |
+| Gabon | 3 | Kongou Falls, Lagune Ndogo, Loango National Park |
+| Grenada | 3 | Mount Saint Catherine, Petite Martinique, Grand Anse Beach |
+| Guernsey | 3 | Sark, Alderney, Castle Cornet |
+| Isle of Man | 3 | Calf of Man, Snaefell, Peel Castle |
+| Jersey | 3 | Les Dirouilles, Pierres de Lecq, Mont Orgueil |
+| Liechtenstein | 3 | Falknis, Vaduz Cathedral, Vaduz Castle |
+| Maldives | 3 | Fuvahmulah, Malé Fish Market, Malé Friday Mosque |
+| Monaco | 3 | Musée océanographique de Monaco, Prince's Palace, Monte Carlo Casino |
+| Saint Helena | 3 | Longwood House, Museum of Saint Helena, Jacob's Ladder |
+| Saint Kitts and Nevis | 3 | Mount Liamuiga, Booby Island, Brimstone Hill Fortress |
+| Saint Lucia | 3 | Pitons, Qualibou, The Pitons |
+| San Marino | 3 | Monte Titano, Basilica di San Marino, Guaita Tower |
+| Seychelles | 3 | Praslin, Silhouette Island, Vallée de Mai |
+| Singapore | 3 | Singapore Botanic Gardens, Gardens by the Bay, Marina Bay Sands |
+| Sint Maarten | 3 | Saint Martin, Maho Beach, Fort Amsterdam |
+| Turks and Caicos Islands | 3 | Pine Cay, West Caicos, Grace Bay |
+| Tuvalu | 3 | Nanumanga, Niulakita, Funafuti Lagoon |
+| Vatican City | 3 | St Peter's Basilica, Apostolic Palace, Sistine Chapel |
+| Central African Republic | 4 | Manovo-Gounda St. Floris National Park, Cathédrale Notre-Dame, St. Peter Claver Cathedral, Bangassou, Boali Falls |
+| Faroe Islands | 4 | Magnus Cathedral, Sørvágsvatn, Tórshavn Cathedral, Saksun |
+| Hong Kong | 4 | Jamia Mosque, Victoria Peak, Po Toi Lighthouse, Statue of Bruce Lee |
+| Luxembourg | 4 | Berg Castle, Grand Ducal Palace, Notre-Dame Cathedral, Luxembourg Old Town |
+| Mauritius | 4 | Mauritius Island, Sir Seewoosagur Ramgoolam Botanical Garden, Trou aux Cerfs, Le Morne Brabant |
+| Netherlands | 4 | Rijksmuseum, Windmills of Kinderdijk, Anne Frank House, Delta Works |
+| Puerto Rico | 4 | Vieques, Minor Basilica of the Virgin of Montserrat, Puerto Rico Museum of Art, El Morro |
+| Saint Vincent and the Grenadines | 4 | Saint Vincent, Bequia, Assumption Cathedral, Kingstown, La Soufrière |
+| Samoa | 4 | Savai'i, Upolu, Pulemelei Mound, To Sua Ocean Trench |
+| South Georgia and the South Sandwich Islands | 4 | Mount Hodson, Mount Holdgate, Mount Larsen, Grytviken |
+| Belize | 5 | Belize Barrier Reef, Actun Tunichil Muknal, Caracol, Xunantunich, Great Blue Hole |
+| Brunei | 5 | Istana Nurul Iman, Jame 'Asr Hassanil Bolkiah Mosque, Louisa Reef, Sultan Haji Omar Ali Saifuddien Bridge, Omar Ali Saifuddien Mosque |
+| Burundi | 5 | Ruvubu National Park, Christ the King Cathedral, Chutes de la Kagera, Livingstone–Stanley Monument, Karera Falls |
+| Cyprus | 5 | Khirokitia, Lala Mustafa Pasha Mosque, Mount Olympus, Salamis, Tombs of the Kings |
+| Djibouti | 5 | Lake Abbe, Ardoukoba, Day Forest National Park, Moucha Island, Lake Assal |
+| East Timor | 5 | Atauro, Tatamailau, An-Nur Mosque, Immaculate Conception Cathedral, Cristo Rei of Dili |
+| El Salvador | 5 | Cerro El Pital, Izalco, Lake Ilopango, Santa Ana Volcano, Joya de Cerén |
+| Falkland Islands | 5 | Blue Beach Military Cemetery at San Carlos, Christ Church Cathedral, Horse Block, Kidney Island, Volunteer Point |
+| Federated States of Micronesia | 5 | Pohnpei, Satawal, Catholic Belltower, Leluh, Nan Madol |
+| Jamaica | 5 | Blue and John Crow Mountains National Park, Blue Mountain Peak, James Bond Beach, White Witch of Rose Hall, Dunn's River Falls |
+| Kiribati | 5 | Banaba Island, Aranuka, Sacred Heart Cathedral, Te Umanibong, Christmas Island |
+| Kuwait | 5 | Grand Mosque, Warbah Island, Kubbar Island, Qaruh Island, Kuwait Towers |
+| Lebanon | 5 | Byblos, Beqaa Valley, Jeita Grotto, Kadisha Valley, Baalbek |
+| Lesotho | 5 | Katse Dam, Qacha's Nek, Thabana Ntlenyana, Afri-Ski, Maletsunyane Falls |
+| Montenegro | 5 | Lake Skadar, Stećak, Lovćen, Ostrog monastery, Bay of Kotor |
+| North Macedonia | 5 | Dojran Lake, Mavrovo National Park, Monastery of Saint Naum, Šarena Mosque, Ohrid |
+| Qatar | 5 | Zubarah, Imam Muhammad ibn Abd al-Wahhab Mosque, National Museum of Qatar, The Pearl Island, Museum of Islamic Art |
+| Rwanda | 5 | Mount Karisimbi, Mount Muhabura, Nyungwe Forest, Rusumo Falls, Volcanoes National Park |
+| São Tomé and Príncipe | 5 | Ilheu Bom Bom, Islet of Rolas, Pico de São Tomé, São Sebastião Museum, Pico Cão Grande |
+| Slovenia | 5 | Postojna Cave, Triglav, Lake Bohinj, Škocjan Caves, Lake Bled |
+| Solomon Islands | 5 | Malaita, East Rennell, Kavachi, Holy Cross Cathedral, Marovo Lagoon |
+| The Gambia | 5 | Abuko Nature Reserve, Pipeline Mosque, River Gambia National Park, Senegambia bridge, Kunta Kinteh Island |
+| Tonga | 5 | Hunga Tonga–Hunga Haʻapai, Tongatapu, Kao, Niuatoputapu, Haʻamonga ʻa Maui |
+| Trinidad and Tobago | 5 | Trinidad, Tobago, Cathedral of the Immaculate Conception, Port of Spain, National Museum and Art Gallery, Pitch Lake |
+| Albania | 6 | Lake Ohrid, Lake Prespa, Apollonia, Et'hem Bey Mosque, Roman amphitheatre of Durrës, Butrint |
+| Armenia | 6 | Lake Sevan, Geghard, Erebuni Fortress, Etchmiadzin Cathedral, Garni Temple, Khor Virap |
+| Austria | 6 | St. Stephen's Cathedral, Venus of Willendorf, Belvedere, Wachau, Schönbrunn Palace, Hallstatt |
+| Azerbaijan | 6 | Maiden Tower, Palace of the Shirvanshahs, Baku TV Tower, National Art Museum of Azerbaijan, National Museum of History of Azerbaijan, Flame Towers |
+| Belgium | 6 | Onze-Lieve-Vrouwekathedraal, Tournai Cathedral, Atomium, Grand-Place of Brussels, Madonna of Bruges, Plantin–Moretus Museum |
+| Benin | 6 | Pendjari National Park, Koutammakou, Lake Nokoué, Royal Palaces of Abomey, São João Baptista d’Ajudá, Ganvie |
+| Bhutan | 6 | Gangkhar Puensum, Paro Taktsang, Buddha Dordenma statue, Kula Kangri, Punakha Dzong, Tiger's Nest |
+| Bosnia and Herzegovina | 6 | Maglić, Mehmed Paša Sokolović Bridge, Bosnian pyramid claims, Gazi Husrev-beg Mosque, Sutjeska National Park, Stari Most |
+| Bulgaria | 6 | Alexander Nevsky Cathedral, Musala, Boyana Church, Monastery of Saint John of Rila, Srebarna Nature Reserve, Rila Monastery |
+| Cambodia | 6 | Angkor, Angkor Wat, Tonlé Sap, Angkor Thom, Tuol Sleng torture center, Phnom Aural |
+| Cape Verde | 6 | Sal, Santiago, Pico do Fogo, Farol de D. Maria Pia, Fort Real de São Filipe, Cidade Velha |
+| Costa Rica | 6 | Stone spheres of Costa Rica, Cerro Chirripó, Irazú Volcano, Manuel Antonio National Park, Poás Volcano, Arenal Volcano |
+| Croatia | 6 | Hvar, Krk, Diocletian's Palace, Vis (island), Dubrovnik Old Town, Plitvice Lakes |
+| Czech Republic | 6 | Sněžka, St. Vitus Cathedral, Karlštejn Castle, Prague Astronomical Clock, Charles Bridge, Prague Castle |
+| Denmark | 6 | Zealand, Funen, Øresund Bridge, Roskilde Cathedral, The Little Mermaid, Kronborg Castle |
+| Dominican Republic | 6 | Alcázar de Colón, Basílica Catedral Metropolitana Santa María de la Encarnación, Fortaleza Ozama, Lake Enriquillo, Saona Island, Zona Colonial |
+| Equatorial Guinea | 6 | Annobón Island, Corisco, Elobey Chico, Elobey Grande, Pico Basilé, Basílica de Mongomo |
+| Estonia | 6 | Saaremaa, Hiiumaa, Alexander Nevsky Cathedral, Toompea Castle, Hermann Castle, Tallinn Old Town |
+| Georgia | 6 | Gelati Monastery, Shkhara, Bagrati Cathedral, Lake Ritsa, Krubera Cave, Gergeti Trinity Church |
+| Guatemala | 6 | Quiriguá, Volcán de Fuego, Lago de Atitlán, Lake Izabal, Takalik Abaj, Tikal |
+| Guinea-Bissau | 6 | Grande de Buba River, The Cathedral of Bissau, Cacheu Mangroves Natural Park, Pecixe, Roxa, Bijagós Islands |
+| Haiti | 6 | Cathedral of Our Lady of the Assumption, Gonâve Island, Île à Vache, National Palace, Sans-Souci Palace, Citadelle Laferrière |
+| Honduras | 6 | Río Plátano Biosphere Reserve, Lake Yojoa, Tiger Island, El Cajón Dam, Isla Zacate Grande, Copán |
+| Hungary | 6 | Lake Balaton, Hortobágy National Park, Buda Castle, Széchenyi Chain Bridge, Hungarian Parliament, Fisherman's Bastion |
+| Ireland | 6 | Brú na Bóinne, Newgrange, Achill Island, Cliffs of Moher, Dublin Castle, Rock of Cashel |
+| Israel | 6 | Sea of Galilee, Western Wall, Israel Museum, Capernaum, Yad Vashem, Masada |
+| Jordan | 6 | Petra, Ajloun, Qasr Amra, Umm ar-Rasas, Jordan Valley, Wadi Rum |
+| Latvia | 6 | Freedom Monument, Riga Cathedral, Riga Castle, Gauja National Park, St. Peter's Church, Riga Old Town |
+| Lithuania | 6 | Hill of Crosses, Aukštojas Hill, Gate of Dawn, Gediminas' Tower, Vilnius Cathedral, Trakai Island Castle |
+| Malawi | 6 | Lake Chilwa, Chongoni Rock Art Area, Lake Malombe, Cultural & Museum Centre Karonga, Kapichira Falls, Lake Malawi |
+| Moldova | 6 | Bălănești Hill, Căpriana monastery, Nativity of Christ Cathedral, Soroca Fort, Triumphal Arch, Chișinău, Orheiul Vechi |
+| Nicaragua | 6 | Lake Nicaragua, Lake Managua, Concepción, León Cathedral, Volcán Momotombo, Masaya Volcano |
+| Palau | 6 | Babeldaob, Jellyfish Lake, Belau National Museum, Etpison Museum, Tet el Bad Stone Coffin, Rock Islands |
+| Panama | 6 | Coiba, Darién National Park, Bridge of the Americas, Panama Canal, Panamá Viejo, Volcan Baru |
+| Republic of the Congo | 6 | Livingstone Falls, Mbamu, Brazzaville Zoo, Dimonika Biosphere Reserve, Sacred Heart Cathedral, Brazzaville, Basilique Sainte-Anne |
+| Serbia | 6 | Church of Saint Sava, Iron Gate, Sirmium, Studenica monastery, Stari Ras, Belgrade Fortress |
+| Sierra Leone | 6 | Sherbro Island, Lake Sonfon, Outamba-Kilimi National Park, Sierra Leone National Museum, St. George's Cathedral, Freetown, Cotton Tree |
+| Slovakia | 6 | Gerlachovský štít, Spiš Castle, Bojnice Castle, Tatra National Park, Bridge of the Slovak National Uprising, Bratislava Castle |
+| Sri Lanka | 6 | Adam's Peak, Sinharaja Forest Reserve, Avukana Buddha statue, Dambulla cave temple, Sigiriya, Temple of the Tooth |
+| Suriname | 6 | Brokopondo Reservoir, Central Suriname Nature Reserve, Fort Zeelandia, Mosque Keizerstraat, Saint Peter and Paul Cathedral, Central Suriname Reserve |
+| Switzerland | 6 | Lake Maggiore, Matterhorn, Lake Lugano, Chillon Castle, Rhine Falls, Chapel Bridge |
+| Taiwan | 6 | Chiang Kai-shek Memorial Hall, Fort Zeelandia, Kaohsiung Mosque, Orchid Island, Sun Moon Lake, Taipei 101 |
+| Togo | 6 | Lake Togo, Fazao Mafakassa National Park, Holy Spirit Cathedral, Kpalimé, Nangbeto Dam, Sacred Heart Cathedral, Koutammakou |
+| United Arab Emirates | 6 | Burj Khalifa, Ferrari World Abu Dhabi, Palm Jebel Ali, Palm Jumeirah, Sheikh Zayed Mosque, The Dubai Fountain |
+| Vanuatu | 6 | Efate, Espiritu Santo, Kuwae, Merelava, Cathédrale du Sacré-Coeur, Port Vila, Mount Yasur |
+| Afghanistan | 7 | Buddhas of Bamiyan, Minaret of Jam, Blue Mosque, Zorkul, National Museum of Afghanistan, Panjshir Valley, Band-e Amir |
+| Algeria | 7 | Tassili n'Ajjer, Timgad, Mount Tahat, Qal'at Bani Hammad, Djamaa El Kebir of Algiers, Ketchaoua Mosque, Casbah of Algiers |
+| Angola | 7 | Capanda Dam, Mount Moco, Quissama National Park, Church of Our Lady of Remedies, Fortress of São Miguel, Ilha de Luanda, Kalandula Falls |
+| Argentina | 7 | Aconcagua, Iguaçu Falls, Llullaillaco, Ojos del Salado, Iguazú Falls, Perito Moreno Glacier, Obelisco |
+| Australia | 7 | Great Barrier Reef, Mount Kosciuszko, Sydney Opera House, Uluru, Lord Howe Island, Sydney Harbour Bridge, Twelve Apostles |
+| Bangladesh | 7 | Somapura Mahavihara, Baitul Mukarram National Mosque, Bangladesh National Museum, Gauḍa, Lalbagh Fort, Shaheed Minar, Sixty Dome Mosque |
+| Belarus | 7 | Białowieża Forest, Nesvizh Castle, Brest Fortress, Belarusian National Arts Museum, Church of Saints Simon and Helena, Narač, Mir Castle |
+| Bolivia | 7 | Titicaca, Tiwanaku, Parinacota, Poopó Lake, El Fuerte de Samaipata, Licancabur, Salar de Uyuni |
+| Botswana | 7 | Chobe National Park, Tsodilo, Kazungula Bridge, Makgadikgadi Pans, Okavango Delta, Gaborone Dam, Kgale Hill |
+| Brazil | 7 | Christ the Redeemer, Iguaçu Falls, Mineirão, São Paulo Museum of Art, Ilha da Queimada Grande, Amazon Rainforest, Sugarloaf Mountain |
+| Burkina Faso | 7 | Arli National Park, Karfiguéla waterfalls, Mount Tenakourou, Ouagadougou Cathedral, Bobo Dioulasso Grand Mosque, Symposium de sculpture sur granit de Laongo, Ruins of Loropéni |
+| Cameroon | 7 | Dja Faunal Reserve, Lake Nyos, Lake Monoun, Mount Manengouba, Cathedral of Saints Peter and Paul, Douala, Edea Hydroelectric Power Station, Mount Cameroon |
+| Canada | 7 | Mount Logan, Niagara Falls, Lake Winnipeg, L'Anse aux Meadows, Banff National Park, CN Tower, Château Frontenac |
+| Chad | 7 | Emi Koussi, Lake Fitri, Lake Yoa, Tarso Toussidé, Cathedral of Our Lady, N'Djamena, N'Djamena Grand Mosque, Ennedi Massif |
+| Chile | 7 | Easter Island, Moai of Rapa Nui, moai, Osorno, Robinson Crusoe Island, Torres del Paine, Atacama Desert |
+| Colombia | 7 | Galeras, Nevado del Ruiz, Pico Cristóbal Colón, Las Lajas Sanctuary, Nevado del Huila, Cartagena Old Town, Lost City |
+| Cuba | 7 | Alexander von Humboldt National Park, Isla de la Juventud, Castillo de San Pedro de la Roca, Che Guevara Mausoleum, Havana Cathedral, Museum of the Revolution, Old Havana |
+| Democratic Republic of the Congo | 7 | Lake Albert, Lake Kivu, Mount Nyiragongo, Nyamuragira, Boyoma Falls, Inga Falls, Virunga National Park |
+| Ecuador | 7 | Chimborazo, Cotopaxi volcano, Isabela Island, Sangay National Park, Galápagos Islands, Ingapirca, Mitad del Mundo |
+| Egypt | 7 | Great Pyramid of Giza, Great Sphinx, Pyramids of Giza, Aswan Dam, Lighthouse of Alexandria, Abu Simbel, Karnak Temple |
+| Eritrea | 7 | Adulis, Great Mosque of Asmara, Mosque of the Companions, Massawa, Mousa Ali, Nabro Volcano, Hawulti, Asmara Old Town |
+| Ethiopia | 7 | Lake Turkana, Lake Tana, Erta Ale, Fasil Ghebbi, Church of Saint George, Grand Ethiopian Renaissance Dam, Rock-Hewn Churches of Lalibela |
+| Fiji | 7 | Vanua Levu, Taveuni, Fiji Museum, Nabukelevu, Sacred Heart Cathedral, Suva, Sacred Heart Church, Sri Siva Subramaniya Temple |
+| Finland | 7 | Saimaa, Lake Inari, Helsinki Cathedral, Petäjävesi Old Church, Turku Castle, Verla, Suomenlinna |
+| Germany | 7 | Brandenburg Gate, Laacher See, Neuschwanstein Castle, Lake Constance, Aachen Cathedral, Rügen, Cologne Cathedral |
+| Ghana | 7 | Lake Volta, Akosombo Dam, Elmina Castle, Lake Bosumtwi, Larabanga Mosque, Osu Castle, Cape Coast Castle |
+| Greece | 7 | Acropolis of Athens, Crete, Parthenon, Mount Olympus, Sparta, Meteora, Santorini |
+| Greenland | 7 | Gunnbjørn Fjeld, Northeast Greenland National Park, Brattahlíð, Ilulissat Icefjord, Nordostrundingen, Nuuk Cathedral, Qilakitsoq |
+| Guinea | 7 | Cathedrale Sainte-Marie, Monument du 22 Novembre 1970, Nadir crater, Tinkisso Falls, Tombo Island, Ziama Strict Nature Reserve, Mount Nimba |
+| Guyana | 7 | Mount Roraima, Brickdam Cathedral, Fort Zeelandia, Guyana Zoo, St. George's Cathedral, Takutu River Bridge, Kaieteur Falls |
+| Iceland | 7 | Eyjafjallajökull, Surtsey, Hekla, Laki, Dettifoss, Geysir, Gullfoss |
+| India | 7 | Ajanta Caves, Taj Mahal, Red Fort, Ellora Caves, Gateway of India, Golden Temple, Hawa Mahal |
+| Indonesia | 7 | Bali Island, Krakatoa, Lombok Island, Merapi, Borobudur, Prambanan Temple, Mount Bromo |
+| Iran | 7 | Urmia Lake, Damavand, Chogha Zanbil, Susa, Dasht-e Lut, Naqsh-e Jahan Square, Persepolis |
+| Iraq | 7 | Nineveh, Ur, Imam Ali Mosque, Ishtar Gate, Al-Askari Shrine, Shanidar Cave, Ziggurat of Ur |
+| Italy | 7 | Colosseum, Leaning Tower of Pisa, Mount Etna, Duomo of Florence, Mount Vesuvius, St Mark's Square, Trevi Fountain |
+| Ivory Coast | 7 | Comoé National Park, Taï National Park, Mount Nimba Strict Nature Reserve, Ébrié Lagoon, Kossou Dam, Lake Kossou, Basilica of Our Lady of Peace |
+| Japan | 7 | Fushimi Inari Shrine, Mode Gakuen Cocoon Tower, Mount Fuji, Kiyomizu-dera Temple, Himeji Castle, Itsukushima Shrine, Tokyo Tower |
+| Kazakhstan | 7 | Lake Balkhash, Lake Zaysan, Mausoleum of Khoja Ahmed Yasawi, Tamgaly, Bayterek, Otrar, Baiterek Tower |
+| Kenya | 7 | Lake Nakuru, Nairobi National Park, Central Island, Maasai Mara, Mount Longonot, Thimlich Ohinga, Mount Kenya |
+| Kyrgyzstan | 7 | Issyk-Kul, Khan Tengri, Balasagun, Suyab, Manas Ordo, Toktogul Dam, Burana Tower |
+| Laos | 7 | Plain of Jars, Vat Phou, Khone Phapheng Falls, Phou Bia, Bolaven Plateau, Kuang Si Falls, Pha That Luang |
+| Libya | 7 | Cyrene, Tadrart Acacus, Great Manmade River, Grand Erg Oriental, Great Sand Sea, Gurgi Mosque, Leptis Magna |
+| Madagascar | 7 | Europa Island, Tsingy de Bemaraha Strict Nature Reserve, Amber Mountain National Park, Ankaratra, Avenue of the Baobabs, Lake Tritriva, Rova of Antananarivo |
+| Malaysia | 7 | Kinabalu Park, Mount Kota Kinabalu, Batu Caves, National Mosque of Malaysia, Niah National Park, Petronas Towers, Sultan Abdul Samad Jamek Mosque |
+| Mali | 7 | Tomb of Askia, Djinguereber Mosque, Great Mosque of Djenné, Lake Débo, Manantali Dam, Sankore Madrasah, Timbuktu |
+| Marshall Islands | 7 | Arno Atoll, Jabat Island, Kili Island, Lib Island, Namdrik Atoll, Rongerik Atoll, Bikini Atoll |
+| Mauritania | 7 | Banc d'Arguin National Park, Aoudaghost, Arguin, Chinguetti Mosque, Ibn Abbas Mosque, Ras Nouadhibou lighthouse, Richat Structure |
+| Mexico | 7 | Chichén Itzá, Popocatépetl, Citlaltepetl, Mexico City Metropolitan Cathedral, Uxmal, Teotihuacan, Palenque |
+| Mongolia | 7 | Burkhan Khaldun, Khövsgöl Lake, Gandantegchinlen Monastery, Genghis Khan Equestrian Statue, Ordu-Baliq, Erdene Zuu Monastery, Genghis Khan Statue |
+| Morocco | 7 | Jbel Toubkal, Volubilis, Koutoubia Mosque, Hassan II Mosque, Hassan Tower, Jemaa el-Fnaa, Aït Benhaddou |
+| Mozambique | 7 | Lake Malawi, Monte Binga, Sofala, Cahora Bassa Dam, Chapel of Nossa Senhora de Baluarte, Dona Ana Bridge, Island of Mozambique |
+| Myanmar | 7 | Bagan, Inle Lake, Hkakabo Razi, Ananda Temple, Kyaiktiyo Pagoda, Laykyun Sekkya, Shwedagon Pagoda |
+| Namibia | 7 | Etosha National Park, Brandberg, Epupa Falls, Ruacana Falls, Sossusvlei, Twyfelfontein, Fish River Canyon |
+| Nepal | 7 | Kanchenjunga, Mount Everest, Manaslu, Pashupatinath Temple, Dharahara, Swayambhunath, Boudhanath Stupa |
+| New Zealand | 7 | Lake Taupō, Stewart Island/Rakiura, Mount Ruapehu, Tongariro National Park, Hobbiton, Milford Sound, Sky Tower |
+| Niger | 7 | W National Park, Aïr and Ténéré National Nature Reserve, Great Mosque of Agadez, Boubou Hama National Museum, Dabous Giraffes, Kennedy Bridge, Grand Mosque of Agadez |
+| Nigeria | 7 | Lake Chad, Abuja National Mosque, Kainji Dam, Kainji Lake, Osun-Osogbo Grove, Olumo Rock, Zuma Rock |
+| North Korea | 7 | Baekdu Mountain, Heaven Lake, Arch of Triumph, Goguryeo tombs, Kumsusan Palace of the Sun, Sino-Korean Friendship Bridge, Juche Tower |
+| Norway | 7 | Jan Mayen, Bouvet Island, Beerenberg, Urnes Stave Church, Geirangerfjord, Nidaros Cathedral, Bryggen |
+| Oman | 7 | Bahla Fort, Bat, Al-Khutm and Al-Ayn archaeological sites, Majlis al Jinn, Masirah Island, Sultan Qaboos Grand Mosque, Qurm Nature Reserve, Sultan Qaboos Mosque |
+| Pakistan | 7 | Mohenjo-daro, Nanga Parbat, Harappa, Khyber Pass, Badshahi Mosque, Faisal Mosque, K2 |
+| Papua New Guinea | 7 | Mount Wilhelm, Kuk Swamp, Mount Balbi, New Hanover Island, Ulawun, Papua New Guinea National Museum and Art Gallery, Kokoda Track |
+| Paraguay | 7 | Itaipu Dam, Friendship Bridge, Guaíra Falls, Jesús de Tavarangüé, La Santísima Trinidad del Paraná, Ypacaraí Lake, Jesuit Ruins of Trinidad |
+| People's Republic of China | 7 | Forbidden City, Great Wall of China, Three Gorges Dam, Mount Kailash, Potala Palace, Terracotta Army, The Bund |
+| Peru | 7 | Machu Picchu, Caral, Chan Chan, Alpamayo, Coropuna, Misti, Nazca Lines |
+| Philippines | 7 | Mayon Volcano, Pinatubo, Mactan, Puerto Princesa Subterranean River National Park, Malacañang Palace, Banaue Rice Terraces, Chocolate Hills |
+| Poland | 7 | Auschwitz concentration camp, Wikipedia Monument, Hel Peninsula, Wawel Cathedral, Śniardwy, Malbork Castle, Wawel Castle |
+| Portugal | 7 | Jerónimos Monastery, Vasco da Gama Bridge, Madeira Island, Mount Pico, Batalha Monastery, Belém Tower, Pena Palace |
+| Romania | 7 | Horezu monastery, Ada Kaleh, Bran Castle, Corvin Castle, Peleș Castle, Transfăgărășan, Palace of the Parliament |
+| Russia | 7 | Mount Elbrus, Saint Basil's Cathedral, The Kremlin, Lake Ladoga, Winter Palace, Hermitage Museum, Lake Baikal |
+| Saudi Arabia | 7 | Al-Masjid Al-Haram, Kaaba, Quba Mosque, Abraj Al Bait, Mount Arafat, Hegra, Al-Ula |
+| Senegal | 7 | Djoudj National Bird Sanctuary, Niokolo-Koba National Park, African Renaissance Monument, Diama Dam, Great Mosque of Touba, IFAN Museum of African Arts, Gorée Island |
+| Somalia | 7 | Fakr ad-Din Mosque, Mogadishu Cathedral, Mosque of Islamic Solidarity, Shimbiris, Arba'a Rukun Mosque, Nugaal, Mogadishu Lighthouse |
+| South Africa | 7 | Table Mountain, Tugela Falls, Vredefort crater, Augrabies Falls, Cape of Good Hope, Kruger National Park, Sterkfontein |
+| South Korea | 7 | Jeju Island, Changdeokgung, Hallasan, Seokguram, Ganghwa Island, Gyeongbokgung Palace, Bulguksa Temple |
+| Spain | 7 | Mallorca, Sagrada Família, Basilica and Expiatory Church of the Holy Family, Teide, Alhambra, Park Güell, Seville Cathedral |
+| Sudan | 7 | Jebel Barkal, Lake Nasser, Napata, Jebel Uweinat, Merowe Dam, Roseires Dam, Pyramids of Meroë |
+| Sweden | 7 | Vänern, Vättern, Birka, Drottningholm Palace, Stockholm Palace, Icehotel, Vasa Museum |
+| Syria | 7 | Palmyra, Umayyad Mosque, Great Mosque of Aleppo, Mari, Citadel of Salah Ed-Din, Margat, Krak des Chevaliers |
+| Tajikistan | 7 | Ferghana Valley, Ismoil Somoni Peak, Karakul, Norak Dam, Rogun Dam, Sarazm, Iskanderkul |
+| Tanzania | 7 | Mount Kilimanjaro, Lake Natron, Rukwa Lake, Kondoa Rock Art Sites, Laetoli, Serengeti, Stone Town |
+| Thailand | 7 | Ko Samui, Wat Phra Kaew, Ban Chiang, Khao Yai National Park, First Thai–Lao Friendship Bridge, Grand Palace, Wat Arun |
+| The Bahamas | 7 | Eleuthera, Inagua, Dean's Blue Hole, Fort Montagu, Nassau Public Library, St. Francis Xavier Cathedral, Nassau, Blue Holes of Andros |
+| Tunisia | 7 | Dougga, Kerkouane, Great Mosque of Kairouan, Ichkeul National Park, Bardo National Museum, Carthage, El Djem Amphitheatre |
+| Turkey | 7 | Hagia Sophia, Troy, Mount Ararat, Ephesus, Lake Van, Cappadocia, Pamukkale |
+| Turkmenistan | 7 | Köpet Dag, Merv, Nisa, Sarygamysh Lake, Arch of Neutrality, Türkmenbaşy Mosque, Darvaza Gas Crater |
+| Uganda | 7 | Kasubi Tombs, Lake Kyoga, Mount Elgon, Rwenzori Mountains National Park, Mount Sabyinyo, Murchison Falls, Bwindi Forest |
+| Ukraine | 7 | Crimean Bridge, Snake Island, Chersonesus, Kyiv Pechersk Lavra, Hoverla, Mariinskyi Palace, Saint Sophia Cathedral |
+| United Kingdom | 7 | Big Ben, British Museum, Stonehenge, Tower Bridge, Buckingham Palace, Edinburgh Castle, Giant's Causeway |
+| Uruguay | 7 | Church of Cristo Obrero y Nuestra Señora de Lourdes, Laguna Garzón Bridge, Metropolitan Basilica Cathedral of the Immaculate Conception and San Felipe and Santiago, Gorriti Island, Obelisk of Montevideo, Santa Teresa National Park, Colonia del Sacramento |
+| Uzbekistan | 7 | Bibi-Khanym Mosque, Gur-e Amir, Aydar Lake, Kalyan Minaret, Registan, Samanid Mausoleum, South Aral Sea |
+| Venezuela | 7 | Lake Maracaibo, Margarita Island, Angel Falls, Botanical Garden of Mérida, General Rafael Urdaneta Bridge, Guri Dam, Mosque of Sheikh Ibrahim Al-Ibrahim |
+| Vietnam | 7 | Son Doong Cave, Phú Quốc, Mỹ Sơn, Thien Duong Cave, Fansipan, Ha Long Bay, Hoi An Old Town |
+| Yemen | 7 | Socotra, Great Mosque of Sana'a, Hanish Islands, Jabal al-Tair Island, Marib Dam, Perim, Old City of Sana'a |
+| Zambia | 7 | Lake Bangweulu, Kalambo Falls, Lake Mweru Wantipa, Mosi-oa-Tunya, Ngonye Falls, Itezhi-Tezhi Dam, Kafue Gorge Dam |
+| Zimbabwe | 7 | Victoria Falls, Lake Kariba, Mana Pools National Park, Kariba Dam, Khami, Mutarazi Falls, Great Zimbabwe |
+| France | 8 | Eiffel Tower, Louvre, Notre-Dame de Paris, Arc de Triomphe, Mont Saint-Michel, Palace of Versailles, Sacré-Cœur, Pont du Gard |
+| United States of America | 8 | Golden Gate Bridge, Grand Canyon, Statue of Liberty, Empire State Building, Mount Rushmore, White House, Yellowstone, Space Needle |
+

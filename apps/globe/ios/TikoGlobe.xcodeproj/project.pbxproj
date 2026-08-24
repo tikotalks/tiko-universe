@@ -14,12 +14,14 @@
 		205AD9431DD7D2E3C64EF0C8 /* GlobeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */; };
 		23013F064DDE0657085F23ED /* GlobeGeography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E848A064642605763CB8D3 /* GlobeGeography.swift */; };
 		2D4614B42BF8C19E67B45DFA /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10DEE2F1A059932E1A55EB7A /* TikoKit */; };
+		31804001BDE889FF191469F3 /* mode-capitals.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EDA4289462845E736B7DBFF /* mode-capitals.png */; };
 		35194819D658C1CD18214E7D /* GeographyContent in Resources */ = {isa = PBXBuildFile; fileRef = 0E348D4764D805D8C3AF5084 /* GeographyContent */; };
 		365245812BBD8BC406F0E880 /* GlobeNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFF8C7DD288CC33EF9BD94 /* GlobeNaming.swift */; };
 		37021294967523035372768B /* GlobeSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20705001102714B73B9D6D0D /* GlobeSurfaceView.swift */; };
 		384B83750F4692E443D96AB2 /* GlobeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F50F0DEF7E3EFE99B4974EAF /* GlobeView.swift */; };
 		38A58A4219139B9EC408BC65 /* GlobeHitTestingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A8BA15F036328692FAD53 /* GlobeHitTestingTests.swift */; };
 		392D444EBD1B960337607337 /* GlobeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */; };
+		571F95A46713C8BAE23F641F /* mode-countries.png in Resources */ = {isa = PBXBuildFile; fileRef = 98C8953DF39609607B929F38 /* mode-countries.png */; };
 		5D6EB2563E334055DEEE4E5E /* GlobeHitTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D04293C93969B8E06766BD6 /* GlobeHitTesting.swift */; };
 		5ED1B38DBC982DF8873AEF55 /* GlobeCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */; };
 		6BA18B4C3A22708816D5EE3F /* GlobeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F665DA205640BE306B9C70 /* GlobeController.swift */; };
@@ -28,12 +30,14 @@
 		8399FAC0297D6ABFC4E3E0FD /* GlobeMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22188E2DD5E056F1040AA522 /* GlobeMathTests.swift */; };
 		8F57146F5E4D8B19DFF03897 /* GlobeAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EE9F3970A722D07ED97B5C /* GlobeAppConfig.swift */; };
 		930F0C17494500DE855CE519 /* TikoGlobeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA05844521B77D95653AEC3 /* TikoGlobeApp.swift */; };
+		B24A873AB3E0EE5AB027135B /* mode-landmarks.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C678A15648BBE26561A2E70 /* mode-landmarks.png */; };
 		B3353E4A0BAAAADAC4C0D9B7 /* GlobeContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */; };
 		B656E56930ED301B90A2D39A /* GlobeCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */; };
 		BCFB5825328B93123492A674 /* GlobeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430A2D66EA2E11C77432EBFD /* GlobeContent.swift */; };
 		D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738B434CE752431B9D1DC059 /* GlobeCountryList.swift */; };
 		D7CEBD46F962A7F1B3A747D7 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7A205FB2FCEC1447AD619F /* TikoKit */; };
 		D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404C639172C12A5CC9251A0E /* GlobeWater.swift */; };
+		DCF30D52D0BBFB33187CCEAC /* mode-animals.png in Resources */ = {isa = PBXBuildFile; fileRef = 69424DF8CBD6A225DEF38B86 /* mode-animals.png */; };
 		E4B55DF5B4EBAF534CAE4785 /* GlobeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B48B8253D08F9048D3CD01 /* GlobeMath.swift */; };
 		E6C2494BD43A6E010C57317E /* Geography in Resources */ = {isa = PBXBuildFile; fileRef = F3DD7D1C84834BD71805E0C3 /* Geography */; };
 		E9E84BFC67DAB8BEAA66857E /* GlobeAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */; };
@@ -61,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		0E348D4764D805D8C3AF5084 /* GeographyContent */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GeographyContent; path = ../../../packages/geography/content; sourceTree = SOURCE_ROOT; };
+		0EDA4289462845E736B7DBFF /* mode-capitals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-capitals.png"; sourceTree = "<group>"; };
 		10B48B8253D08F9048D3CD01 /* GlobeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMath.swift; sourceTree = "<group>"; };
 		16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCountryNaming.swift; sourceTree = "<group>"; };
 		17464052BCC73051B8D2900D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -75,14 +80,17 @@
 		532A8BA15F036328692FAD53 /* GlobeHitTestingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeHitTestingTests.swift; sourceTree = "<group>"; };
 		5614E2D52B9B3D980E632516 /* GlobeSeas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeSeas.swift; sourceTree = "<group>"; };
 		56E848A064642605763CB8D3 /* GlobeGeography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeography.swift; sourceTree = "<group>"; };
+		5C678A15648BBE26561A2E70 /* mode-landmarks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-landmarks.png"; sourceTree = "<group>"; };
 		5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCameraTests.swift; sourceTree = "<group>"; };
 		65CEB617343B35B84A803598 /* TikoGlobe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoGlobe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69424DF8CBD6A225DEF38B86 /* mode-animals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-animals.png"; sourceTree = "<group>"; };
 		71157EB169D449CC0B4820D1 /* TikoGlobeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		738B434CE752431B9D1DC059 /* GlobeCountryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCountryList.swift; sourceTree = "<group>"; };
 		87C00B4E3BE21ED67AFC5A81 /* TikoGlobeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeographyTests.swift; sourceTree = "<group>"; };
 		8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCamera.swift; sourceTree = "<group>"; };
 		92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeContentTests.swift; sourceTree = "<group>"; };
+		98C8953DF39609607B929F38 /* mode-countries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-countries.png"; sourceTree = "<group>"; };
 		99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeAppearance.swift; sourceTree = "<group>"; };
 		A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMomentumTests.swift; sourceTree = "<group>"; };
 		A9AA8AD6765C5936F0A9F9A8 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
@@ -150,6 +158,17 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		73EBD20FFF556BE8687CDEE2 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				69424DF8CBD6A225DEF38B86 /* mode-animals.png */,
+				0EDA4289462845E736B7DBFF /* mode-capitals.png */,
+				98C8953DF39609607B929F38 /* mode-countries.png */,
+				5C678A15648BBE26561A2E70 /* mode-landmarks.png */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
 		998C5E7120073929A1174185 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -176,6 +195,7 @@
 			children = (
 				F3DD7D1C84834BD71805E0C3 /* Geography */,
 				0E348D4764D805D8C3AF5084 /* GeographyContent */,
+				73EBD20FFF556BE8687CDEE2 /* Media */,
 				9AB167199A0EC67970AD36F4 /* Packages */,
 				47261B0505C3CF8B15B167BD /* Sources */,
 				998C5E7120073929A1174185 /* Tests */,
@@ -318,6 +338,10 @@
 				6DC59DCDFD924CA381C107B1 /* Assets.xcassets in Resources */,
 				35194819D658C1CD18214E7D /* GeographyContent in Resources */,
 				E6C2494BD43A6E010C57317E /* Geography in Resources */,
+				DCF30D52D0BBFB33187CCEAC /* mode-animals.png in Resources */,
+				31804001BDE889FF191469F3 /* mode-capitals.png in Resources */,
+				571F95A46713C8BAE23F641F /* mode-countries.png in Resources */,
+				B24A873AB3E0EE5AB027135B /* mode-landmarks.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
