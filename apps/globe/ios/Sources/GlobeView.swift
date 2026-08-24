@@ -43,6 +43,7 @@ struct GlobeView: View {
             }
         )
         .task {
+            controller.i18n = i18n
             controller.languageCode = languageCode
             controller.earthLabel = i18n.t("globe.earth")
             controller.speaksNames = saysNames
@@ -59,11 +60,11 @@ struct GlobeView: View {
         .sheet(isPresented: $showingCountryList) {
             GlobeCountryList(
                 countries: controller.countries,
-                markers: controller.markersForCurrentMode,
+                entities: controller.entitiesForCurrentMode,
                 languageCode: languageCode,
                 i18n: i18n,
                 onSelect: { country in controller.select(country: country, focus: true) },
-                onSelectMarker: { marker in controller.select(marker: marker, focus: true) }
+                onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) }
             )
         }
     }
@@ -189,7 +190,7 @@ struct GlobeView: View {
             let eased = 1 - pow(1 - t, 3)
             let size = fullSize * (0.4 + 0.6 * eased)
             context.opacity = min(1, t * 1.4)
-            if let image = GlobeMarkerImage.drawable(named: placed.marker.imageName, size: fullSize * 2) {
+            if let image = GlobeMarkerImage.drawable(named: placed.entity.imageName, size: fullSize * 2) {
                 context.draw(
                     image,
                     in: CGRect(
@@ -201,7 +202,7 @@ struct GlobeView: View {
                 )
             } else {
                 context.draw(
-                    context.resolve(Text(placed.marker.glyph).font(.system(size: size * 0.8))),
+                    context.resolve(Text(placed.entity.glyph).font(.system(size: size * 0.8))),
                     at: CGPoint(x: placed.point.x, y: placed.point.y - size * 0.2),
                     anchor: .center
                 )
@@ -209,7 +210,7 @@ struct GlobeView: View {
             // The name once the artwork is big enough to have room under it.
             if controller.markerScale > 1.0, t > 0.6 {
                 draw(
-                    placed.marker.name,
+                    GlobeNaming.displayName(for: placed.entity, i18n: i18n),
                     at: CGPoint(x: placed.point.x, y: placed.point.y + size * 0.45),
                     size: 11 * min(controller.markerScale, 1.4),
                     in: &context,
@@ -230,7 +231,10 @@ struct GlobeView: View {
             }
             if controller.mode == .capitals {
                 for placed in controller.markers {
-                    draw(placed.marker.name, at: placed.point, size: 13, in: &context, isPlace: true)
+                    draw(
+                        GlobeNaming.displayName(for: placed.entity, i18n: i18n),
+                        at: placed.point, size: 13, in: &context, isPlace: true
+                    )
                 }
             }
             drawMarkers(in: &context)

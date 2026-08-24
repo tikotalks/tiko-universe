@@ -143,3 +143,31 @@ npm run geography:content    # rebuild the packs the app bundles, and the gap re
 country, an unknown district, a duplicate, coordinates off the planet, and a
 `verified` entry with nobody's name on it. What it cannot check is whether a
 chameleon really lives in Malta — that is what the review state is for.
+
+## The contract the app consumes
+
+Globe reads geography as **entities and occurrences**, and nothing else:
+
+```text
+stable entity id  →  translation key + media + fallback English name
+      ↓
+one or more occurrences: lat/lon, importance, country, note
+      ↓
+camera decides which occurrence of which entity to draw
+```
+
+- **Identity is the id**, never the English name. `chameleon`,
+  `african-elephant`, `hagar-qim`. The `name` in the data is a fallback for when
+  a translation is missing, and for reading the file.
+- **Translation keys** follow from the id: `geography.animals.chameleon`,
+  `geography.landmarks.hagar-qim`, `geography.countries.mlt`. A separate
+  `…​.spoken` key can override the pronunciation, so what is written and what is
+  said need not be the same string.
+- **Importance is 1–10**, authored per occurrence, and is what zoom filters on.
+  The bands themselves are a presentation choice and live in the app
+  (`GlobeImportanceBands`), not in the data.
+- **One identity, many occurrences.** The same elephant appears in many
+  countries; a view draws one of them, and the country's own authored occurrence
+  wins when a child is looking at that country.
+- **Every occurrence carries its own coordinates.** The renderer never invents a
+  position, and nothing in the app is keyed on one.

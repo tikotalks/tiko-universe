@@ -4,18 +4,18 @@ import SwiftUI
 /// `tools/geography/map-media.mjs` so it is there in airplane mode. Falls back
 /// to the entry's glyph when the library has no picture of that subject yet.
 struct GlobeMarkerImage: View {
-    let marker: GlobeMarker
+    let entity: GlobeEntity
     let size: CGFloat
 
     var body: some View {
-        if let image = Self.image(named: marker.imageName) {
+        if let image = Self.image(named: entity.imageName) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
                 .frame(width: size, height: size)
                 .accessibilityHidden(true)
         } else {
-            Text(marker.glyph)
+            Text(entity.glyph)
                 .font(.system(size: size * 0.82))
                 .frame(width: size, height: size)
                 .accessibilityHidden(true)

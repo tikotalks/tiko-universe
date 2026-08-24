@@ -1,7 +1,7 @@
 import Foundation
 
 /// What the globe is showing. Countries is the geography itself; the others are
-/// markers laid over it, all reading from the same canonical country records.
+/// occurrences laid over it, all reading from the same canonical country records.
 enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
     case countries
     case capitals
@@ -24,139 +24,213 @@ enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
-/// One thing a child can tap that is not a country: a capital, an animal or a
-/// landmark. Capitals come from the geography; the other two are authored in
-/// `packages/geography/content`.
-struct GlobeMarker: Identifiable, Equatable, Sendable {
+/// A thing that exists in the world, once, wherever it happens to be found: the
+/// African elephant, Ħaġar Qim, Valletta. Identity lives here — the name is a
+/// fallback for when there is no translation, never the identity itself.
+struct GlobeEntity: Identifiable, Equatable, Sendable {
     enum Kind: String, Sendable {
         case capital
         case animal
         case landmark
+
+        /// The half of the translation key that says what sort of thing this is.
+        var translationNamespace: String {
+            switch self {
+            case .capital: "geography.capitals"
+            case .animal: "geography.animals"
+            case .landmark: "geography.landmarks"
+            }
+        }
     }
 
     let id: String
     let kind: Kind
-    let name: String
+    /// English, for debugging and for when a translation is missing.
+    let fallbackName: String
     let glyph: String
-    /// Bundled Tiko media, where the library had a picture of this subject.
+    /// Bundled Tiko media, where the library has a picture of this subject.
     let imageName: String?
-    let point: GeoPoint
-    /// Larger shows earlier as the child zooms out.
-    let priority: Int
-    /// 1 shows from space, 10 only at the closest zoom. Authored per subject.
-    let importance: Int
-    /// Placed inside one country, and only drawn once the child is looking at
-    /// that country — the guarantee that every country has something to find.
-    let isCloseUp: Bool
-    /// The country this belongs to, where it belongs to exactly one.
-    let countryID: String?
-    /// Every country this subject covers — one for a capital or a landmark, a
-    /// whole region's worth for an animal. Drives the panel's little map.
-    let countryIDs: [String]
-    /// Broad wording for something that lives in more than one place. Never a
-    /// habitat claim — see `packages/geography/content/animals.json`.
-    let region: String?
     /// False until an editor has been through the entry.
     let isReviewed: Bool
 
-    /// The subject itself, without the marker that happens to carry it: one
-    /// elephant has a dozen markers, and a view should hold one of them.
-    var subjectID: String {
-        id.split(separator: "#").first.map(String.init) ?? id
+    /// `geography.animals.african-elephant`, and so on.
+    var translationKey: String { "\(kind.translationNamespace).\(id)" }
+}
+
+/// One place an entity is found. The same elephant has many of these; each can
+/// carry its own importance, because an elephant matters more in Kenya than in
+/// the corner of a map.
+struct GlobeOccurrence: Identifiable, Equatable, Sendable {
+    let id: String
+    let entityID: String
+    let point: GeoPoint
+    /// 1 shows from space, 10 only at the closest zoom. Importance to the map a
+    /// child is reading, not rarity.
+    let importance: Int
+    /// The country this occurrence belongs to, when it belongs to exactly one.
+    let countryID: String?
+    /// Every country this entity is found in — what the detail panel maps.
+    let countryIDs: [String]
+    /// Broad wording for a region, where the data carries one.
+    let region: String?
+    let note: String?
+    /// True when the occurrence was authored for one country, and so should only
+    /// appear once a child is looking at that country.
+    let isWithinCountry: Bool
+}
+
+/// Everything the modes draw, and the entities behind it.
+struct GlobeContentLibrary: Sendable {
+    private(set) var entities: [String: GlobeEntity] = [:]
+    private(set) var occurrences: [GlobeMode: [GlobeOccurrence]] = [:]
+
+    func entity(for occurrence: GlobeOccurrence) -> GlobeEntity? {
+        entities[occurrence.entityID]
+    }
+
+    /// Reads the authored packs. A missing pack is not fatal: Countries and
+    /// Capitals still work, and the app says nothing it cannot back up.
+    static func load(from bundle: Bundle = .main, countries: [GlobeCountry]) -> GlobeContentLibrary {
+        var library = GlobeContentLibrary()
+        library.addCapitals(from: countries)
+        library.add(pack: "animals", kind: .animal, mode: .animals, from: bundle)
+        library.add(pack: "landmarks", kind: .landmark, mode: .landmarks, from: bundle)
+        return library
+    }
+
+    private mutating func addCapitals(from countries: [GlobeCountry]) {
+        var found: [GlobeOccurrence] = []
+        for country in countries {
+            guard let capital = country.capital else { continue }
+            let id = "capital.\(country.id.lowercased())"
+            entities[id] = GlobeEntity(
+                id: id,
+                kind: .capital,
+                fallbackName: capital.name,
+                glyph: "🏙️",
+                imageName: nil,
+                isReviewed: true
+            )
+            found.append(GlobeOccurrence(
+                id: id,
+                entityID: id,
+                point: capital.point,
+                // Sovereign capitals surface before a dependency's seat does.
+                importance: country.sovereignty == .sovereign ? 2 : 4,
+                countryID: country.id,
+                countryIDs: [country.id],
+                region: nil,
+                note: nil,
+                isWithinCountry: false
+            ))
+        }
+        occurrences[.capitals] = found
+    }
+
+    private mutating func add(pack name: String, kind: GlobeEntity.Kind, mode: GlobeMode, from bundle: Bundle) {
+        guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "content")
+            ?? bundle.url(forResource: name, withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let file = try? JSONDecoder().decode(ContentPack.self, from: data)
+        else {
+            occurrences[mode] = []
+            return
+        }
+
+        var found: [GlobeOccurrence] = []
+        for item in file.items {
+            let entityID = item.entityID(kind: kind)
+            entities[entityID] = GlobeEntity(
+                id: entityID,
+                kind: kind,
+                fallbackName: item.name,
+                glyph: item.glyph ?? "📍",
+                imageName: item.image.map { ($0 as NSString).lastPathComponent },
+                isReviewed: item.review?.state == "reviewed" || item.review?.state == "verified"
+            )
+            found.append(contentsOf: item.occurrences(entityID: entityID, kind: kind))
+        }
+        occurrences[mode] = found
     }
 }
 
-private struct ContentFile: Decodable {
-    struct Marker: Decodable {
+// MARK: - Reading the packs
+
+/// Tolerant on purpose: the geography content is mid-audit, and the shapes
+/// before and after it should both load. Identity comes from the id, never from
+/// the English name.
+private struct ContentPack: Decodable {
+    struct Point: Decodable {
         let lat: Double
         let lon: Double
         let country: String?
         let closeUp: Bool?
+        let importance: Int?
+        let note: String?
     }
 
     struct Review: Decodable {
-        let state: String
+        let state: String?
     }
 
     struct Item: Decodable {
-        let id: String
+        let id: String?
+        let animal: String?
         let name: String
-        let glyph: String
-        let priority: Int
-        let importance: Int?
-        let region: String?
+        let glyph: String?
         let image: String?
+        let importance: Int?
+        /// The old five-band tier, still read so a stale pack loads.
+        let tier: Int?
+        let region: String?
         let country: String?
         let countries: [String]?
-        let marker: Marker?
-        let markers: [Marker]?
-        let review: Review
-    }
+        let marker: Point?
+        let markers: [Point]?
+        let note: String?
+        let review: Review?
 
-    let schemaVersion: Int
-    let items: [Item]
-}
-
-enum GlobeContent {
-    /// Reads the authored packs. A missing pack is not fatal: Countries and
-    /// Capitals still work, and the app says nothing it cannot back up.
-    static func markers(from bundle: Bundle = .main, countries: [GlobeCountry]) -> [GlobeMode: [GlobeMarker]] {
-        var markers: [GlobeMode: [GlobeMarker]] = [:]
-        markers[.capitals] = capitals(from: countries)
-        markers[.animals] = load(named: "animals", kind: .animal, from: bundle)
-        markers[.landmarks] = load(named: "landmarks", kind: .landmark, from: bundle)
-        return markers
-    }
-
-    private static func capitals(from countries: [GlobeCountry]) -> [GlobeMarker] {
-        countries.compactMap { country in
-            guard let capital = country.capital else { return nil }
-            return GlobeMarker(
-                id: "capital.\(country.id)",
-                kind: .capital,
-                name: capital.name,
-                glyph: "🏙️",
-                imageName: nil,
-                point: capital.point,
-                // Sovereign capitals surface before a dependency's seat does.
-                priority: country.sovereignty == .sovereign ? 80 : 50,
-                importance: country.sovereignty == .sovereign ? 2 : 4,
-                isCloseUp: false,
-                countryID: country.id,
-                countryIDs: [country.id],
-                region: nil,
-                isReviewed: true
-            )
+        /// `african-elephant`, from whichever field carries the identity.
+        func entityID(kind: GlobeEntity.Kind) -> String {
+            if let animal, !animal.isEmpty { return animal }
+            guard let id, !id.isEmpty else { return Self.slug(name) }
+            // Historic ids are prefixed with their kind: `animal.african-elephant`.
+            let prefix = "\(kind.rawValue)."
+            return id.hasPrefix(prefix) ? String(id.dropFirst(prefix.count)) : id
         }
-    }
 
-    private static func load(named name: String, kind: GlobeMarker.Kind, from bundle: Bundle) -> [GlobeMarker] {
-        guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "content")
-            ?? bundle.url(forResource: name, withExtension: "json"),
-            let data = try? Data(contentsOf: url),
-            let file = try? JSONDecoder().decode(ContentFile.self, from: data)
-        else { return [] }
+        /// 1…10. An authored value wins; a stale tier is mapped onto the scale.
+        var resolvedImportance: Int {
+            if let importance, (1...10).contains(importance) { return importance }
+            if let tier { return min(10, max(1, tier * 2)) }
+            return 6
+        }
 
-        return file.items.flatMap { item -> [GlobeMarker] in
-            let points = item.markers ?? [item.marker].compactMap { $0 }
-            return points.enumerated().map { index, marker in
-                GlobeMarker(
-                    // One entry can appear in several places; each needs its own id.
-                    id: points.count > 1 ? "\(item.id)#\(index)" : item.id,
-                    kind: kind,
-                    name: item.name,
-                    glyph: item.glyph,
-                    imageName: item.image.map { ($0 as NSString).lastPathComponent },
-                    point: GeoPoint(lat: marker.lat, lon: marker.lon),
-                    priority: item.priority,
-                    importance: item.importance ?? 6,
-                    isCloseUp: marker.closeUp ?? false,
-                    countryID: marker.country ?? item.country,
-                    countryIDs: item.countries ?? [item.country].compactMap { $0 },
-                    region: item.region,
-                    isReviewed: item.review.state == "reviewed"
+        func occurrences(entityID: String, kind: GlobeEntity.Kind) -> [GlobeOccurrence] {
+            let points = markers ?? [marker].compactMap { $0 }
+            let everywhere = countries ?? [country].compactMap { $0 }
+            return points.enumerated().map { index, point in
+                GlobeOccurrence(
+                    // One entity, many occurrences: each needs its own id.
+                    id: points.count > 1 ? "\(entityID)#\(index)" : entityID,
+                    entityID: entityID,
+                    point: GeoPoint(lat: point.lat, lon: point.lon),
+                    importance: point.importance ?? resolvedImportance,
+                    countryID: point.country ?? country,
+                    countryIDs: everywhere,
+                    region: region,
+                    note: point.note ?? note,
+                    isWithinCountry: point.closeUp ?? false
                 )
             }
         }
+
+        private static func slug(_ value: String) -> String {
+            value.lowercased()
+                .replacingOccurrences(of: "[^a-z0-9]+", with: "-", options: .regularExpression)
+                .trimmingCharacters(in: CharacterSet(charactersIn: "-"))
+        }
     }
+
+    let items: [Item]
 }

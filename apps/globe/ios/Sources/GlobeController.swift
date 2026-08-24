@@ -17,20 +17,40 @@ struct GlobeLabel: Identifiable, Equatable {
     let prominence: Double
 }
 
-/// A marker that survived the density pass, ready to draw. `presence` runs 0…1
-/// as it arrives and back down as it leaves, so nothing blinks in or out.
+/// An occurrence that survived the density pass, ready to draw. `presence` runs
+/// 0…1 as it arrives and back down as it leaves, so nothing blinks in or out.
 struct GlobePlacedMarker: Identifiable, Equatable {
-    let marker: GlobeMarker
+    let occurrence: GlobeOccurrence
+    let entity: GlobeEntity
     let point: CGPoint
     let presence: Double
 
-    var id: String { marker.id }
+    var id: String { occurrence.id }
 }
 
-/// What the child has picked: a country, or something standing on one.
+/// How much of the world's detail is visible at a given zoom. Importance is
+/// authored 1…10; this table says how deep to go, and is a presentation choice
+/// that can be retuned without touching the data.
+enum GlobeImportanceBands {
+    static func deepest(forVisibleRadius degrees: Double) -> Int {
+        switch degrees {
+        case 40...: 2
+        case 15..<40: 4
+        case 5..<15: 6
+        case 1.5..<5: 8
+        default: 10
+        }
+    }
+
+    /// Below this, a child is looking at one country, and that country's own
+    /// authored occurrences are what should fill it.
+    static let countryZoomRadius: Double = 6
+}
+
+/// What the child has picked: a country, or an entity found somewhere on it.
 enum GlobeSelection: Equatable {
     case country(GlobeCountry)
-    case marker(GlobeMarker)
+    case entity(GlobeEntity, GlobeOccurrence)
 }
 
 @MainActor
@@ -73,10 +93,10 @@ final class GlobeController: ObservableObject {
     var viewSize: CGSize = .zero
 
     private(set) var geography: GlobeGeography?
-    private var markersByMode: [GlobeMode: [GlobeMarker]] = [:]
-    /// Sorted once, not on every frame: ordering two thousand markers sixty
+    private(set) var content = GlobeContentLibrary()
+    /// Sorted once, not on every frame: ordering two thousand occurrences sixty
     /// times a second is most of what made spinning the globe feel heavy.
-    private var rankedByMode: [GlobeMode: [GlobeMarker]] = [:]
+    private var rankedByMode: [GlobeMode: [GlobeOccurrence]] = [:]
     /// Built with the geography, off the main thread.
     private(set) var meshes: GlobeMeshes?
     private var hitTester: GlobeHitTester?
@@ -109,11 +129,11 @@ final class GlobeController: ObservableObject {
     private var secondsSinceChoosing: Double = .greatestFiniteMagnitude
     private static let chooseInterval: Double = 0.12
     private var chosenLabels: [GlobeCountry] = []
-    private var chosenMarkers: [GlobeMarker] = []
+    private var chosenMarkers: [GlobeOccurrence] = []
     /// How far in or out each marker is, keyed by id. A marker leaving the set
     /// keeps its entry until it has shrunk away.
     private var markerPresence: [String: Double] = [:]
-    private var leavingMarkers: [String: GlobeMarker] = [:]
+    private var leavingMarkers: [String: GlobeOccurrence] = [:]
     /// A marker pops in over this long.
     private static let presenceDuration: Double = 0.28
 
@@ -144,9 +164,11 @@ final class GlobeController: ObservableObject {
             let geography = loaded.0
             self.geography = geography
             meshes = loaded.1
-            markersByMode = GlobeContent.markers(countries: geography.countries)
-            rankedByMode = markersByMode.mapValues { markers in
-                markers.sorted { ($0.importance, $1.priority) < ($1.importance, $0.priority) }
+            content = GlobeContentLibrary.load(countries: geography.countries)
+            // Most important first, then by id — a stable order that owes
+            // nothing to how the data was generated.
+            rankedByMode = content.occurrences.mapValues { occurrences in
+                occurrences.sorted { ($0.importance, $0.id) < ($1.importance, $1.id) }
             }
             hitTester = GlobeHitTester(geography: geography)
             loadState = .ready
@@ -213,10 +235,10 @@ final class GlobeController: ObservableObject {
         // beside the artwork still counts.
         let reach = 24 + 16 * markerScale
         if let nearest = markers
-            .map({ ($0.marker, hypot($0.point.x - point.x, $0.point.y - point.y)) })
+            .map({ ($0.occurrence, hypot($0.point.x - point.x, $0.point.y - point.y)) })
             .filter({ $0.1 <= reach })
             .min(by: { $0.1 < $1.1 })?.0 {
-            select(marker: nearest)
+            select(occurrence: nearest)
             return true
         }
 
@@ -233,21 +255,47 @@ final class GlobeController: ObservableObject {
 
     /// A marker tap: the marker is what was chosen, and the country under it is
     /// lifted so the child can see where the thing they tapped lives.
-    /// Everything the current mode could show, for the list route.
-    var markersForCurrentMode: [GlobeMarker] {
-        markersByMode[mode] ?? []
+    /// Everything the current mode could show, one row per entity, for the list
+    /// route. A child looking for the elephant wants one elephant.
+    var entitiesForCurrentMode: [GlobeEntity] {
+        var seen = Set<String>()
+        return (rankedByMode[mode] ?? []).compactMap { occurrence in
+            guard !seen.contains(occurrence.entityID) else { return nil }
+            seen.insert(occurrence.entityID)
+            return content.entities[occurrence.entityID]
+        }
     }
 
-    func select(marker: GlobeMarker, speak: Bool = true, focus: Bool = false) {
-        let countryIndex = marker.countryID.flatMap { geography?.index(of: $0) }
+    /// The occurrence of an entity a child should be taken to: the one they can
+    /// see, else the most important.
+    func bestOccurrence(of entityID: String) -> GlobeOccurrence? {
+        let candidates = (rankedByMode[mode] ?? []).filter { $0.entityID == entityID }
+        let cameraDirection = camera.globeSpaceCameraDirection
+        let visible = candidates.first { occurrence in
+            simd_dot(GlobeMath.unitVector(occurrence.point), cameraDirection) > Float(camera.insetHorizonCosine)
+        }
+        return visible ?? candidates.first
+    }
+
+    /// An occurrence tap: the entity is what was chosen, and the country under
+    /// it is lifted so the child can see where the thing they tapped is.
+    func select(occurrence: GlobeOccurrence, speak: Bool = true, focus: Bool = false) {
+        guard let entity = content.entities[occurrence.entityID] else { return }
+        let countryIndex = occurrence.countryID.flatMap { geography?.index(of: $0) }
         if selectedIndex != countryIndex {
             liftElapsed = 0
             selectionLift = reduceMotion ? 1 : 0
         }
         selectedIndex = countryIndex
-        selection = .marker(marker)
+        selection = .entity(entity, occurrence)
         if speak { speakSelection() }
         if focus { focusOnSelection() }
+    }
+
+    /// Picks the right occurrence of an entity for where the child is looking.
+    func select(entityID: String, speak: Bool = true, focus: Bool = false) {
+        guard let occurrence = bestOccurrence(of: entityID) else { return }
+        select(occurrence: occurrence, speak: speak, focus: focus)
     }
 
     func select(index: Int, speak: Bool = true) {
@@ -269,11 +317,23 @@ final class GlobeController: ObservableObject {
         if focus { focusOnSelection() }
     }
 
-    /// What the card and the voice call the current selection.
+    /// What the panel and the voice call the current selection. Entities are
+    /// named through their translation key, so this needs the app's strings.
+    var i18n: TikoI18n?
+
     var selectionName: String {
         switch selection {
         case .country(let country): GlobeCountryNaming.name(for: country, languageCode: languageCode)
-        case .marker(let marker): marker.name
+        case .entity(let entity, _): i18n.map { GlobeNaming.displayName(for: entity, i18n: $0) } ?? entity.fallbackName
+        case nil: ""
+        }
+    }
+
+    /// What the voice says, which may differ from what is written.
+    var spokenSelectionName: String {
+        switch selection {
+        case .country(let country): GlobeCountryNaming.spokenName(for: country, languageCode: languageCode)
+        case .entity(let entity, _): i18n.map { GlobeNaming.spokenName(for: entity, i18n: $0) } ?? entity.fallbackName
         case nil: ""
         }
     }
@@ -287,7 +347,7 @@ final class GlobeController: ObservableObject {
 
     func speakSelection() {
         guard speaksNames, selection != nil else { return }
-        let text = selectionName
+        let text = spokenSelectionName
         speechTask?.cancel()
         let language = languageCode
         speechTask = Task { await TikoVoiceService.shared.speak(text, languageCode: language) }
@@ -301,9 +361,9 @@ final class GlobeController: ObservableObject {
             var target = camera
             target.focus(on: country.labelPoint, distance: focusDistance(for: country))
             move(to: target)
-        case .marker(let marker):
+        case .entity(_, let occurrence):
             var target = camera
-            target.focus(on: marker.point, distance: min(camera.distance, GlobeCamera.countryDistance))
+            target.focus(on: occurrence.point, distance: min(camera.distance, GlobeCamera.countryDistance))
             move(to: target)
         case nil:
             break
@@ -539,19 +599,19 @@ final class GlobeController: ObservableObject {
         let showsCloseUps = visible < 6
 
         var placed: [CGRect] = []
-        var next: [GlobeMarker] = []
+        var next: [GlobeOccurrence] = []
         // One elephant, however many places it lives: a view with the same
         // animal three times reads as three animals. Zoomed into a country its
         // own copy is the one that wins, which is why close-ups sort first.
         var alreadyShowing = Set<String>()
         let ordered = showsCloseUps
-            ? candidates.sorted { ($0.isCloseUp ? 0 : 1, $0.importance) < ($1.isCloseUp ? 0 : 1, $1.importance) }
+            ? candidates.sorted { ($0.isWithinCountry ? 0 : 1, $0.importance) < ($1.isWithinCountry ? 0 : 1, $1.importance) }
             : candidates
         for marker in ordered {
             guard next.count < limit else { break }
             guard marker.importance <= deepestImportance else { continue }
-            guard !marker.isCloseUp || showsCloseUps else { continue }
-            guard !alreadyShowing.contains(marker.subjectID) else { continue }
+            guard !marker.isWithinCountry || showsCloseUps else { continue }
+            guard !alreadyShowing.contains(marker.entityID) else { continue }
             let normal = GlobeMath.unitVector(marker.point)
             guard simd_dot(normal, cameraDirection) > horizon else { continue }
             guard let point = camera.viewPoint(for: marker.point, viewSize: viewSize) else { continue }
@@ -564,7 +624,7 @@ final class GlobeController: ObservableObject {
             let box = CGRect(x: point.x - half, y: point.y - half, width: half * 2, height: half * 2)
             guard !placed.contains(where: { $0.intersects(box) }) else { continue }
             placed.append(box)
-            alreadyShowing.insert(marker.subjectID)
+            alreadyShowing.insert(marker.entityID)
             next.append(marker)
         }
 
@@ -603,13 +663,14 @@ final class GlobeController: ObservableObject {
         let horizon = Float(camera.insetHorizonCosine)
         var next: [GlobePlacedMarker] = []
         next.reserveCapacity(chosenMarkers.count + leavingMarkers.count)
-        for marker in chosenMarkers + Array(leavingMarkers.values) {
-            let presence = markerPresence[marker.id] ?? 0
+        for occurrence in chosenMarkers + Array(leavingMarkers.values) {
+            let presence = markerPresence[occurrence.id] ?? 0
             guard presence > 0.001 else { continue }
-            let normal = GlobeMath.unitVector(marker.point)
+            guard let entity = content.entities[occurrence.entityID] else { continue }
+            let normal = GlobeMath.unitVector(occurrence.point)
             guard simd_dot(normal, cameraDirection) > horizon else { continue }
-            guard let point = camera.viewPoint(for: marker.point, viewSize: viewSize) else { continue }
-            next.append(GlobePlacedMarker(marker: marker, point: point, presence: presence))
+            guard let point = camera.viewPoint(for: occurrence.point, viewSize: viewSize) else { continue }
+            next.append(GlobePlacedMarker(occurrence: occurrence, entity: entity, point: point, presence: presence))
         }
         if next != markers { markers = next }
     }

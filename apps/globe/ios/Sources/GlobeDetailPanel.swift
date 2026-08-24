@@ -92,8 +92,8 @@ struct GlobeDetailPanel: View {
                     .font(.system(size: artworkSize * 0.7))
                     .accessibilityHidden(true)
             }
-        case .marker(let marker):
-            GlobeMarkerImage(marker: marker, size: artworkSize)
+        case .entity(let entity, _):
+            GlobeMarkerImage(entity: entity, size: artworkSize)
         }
     }
 
@@ -165,22 +165,22 @@ struct GlobeDetailPanel: View {
     }
 
     private var isAnimal: Bool {
-        if case .marker(let marker) = selection { return marker.kind == .animal }
+        if case .entity(let entity, _) = selection { return entity.kind == .animal }
         return false
     }
 
     private var title: String {
         switch selection {
         case .country(let country): GlobeCountryNaming.name(for: country, languageCode: languageCode)
-        case .marker(let marker): marker.name
+        case .entity(let entity, _): GlobeNaming.displayName(for: entity, i18n: i18n)
         }
     }
 
     private var kindLabel: String {
         switch selection {
         case .country: i18n.t("globe.mode.countries")
-        case .marker(let marker):
-            switch marker.kind {
+        case .entity(let entity, _):
+            switch entity.kind {
             case .capital: i18n.t("globe.card.capitalCity")
             case .animal: i18n.t("globe.card.animal")
             case .landmark: i18n.t("globe.card.landmark")
@@ -191,19 +191,21 @@ struct GlobeDetailPanel: View {
     private var mapCaption: String {
         switch selection {
         case .country: i18n.t("globe.card.whereIsIt")
-        case .marker(let marker): marker.kind == .animal ? i18n.t("globe.card.whereItLives") : i18n.t("globe.card.whereIsIt")
+        case .entity(let entity, _): entity.kind == .animal ? i18n.t("globe.card.whereItLives") : i18n.t("globe.card.whereIsIt")
         }
     }
 
     private var countryIDs: [String] {
         switch selection {
         case .country(let country): [country.id]
-        case .marker(let marker): marker.countryIDs
+        case .entity(_, let occurrence): occurrence.countryIDs.isEmpty
+            ? [occurrence.countryID].compactMap { $0 }
+            : occurrence.countryIDs
         }
     }
 
     private var countries: [GlobeCountry] {
-        guard case .marker = selection else { return [] }
+        guard case .entity = selection else { return [] }
         return countryIDs
             .compactMap { id in geography.countries.first { $0.id == id } }
             .sorted { $0.name < $1.name }
@@ -212,14 +214,14 @@ struct GlobeDetailPanel: View {
     private var pins: [GeoPoint] {
         switch selection {
         case .country: []
-        case .marker(let marker): [marker.point]
+        case .entity(_, let occurrence): [occurrence.point]
         }
     }
 
     private var centre: GeoPoint {
         switch selection {
         case .country(let country): country.labelPoint
-        case .marker(let marker): marker.point
+        case .entity(_, let occurrence): occurrence.point
         }
     }
 
@@ -235,11 +237,14 @@ struct GlobeDetailPanel: View {
                 rows.append(Detail(label: i18n.t("globe.card.mappedAs"), value: country.name))
             }
             return rows
-        case .marker(let marker):
+        case .entity(let entity, let occurrence):
             var rows: [Detail] = []
-            if let region = marker.region {
+            if let note = occurrence.note {
+                rows.append(Detail(label: i18n.t("globe.card.about"), value: note))
+            }
+            if let region = occurrence.region {
                 rows.append(Detail(
-                    label: i18n.t(marker.kind == .animal ? "globe.card.livesIn" : "globe.card.where"),
+                    label: i18n.t(entity.kind == .animal ? "globe.card.livesIn" : "globe.card.where"),
                     value: region
                 ))
             }
@@ -254,7 +259,7 @@ struct GlobeDetailPanel: View {
             }
             rows.append(Detail(
                 label: i18n.t("globe.card.position"),
-                value: GlobeDetailPanel.coordinates(marker.point)
+                value: GlobeDetailPanel.coordinates(occurrence.point)
             ))
             return rows
         }
@@ -262,7 +267,7 @@ struct GlobeDetailPanel: View {
 
     /// Nothing is claimed about a subject an editor has not been through yet.
     private var footnote: String? {
-        guard case .marker(let marker) = selection, !marker.isReviewed else { return nil }
+        guard case .entity(let entity, _) = selection, !entity.isReviewed else { return nil }
         return i18n.t("globe.card.draft")
     }
 

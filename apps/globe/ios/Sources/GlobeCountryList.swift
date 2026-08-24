@@ -7,13 +7,13 @@ import TikoKit
 /// up in exactly the same place.
 struct GlobeCountryList: View {
     let countries: [GlobeCountry]
-    /// Whatever the current mode has put on the globe — capitals, animals,
-    /// landmarks — so the list reaches everything a fingertip can.
-    let markers: [GlobeMarker]
+    /// Whatever the current mode can show — capitals, animals, landmarks — one
+    /// row per thing, so the list reaches everything a fingertip can.
+    let entities: [GlobeEntity]
     let languageCode: String
     @ObservedObject var i18n: TikoI18n
     let onSelect: (GlobeCountry) -> Void
-    let onSelectMarker: (GlobeMarker) -> Void
+    let onSelectEntity: (GlobeEntity) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var search = ""
@@ -26,8 +26,9 @@ struct GlobeCountryList: View {
             .map(\.country)
     }
 
-    private var sortedMarkers: [GlobeMarker] {
-        markers
+    private var sortedEntities: [(entity: GlobeEntity, name: String)] {
+        entities
+            .map { (entity: $0, name: GlobeNaming.displayName(for: $0, i18n: i18n)) }
             .filter { search.isEmpty || $0.name.localizedCaseInsensitiveContains(search) }
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
@@ -35,22 +36,22 @@ struct GlobeCountryList: View {
     var body: some View {
         NavigationStack {
             List {
-                if !sortedMarkers.isEmpty {
+                if !sortedEntities.isEmpty {
                     Section(i18n.t("globe.list.onTheGlobe")) {
-                        ForEach(sortedMarkers) { marker in
+                        ForEach(sortedEntities, id: \.entity.id) { row in
                             Button {
-                                onSelectMarker(marker)
+                                onSelectEntity(row.entity)
                                 dismiss()
                             } label: {
                                 HStack(spacing: 12) {
-                                    GlobeMarkerImage(marker: marker, size: 32)
-                                    Text(marker.name)
+                                    GlobeMarkerImage(entity: row.entity, size: 32)
+                                    Text(row.name)
                                     Spacer()
                                 }
                                 .frame(minHeight: 44)
                                 .contentShape(Rectangle())
                             }
-                            .accessibilityIdentifier("globe-list-\(marker.id)")
+                            .accessibilityIdentifier("globe-list-\(row.entity.kind.rawValue).\(row.entity.id)")
                         }
                     }
                 }
@@ -77,7 +78,7 @@ struct GlobeCountryList: View {
             }
             .listStyle(.plain)
             .overlay {
-                if sorted.isEmpty && sortedMarkers.isEmpty {
+                if sorted.isEmpty && sortedEntities.isEmpty {
                     Text(i18n.t("globe.list.empty")).foregroundStyle(.secondary)
                 }
             }
