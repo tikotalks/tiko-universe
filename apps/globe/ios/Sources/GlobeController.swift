@@ -32,8 +32,9 @@ struct GlobePlacedMarker: Identifiable, Equatable {
 /// authored 1…10; this table says how deep to go, and is a presentation choice
 /// that can be retuned without touching the data.
 extension GlobeController {
-    /// Roughly what the controls cover, top and bottom, in points.
-    static let chromeHeight: Double = 210
+    /// What the controls cover before the mode bar has measured itself, in
+    /// points. Replaced by the real height on the first layout.
+    static let chromeHeight: Double = 130
 
     /// Below this much of the world on screen, a country's states are what a
     /// child is looking at, and their names are worth more than its own.
@@ -127,26 +128,41 @@ final class GlobeController: ObservableObject {
     var viewSize: CGSize = .zero {
         didSet {
             guard viewSize != oldValue, viewSize.height > 0 else { return }
-            // How far back the whole Earth has to sit to fit on this screen. A
-            // phone held upright is much narrower than the field of view is
-            // tall, and the globe was losing its sides off both edges.
-            let wasWide = camera.distance >= camera.earthDistance - 0.001
-            let first = !hasFittedCamera
-            hasFittedCamera = true
-            // The mode bar and the toolbar sit over the globe; the Earth should
-            // fit in what is left rather than behind them.
-            camera.fittingDistance = GlobeCamera.distanceFitting(
-                viewSize: viewSize,
-                coveredHeight: Self.chromeHeight
-            )
-            // The app opens on the whole Earth, and a globe already showing it
-            // keeps showing it when the screen changes shape — otherwise the
-            // distance still means "everything" on a screen it no longer draws
-            // into, and the sides run off the edges.
-            if first || wasWide { camera.distance = camera.earthDistance }
-            if camera.distance > camera.maxDistance { camera.distance = camera.maxDistance }
-            refreshCameraFlags()
+            fitCamera()
         }
+    }
+    /// How much of the bottom of the surface the mode bar covers, measured by
+    /// the view rather than guessed, safe area included.
+    var bottomChrome: Double = GlobeController.chromeHeight {
+        didSet {
+            guard abs(bottomChrome - oldValue) > 0.5, viewSize.height > 0 else { return }
+            fitCamera()
+        }
+    }
+
+    /// Sit the camera back far enough that the whole Earth fits in the part of
+    /// the surface nothing covers, and slide the picture up so that free space
+    /// is what the globe is centred in.
+    private func fitCamera() {
+        // A phone held upright is much narrower than the field of view is tall,
+        // and the globe was losing its sides off both edges.
+        let wasWide = camera.distance >= camera.earthDistance - 0.001
+        let first = !hasFittedCamera
+        hasFittedCamera = true
+        camera.fittingDistance = GlobeCamera.distanceFitting(
+            viewSize: viewSize,
+            coveredHeight: bottomChrome
+        )
+        // The bar covers the bottom and nothing covers the top, so the middle of
+        // what is left sits half the bar's height above the middle of the view.
+        camera.verticalShift = bottomChrome / Double(viewSize.height)
+        // The app opens on the whole Earth, and a globe already showing it
+        // keeps showing it when the screen changes shape — otherwise the
+        // distance still means "everything" on a screen it no longer draws
+        // into, and the sides run off the edges.
+        if first || wasWide { camera.distance = camera.earthDistance }
+        if camera.distance > camera.maxDistance { camera.distance = camera.maxDistance }
+        refreshCameraFlags()
     }
 
     private(set) var geography: GlobeGeography?

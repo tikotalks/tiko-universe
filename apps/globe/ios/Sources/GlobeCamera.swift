@@ -33,6 +33,11 @@ struct GlobeCamera: Equatable, Sendable {
 
     /// How far back this screen needs the camera for the globe to fit on it.
     var fittingDistance: Double = GlobeCamera.earthDistance
+    /// How far up the frame the globe sits, in normalised device units. The
+    /// mode bar covers the bottom of the surface and nothing covers the top, so
+    /// the middle of the free space is above the middle of the view; without
+    /// this the globe is centred behind the bar and loses its foot.
+    var verticalShift: Double = 0
     /// Where focusing on a country lands: the country fills the view without
     /// losing the sense that this is a ball.
     static let countryDistance: Double = 1.35
@@ -230,7 +235,8 @@ struct GlobeCamera: Equatable, Sendable {
             perspectiveFieldOfView: Float(Self.fieldOfViewDegrees * .pi / 180),
             aspect: Float(max(0.0001, aspect)),
             near: Float(max(0.01, distance - 1.5)),
-            far: Float(distance + 2)
+            far: Float(distance + 2),
+            verticalShift: Float(verticalShift)
         )
         return projection * translation * rotation
     }
@@ -254,7 +260,7 @@ struct GlobeCamera: Equatable, Sendable {
     func geoPoint(atViewPoint point: CGPoint, viewSize: CGSize) -> GeoPoint? {
         guard viewSize.width > 0, viewSize.height > 0 else { return nil }
         let ndcX = Double(point.x) / Double(viewSize.width) * 2 - 1
-        let ndcY = 1 - Double(point.y) / Double(viewSize.height) * 2
+        let ndcY = 1 - Double(point.y) / Double(viewSize.height) * 2 - verticalShift
         let tanHalf = tan(Self.halfFieldOfViewRadians)
         let aspect = Double(viewSize.width) / Double(viewSize.height)
         let direction = SIMD3<Float>(
@@ -289,14 +295,17 @@ extension simd_float4x4 {
     /// Metal's clip space, not OpenGL's: depth runs 0…1, so a projection built
     /// for the −1…1 convention silently clips away everything in the near half
     /// of the scene — which here is most of the globe.
-    init(perspectiveFieldOfView fovy: Float, aspect: Float, near: Float, far: Float) {
+    /// `verticalShift` slides the whole picture up the frame without moving the
+    /// camera or bending the perspective — a lens shift, in the photographic
+    /// sense — so the globe can sit above the mode bar rather than behind it.
+    init(perspectiveFieldOfView fovy: Float, aspect: Float, near: Float, far: Float, verticalShift: Float = 0) {
         let scaleY = 1 / tan(fovy * 0.5)
         let scaleX = scaleY / aspect
         let zScale = far / (near - far)
         self.init(
             SIMD4<Float>(scaleX, 0, 0, 0),
             SIMD4<Float>(0, scaleY, 0, 0),
-            SIMD4<Float>(0, 0, zScale, -1),
+            SIMD4<Float>(0, -verticalShift, zScale, -1),
             SIMD4<Float>(0, 0, zScale * near, 0)
         )
     }

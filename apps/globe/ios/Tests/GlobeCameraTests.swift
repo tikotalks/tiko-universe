@@ -160,6 +160,45 @@ final class GlobeCameraTests: XCTestCase {
         XCTAssertLessThanOrEqual(asin(1 / camera.earthDistance), halfUsable)
     }
 
+    /// The mode bar covers the bottom of the surface, so the globe is drawn
+    /// above the middle of the view — and everything that maps a place to a
+    /// point on screen, and back, has to agree about that.
+    func testTheGlobeSitsAboveTheBarAndTapsStillLandWhereTheyLook() {
+        let size = CGSize(width: 440, height: 956)
+        let covered = 132.0
+        var camera = GlobeCamera()
+        camera.fittingDistance = GlobeCamera.distanceFitting(viewSize: size, coveredHeight: covered)
+        camera.distance = camera.earthDistance
+        camera.verticalShift = covered / Double(size.height)
+
+        // The middle of the globe lands in the middle of the free strip, not in
+        // the middle of the view.
+        let centre = camera.viewPoint(for: camera.centre, viewSize: size)
+        XCTAssertNotNil(centre)
+        XCTAssertEqual(Double(centre!.y), (Double(size.height) - covered) / 2, accuracy: 1)
+
+        // Its foot clears the bar: the lowest point of the silhouette sits above
+        // where the bar begins.
+        let radius = asin(1 / camera.distance)
+        let halfFov = GlobeCamera.fieldOfViewDegrees / 2 * .pi / 180
+        let halfHeight = Double(size.height) / 2
+        let radiusPoints = tan(radius) / tan(halfFov) * halfHeight
+        XCTAssertLessThanOrEqual(Double(centre!.y) + radiusPoints, Double(size.height) - covered + 1)
+        XCTAssertGreaterThanOrEqual(Double(centre!.y) - radiusPoints, -1)
+
+        // And a tap where a place is drawn finds that place again.
+        for place in [GeoPoint(lat: 0, lon: 0), GeoPoint(lat: 40, lon: -20), GeoPoint(lat: -30, lon: 25)] {
+            guard let point = camera.viewPoint(for: place, viewSize: size) else {
+                return XCTFail("\(place) should be on screen")
+            }
+            guard let back = camera.geoPoint(atViewPoint: point, viewSize: size) else {
+                return XCTFail("a tap on \(place) should hit the globe")
+            }
+            XCTAssertEqual(back.lat, place.lat, accuracy: 0.2)
+            XCTAssertEqual(back.lon, place.lon, accuracy: 0.2)
+        }
+    }
+
     func testHitToleranceGrowsWithTheVisibleArea() {
         var far = GlobeCamera()
         far.distance = GlobeCamera.maxDistance

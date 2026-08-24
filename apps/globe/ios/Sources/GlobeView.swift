@@ -15,6 +15,11 @@ struct GlobeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showingCountryList = false
+    /// Where the globe's surface ends and where the mode bar begins, both in the
+    /// frame's own coordinates — the difference is what the bar covers.
+    @State private var surfaceBottom: CGFloat = 0
+    @State private var chromeTop: CGFloat = 0
+    private static let frameSpace = "globe-frame"
     /// A phone has no room for a panel beside the map, so the card takes the
     /// whole screen there — over the mode bar and the zoom buttons, which are
     /// no use while you are reading about a chameleon.
@@ -108,6 +113,9 @@ struct GlobeView: View {
                         appearance: GlobeAppearance.appearance(for: colorScheme)
                     )
                     .ignoresSafeArea(edges: .bottom)
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.frame(in: .named(Self.frameSpace)).maxY
+                    } action: { surfaceBottom = $0; measureChrome() }
                     .accessibilityLabel(i18n.t("globe.earth"))
                     .accessibilityHint(i18n.t("globe.hint.explore"))
                     .accessibilityIdentifier("globe-surface")
@@ -153,9 +161,23 @@ struct GlobeView: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 16)
+            // What the bar actually covers, measured rather than guessed: the
+            // globe is fitted into the space above it, and a wrong guess either
+            // wastes the screen or hides the foot of the Earth.
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.frame(in: .named(Self.frameSpace)).minY
+            } action: { chromeTop = $0; measureChrome() }
             .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: controller.selection)
             .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: controller.isShowingWholeEarth)
         }
+        .coordinateSpace(name: Self.frameSpace)
+    }
+
+    /// Hands the controller the height of the strip the mode bar covers, in the
+    /// surface's own terms: it reaches below the safe area, the bar does not.
+    private func measureChrome() {
+        guard surfaceBottom > 0, chromeTop > 0 else { return }
+        controller.bottomChrome = max(0, Double(surfaceBottom - chromeTop))
     }
 
     /// The mode switch. One row, large targets, a modelled icon *and* a word
