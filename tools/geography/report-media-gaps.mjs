@@ -42,7 +42,8 @@ for (const [id, names] of Object.entries(COUNTRY_ANIMALS)) {
 }
 
 const missingLandmarks = landmarks.filter((landmark) => !landmark.mediaId)
-const byTier = (tier) => missingLandmarks.filter((landmark) => landmark.tier === tier)
+/** Grouped by how soon a landmark shows: the ones a child sees from space first. */
+const byBand = (low, high) => missingLandmarks.filter((landmark) => landmark.importance >= low && landmark.importance <= high)
 
 const lines = [
   '# Tiko Globe — what the media library is missing',
@@ -90,12 +91,12 @@ if (wishlist.length > 0) {
   }
 }
 
-for (const [tier, heading, note] of [
-  [1, '## Landmarks — the famous ones', 'Visible from the whole-Earth view. These are the ones a child goes looking for.'],
-  [2, '## Landmarks — well known', 'Visible once a child is looking at a region.'],
-  [3, '## Landmarks — one per country', 'Visible at country zoom. Often the only landmark that country has.']
+for (const [low, high, heading, note] of [
+  [1, 3, '## Landmarks — the famous ones', 'Importance 1–3: visible from the whole-Earth view. These are the ones a child goes looking for.'],
+  [4, 6, '## Landmarks — well known', 'Importance 4–6: visible once a child is looking at a region.'],
+  [7, 10, '## Landmarks — one per country', 'Importance 7–10: visible at country zoom. Often the only landmark that country has.']
 ]) {
-  const group = byTier(tier)
+  const group = byBand(low, high)
   if (group.length === 0) continue
   lines.push('', heading, '', note, '', '| Landmark | Country |', '| --- | --- |')
   for (const landmark of group.sort((a, b) => a.name.localeCompare(b.name))) {
@@ -108,4 +109,4 @@ lines.push('', '## Already covered', '', `${animals.length} animals and ${landma
 await writeFile(DOC, `${lines.join('\n')}\n`)
 const wishlistCount = wishlist.reduce((total, [, names]) => total + names.filter((name) => !animalNames.has(name.toLowerCase())).length, 0)
 process.stdout.write(`${wantedAnimals.size} animals on country lists, ${wishlistCount} more asked for, and ${missingLandmarks.length} landmarks have no picture — written to docs/apps/globe-media-gaps.md\n`)
-process.stdout.write(`famous landmarks with no picture: ${byTier(1).map((l) => l.name).join(', ')}\n`)
+process.stdout.write(`famous landmarks with no picture: ${byBand(1, 3).map((l) => l.name).join(', ')}\n`)

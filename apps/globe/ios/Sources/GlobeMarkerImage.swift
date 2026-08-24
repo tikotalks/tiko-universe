@@ -25,6 +25,21 @@ struct GlobeMarkerImage: View {
     /// Decoded once per name: a marker redraws every frame as the globe turns.
     private static let cache = NSCache<NSString, UIImage>()
     private static let thumbnails = NSCache<NSString, UIImage>()
+    /// SwiftUI `Image` values, kept so the canvas is not building a hundred of
+    /// them every frame.
+    private static var drawables: [String: Image] = [:]
+
+    /// The marker-sized `Image` for the canvas to draw.
+    static func drawable(named name: String?, size: CGFloat) -> Image? {
+        guard let name else { return nil }
+        let bucket = max(32, (size / 16).rounded(.up) * 16)
+        let key = "\(name)@\(Int(bucket))"
+        if let cached = drawables[key] { return cached }
+        guard let bitmap = thumbnail(named: name, size: bucket) else { return nil }
+        let image = Image(uiImage: bitmap)
+        drawables[key] = image
+        return image
+    }
 
     /// A marker-sized copy, drawn once and kept. Handing the full-size art to
     /// the renderer every frame is what made a globe full of animals crawl.

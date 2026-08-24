@@ -1,15 +1,10 @@
 {
   "schemaVersion": 1,
-  "note": "Landmarks by country, authored by hand. Every country has at least one. Coordinates are the landmark itself, to three decimals. Tier decides how far out it shows: 1 is the Eiffel Tower, 2 is well known, 3 is a good local landmark. A landmark with no picture in the media library still appears, drawn with its glyph.",
+  "note": "Landmarks by country, authored by hand. Every country has at least one. Coordinates are the landmark itself, to three decimals. importance decides how far out it shows, 1 to 10 with 1 showing first: the Eiffel Tower is a 2, a good local landmark an 8. A landmark with no picture in the media library still appears, drawn with its glyph.",
   "reviewStates": [
     "draft",
     "verified"
   ],
-  "tiers": {
-    "1": "known worldwide",
-    "2": "well known",
-    "3": "local"
-  },
   "countries": {
     "FRA": {
       "country": "France",
@@ -24,64 +19,64 @@
           "lat": 48.858,
           "lon": 2.294,
           "glyph": "🗼",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Louvre",
           "lat": 48.861,
           "lon": 2.336,
           "glyph": "🏛️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Notre-Dame de Paris",
           "lat": 48.853,
           "lon": 2.35,
           "glyph": "⛪",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Arc de Triomphe",
           "lat": 48.874,
           "lon": 2.295,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Sacré-Cœur",
           "lat": 48.887,
           "lon": 2.343,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Palace of Versailles",
           "lat": 48.805,
           "lon": 2.12,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Mont Saint-Michel",
           "lat": 48.636,
           "lon": -1.511,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Pont du Gard",
           "lat": 43.947,
           "lon": 4.535,
           "glyph": "🌉",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -98,48 +93,48 @@
           "lat": 51.501,
           "lon": -0.125,
           "glyph": "🕰️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Tower Bridge",
           "lat": 51.506,
           "lon": -0.075,
           "glyph": "🌉",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Stonehenge",
           "lat": 51.179,
           "lon": -1.826,
           "glyph": "🪨",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Buckingham Palace",
           "lat": 51.501,
           "lon": -0.142,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Edinburgh Castle",
           "lat": 55.949,
           "lon": -3.2,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Giant's Causeway",
           "lat": 55.241,
           "lon": -6.512,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -156,48 +151,48 @@
           "lat": 41.89,
           "lon": 12.492,
           "glyph": "🏛️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Leaning Tower of Pisa",
           "lat": 43.723,
           "lon": 10.397,
           "glyph": "🗼",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "St Mark's Square",
           "lat": 45.434,
           "lon": 12.339,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Trevi Fountain",
           "lat": 41.901,
           "lon": 12.483,
           "glyph": "⛲",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Mount Vesuvius",
           "lat": 40.822,
           "lon": 14.426,
           "glyph": "🌋",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Duomo of Florence",
           "lat": 43.773,
           "lon": 11.256,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -214,8 +209,8 @@
           "lat": 41.902,
           "lon": 12.454,
           "glyph": "⛪",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         }
       ]
     },
@@ -232,32 +227,32 @@
           "lat": 41.404,
           "lon": 2.174,
           "glyph": "⛪",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Alhambra",
           "lat": 37.176,
           "lon": -3.588,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Park Güell",
           "lat": 41.414,
           "lon": 2.153,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Seville Cathedral",
           "lat": 37.386,
           "lon": -5.993,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -274,16 +269,16 @@
           "lat": 38.692,
           "lon": -9.216,
           "glyph": "🗼",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Pena Palace",
           "lat": 38.788,
           "lon": -9.391,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -300,24 +295,24 @@
           "lat": 52.516,
           "lon": 13.378,
           "glyph": "🏛️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Neuschwanstein Castle",
           "lat": 47.558,
           "lon": 10.75,
           "glyph": "🏰",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Cologne Cathedral",
           "lat": 50.941,
           "lon": 6.958,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -334,32 +329,32 @@
           "lat": 51.884,
           "lon": 4.64,
           "glyph": "🌬️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Rijksmuseum",
           "lat": 52.36,
           "lon": 4.885,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Anne Frank House",
           "lat": 52.375,
           "lon": 4.884,
           "glyph": "🏠",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Delta Works",
           "lat": 51.622,
           "lon": 3.842,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -376,16 +371,16 @@
           "lat": 50.847,
           "lon": 4.352,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Atomium",
           "lat": 50.895,
           "lon": 4.341,
           "glyph": "⚛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -402,8 +397,8 @@
           "lat": 49.611,
           "lon": 6.131,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -420,16 +415,16 @@
           "lat": 45.977,
           "lon": 7.658,
           "glyph": "🏔️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Chapel Bridge",
           "lat": 47.052,
           "lon": 8.308,
           "glyph": "🌉",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -446,16 +441,16 @@
           "lat": 48.185,
           "lon": 16.312,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Hallstatt",
           "lat": 47.562,
           "lon": 13.649,
           "glyph": "🏔️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -472,16 +467,16 @@
           "lat": 52.972,
           "lon": -9.427,
           "glyph": "🌊",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Rock of Cashel",
           "lat": 52.52,
           "lon": -7.891,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -498,16 +493,16 @@
           "lat": 64.313,
           "lon": -20.302,
           "glyph": "♨️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Gullfoss",
           "lat": 64.327,
           "lon": -20.121,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -524,16 +519,16 @@
           "lat": 62.101,
           "lon": 7.006,
           "glyph": "🏔️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Bryggen",
           "lat": 60.397,
           "lon": 5.324,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -550,16 +545,16 @@
           "lat": 59.328,
           "lon": 18.091,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Icehotel",
           "lat": 67.849,
           "lon": 20.591,
           "glyph": "🧊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -576,8 +571,8 @@
           "lat": 60.145,
           "lon": 24.988,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -594,16 +589,16 @@
           "lat": 55.693,
           "lon": 12.599,
           "glyph": "🧜",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Kronborg Castle",
           "lat": 56.039,
           "lon": 12.622,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -620,24 +615,24 @@
           "lat": 37.971,
           "lon": 23.726,
           "glyph": "🏛️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Meteora",
           "lat": 39.721,
           "lon": 21.63,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Santorini",
           "lat": 36.393,
           "lon": 25.462,
           "glyph": "🏘️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -654,16 +649,16 @@
           "lat": 50.054,
           "lon": 19.935,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Malbork Castle",
           "lat": 54.04,
           "lon": 19.028,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -680,16 +675,16 @@
           "lat": 50.086,
           "lon": 14.411,
           "glyph": "🌉",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Prague Castle",
           "lat": 50.091,
           "lon": 14.401,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -706,8 +701,8 @@
           "lat": 48.142,
           "lon": 17.1,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -724,16 +719,16 @@
           "lat": 47.507,
           "lon": 19.046,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Fisherman's Bastion",
           "lat": 47.502,
           "lon": 19.035,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -750,16 +745,16 @@
           "lat": 45.515,
           "lon": 25.367,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Palace of the Parliament",
           "lat": 44.428,
           "lon": 26.088,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -776,8 +771,8 @@
           "lat": 42.133,
           "lon": 23.34,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -794,16 +789,16 @@
           "lat": 42.641,
           "lon": 18.108,
           "glyph": "🏰",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Plitvice Lakes",
           "lat": 44.881,
           "lon": 15.616,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -820,8 +815,8 @@
           "lat": 46.363,
           "lon": 14.094,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -838,8 +833,8 @@
           "lat": 44.823,
           "lon": 20.45,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -856,8 +851,8 @@
           "lat": 43.337,
           "lon": 17.815,
           "glyph": "🌉",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -874,8 +869,8 @@
           "lat": 42.424,
           "lon": 18.771,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -892,8 +887,8 @@
           "lat": 41.113,
           "lon": 20.802,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -910,8 +905,8 @@
           "lat": 39.746,
           "lon": 20.021,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -928,8 +923,8 @@
           "lat": 42.6,
           "lon": 21.194,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -946,8 +941,8 @@
           "lat": 50.453,
           "lon": 30.514,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -964,8 +959,8 @@
           "lat": 53.451,
           "lon": 26.473,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -982,8 +977,8 @@
           "lat": 47.336,
           "lon": 28.978,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1000,8 +995,8 @@
           "lat": 54.652,
           "lon": 24.933,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1018,8 +1013,8 @@
           "lat": 56.949,
           "lon": 24.106,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1036,8 +1031,8 @@
           "lat": 59.437,
           "lon": 24.745,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1054,32 +1049,32 @@
           "lat": 55.753,
           "lon": 37.623,
           "glyph": "⛪",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "The Kremlin",
           "lat": 55.752,
           "lon": 37.617,
           "glyph": "🏰",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Hermitage Museum",
           "lat": 59.94,
           "lon": 30.315,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Lake Baikal",
           "lat": 53.5,
           "lon": 108,
           "glyph": "🏞️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1096,112 +1091,112 @@
           "lat": 35.893,
           "lon": 14.518,
           "glyph": "⛵",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "St John's Co-Cathedral",
           "lat": 35.898,
           "lon": 14.512,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Ħaġar Qim",
           "lat": 35.827,
           "lon": 14.442,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Mdina",
           "lat": 35.886,
           "lon": 14.403,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Blue Grotto",
           "lat": 35.82,
           "lon": 14.454,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Fort St Angelo",
           "lat": 35.892,
           "lon": 14.518,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Mosta Rotunda",
           "lat": 35.911,
           "lon": 14.426,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Marsaxlokk",
           "lat": 35.842,
           "lon": 14.545,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Dingli Cliffs",
           "lat": 35.851,
           "lon": 14.377,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Popeye Village",
           "lat": 35.928,
           "lon": 14.336,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Cittadella of Gozo",
           "lat": 36.046,
           "lon": 14.239,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Blue Lagoon of Comino",
           "lat": 36.014,
           "lon": 14.322,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Ġgantija Temples",
           "lat": 36.047,
           "lon": 14.269,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Tarxien Temples",
           "lat": 35.869,
           "lon": 14.511,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1218,8 +1213,8 @@
           "lat": 34.771,
           "lon": 32.406,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1236,8 +1231,8 @@
           "lat": 35.341,
           "lon": 33.32,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1254,8 +1249,8 @@
           "lat": 42.507,
           "lon": 1.522,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1272,8 +1267,8 @@
           "lat": 43.74,
           "lon": 7.428,
           "glyph": "🎰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1290,8 +1285,8 @@
           "lat": 43.937,
           "lon": 12.446,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1308,8 +1303,8 @@
           "lat": 47.14,
           "lon": 9.525,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1326,8 +1321,8 @@
           "lat": 62.248,
           "lon": -7.183,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1344,8 +1339,8 @@
           "lat": 60.24,
           "lon": 20.078,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1362,8 +1357,8 @@
           "lat": 49.454,
           "lon": -2.531,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1380,8 +1375,8 @@
           "lat": 49.198,
           "lon": -2.023,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1398,8 +1393,8 @@
           "lat": 54.226,
           "lon": -4.699,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1416,40 +1411,40 @@
           "lat": 40.432,
           "lon": 116.57,
           "glyph": "🧱",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Forbidden City",
           "lat": 39.916,
           "lon": 116.397,
           "glyph": "🏯",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Terracotta Army",
           "lat": 34.385,
           "lon": 109.278,
           "glyph": "🗿",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Potala Palace",
           "lat": 29.658,
           "lon": 91.117,
           "glyph": "🏯",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "The Bund",
           "lat": 31.24,
           "lon": 121.49,
           "glyph": "🏙️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1466,40 +1461,40 @@
           "lat": 35.361,
           "lon": 138.727,
           "glyph": "🗻",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Fushimi Inari Shrine",
           "lat": 34.967,
           "lon": 135.773,
           "glyph": "⛩️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Tokyo Tower",
           "lat": 35.659,
           "lon": 139.746,
           "glyph": "🗼",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Itsukushima Shrine",
           "lat": 34.296,
           "lon": 132.32,
           "glyph": "⛩️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Himeji Castle",
           "lat": 34.839,
           "lon": 134.694,
           "glyph": "🏯",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1516,32 +1511,32 @@
           "lat": 27.175,
           "lon": 78.042,
           "glyph": "🕌",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Golden Temple",
           "lat": 31.62,
           "lon": 74.877,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Gateway of India",
           "lat": 18.922,
           "lon": 72.835,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Hawa Mahal",
           "lat": 26.924,
           "lon": 75.827,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1558,8 +1553,8 @@
           "lat": 13.413,
           "lon": 103.867,
           "glyph": "🛕",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         }
       ]
     },
@@ -1576,16 +1571,16 @@
           "lat": 13.75,
           "lon": 100.492,
           "glyph": "🏯",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Wat Arun",
           "lat": 13.744,
           "lon": 100.489,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1602,16 +1597,16 @@
           "lat": 20.91,
           "lon": 107.184,
           "glyph": "⛵",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Hoi An Old Town",
           "lat": 15.877,
           "lon": 108.327,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1628,8 +1623,8 @@
           "lat": 17.976,
           "lon": 102.617,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1646,8 +1641,8 @@
           "lat": 16.798,
           "lon": 96.15,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1664,8 +1659,8 @@
           "lat": 3.158,
           "lon": 101.712,
           "glyph": "🏙️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1682,8 +1677,8 @@
           "lat": 1.283,
           "lon": 103.86,
           "glyph": "🏙️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1700,16 +1695,16 @@
           "lat": -7.608,
           "lon": 110.204,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Mount Bromo",
           "lat": -7.942,
           "lon": 112.953,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1726,16 +1721,16 @@
           "lat": 16.934,
           "lon": 121.058,
           "glyph": "🌾",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Chocolate Hills",
           "lat": 9.828,
           "lon": 124.171,
           "glyph": "⛰️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1752,8 +1747,8 @@
           "lat": 4.889,
           "lon": 114.941,
           "glyph": "🕌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1770,8 +1765,8 @@
           "lat": -8.52,
           "lon": 125.617,
           "glyph": "⛰️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1788,16 +1783,16 @@
           "lat": 37.579,
           "lon": 126.977,
           "glyph": "🏯",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Bulguksa Temple",
           "lat": 35.79,
           "lon": 129.332,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1814,8 +1809,8 @@
           "lat": 39.018,
           "lon": 125.762,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1832,8 +1827,8 @@
           "lat": 25.034,
           "lon": 121.565,
           "glyph": "🏙️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1850,8 +1845,8 @@
           "lat": 22.276,
           "lon": 114.145,
           "glyph": "🏙️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1868,8 +1863,8 @@
           "lat": 22.198,
           "lon": 113.541,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1886,16 +1881,16 @@
           "lat": 47.808,
           "lon": 107.53,
           "glyph": "🗿",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Erdene Zuu Monastery",
           "lat": 47.201,
           "lon": 102.842,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1912,8 +1907,8 @@
           "lat": 51.128,
           "lon": 71.43,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1930,8 +1925,8 @@
           "lat": 39.655,
           "lon": 66.975,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -1948,8 +1943,8 @@
           "lat": 40.253,
           "lon": 58.439,
           "glyph": "🔥",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1966,8 +1961,8 @@
           "lat": 42.746,
           "lon": 75.25,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -1984,8 +1979,8 @@
           "lat": 39.075,
           "lon": 68.371,
           "glyph": "🏞️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2002,8 +1997,8 @@
           "lat": 34.842,
           "lon": 67.23,
           "glyph": "🏞️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2020,16 +2015,16 @@
           "lat": 31.588,
           "lon": 74.31,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "K2",
           "lat": 35.881,
           "lon": 76.513,
           "glyph": "🏔️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2046,16 +2041,16 @@
           "lat": 27.988,
           "lon": 86.925,
           "glyph": "🏔️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Boudhanath Stupa",
           "lat": 27.721,
           "lon": 85.362,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2072,8 +2067,8 @@
           "lat": 27.492,
           "lon": 89.363,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2090,8 +2085,8 @@
           "lat": 22.674,
           "lon": 89.742,
           "glyph": "🕌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2108,8 +2103,8 @@
           "lat": 7.957,
           "lon": 80.76,
           "glyph": "🪨",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2126,16 +2121,16 @@
           "lat": 4.176,
           "lon": 73.51,
           "glyph": "🕌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Malé Fish Market",
           "lat": 4.178,
           "lon": 73.51,
           "glyph": "🐟",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2152,16 +2147,16 @@
           "lat": 29.936,
           "lon": 52.89,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Naqsh-e Jahan Square",
           "lat": 32.658,
           "lon": 51.678,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2178,8 +2173,8 @@
           "lat": 30.963,
           "lon": 46.103,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2196,16 +2191,16 @@
           "lat": 21.423,
           "lon": 39.826,
           "glyph": "🕋",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Al-Ula",
           "lat": 26.609,
           "lon": 37.917,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2222,16 +2217,16 @@
           "lat": 25.197,
           "lon": 55.274,
           "glyph": "🏙️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Sheikh Zayed Mosque",
           "lat": 24.412,
           "lon": 54.475,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2248,8 +2243,8 @@
           "lat": 25.295,
           "lon": 51.539,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2266,8 +2261,8 @@
           "lat": 29.39,
           "lon": 48,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2284,8 +2279,8 @@
           "lat": 26.233,
           "lon": 50.521,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2302,8 +2297,8 @@
           "lat": 23.583,
           "lon": 58.388,
           "glyph": "🕌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2320,8 +2315,8 @@
           "lat": 15.353,
           "lon": 44.214,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2338,16 +2333,16 @@
           "lat": 30.329,
           "lon": 35.444,
           "glyph": "🏜️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Wadi Rum",
           "lat": 29.583,
           "lon": 35.42,
           "glyph": "🏜️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2364,16 +2359,16 @@
           "lat": 31.777,
           "lon": 35.234,
           "glyph": "🕍",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Masada",
           "lat": 31.315,
           "lon": 35.354,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2390,8 +2385,8 @@
           "lat": 31.704,
           "lon": 35.207,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2408,8 +2403,8 @@
           "lat": 34.007,
           "lon": 36.204,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2426,8 +2421,8 @@
           "lat": 34.757,
           "lon": 36.295,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2444,24 +2439,24 @@
           "lat": 41.008,
           "lon": 28.98,
           "glyph": "🕌",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Cappadocia",
           "lat": 38.643,
           "lon": 34.829,
           "glyph": "🎈",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Pamukkale",
           "lat": 37.92,
           "lon": 29.121,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2478,8 +2473,8 @@
           "lat": 42.663,
           "lon": 44.621,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2496,8 +2491,8 @@
           "lat": 39.878,
           "lon": 44.577,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2514,8 +2509,8 @@
           "lat": 40.36,
           "lon": 49.833,
           "glyph": "🏙️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2532,8 +2527,8 @@
           "lat": 35.421,
           "lon": 77.109,
           "glyph": "🏔️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2550,32 +2545,32 @@
           "lat": 29.979,
           "lon": 31.134,
           "glyph": "🔺",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Great Sphinx",
           "lat": 29.975,
           "lon": 31.138,
           "glyph": "🗿",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Karnak Temple",
           "lat": 25.719,
           "lon": 32.657,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Abu Simbel",
           "lat": 22.337,
           "lon": 31.626,
           "glyph": "🗿",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2592,24 +2587,24 @@
           "lat": 31.626,
           "lon": -7.989,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Hassan II Mosque",
           "lat": 33.608,
           "lon": -7.633,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Aït Benhaddou",
           "lat": 31.047,
           "lon": -7.129,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2626,8 +2621,8 @@
           "lat": 36.784,
           "lon": 3.06,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2644,16 +2639,16 @@
           "lat": 36.853,
           "lon": 10.323,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "El Djem Amphitheatre",
           "lat": 35.296,
           "lon": 10.707,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2670,8 +2665,8 @@
           "lat": 32.638,
           "lon": 14.293,
           "glyph": "🏛️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2688,8 +2683,8 @@
           "lat": 16.938,
           "lon": 33.749,
           "glyph": "🔺",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2706,8 +2701,8 @@
           "lat": 6.5,
           "lon": 34,
           "glyph": "🦌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2724,8 +2719,8 @@
           "lat": 12.031,
           "lon": 39.041,
           "glyph": "⛪",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2742,8 +2737,8 @@
           "lat": 15.339,
           "lon": 38.932,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2760,8 +2755,8 @@
           "lat": 11.657,
           "lon": 42.4,
           "glyph": "🏞️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2778,8 +2773,8 @@
           "lat": 2.031,
           "lon": 45.354,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2796,8 +2791,8 @@
           "lat": 9.735,
           "lon": 44.311,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2814,16 +2809,16 @@
           "lat": -1.5,
           "lon": 35.143,
           "glyph": "🦁",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Mount Kenya",
           "lat": -0.152,
           "lon": 37.308,
           "glyph": "🏔️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2840,24 +2835,24 @@
           "lat": -3.067,
           "lon": 37.355,
           "glyph": "🏔️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Serengeti",
           "lat": -2.333,
           "lon": 34.833,
           "glyph": "🦓",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Stone Town",
           "lat": -6.163,
           "lon": 39.189,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2874,8 +2869,8 @@
           "lat": -1.055,
           "lon": 29.674,
           "glyph": "🦍",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2892,8 +2887,8 @@
           "lat": -1.474,
           "lon": 29.529,
           "glyph": "🦍",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2910,8 +2905,8 @@
           "lat": -4.033,
           "lon": 30.4,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2928,24 +2923,24 @@
           "lat": -33.963,
           "lon": 18.41,
           "glyph": "🏔️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Cape of Good Hope",
           "lat": -34.357,
           "lon": 18.472,
           "glyph": "🌊",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Kruger National Park",
           "lat": -24.01,
           "lon": 31.486,
           "glyph": "🐘",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -2962,16 +2957,16 @@
           "lat": -17.925,
           "lon": 25.858,
           "glyph": "💦",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Great Zimbabwe",
           "lat": -20.268,
           "lon": 30.934,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -2988,8 +2983,8 @@
           "lat": -17.921,
           "lon": 25.856,
           "glyph": "💦",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -3006,8 +3001,8 @@
           "lat": -19.283,
           "lon": 22.8,
           "glyph": "🏞️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -3024,16 +3019,16 @@
           "lat": -24.727,
           "lon": 15.343,
           "glyph": "🏜️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Fish River Canyon",
           "lat": -27.596,
           "lon": 17.615,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3050,8 +3045,8 @@
           "lat": -9.075,
           "lon": 16.006,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3068,8 +3063,8 @@
           "lat": -15.035,
           "lon": 40.735,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3086,8 +3081,8 @@
           "lat": -12,
           "lon": 34.583,
           "glyph": "🏞️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3104,8 +3099,8 @@
           "lat": -20.251,
           "lon": 44.418,
           "glyph": "🌳",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -3122,8 +3117,8 @@
           "lat": -20.457,
           "lon": 57.322,
           "glyph": "🏔️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3140,8 +3135,8 @@
           "lat": -4.331,
           "lon": 55.74,
           "glyph": "🌴",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3158,8 +3153,8 @@
           "lat": -11.75,
           "lon": 43.38,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3176,8 +3171,8 @@
           "lat": -26.484,
           "lon": 31.19,
           "glyph": "🦓",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3194,8 +3189,8 @@
           "lat": -29.842,
           "lon": 28.061,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3212,8 +3207,8 @@
           "lat": -0.928,
           "lon": 29.18,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3230,8 +3225,8 @@
           "lat": -4.279,
           "lon": 15.283,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3248,8 +3243,8 @@
           "lat": 4.796,
           "lon": 18.121,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3266,8 +3261,8 @@
           "lat": 4.203,
           "lon": 9.17,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3284,8 +3279,8 @@
           "lat": 17,
           "lon": 22,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3302,8 +3297,8 @@
           "lat": 16.973,
           "lon": 7.991,
           "glyph": "🕌",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3320,16 +3315,16 @@
           "lat": 13.905,
           "lon": -4.555,
           "glyph": "🕌",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Timbuktu",
           "lat": 16.775,
           "lon": -3.009,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3346,8 +3341,8 @@
           "lat": 10.278,
           "lon": -3.583,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3364,8 +3359,8 @@
           "lat": 14.667,
           "lon": -17.398,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3382,8 +3377,8 @@
           "lat": 13.322,
           "lon": -16.363,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3400,8 +3395,8 @@
           "lat": 11.3,
           "lon": -15.9,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3418,8 +3413,8 @@
           "lat": 7.616,
           "lon": -8.412,
           "glyph": "🏔️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3436,8 +3431,8 @@
           "lat": 8.487,
           "lon": -13.234,
           "glyph": "🌳",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3454,8 +3449,8 @@
           "lat": 6.313,
           "lon": -10.803,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3472,8 +3467,8 @@
           "lat": 6.812,
           "lon": -5.288,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3490,8 +3485,8 @@
           "lat": 5.104,
           "lon": -1.242,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3508,8 +3503,8 @@
           "lat": 10.063,
           "lon": 1.108,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3526,8 +3521,8 @@
           "lat": 6.466,
           "lon": 2.412,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3544,16 +3539,16 @@
           "lat": 9.128,
           "lon": 7.234,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Olumo Rock",
           "lat": 7.152,
           "lon": 3.348,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3570,8 +3565,8 @@
           "lat": -2.3,
           "lon": 9.6,
           "glyph": "🐘",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3588,8 +3583,8 @@
           "lat": 1.626,
           "lon": 11.316,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3606,8 +3601,8 @@
           "lat": 0.146,
           "lon": 6.582,
           "glyph": "⛰️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3624,8 +3619,8 @@
           "lat": 14.916,
           "lon": -23.605,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3642,8 +3637,8 @@
           "lat": 21.124,
           "lon": -11.401,
           "glyph": "🎯",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3660,8 +3655,8 @@
           "lat": 27.15,
           "lon": -13.199,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3678,8 +3673,8 @@
           "lat": -15.925,
           "lon": -5.717,
           "glyph": "🪜",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3696,64 +3691,64 @@
           "lat": 40.689,
           "lon": -74.045,
           "glyph": "🗽",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Golden Gate Bridge",
           "lat": 37.82,
           "lon": -122.478,
           "glyph": "🌉",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Grand Canyon",
           "lat": 36.099,
           "lon": -112.113,
           "glyph": "🏜️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Mount Rushmore",
           "lat": 43.879,
           "lon": -103.459,
           "glyph": "🗿",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "White House",
           "lat": 38.898,
           "lon": -77.036,
           "glyph": "🏛️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Empire State Building",
           "lat": 40.749,
           "lon": -73.986,
           "glyph": "🏙️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Yellowstone",
           "lat": 44.428,
           "lon": -110.588,
           "glyph": "♨️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Space Needle",
           "lat": 47.62,
           "lon": -122.349,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3770,32 +3765,32 @@
           "lat": 43.078,
           "lon": -79.075,
           "glyph": "💦",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "CN Tower",
           "lat": 43.643,
           "lon": -79.387,
           "glyph": "🗼",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Banff National Park",
           "lat": 51.178,
           "lon": -115.571,
           "glyph": "🏔️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Château Frontenac",
           "lat": 46.812,
           "lon": -71.205,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3812,24 +3807,24 @@
           "lat": 20.683,
           "lon": -88.569,
           "glyph": "🔺",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Teotihuacan",
           "lat": 19.692,
           "lon": -98.844,
           "glyph": "🔺",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Palenque",
           "lat": 17.484,
           "lon": -92.046,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3846,8 +3841,8 @@
           "lat": 17.222,
           "lon": -89.623,
           "glyph": "🛕",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -3864,8 +3859,8 @@
           "lat": 17.316,
           "lon": -87.535,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3882,8 +3877,8 @@
           "lat": 14.837,
           "lon": -89.142,
           "glyph": "🗿",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3900,8 +3895,8 @@
           "lat": 13.828,
           "lon": -89.361,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3918,8 +3913,8 @@
           "lat": 11.984,
           "lon": -86.161,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3936,8 +3931,8 @@
           "lat": 10.463,
           "lon": -84.703,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3954,8 +3949,8 @@
           "lat": 9.08,
           "lon": -79.68,
           "glyph": "🚢",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -3972,8 +3967,8 @@
           "lat": 23.14,
           "lon": -82.353,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -3990,8 +3985,8 @@
           "lat": 18.415,
           "lon": -77.137,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4008,8 +4003,8 @@
           "lat": 19.574,
           "lon": -72.244,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4026,8 +4021,8 @@
           "lat": 18.473,
           "lon": -69.884,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4044,8 +4039,8 @@
           "lat": 24.7,
           "lon": -77.8,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4062,8 +4057,8 @@
           "lat": 18.471,
           "lon": -66.124,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4080,8 +4075,8 @@
           "lat": 10.234,
           "lon": -61.628,
           "glyph": "🛢️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4098,8 +4093,8 @@
           "lat": 13.187,
           "lon": -59.573,
           "glyph": "🕳️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4116,8 +4111,8 @@
           "lat": 13.808,
           "lon": -61.064,
           "glyph": "⛰️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4134,8 +4129,8 @@
           "lat": 12.006,
           "lon": -61.767,
           "glyph": "🏖️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4152,8 +4147,8 @@
           "lat": 13.331,
           "lon": -61.177,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4170,8 +4165,8 @@
           "lat": 15.318,
           "lon": -61.294,
           "glyph": "♨️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4188,8 +4183,8 @@
           "lat": 17.006,
           "lon": -61.765,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4206,8 +4201,8 @@
           "lat": 17.368,
           "lon": -62.836,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4224,8 +4219,8 @@
           "lat": 12.615,
           "lon": -70.052,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4242,8 +4237,8 @@
           "lat": 12.106,
           "lon": -68.933,
           "glyph": "🌉",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4260,8 +4255,8 @@
           "lat": 18.019,
           "lon": -63.056,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4278,8 +4273,8 @@
           "lat": 18.069,
           "lon": -63.084,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4296,8 +4291,8 @@
           "lat": 17.897,
           "lon": -62.851,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4314,8 +4309,8 @@
           "lat": 18.43,
           "lon": -64.443,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4332,8 +4327,8 @@
           "lat": 18.353,
           "lon": -64.77,
           "glyph": "🏖️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4350,8 +4345,8 @@
           "lat": 18.245,
           "lon": -63.019,
           "glyph": "🏖️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4368,8 +4363,8 @@
           "lat": 16.712,
           "lon": -62.181,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4386,8 +4381,8 @@
           "lat": 19.371,
           "lon": -81.288,
           "glyph": "🐠",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4404,8 +4399,8 @@
           "lat": 21.796,
           "lon": -72.196,
           "glyph": "🏖️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4422,8 +4417,8 @@
           "lat": 32.327,
           "lon": -64.836,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4440,32 +4435,32 @@
           "lat": -22.952,
           "lon": -43.211,
           "glyph": "⛰️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Iguaçu Falls",
           "lat": -25.687,
           "lon": -54.445,
           "glyph": "💦",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Sugarloaf Mountain",
           "lat": -22.949,
           "lon": -43.157,
           "glyph": "🚡",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Amazon Rainforest",
           "lat": -3.465,
           "lon": -62.216,
           "glyph": "🌳",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4482,24 +4477,24 @@
           "lat": -50.496,
           "lon": -73.14,
           "glyph": "🧊",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Iguazú Falls",
           "lat": -25.695,
           "lon": -54.437,
           "glyph": "💦",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Obelisco",
           "lat": -34.604,
           "lon": -58.382,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4516,24 +4511,24 @@
           "lat": -27.113,
           "lon": -109.35,
           "glyph": "🗿",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Torres del Paine",
           "lat": -50.943,
           "lon": -73.407,
           "glyph": "🏔️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Atacama Desert",
           "lat": -23.865,
           "lon": -69.13,
           "glyph": "🏜️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4550,16 +4545,16 @@
           "lat": -13.163,
           "lon": -72.545,
           "glyph": "🏔️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Nazca Lines",
           "lat": -14.739,
           "lon": -75.13,
           "glyph": "🗿",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4576,8 +4571,8 @@
           "lat": -20.133,
           "lon": -67.489,
           "glyph": "🧂",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4594,16 +4589,16 @@
           "lat": -0.777,
           "lon": -91.142,
           "glyph": "🐢",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Mitad del Mundo",
           "lat": -0.002,
           "lon": -78.456,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4620,16 +4615,16 @@
           "lat": 11.038,
           "lon": -73.925,
           "glyph": "🗿",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         },
         {
           "name": "Cartagena Old Town",
           "lat": 10.423,
           "lon": -75.551,
           "glyph": "🏰",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4646,8 +4641,8 @@
           "lat": 5.969,
           "lon": -62.536,
           "glyph": "💦",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4664,8 +4659,8 @@
           "lat": 5.175,
           "lon": -59.483,
           "glyph": "💦",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4682,8 +4677,8 @@
           "lat": 4.2,
           "lon": -56.4,
           "glyph": "🌳",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4700,8 +4695,8 @@
           "lat": -27.132,
           "lon": -55.7,
           "glyph": "⛪",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4718,8 +4713,8 @@
           "lat": -34.471,
           "lon": -57.844,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4736,8 +4731,8 @@
           "lat": -51.47,
           "lon": -57.842,
           "glyph": "🐧",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4754,8 +4749,8 @@
           "lat": 69.167,
           "lon": -51.1,
           "glyph": "🧊",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4772,8 +4767,8 @@
           "lat": 46.771,
           "lon": -56.157,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4790,40 +4785,40 @@
           "lat": -33.857,
           "lon": 151.215,
           "glyph": "🎭",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Uluru",
           "lat": -25.345,
           "lon": 131.036,
           "glyph": "🪨",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Great Barrier Reef",
           "lat": -18.286,
           "lon": 147.7,
           "glyph": "🐠",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         },
         {
           "name": "Sydney Harbour Bridge",
           "lat": -33.852,
           "lon": 151.211,
           "glyph": "🌉",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Twelve Apostles",
           "lat": -38.665,
           "lon": 143.104,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4840,24 +4835,24 @@
           "lat": -44.641,
           "lon": 167.897,
           "glyph": "🏔️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Hobbiton",
           "lat": -37.872,
           "lon": 175.683,
           "glyph": "🏘️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         },
         {
           "name": "Sky Tower",
           "lat": -36.848,
           "lon": 174.762,
           "glyph": "🗼",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4874,8 +4869,8 @@
           "lat": -9.07,
           "lon": 147.73,
           "glyph": "🥾",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4892,8 +4887,8 @@
           "lat": -17.622,
           "lon": 177.463,
           "glyph": "🛕",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4910,8 +4905,8 @@
           "lat": -8.7,
           "lon": 158.1,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4928,8 +4923,8 @@
           "lat": -19.532,
           "lon": 169.442,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4946,8 +4941,8 @@
           "lat": -20.945,
           "lon": 164.652,
           "glyph": "💚",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -4964,8 +4959,8 @@
           "lat": -16.5,
           "lon": -151.741,
           "glyph": "🏝️",
-          "tier": 2,
-          "note": null
+          "note": null,
+          "importance": 5
         }
       ]
     },
@@ -4982,8 +4977,8 @@
           "lat": -14.023,
           "lon": -171.494,
           "glyph": "🌊",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5000,8 +4995,8 @@
           "lat": -21.135,
           "lon": -175.055,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5018,8 +5013,8 @@
           "lat": -8.52,
           "lon": 179.196,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5036,8 +5031,8 @@
           "lat": 1.983,
           "lon": -157.476,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5054,8 +5049,8 @@
           "lat": -0.535,
           "lon": 166.926,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5072,8 +5067,8 @@
           "lat": 7.15,
           "lon": 134.376,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5090,8 +5085,8 @@
           "lat": 6.844,
           "lon": 158.334,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5108,8 +5103,8 @@
           "lat": 11.6,
           "lon": 165.383,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5126,8 +5121,8 @@
           "lat": 13.52,
           "lon": 144.803,
           "glyph": "⛰️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5144,8 +5139,8 @@
           "lat": 15.235,
           "lon": 145.716,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5162,8 +5157,8 @@
           "lat": -14.246,
           "lon": -170.578,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5180,8 +5175,8 @@
           "lat": -21.253,
           "lon": -159.735,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5198,8 +5193,8 @@
           "lat": -18.955,
           "lon": -169.87,
           "glyph": "🪨",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5216,8 +5211,8 @@
           "lat": -13.294,
           "lon": -176.204,
           "glyph": "🏞️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5234,8 +5229,8 @@
           "lat": -25.063,
           "lon": -130.096,
           "glyph": "⛵",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5252,8 +5247,8 @@
           "lat": -29.055,
           "lon": 167.96,
           "glyph": "🏘️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5270,8 +5265,8 @@
           "lat": -10.492,
           "lon": 105.633,
           "glyph": "🦀",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5288,8 +5283,8 @@
           "lat": -12.256,
           "lon": 123.045,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5306,8 +5301,8 @@
           "lat": -90,
           "lon": 0,
           "glyph": "❄️",
-          "tier": 1,
-          "note": null
+          "note": null,
+          "importance": 2
         }
       ]
     },
@@ -5324,8 +5319,8 @@
           "lat": -49.351,
           "lon": 70.219,
           "glyph": "🐧",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5342,8 +5337,8 @@
           "lat": -54.281,
           "lon": -36.508,
           "glyph": "🐧",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5360,8 +5355,8 @@
           "lat": -53.106,
           "lon": 73.514,
           "glyph": "🌋",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     },
@@ -5378,10 +5373,11 @@
           "lat": -7.313,
           "lon": 72.411,
           "glyph": "🏝️",
-          "tier": 3,
-          "note": null
+          "note": null,
+          "importance": 8
         }
       ]
     }
-  }
+  },
+  "importance": "1 (shows from space) to 10 (only at the closest zoom)"
 }

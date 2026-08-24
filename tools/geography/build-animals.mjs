@@ -50,10 +50,20 @@ const GROUPS = [
   { tier: 3, test: /(bird|owl|eagle|vulture|parrot|parakeet|macaw|cockatoo|cockatiel|penguin|puffin|goose|gander|swan|stork|robin|magpie|pigeon|canary|lovebird|kookaburra|hornbill|cassowary|emu|peafowl|snowcock|booby|seagull|duck|mallard|toucan|indigo)/i }
 ]
 
+/** Turns the old five-band tier into the 1–10 importance the data now carries. */
+const TIER_TO_IMPORTANCE = { 1: 2, 2: 4, 3: 6, 4: 8, 5: 10 }
+
 /**
- * 1 is a lion, 5 is a sea anemone. Mammals default to 2 because the ask was for
- * more mammals and bigger animals up front.
+ * How soon an animal shows as a child zooms out: 1 from space, 10 only at the
+ * closest zoom. An authored value wins; otherwise it comes from the kind of
+ * animal it is — a lion leads, a sea anemone waits.
  */
+function importanceFor(key) {
+  const authored = districtSource.animals[key]?.importance
+  if (authored >= 1 && authored <= 10) return authored
+  return TIER_TO_IMPORTANCE[tierFor(key)] ?? 6
+}
+
 function tierFor(key) {
   if (ICONIC.has(key)) return 1
   for (const group of GROUPS) {
@@ -62,12 +72,11 @@ function tierFor(key) {
   return 2
 }
 
-/** Priority within the tier, stable per animal so the globe looks the same twice. */
-function priorityFor(key, tier) {
+/** Order within one importance band, stable per animal. */
+function priorityFor(key, importance) {
   let hash = 0
   for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) & 0xffff
-  const band = [0, 88, 70, 52, 34, 16][tier]
-  return band + (hash % 12)
+  return (11 - importance) * 9 + (hash % 9)
 }
 
 async function library() {
@@ -136,12 +145,50 @@ async function searchForTitle(title) {
 }
 
 const districtSource = JSON.parse(await readFile(join(CONTENT_DIR, 'animal-districts.json'), 'utf8'))
+
+/** Coordinates written into animal-districts.json by a previous build or by hand. */
+function authoredDistrictPoint(name, districtId, index) {
+  const at = districtSource.animals[name]?.at ?? []
+  const found = at.find((point) => point.district === districtId && (point.index ?? 0) === index)
+  return found ? { lat: found.lat, lon: found.lon } : null
+}
+
+/** Writes the importance back, so it is authored data rather than a rule. */
+function rememberImportance(name, importance) {
+  const entry = districtSource.animals[name]
+  if (entry) entry.importance = importance
+}
+
+function rememberDistrictPoint(name, districtId, index, point) {
+  const entry = districtSource.animals[name]
+  if (!entry) return
+  entry.at ??= []
+  const existing = entry.at.find((candidate) => candidate.district === districtId && (candidate.index ?? 0) === index)
+  if (existing) {
+    existing.lat = point.lat
+    existing.lon = point.lon
+    return
+  }
+  entry.at.push({ district: districtId, index, lat: point.lat, lon: point.lon })
+}
 /** name → district ids, from the authored JSON. */
 const ANIMAL_DISTRICTS = Object.fromEntries(
   Object.entries(districtSource.animals).map(([name, entry]) => [name, entry.districts])
 )
 const NEAREST_AVAILABLE = districtSource.renames ?? {}
 const countryAnimals = JSON.parse(await readFile(join(CONTENT_DIR, 'country-animals.json'), 'utf8'))
+
+/** Where an animal stands in a country, if somebody has said so. */
+function authoredCountryPoint(countryId, name) {
+  const entry = countryAnimals.countries[countryId]?.animals.find((animal) => animal.name === name)
+  return entry?.at ? { lat: entry.at.lat, lon: entry.at.lon } : null
+}
+
+function rememberCountryPoint(countryId, name, point) {
+  const entry = countryAnimals.countries[countryId]?.animals.find((animal) => animal.name === name)
+  if (!entry) return
+  entry.at = { lat: point.lat, lon: point.lon }
+}
 const COUNTRY_ANIMALS = Object.fromEntries(
   Object.entries(countryAnimals.countries).map(([id, entry]) => [id, entry.animals.map((animal) => animal.name)])
 )
@@ -203,24 +250,25 @@ for (const item of media) {
     // spot shows one.
     const wantsLand = !district.isMarine
     for (const [index, point] of district.points.slice(0, 2).entries()) {
-      markers.push({
-        ...scatter(point, district.spreadDegrees ?? 5, `${key}:${districtId}:${index}`, wantsLand),
-        // Which district put it here, so the placement guard can hold each
-        // marker to its own district's rules.
-        district: districtId
-      })
+      // An authored position wins. Where there is none, one is worked out and
+      // written back, so every animal ends up with real coordinates somebody
+      // can look at and correct.
+      const authored = authoredDistrictPoint(key, districtId, index)
+      const placement = authored ?? scatter(point, district.spreadDegrees ?? 5, `${key}:${districtId}:${index}`, wantsLand)
+      markers.push({ lat: placement.lat, lon: placement.lon, district: districtId })
+      rememberDistrictPoint(key, districtId, index, placement)
     }
   }
 
   const countries = [...new Set(placement.flatMap((districtId) => districtCountries.get(districtId) ?? []))].sort()
-  const tier = tierFor(key)
+  const importance = importanceFor(key)
   const id = slug(title)
   items.push({
     id: `animal.${id}`,
     name: title,
     glyph: '🐾',
-    tier,
-    priority: priorityFor(key, tier),
+    importance,
+    priority: priorityFor(key, importance),
     districts: placement,
     region: regions.join(' · '),
     countries,
@@ -229,6 +277,7 @@ for (const item of media) {
     image: WRITE ? await download(item, id) : `images/${id}.png`,
     review: { state: 'draft', source: null }
   })
+  rememberImportance(key, importance)
 }
 
 // The mapped animals the category listing missed — the polar bear is filed
@@ -255,14 +304,14 @@ for (const [key, placement] of Object.entries(ANIMAL_DISTRICTS)) {
   }
   if (markers.length === 0) continue
   const countries = [...new Set(placement.flatMap((districtId) => districtCountries.get(districtId) ?? []))].sort()
-  const tier = tierFor(key)
+  const importance = importanceFor(key)
   const id = slug(title)
   items.push({
     id: `animal.${id}`,
     name: title,
     glyph: '🐾',
-    tier,
-    priority: priorityFor(key, tier),
+    importance,
+    priority: priorityFor(key, importance),
     districts: placement,
     region: regions.join(' · '),
     countries,
@@ -271,6 +320,7 @@ for (const [key, placement] of Object.entries(ANIMAL_DISTRICTS)) {
     image: WRITE ? await download(item, id) : `images/${id}.png`,
     review: { state: 'draft', source: null }
   })
+  rememberImportance(key, importance)
 }
 
 // Every country gets a few of its own animals standing inside it, so zooming
@@ -349,7 +399,7 @@ for (const country of generated) {
     .filter((item) => !residents.includes(item)
       && livesInWaterOnly(item)
       && item.districts.some((id) => marineDistrictIds.has(id) && (districtCountries.get(id) ?? []).includes(country.id)))
-    .sort((a, b) => a.tier - b.tier || b.priority - a.priority)
+    .sort((a, b) => a.importance - b.importance || b.priority - a.priority)
     .slice(0, SEA_PER_COUNTRY)
   residents = [...residents, ...seaExtras]
 
@@ -363,16 +413,18 @@ for (const country of generated) {
     : []
 
   onLand.forEach((resident, index) => {
-    const point = inside[index]
+    const point = authoredCountryPoint(country.id, resident.name) ?? inside[index]
     if (!point) return
+    rememberCountryPoint(country.id, resident.name, point)
     // Only visible once the child is inside the country: these exist to fill a
     // zoomed-in country, not to crowd the continent.
     resident.markers.push({ lat: point.lat, lon: point.lon, country: country.id, closeUp: true })
     countryPlacements += 1
   })
   atSea.forEach((resident, index) => {
-    const point = offshore[index]
+    const point = authoredCountryPoint(country.id, resident.name) ?? offshore[index]
     if (!point) return
+    rememberCountryPoint(country.id, resident.name, point)
     resident.markers.push({ lat: point.lat, lon: point.lon, country: country.id, closeUp: true, atSea: true })
     countryPlacements += 1
   })
@@ -381,6 +433,9 @@ for (const country of generated) {
 items.sort((a, b) => a.name.localeCompare(b.name))
 
 if (WRITE) {
+  // The authored files carry the positions from now on.
+  await writeFile(join(CONTENT_DIR, 'animal-districts.json'), `${JSON.stringify(districtSource, null, 2)}\n`)
+  await writeFile(join(CONTENT_DIR, 'country-animals.json'), `${JSON.stringify(countryAnimals, null, 2)}\n`)
   await writeFile(join(CONTENT_DIR, 'animals.json'), `${JSON.stringify({
     schemaVersion: SCHEMA_VERSION,
     note: 'Built by tools/geography/build-animals.mjs from the Tiko media library and animal-districts.mjs. Markers are representative points inside a district, not habitat data. Every entry is draft until an editor has reviewed it.',

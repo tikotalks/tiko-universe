@@ -93,13 +93,34 @@ Each country carries a review state:
   "country": "Malta",
   "review": { "state": "verified", "by": "sil", "at": "2026-08-24" },
   "animals": [
-    { "name": "Chameleon", "note": "Naturalised; common on Malta and Gozo" }
+    {
+      "name": "Chameleon",
+      "at": { "lat": 35.893, "lon": 14.433 },   // where it stands in this country
+      "note": "Naturalised; common on Malta and Gozo"
+    }
   ],
   "alsoWanted": [
     { "name": "Octopus", "note": "no picture in the media library" }
   ]
 }
 ```
+
+### Positions and importance
+
+Every marker has real coordinates, and every subject has an importance from
+**1 (shows from space) to 10 (only at the closest zoom)**.
+
+- `at` on a country's animal is where that animal stands inside that country.
+- `at` in `animal-districts.json` is where the animal appears across the region
+  it lives in, one entry per district point.
+- `importance` lives on the subject: in `animal-districts.json` for an animal,
+  on each landmark in `country-landmarks.json`.
+
+Both are ordinary data. Set them by hand and the build keeps them; leave them
+out and the build works them out and writes them back, so the file always shows
+exactly where everything is. The zoom bands are: importance ≤ 2 around the whole
+Earth, ≤ 4 across a continent, ≤ 6 over a region, ≤ 8 at country scale, and
+everything at the closest zoom.
 
 - `state: "draft"` — written from general knowledge, not checked. This is where
   241 of the 242 countries are today.

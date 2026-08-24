@@ -17,10 +17,12 @@ struct GlobeLabel: Identifiable, Equatable {
     let prominence: Double
 }
 
-/// A marker that survived the density pass, ready to draw.
+/// A marker that survived the density pass, ready to draw. `presence` runs 0…1
+/// as it arrives and back down as it leaves, so nothing blinks in or out.
 struct GlobePlacedMarker: Identifiable, Equatable {
     let marker: GlobeMarker
     let point: CGPoint
+    let presence: Double
 
     var id: String { marker.id }
 }
@@ -108,6 +110,12 @@ final class GlobeController: ObservableObject {
     private static let chooseInterval: Double = 0.12
     private var chosenLabels: [GlobeCountry] = []
     private var chosenMarkers: [GlobeMarker] = []
+    /// How far in or out each marker is, keyed by id. A marker leaving the set
+    /// keeps its entry until it has shrunk away.
+    private var markerPresence: [String: Double] = [:]
+    private var leavingMarkers: [String: GlobeMarker] = [:]
+    /// A marker pops in over this long.
+    private static let presenceDuration: Double = 0.28
 
     private struct FocusAnimation {
         let from: GlobeCamera
@@ -138,7 +146,7 @@ final class GlobeController: ObservableObject {
             meshes = loaded.1
             markersByMode = GlobeContent.markers(countries: geography.countries)
             rankedByMode = markersByMode.mapValues { markers in
-                markers.sorted { ($0.tier, $1.priority) < ($1.tier, $0.priority) }
+                markers.sorted { ($0.importance, $1.priority) < ($1.importance, $0.priority) }
             }
             hitTester = GlobeHitTester(geography: geography)
             loadState = .ready
@@ -362,6 +370,7 @@ final class GlobeController: ObservableObject {
             chooseLabels()
             chooseMarkers()
         }
+        advanceMarkerPresence(by: seconds)
         placeLabels()
         placeMarkers()
 
@@ -517,23 +526,32 @@ final class GlobeController: ObservableObject {
         // Capitals behave like country names: all of them, all the time.
         let limit = mode == .capitals ? Int.max : (visible > 40 ? 70 : 140)
         // Zooming in is how a child finds more: the whole Earth carries the
-        // lions and the elephants, a country carries its beetles.
-        let deepestTier: Int
+        // lions and the elephants, a country carries its beetles. Importance is
+        // authored per subject, 1 from space to 10 at the closest zoom.
+        let deepestImportance: Int
         switch visible {
-        case 40...: deepestTier = 1
-        case 15..<40: deepestTier = 2
-        case 5..<15: deepestTier = 3
-        case 1.5..<5: deepestTier = 4
-        default: deepestTier = 5
+        case 40...: deepestImportance = 2
+        case 15..<40: deepestImportance = 4
+        case 5..<15: deepestImportance = 6
+        case 1.5..<5: deepestImportance = 8
+        default: deepestImportance = 10
         }
         let showsCloseUps = visible < 6
 
         var placed: [CGRect] = []
         var next: [GlobeMarker] = []
-        for marker in candidates {
+        // One elephant, however many places it lives: a view with the same
+        // animal three times reads as three animals. Zoomed into a country its
+        // own copy is the one that wins, which is why close-ups sort first.
+        var alreadyShowing = Set<String>()
+        let ordered = showsCloseUps
+            ? candidates.sorted { ($0.isCloseUp ? 0 : 1, $0.importance) < ($1.isCloseUp ? 0 : 1, $1.importance) }
+            : candidates
+        for marker in ordered {
             guard next.count < limit else { break }
-            guard marker.tier <= deepestTier else { continue }
+            guard marker.importance <= deepestImportance else { continue }
             guard !marker.isCloseUp || showsCloseUps else { continue }
+            guard !alreadyShowing.contains(marker.subjectID) else { continue }
             let normal = GlobeMath.unitVector(marker.point)
             guard simd_dot(normal, cameraDirection) > horizon else { continue }
             guard let point = camera.viewPoint(for: marker.point, viewSize: viewSize) else { continue }
@@ -546,9 +564,33 @@ final class GlobeController: ObservableObject {
             let box = CGRect(x: point.x - half, y: point.y - half, width: half * 2, height: half * 2)
             guard !placed.contains(where: { $0.intersects(box) }) else { continue }
             placed.append(box)
+            alreadyShowing.insert(marker.subjectID)
             next.append(marker)
         }
+
+        // Anything dropped this round leaves on screen rather than vanishing.
+        let chosenIDs = Set(next.map(\.id))
+        for marker in chosenMarkers where !chosenIDs.contains(marker.id) {
+            leavingMarkers[marker.id] = marker
+        }
+        for marker in next { leavingMarkers[marker.id] = nil }
         chosenMarkers = next
+    }
+
+    /// Grows arriving markers and shrinks departing ones, one frame at a time.
+    private func advanceMarkerPresence(by seconds: Double) {
+        let step = reduceMotion ? 1 : seconds / Self.presenceDuration
+        for marker in chosenMarkers {
+            markerPresence[marker.id] = min(1, (markerPresence[marker.id] ?? 0) + step)
+        }
+        for id in leavingMarkers.keys {
+            let value = max(0, (markerPresence[id] ?? 0) - step)
+            markerPresence[id] = value
+            if value == 0 {
+                markerPresence[id] = nil
+                leavingMarkers[id] = nil
+            }
+        }
     }
 
     /// Re-projects the chosen markers, every frame.
@@ -560,12 +602,14 @@ final class GlobeController: ObservableObject {
         let cameraDirection = camera.globeSpaceCameraDirection
         let horizon = Float(camera.insetHorizonCosine)
         var next: [GlobePlacedMarker] = []
-        next.reserveCapacity(chosenMarkers.count)
-        for marker in chosenMarkers {
+        next.reserveCapacity(chosenMarkers.count + leavingMarkers.count)
+        for marker in chosenMarkers + Array(leavingMarkers.values) {
+            let presence = markerPresence[marker.id] ?? 0
+            guard presence > 0.001 else { continue }
             let normal = GlobeMath.unitVector(marker.point)
             guard simd_dot(normal, cameraDirection) > horizon else { continue }
             guard let point = camera.viewPoint(for: marker.point, viewSize: viewSize) else { continue }
-            next.append(GlobePlacedMarker(marker: marker, point: point))
+            next.append(GlobePlacedMarker(marker: marker, point: point, presence: presence))
         }
         if next != markers { markers = next }
     }

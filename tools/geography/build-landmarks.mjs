@@ -46,7 +46,7 @@ async function download(item, id) {
 const source = JSON.parse(await readFile(join(CONTENT_DIR, 'country-landmarks.json'), 'utf8'))
 /** [country, name, lat, lon, glyph, tier], from the authored JSON. */
 const LANDMARKS = Object.entries(source.countries).flatMap(([country, entry]) =>
-  entry.landmarks.map((landmark) => [country, landmark.name, landmark.lat, landmark.lon, landmark.glyph, landmark.tier])
+  entry.landmarks.map((landmark) => [country, landmark.name, landmark.lat, landmark.lon, landmark.glyph, landmark.importance])
 )
 
 const items = []
@@ -55,7 +55,7 @@ const withoutPicture = []
 const misplaced = []
 const seen = new Set()
 
-for (const [country, name, lat, lon, glyph, tier] of LANDMARKS) {
+for (const [country, name, lat, lon, glyph, importance] of LANDMARKS) {
   const id = `landmark.${slug(name)}`
   if (seen.has(id)) {
     misplaced.push(`${name}: duplicate id`)
@@ -80,9 +80,9 @@ for (const [country, name, lat, lon, glyph, tier] of LANDMARKS) {
     id,
     name,
     glyph,
-    tier,
-    // Tier 1 shows around the whole planet, tier 3 only close in.
-    priority: [0, 95, 70, 45][tier],
+    // 1 shows from space, 10 only at the closest zoom.
+    importance,
+    priority: (11 - importance) * 9,
     country,
     marker: { lat, lon },
     ...(picture ? { mediaId: picture.id, image: WRITE ? await download(picture, slug(name)) : `images/${slug(name)}.png` } : {}),

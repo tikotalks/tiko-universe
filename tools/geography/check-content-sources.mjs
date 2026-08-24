@@ -8,6 +8,7 @@
 // an editorial question, which is what the review state is for.
 
 import { readFile } from 'node:fs/promises'
+import { countriesNear, isInsideCountry } from './country-lookup.mjs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -27,6 +28,19 @@ const districtSource = await read('animal-districts.json')
 
 const problems = []
 const REVIEW_STATES = ['draft', 'verified']
+const marineDistricts = new Set(districts.items.filter((district) => district.isMarine).map((district) => district.id))
+
+// The district file is keyed by the library's own lower-case titles.
+const districtsByName = new Map(
+  Object.entries(districtSource.animals).map(([name, entry]) => [name.toLowerCase(), entry])
+)
+
+/** A sea animal is placed in the water off a country, which is further out. */
+function livesInWaterOnly(name) {
+  const entry = districtsByName.get(name.toLowerCase())
+  if (!entry) return false
+  return entry.districts.every((id) => marineDistricts.has(id))
+}
 
 function checkReview(where, review) {
   if (!review || !REVIEW_STATES.includes(review.state)) {
@@ -56,6 +70,21 @@ for (const [id, entry] of Object.entries(animalSource.countries)) {
     if (!animal?.name) problems.push(`country-animals.json ${id} has an animal with no name`)
     else if (seen.has(animal.name)) problems.push(`country-animals.json ${id} lists ${animal.name} twice`)
     seen.add(animal?.name)
+
+    // Positions are authored data now, so they are checked like any other.
+    if (animal?.at) {
+      const { lat, lon } = animal.at
+      if (!(lat >= -90 && lat <= 90) || !(lon >= -180 && lon <= 180)) {
+        problems.push(`country-animals.json ${id} ${animal.name} has coordinates outside the world`)
+      } else {
+        // Land animals stand in the country; sea animals sit off its coast, so
+        // they are allowed further out.
+        const reach = livesInWaterOnly(animal.name) ? 5 : 1
+        if (!isInsideCountry(id, animal.at) && !countriesNear(animal.at, reach).includes(id)) {
+          problems.push(`country-animals.json ${id} ${animal.name} is placed nowhere near ${id}`)
+        }
+      }
+    }
   }
 }
 
@@ -76,7 +105,9 @@ for (const [id, entry] of Object.entries(landmarkSource.countries)) {
     const where = `country-landmarks.json ${id} ${landmark?.name ?? '(unnamed)'}`
     if (!landmark?.name) problems.push(`${where} has no name`)
     if (!landmark?.glyph) problems.push(`${where} has no glyph`)
-    if (![1, 2, 3].includes(landmark?.tier)) problems.push(`${where} has tier ${landmark?.tier}, expected 1, 2 or 3`)
+    if (!(landmark?.importance >= 1 && landmark?.importance <= 10)) {
+      problems.push(`${where} has importance ${landmark?.importance}, expected 1 (shows from space) to 10 (closest zoom)`)
+    }
     if (!(landmark?.lat >= -90 && landmark?.lat <= 90) || !(landmark?.lon >= -180 && landmark?.lon <= 180)) {
       problems.push(`${where} has coordinates outside the world`)
     }
@@ -92,6 +123,17 @@ for (const [name, entry] of Object.entries(districtSource.animals)) {
   for (const id of entry.districts) {
     if (!districtIds.has(id)) problems.push(`animal-districts.json ${name} references unknown district ${id}`)
   }
+  if (entry.importance !== undefined && !(entry.importance >= 1 && entry.importance <= 10)) {
+    problems.push(`animal-districts.json ${name} has importance ${entry.importance}, expected 1 to 10`)
+  }
+  for (const point of entry.at ?? []) {
+    if (!entry.districts.includes(point.district)) {
+      problems.push(`animal-districts.json ${name} has a position in ${point.district}, which it does not live in`)
+    }
+    if (!(point.lat >= -90 && point.lat <= 90) || !(point.lon >= -180 && point.lon <= 180)) {
+      problems.push(`animal-districts.json ${name} has a position outside the world`)
+    }
+  }
 }
 
 if (problems.length > 0) {
@@ -100,5 +142,7 @@ if (problems.length > 0) {
   process.exitCode = 1
 } else {
   const verified = Object.values(animalSource.countries).filter((entry) => entry.review.state === 'verified').length
-  process.stdout.write(`content sources ok: ${Object.keys(animalSource.countries).length} countries of animals (${verified} verified), ${Object.values(landmarkSource.countries).reduce((total, entry) => total + entry.landmarks.length, 0)} landmarks, ${Object.keys(districtSource.animals).length} animals placed in districts\n`)
+  const positioned = Object.values(animalSource.countries)
+    .reduce((total, entry) => total + entry.animals.filter((animal) => animal.at).length, 0)
+  process.stdout.write(`content sources ok: ${Object.keys(animalSource.countries).length} countries of animals (${verified} verified, ${positioned} with coordinates), ${Object.values(landmarkSource.countries).reduce((total, entry) => total + entry.landmarks.length, 0)} landmarks, ${Object.keys(districtSource.animals).length} animals placed in districts\n`)
 }

@@ -5,268 +5,1153 @@
     "african elephant": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 3.305,
+          "lon": 36.646
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -13.923,
+          "lon": 28.315
+        }
+      ],
+      "importance": 2
     },
     "elephant": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -8.627,
+          "lon": 38.406
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -26.421,
+          "lon": 26.186
+        }
+      ],
+      "importance": 2
     },
     "asian elephant": {
       "districts": [
         "india",
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 23.405,
+          "lon": 77.846
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 28.754,
+          "lon": 87.11
+        },
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": -1.499,
+          "lon": 115.431
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 3.293,
+          "lon": 101.856
+        }
+      ],
+      "importance": 2
     },
     "lion": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -8.647,
+          "lon": 33.587
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -14.406,
+          "lon": 22.995
+        }
+      ],
+      "importance": 2
     },
     "cheetah": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -7.978,
+          "lon": 38.314
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -23.099,
+          "lon": 29.7
+        }
+      ],
+      "importance": 2
     },
     "leopard": {
       "districts": [
         "africa-savanna",
         "india"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -4.839,
+          "lon": 30.386
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -20.157,
+          "lon": 18.751
+        },
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 22.533,
+          "lon": 75.857
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 28.096,
+          "lon": 84.639
+        }
+      ],
+      "importance": 2
     },
     "persian leopard": {
       "districts": [
         "middle-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "middle-east",
+          "index": 0,
+          "lat": 27.639,
+          "lon": 48.141
+        },
+        {
+          "district": "middle-east",
+          "index": 1,
+          "lat": 35.766,
+          "lon": 57.924
+        }
+      ],
+      "importance": 4
     },
     "giraffe": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -4.011,
+          "lon": 31.105
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -21.338,
+          "lon": 21.789
+        }
+      ],
+      "importance": 2
     },
     "zebra": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -0.03,
+          "lon": 38.418
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -16.178,
+          "lon": 26.965
+        }
+      ],
+      "importance": 2
     },
     "wildebeest": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 5.32,
+          "lon": 34.466
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -24.415,
+          "lon": 28.045
+        }
+      ],
+      "importance": 2
     },
     "wildebeests": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 3.577,
+          "lon": 37.013
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -13.803,
+          "lon": 28.757
+        }
+      ],
+      "importance": 2
     },
     "hippopotamus": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 4.036,
+          "lon": 30.483
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -11.36,
+          "lon": 22.221
+        }
+      ],
+      "importance": 2
     },
     "rhino": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -1.972,
+          "lon": 29.104
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -20.33,
+          "lon": 19.055
+        }
+      ],
+      "importance": 2
     },
     "rhinoceros": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -4.223,
+          "lon": 31.579
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -21.3,
+          "lon": 22.339
+        }
+      ],
+      "importance": 2
     },
     "warthog": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 0.853,
+          "lon": 41.124
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -14.294,
+          "lon": 29.46
+        }
+      ],
+      "importance": 4
     },
     "hyena": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 3.852,
+          "lon": 37.02
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -13.551,
+          "lon": 28.832
+        }
+      ],
+      "importance": 4
     },
     "striped hyena": {
       "districts": [
         "africa-desert",
         "middle-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-desert",
+          "index": 0,
+          "lat": 22.696,
+          "lon": 20.253
+        },
+        {
+          "district": "africa-desert",
+          "index": 1,
+          "lat": 8.232,
+          "lon": 49.557
+        },
+        {
+          "district": "middle-east",
+          "index": 0,
+          "lat": 27.69,
+          "lon": 43.136
+        },
+        {
+          "district": "middle-east",
+          "index": 1,
+          "lat": 35.752,
+          "lon": 49.946
+        }
+      ],
+      "importance": 4
     },
     "meerkat": {
       "districts": [
         "africa-south"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-south",
+          "index": 0,
+          "lat": -22.653,
+          "lon": 24.622
+        },
+        {
+          "district": "africa-south",
+          "index": 1,
+          "lat": -16.621,
+          "lon": 15.305
+        }
+      ],
+      "importance": 2
     },
     "gorilla": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": -1.123,
+          "lon": 24.318
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": 2.741,
+          "lon": 25.796
+        }
+      ],
+      "importance": 2
     },
     "chimpanzee": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": 3.339,
+          "lon": 24.887
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": -0.249,
+          "lon": 35.238
+        }
+      ],
+      "importance": 2
     },
     "chimpansee": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": -0.885,
+          "lon": 16.089
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": -3.819,
+          "lon": 26.46
+        }
+      ],
+      "importance": 4
     },
     "mandrill": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": 2.475,
+          "lon": 21.876
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": -7.045,
+          "lon": 27.982
+        }
+      ],
+      "importance": 4
     },
     "baboon": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 2.983,
+          "lon": 29.397
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -22.232,
+          "lon": 25.587
+        }
+      ],
+      "importance": 4
     },
     "vervet monkey": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -0.08,
+          "lon": 35.599
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -21.934,
+          "lon": 32.369
+        }
+      ],
+      "importance": 4
     },
     "okapi": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": 4.996,
+          "lon": 16.021
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": -0.034,
+          "lon": 28.863
+        }
+      ],
+      "importance": 4
     },
     "aardvark": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 3.72,
+          "lon": 35.551
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -13.432,
+          "lon": 23.408
+        }
+      ],
+      "importance": 4
     },
     "pangolin": {
       "districts": [
         "africa-savanna",
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -8.4,
+          "lon": 39.263
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -23.263,
+          "lon": 30.84
+        },
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 1.182,
+          "lon": 110.581
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 5.712,
+          "lon": 100.509
+        }
+      ],
+      "importance": 4
     },
     "antelope": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -0.805,
+          "lon": 39.72
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -19.267,
+          "lon": 30.284
+        }
+      ],
+      "importance": 4
     },
     "gazelle": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -7.389,
+          "lon": 32.737
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -24.028,
+          "lon": 24.115
+        }
+      ],
+      "importance": 4
     },
     "thomson's gazelle": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -2.339,
+          "lon": 27.423
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -21.201,
+          "lon": 17.319
+        }
+      ],
+      "importance": 4
     },
     "greater kudu": {
       "districts": [
         "africa-south"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-south",
+          "index": 0,
+          "lat": -32.161,
+          "lon": 18.984
+        },
+        {
+          "district": "africa-south",
+          "index": 1,
+          "lat": -22.733,
+          "lon": 16.949
+        }
+      ],
+      "importance": 4
     },
     "caracal": {
       "districts": [
         "africa-desert",
         "middle-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-desert",
+          "index": 0,
+          "lat": 16.293,
+          "lon": 13.281
+        },
+        {
+          "district": "africa-desert",
+          "index": 1,
+          "lat": 9.256,
+          "lon": 42.18
+        },
+        {
+          "district": "middle-east",
+          "index": 0,
+          "lat": 21.643,
+          "lon": 43.606
+        },
+        {
+          "district": "middle-east",
+          "index": 1,
+          "lat": 30.846,
+          "lon": 50.338
+        }
+      ],
+      "importance": 4
     },
     "serval": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -7.384,
+          "lon": 35.649
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -24.527,
+          "lon": 23.592
+        }
+      ],
+      "importance": 4
     },
     "fennec fox": {
       "districts": [
         "africa-desert"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-desert",
+          "index": 0,
+          "lat": 25.275,
+          "lon": 4.667
+        },
+        {
+          "district": "africa-desert",
+          "index": 1,
+          "lat": 10.422,
+          "lon": 43.646
+        }
+      ],
+      "importance": 4
     },
     "ostrich": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -8.169,
+          "lon": 31.661
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -25.183,
+          "lon": 23.295
+        }
+      ],
+      "importance": 2
     },
     "flamingo": {
       "districts": [
         "africa-savanna",
         "mediterranean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -6.666,
+          "lon": 28.924
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -16.164,
+          "lon": 21.996
+        },
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 42.014,
+          "lon": 14.793
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 34.806,
+          "lon": 2.179
+        }
+      ],
+      "importance": 2
     },
     "hornbill": {
       "districts": [
         "africa-rainforest",
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": 3.996,
+          "lon": 15.546
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": 3.382,
+          "lon": 26.214
+        },
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": -1.946,
+          "lon": 115.087
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": -2.964,
+          "lon": 104.317
+        }
+      ],
+      "importance": 6
     },
     "african grey parrot": {
       "districts": [
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": 2.365,
+          "lon": 23.467
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": 1.091,
+          "lon": 31.985
+        }
+      ],
+      "importance": 6
     },
     "african crocodile": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 1.295,
+          "lon": 38.951
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -14.678,
+          "lon": 27.206
+        }
+      ],
+      "importance": 4
     },
     "guinea fowl": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -3.378,
+          "lon": 30.531
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -18.684,
+          "lon": 19.339
+        }
+      ],
+      "importance": 6
     },
     "lemur": {
       "districts": [
         "madagascar"
-      ]
+      ],
+      "at": [
+        {
+          "district": "madagascar",
+          "index": 0,
+          "lat": -18.108,
+          "lon": 47.93
+        }
+      ],
+      "importance": 2
     },
     "chameleon": {
       "districts": [
         "mediterranean",
         "madagascar",
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 40.362,
+          "lon": 17.45
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 40.469,
+          "lon": -0.735
+        },
+        {
+          "district": "madagascar",
+          "index": 0,
+          "lat": -20.116,
+          "lon": 48.005
+        },
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -4.947,
+          "lon": 34.61
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -20.494,
+          "lon": 24.892
+        }
+      ],
+      "importance": 4
     },
     "bearded vulture": {
       "districts": [
         "himalaya",
         "europe-mountains"
-      ]
+      ],
+      "at": [
+        {
+          "district": "himalaya",
+          "index": 0,
+          "lat": 28.51,
+          "lon": 83.34
+        },
+        {
+          "district": "himalaya",
+          "index": 1,
+          "lat": 32.999,
+          "lon": 75.543
+        },
+        {
+          "district": "europe-mountains",
+          "index": 0,
+          "lat": 48.641,
+          "lon": 9.528
+        },
+        {
+          "district": "europe-mountains",
+          "index": 1,
+          "lat": 41.606,
+          "lon": 2.163
+        }
+      ],
+      "importance": 6
     },
     "vulture": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -3.54,
+          "lon": 37.645
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -14.829,
+          "lon": 21.117
+        }
+      ],
+      "importance": 6
     },
     "black vulture": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 4.436,
+          "lon": 37.273
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -12.165,
+          "lon": 24.769
+        }
+      ],
+      "importance": 6
     },
     "flying vulture": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -0.922,
+          "lon": 36.304
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -12.072,
+          "lon": 28.525
+        }
+      ],
+      "importance": 6
     },
     "sitting vulture": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -5.01,
+          "lon": 30.767
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -20.472,
+          "lon": 19.058
+        }
+      ],
+      "importance": 6
     },
     "saiga antelope": {
       "districts": [
         "central-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 51.595,
+          "lon": 74.219
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 49.835,
+          "lon": 101.566
+        }
+      ],
+      "importance": 4
     },
     "tiger": {
       "districts": [
         "india",
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 19.404,
+          "lon": 75.696
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 24.872,
+          "lon": 83.537
+        },
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 2.202,
+          "lon": 112.65
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": -1.398,
+          "lon": 99.05
+        }
+      ],
+      "importance": 2
     },
     "snow leopard": {
       "districts": [
         "himalaya"
-      ]
+      ],
+      "at": [
+        {
+          "district": "himalaya",
+          "index": 0,
+          "lat": 27.432,
+          "lon": 85.682
+        },
+        {
+          "district": "himalaya",
+          "index": 1,
+          "lat": 31.319,
+          "lon": 78.228
+        }
+      ],
+      "importance": 2
     },
     "red panda": {
       "districts": [
         "himalaya"
-      ]
+      ],
+      "at": [
+        {
+          "district": "himalaya",
+          "index": 0,
+          "lat": 29.553,
+          "lon": 80.115
+        },
+        {
+          "district": "himalaya",
+          "index": 1,
+          "lat": 33.014,
+          "lon": 73.168
+        }
+      ],
+      "importance": 2
     },
     "giant panda": {
       "districts": [
@@ -281,140 +1166,710 @@
     "tarsier": {
       "districts": [
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": -2.122,
+          "lon": 114.384
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 6.111,
+          "lon": 100.439
+        }
+      ],
+      "importance": 4
     },
     "saltwater crocodile": {
       "districts": [
         "southeast-asia",
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 0.438,
+          "lon": 110.747
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 1.704,
+          "lon": 99.011
+        },
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -22.997,
+          "lon": 127.992
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -21.119,
+          "lon": 115.956
+        }
+      ],
+      "importance": 2
     },
     "philippine eagle": {
       "districts": [
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 0.631,
+          "lon": 111.705
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 2.584,
+          "lon": 98.698
+        }
+      ],
+      "importance": 6
     },
     "steppe eagle": {
       "districts": [
         "central-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 42.404,
+          "lon": 65.88
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 40.014,
+          "lon": 98.182
+        }
+      ],
+      "importance": 6
     },
     "caspian snowcock": {
       "districts": [
         "central-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 45.316,
+          "lon": 64.62
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 44.517,
+          "lon": 93.659
+        }
+      ],
+      "importance": 6
     },
     "bezoar ibex": {
       "districts": [
         "middle-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "middle-east",
+          "index": 0,
+          "lat": 23.25,
+          "lon": 41.463
+        },
+        {
+          "district": "middle-east",
+          "index": 1,
+          "lat": 33.316,
+          "lon": 48.584
+        }
+      ],
+      "importance": 4
     },
     "armenian mouflon": {
       "districts": [
         "middle-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "middle-east",
+          "index": 0,
+          "lat": 21.589,
+          "lon": 40.616
+        },
+        {
+          "district": "middle-east",
+          "index": 1,
+          "lat": 31.9,
+          "lon": 47.248
+        }
+      ],
+      "importance": 4
     },
     "marbled-polecat": {
       "districts": [
         "central-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 43.338,
+          "lon": 72.179
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 40.604,
+          "lon": 100.557
+        }
+      ],
+      "importance": 4
     },
     "musk ox": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 82.939,
+          "lon": -41.292
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 67.88,
+          "lon": 109.465
+        }
+      ],
+      "importance": 4
     },
     "eurasian lynx": {
       "districts": [
         "europe-east",
         "europe-north",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 44.875,
+          "lon": 16.619
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 49.261,
+          "lon": 24.633
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 58.064,
+          "lon": 15.137
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 60.827,
+          "lon": 33.597
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 62.469,
+          "lon": 93.182
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 67.755,
+          "lon": 124.844
+        }
+      ],
+      "importance": 4
     },
     "lynx": {
       "districts": [
         "europe-east",
         "europe-north",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 45.737,
+          "lon": 16.061
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 50.045,
+          "lon": 24.449
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 62.615,
+          "lon": 22.868
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 60.715,
+          "lon": 23.149
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 62.551,
+          "lon": 90.454
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 67.969,
+          "lon": 120.832
+        }
+      ],
+      "importance": 4
     },
     "ring-necked parakeet": {
       "districts": [
         "india"
-      ]
+      ],
+      "at": [
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 22.538,
+          "lon": 77.409
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 26.73,
+          "lon": 81.3
+        }
+      ],
+      "importance": 6
     },
     "peafowl": {
       "districts": [
         "india"
-      ]
+      ],
+      "at": [
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 19.39,
+          "lon": 80.763
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 24.82,
+          "lon": 90.238
+        }
+      ],
+      "importance": 6
     },
     "koi fish": {
       "districts": [
         "japan-korea"
-      ]
+      ],
+      "at": [
+        {
+          "district": "japan-korea",
+          "index": 0,
+          "lat": 35.064,
+          "lon": 136.913
+        }
+      ],
+      "importance": 8
     },
     "red-eared slider": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 41.858,
+          "lon": -92.656
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 39.255,
+          "lon": -75.03
+        }
+      ],
+      "importance": 8
     },
     "european badger": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 51.734,
+          "lon": 3.411
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.842,
+          "lon": 5.936
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 51.911,
+          "lon": 28.039
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 45.614,
+          "lon": 33.526
+        }
+      ],
+      "importance": 4
     },
     "badger": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.987,
+          "lon": 6.616
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 51.233,
+          "lon": 3.375
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 54.888,
+          "lon": 20.552
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 50.152,
+          "lon": 24.273
+        }
+      ],
+      "importance": 4
     },
     "european hare": {
       "districts": [
         "mediterranean",
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 38.558,
+          "lon": 16.067
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 32.219,
+          "lon": 3.186
+        },
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 52.14,
+          "lon": -0.917
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 45.623,
+          "lon": 0.551
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 54.733,
+          "lon": 20.923
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 50.059,
+          "lon": 24.647
+        }
+      ],
+      "importance": 4
     },
     "european robin": {
       "districts": [
         "europe-west",
         "europe-north"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 51.711,
+          "lon": 10.524
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 49.18,
+          "lon": 6.976
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 62.966,
+          "lon": 22.386
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 66.112,
+          "lon": 31.543
+        }
+      ],
+      "importance": 6
     },
     "eurasian otter": {
       "districts": [
         "europe-west",
         "europe-north"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 51.296,
+          "lon": 3.217
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 48.166,
+          "lon": -0.302
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 61.657,
+          "lon": 20.299
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 68.563,
+          "lon": 24.695
+        }
+      ],
+      "importance": 4
     },
     "common hedgehog": {
       "districts": [
         "mediterranean",
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 41.518,
+          "lon": 14.665
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 35.348,
+          "lon": -0.494
+        },
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 54.143,
+          "lon": 10.262
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 50.81,
+          "lon": 6.253
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 54.842,
+          "lon": 24.398
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 49.319,
+          "lon": 31.882
+        }
+      ],
+      "importance": 4
     },
     "hedgehog": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.362,
+          "lon": 6.347
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 48.664,
+          "lon": 4.62
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 48.855,
+          "lon": 27.66
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 44.948,
+          "lon": 18.127
+        }
+      ],
+      "importance": 4
     },
     "red deer": {
       "districts": [
         "europe-west",
         "europe-east",
         "europe-north"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 50.321,
+          "lon": 5.488
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.298,
+          "lon": 3.116
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 49.844,
+          "lon": 11.673
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 48.075,
+          "lon": 29.244
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 59.695,
+          "lon": 23.289
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 60.058,
+          "lon": 17.581
+        }
+      ],
+      "importance": 4
     },
     "deer": {
       "districts": [
         "europe-west",
         "europe-east",
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.115,
+          "lon": 7.171
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 45.198,
+          "lon": 2.818
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 49.523,
+          "lon": 11.111
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 46.675,
+          "lon": 17.104
+        },
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 43.694,
+          "lon": -85.593
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 44.609,
+          "lon": -76.245
+        }
+      ],
+      "importance": 4
     },
     "red fox": {
       "districts": [
@@ -422,81 +1877,480 @@
         "europe-west",
         "europe-north",
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 41.644,
+          "lon": 15.228
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 33.52,
+          "lon": -1.744
+        },
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 53.133,
+          "lon": 7.111
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 49.404,
+          "lon": 4.979
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 58.298,
+          "lon": 6.332
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 62.27,
+          "lon": 14.698
+        },
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 52.341,
+          "lon": -84.852
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 45.74,
+          "lon": -70.853
+        }
+      ],
+      "importance": 4
     },
     "fox": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 50.809,
+          "lon": 3.573
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.409,
+          "lon": 1.662
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 47.025,
+          "lon": 19.762
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 43.207,
+          "lon": 26.902
+        }
+      ],
+      "importance": 4
     },
     "wild boar": {
       "districts": [
         "mediterranean",
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 39.868,
+          "lon": 15.921
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 35.692,
+          "lon": 2.2
+        },
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.893,
+          "lon": 6.867
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 45.953,
+          "lon": 2.895
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 47.439,
+          "lon": 22.771
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 42.009,
+          "lon": 27.159
+        }
+      ],
+      "importance": 4
     },
     "fire salamander": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.83,
+          "lon": 8.043
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 45.706,
+          "lon": 3.96
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 52.499,
+          "lon": 15.379
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 41.867,
+          "lon": 26.965
+        }
+      ],
+      "importance": 8
     },
     "sand lizard": {
       "districts": [
         "mediterranean",
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 37.146,
+          "lon": 14.885
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 33.719,
+          "lon": 1.595
+        },
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 51.514,
+          "lon": 7.889
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 48.257,
+          "lon": -0.235
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 46.234,
+          "lon": 13.524
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 42.992,
+          "lon": 18.018
+        }
+      ],
+      "importance": 8
     },
     "golden eagle": {
       "districts": [
         "europe-mountains",
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-mountains",
+          "index": 0,
+          "lat": 48.886,
+          "lon": 8.354
+        },
+        {
+          "district": "europe-mountains",
+          "index": 1,
+          "lat": 45.518,
+          "lon": -0.206
+        },
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 46.149,
+          "lon": -108.952
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 51.766,
+          "lon": -116.382
+        }
+      ],
+      "importance": 6
     },
     "white-tailed eagle": {
       "districts": [
         "europe-north",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 61.521,
+          "lon": 15.101
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 68.664,
+          "lon": 21.77
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 54.901,
+          "lon": 16.38
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 49.491,
+          "lon": 20.979
+        }
+      ],
+      "importance": 6
     },
     "atlantic puffin": {
       "districts": [
         "europe-north",
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 62.938,
+          "lon": 13.753
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 59.731,
+          "lon": 28.793
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 39.936,
+          "lon": -47.48
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": 0.844,
+          "lon": -31.01
+        }
+      ],
+      "importance": 6
     },
     "magpie": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 52.02,
+          "lon": 11.352
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.044,
+          "lon": -1.518
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 51.321,
+          "lon": 11.769
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 45.432,
+          "lon": 18.93
+        }
+      ],
+      "importance": 6
     },
     "stork": {
       "districts": [
         "europe-west",
         "europe-east",
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 50.865,
+          "lon": 9.6
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 48.271,
+          "lon": 6.497
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 45.324,
+          "lon": 20.074
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 41.535,
+          "lon": 27.935
+        },
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -9.754,
+          "lon": 32.83
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -25.744,
+          "lon": 19.73
+        }
+      ],
+      "importance": 6
     },
     "swan": {
       "districts": [
         "europe-west",
         "europe-north"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 48.733,
+          "lon": 8.604
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 46.153,
+          "lon": 6.674
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 65.822,
+          "lon": 14.841
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 59.293,
+          "lon": 30.024
+        }
+      ],
+      "importance": 6
     },
     "black swan": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -30.667,
+          "lon": 152.582
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -30.516,
+          "lon": 151.447
+        }
+      ],
+      "importance": 6
     },
     "common frog": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 50.048,
+          "lon": 6.264
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.178,
+          "lon": 6.767
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 54.396,
+          "lon": 22.424
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 50.013,
+          "lon": 26.011
+        }
+      ],
+      "importance": 8
     },
     "wolf": {
       "districts": [
@@ -504,26 +2358,170 @@
         "europe-north",
         "north-america-forest",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 48.248,
+          "lon": 22.502
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 42.807,
+          "lon": 27.324
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 56.784,
+          "lon": 16.318
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 58.912,
+          "lon": 25.042
+        },
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 47.462,
+          "lon": -87.581
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 48.826,
+          "lon": -74.967
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 63.348,
+          "lon": 101.419
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 67.22,
+          "lon": 128.496
+        }
+      ],
+      "importance": 2
     },
     "gray wolf": {
       "districts": [
         "north-america-forest",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 49.376,
+          "lon": -93.146
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 51.541,
+          "lon": -76.995
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 50.901,
+          "lon": 88.697
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 67.23,
+          "lon": 135.643
+        }
+      ],
+      "importance": 2
     },
     "wolverine": {
       "districts": [
         "siberia",
         "europe-north",
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 66.945,
+          "lon": 82.396
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 62.785,
+          "lon": 125.331
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 61.629,
+          "lon": 20.794
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 61.766,
+          "lon": 31.301
+        },
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 47.948,
+          "lon": -94.318
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 46.066,
+          "lon": -82.697
+        }
+      ],
+      "importance": 4
     },
     "ferret": {
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 51.252,
+          "lon": 6.84
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 47.154,
+          "lon": 3.751
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 48.369,
+          "lon": 22.23
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 50.23,
+          "lon": 22.991
+        }
+      ],
+      "importance": 4
     },
     "brown bear": {
       "districts": [
@@ -531,165 +2529,722 @@
         "europe-north",
         "siberia",
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 45.839,
+          "lon": 13.659
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 45.182,
+          "lon": 23.247
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 59.077,
+          "lon": 17.948
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 60.698,
+          "lon": 28.596
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 58.658,
+          "lon": 76.4
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 59.915,
+          "lon": 108.142
+        },
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 43.505,
+          "lon": -111.654
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 49.401,
+          "lon": -119.438
+        }
+      ],
+      "importance": 2
     },
     "bear": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 42.129,
+          "lon": -89.592
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 47.517,
+          "lon": -65.393
+        }
+      ],
+      "importance": 4
     },
     "american black bear": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 48.855,
+          "lon": -83.392
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 48.701,
+          "lon": -72.588
+        }
+      ],
+      "importance": 4
     },
     "grizzly bear": {
       "districts": [
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 46.927,
+          "lon": -105.274
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 47.598,
+          "lon": -119.346
+        }
+      ],
+      "importance": 2
     },
     "bison": {
       "districts": [
         "north-america-plains"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-plains",
+          "index": 0,
+          "lat": 43.932,
+          "lon": -107.015
+        },
+        {
+          "district": "north-america-plains",
+          "index": 1,
+          "lat": 38.125,
+          "lon": -103.142
+        }
+      ],
+      "importance": 2
     },
     "bighorn sheep": {
       "districts": [
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 43.467,
+          "lon": -113.461
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 50.023,
+          "lon": -121.255
+        }
+      ],
+      "importance": 4
     },
     "cougar": {
       "districts": [
         "north-america-west",
         "andes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 44.722,
+          "lon": -105.804
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 51.546,
+          "lon": -112.38
+        },
+        {
+          "district": "andes",
+          "index": 0,
+          "lat": -15.045,
+          "lon": -66.252
+        },
+        {
+          "district": "andes",
+          "index": 1,
+          "lat": -24.215,
+          "lon": -70.068
+        }
+      ],
+      "importance": 4
     },
     "bobcat": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 44.568,
+          "lon": -87.899
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 48.737,
+          "lon": -80.914
+        }
+      ],
+      "importance": 4
     },
     "coyote": {
       "districts": [
         "north-america-plains"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-plains",
+          "index": 0,
+          "lat": 43.167,
+          "lon": -107.08
+        },
+        {
+          "district": "north-america-plains",
+          "index": 1,
+          "lat": 37.399,
+          "lon": -102.938
+        }
+      ],
+      "importance": 4
     },
     "moose": {
       "districts": [
         "north-america-forest",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 50.258,
+          "lon": -98.873
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 46.344,
+          "lon": -78.853
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 65.078,
+          "lon": 93.306
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 69.702,
+          "lon": 127.869
+        }
+      ],
+      "importance": 2
     },
     "elk": {
       "districts": [
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 47.22,
+          "lon": -113.925
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 46.205,
+          "lon": -115.533
+        }
+      ],
+      "importance": 4
     },
     "mule deer": {
       "districts": [
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 46.333,
+          "lon": -109.898
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 51.669,
+          "lon": -117.145
+        }
+      ],
+      "importance": 4
     },
     "beaver": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 48.606,
+          "lon": -93.079
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 51.393,
+          "lon": -76.851
+        }
+      ],
+      "importance": 4
     },
     "muskrat": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 45.422,
+          "lon": -89.113
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 44.05,
+          "lon": -69.246
+        }
+      ],
+      "importance": 4
     },
     "eastern chipmunk": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 45.451,
+          "lon": -89.081
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 44.075,
+          "lon": -69.219
+        }
+      ],
+      "importance": 4
     },
     "squirrel": {
       "districts": [
         "europe-west",
         "europe-east",
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 52.804,
+          "lon": 10.368
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 50.104,
+          "lon": 6.311
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 47.514,
+          "lon": 19.162
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 43.641,
+          "lon": 26.186
+        },
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 47.728,
+          "lon": -103.223
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 43.177,
+          "lon": -81.719
+        }
+      ],
+      "importance": 4
     },
     "possum": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 43.043,
+          "lon": -90.247
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 45.065,
+          "lon": -79.588
+        }
+      ],
+      "importance": 4
     },
     "armadillo": {
       "districts": [
         "north-america-desert",
         "south-america-grassland"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-desert",
+          "index": 0,
+          "lat": 33,
+          "lon": -112
+        },
+        {
+          "district": "south-america-grassland",
+          "index": 0,
+          "lat": -29.381,
+          "lon": -63.164
+        }
+      ],
+      "importance": 4
     },
     "star-nosed mole": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "importance": 4
     },
     "vancouver island marmot": {
       "districts": [
         "north-america-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-west",
+          "index": 0,
+          "lat": 40.913,
+          "lon": -109.046
+        },
+        {
+          "district": "north-america-west",
+          "index": 1,
+          "lat": 46.424,
+          "lon": -117.134
+        }
+      ],
+      "importance": 4
     },
     "harpy eagle": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "importance": 6
     },
     "jaguar": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": 1.346,
+          "lon": -58.53
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -5.231,
+          "lon": -76.624
+        }
+      ],
+      "importance": 2
     },
     "sloth": {
       "districts": [
         "amazon",
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -0.88,
+          "lon": -63.123
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": 1.562,
+          "lon": -70.331
+        },
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 17.097,
+          "lon": -88.47
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 10.013,
+          "lon": -83.862
+        }
+      ],
+      "importance": 2
     },
     "tapir": {
       "districts": [
         "amazon",
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -7.209,
+          "lon": -68.635
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -1.935,
+          "lon": -66.595
+        },
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 2.037,
+          "lon": 114.673
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 3.996,
+          "lon": 102.491
+        }
+      ],
+      "importance": 4
     },
     "scarlet macaw": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -4.895,
+          "lon": -56.168
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -1.572,
+          "lon": -64.437
+        }
+      ],
+      "importance": 6
     },
     "macaw": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -2.338,
+          "lon": -61.127
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": 5.411,
+          "lon": -67.437
+        }
+      ],
+      "importance": 2
     },
     "blue and yellow macaw": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": 1.495,
+          "lon": -59.343
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": 2.214,
+          "lon": -65.648
+        }
+      ],
+      "importance": 6
     },
     "amazon parrot": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -4.896,
+          "lon": -55.629
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -5.456,
+          "lon": -64.059
+        }
+      ],
+      "importance": 6
     },
     "toucan": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": 0.228,
+          "lon": -68.562
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": 3.785,
+          "lon": -75.313
+        }
+      ],
+      "importance": 2
     },
     "tree frog": {
       "districts": [
         "amazon",
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -3.253,
+          "lon": -69.872
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -1.467,
+          "lon": -71.488
+        },
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 16.295,
+          "lon": -89.676
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 10.918,
+          "lon": -83.984
+        }
+      ],
+      "importance": 8
     },
     "amazon river dolphin": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -7.604,
+          "lon": -60.493
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -6.87,
+          "lon": -69.82
+        }
+      ],
+      "importance": 4
     },
     "llama": {
       "districts": [
@@ -699,900 +3254,3703 @@
     "blue-footed booby": {
       "districts": [
         "galapagos"
-      ]
+      ],
+      "at": [
+        {
+          "district": "galapagos",
+          "index": 0,
+          "lat": -0.735,
+          "lon": -90.439
+        }
+      ],
+      "importance": 6
     },
     "basilisk": {
       "districts": [
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 14.314,
+          "lon": -91.423
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 8.613,
+          "lon": -82.239
+        }
+      ],
+      "importance": 4
     },
     "kangaroo": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -19.155,
+          "lon": 134.257
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -24.408,
+          "lon": 116.702
+        }
+      ],
+      "importance": 2
     },
     "wallaby": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -26.947,
+          "lon": 148.871
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -36.327,
+          "lon": 147.837
+        }
+      ],
+      "importance": 4
     },
     "koala": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -26.55,
+          "lon": 148.644
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -30.6,
+          "lon": 147.762
+        }
+      ],
+      "importance": 2
     },
     "wombat": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -27.693,
+          "lon": 151.783
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -32.148,
+          "lon": 150.626
+        }
+      ],
+      "importance": 4
     },
     "quokka": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -26.96,
+          "lon": 138.043
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -25.047,
+          "lon": 125.647
+        }
+      ],
+      "importance": 4
     },
     "echidna": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -21.374,
+          "lon": 136.339
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -18.78,
+          "lon": 125.839
+        }
+      ],
+      "importance": 4
     },
     "platypus": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -31.595,
+          "lon": 150.149
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -33.028,
+          "lon": 151.313
+        }
+      ],
+      "importance": 2
     },
     "dingo": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -19.843,
+          "lon": 129.169
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -20.881,
+          "lon": 128.564
+        }
+      ],
+      "importance": 4
     },
     "tasmanian devil": {
       "districts": [
         "tasmania"
-      ]
+      ],
+      "at": [
+        {
+          "district": "tasmania",
+          "index": 0,
+          "lat": -41.639,
+          "lon": 145.144
+        }
+      ],
+      "importance": 2
     },
     "tasmanian tiger": {
       "districts": [
         "tasmania"
-      ]
+      ],
+      "importance": 4
     },
     "kookaburra": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -24.855,
+          "lon": 151.385
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -30.347,
+          "lon": 148.671
+        }
+      ],
+      "importance": 6
     },
     "emu": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -24.339,
+          "lon": 125.987
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -22.811,
+          "lon": 114.409
+        }
+      ],
+      "importance": 6
     },
     "cassowary": {
       "districts": [
         "papua",
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "papua",
+          "index": 0,
+          "lat": -4.895,
+          "lon": 144.859
+        },
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -26.628,
+          "lon": 148.675
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -32.109,
+          "lon": 152.33
+        }
+      ],
+      "importance": 6
     },
     "sugar glider": {
       "districts": [
         "australia-forest",
         "papua"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -30.009,
+          "lon": 148.895
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -31.242,
+          "lon": 146.995
+        },
+        {
+          "district": "papua",
+          "index": 0,
+          "lat": -5.488,
+          "lon": 144.757
+        }
+      ],
+      "importance": 4
     },
     "sugarglider": {
       "districts": [
         "australia-forest",
         "papua"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -28.733,
+          "lon": 153.056
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -33.525,
+          "lon": 146.276
+        },
+        {
+          "district": "papua",
+          "index": 0,
+          "lat": -6.88,
+          "lon": 141.93
+        }
+      ],
+      "importance": 4
     },
     "frill-necked lizard": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -27.967,
+          "lon": 125.874
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -21.8,
+          "lon": 124.075
+        }
+      ],
+      "importance": 8
     },
     "blue-tongue skink": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "importance": 8
     },
     "redback spider": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -20.99,
+          "lon": 132.705
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -23.178,
+          "lon": 121.794
+        }
+      ],
+      "importance": 10
     },
     "sydney funnel-web spider": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -31.963,
+          "lon": 152.545
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -33.011,
+          "lon": 150.53
+        }
+      ],
+      "importance": 10
     },
     "cockatoo": {
       "districts": [
         "australia-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-forest",
+          "index": 0,
+          "lat": -27.672,
+          "lon": 152.609
+        },
+        {
+          "district": "australia-forest",
+          "index": 1,
+          "lat": -30.068,
+          "lon": 151.401
+        }
+      ],
+      "importance": 6
     },
     "cockatiel": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -30.609,
+          "lon": 133.426
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -24.537,
+          "lon": 126.032
+        }
+      ],
+      "importance": 6
     },
     "budgerigar parakeet": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -18.05,
+          "lon": 133.452
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -24.248,
+          "lon": 114.642
+        }
+      ],
+      "importance": 6
     },
     "freshwater crocodile": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -23.41,
+          "lon": 128.472
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -21.369,
+          "lon": 116.622
+        }
+      ],
+      "importance": 4
     },
     "polar bear": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "importance": 2
     },
     "arctic fox": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 70.253,
+          "lon": -21.328
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 69.105,
+          "lon": 130.284
+        }
+      ],
+      "importance": 2
     },
     "polar fox": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 76.5,
+          "lon": -71.038
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 73.153,
+          "lon": 114.109
+        }
+      ],
+      "importance": 4
     },
     "arctic hare": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 79.263,
+          "lon": -89.82
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 67.766,
+          "lon": 126.677
+        }
+      ],
+      "importance": 4
     },
     "arctic animal": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 71.227,
+          "lon": -31.169
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 71.543,
+          "lon": 92.33
+        }
+      ],
+      "importance": 4
     },
     "walrus": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 72.682,
+          "lon": -74.971
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 71.568,
+          "lon": 73.735
+        }
+      ],
+      "importance": 2
     },
     "narwhal": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 76.28,
+          "lon": -51.141
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 70.813,
+          "lon": 75.58
+        }
+      ],
+      "importance": 4
     },
     "beluga": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 76.272,
+          "lon": -45.682
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 74.652,
+          "lon": 102.706
+        }
+      ],
+      "importance": 4
     },
     "reindeer": {
       "districts": [
         "arctic",
         "siberia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 69.683,
+          "lon": -27.553
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 75.3,
+          "lon": 91.629
+        },
+        {
+          "district": "siberia",
+          "index": 0,
+          "lat": 58.966,
+          "lon": 91.568
+        },
+        {
+          "district": "siberia",
+          "index": 1,
+          "lat": 56.662,
+          "lon": 113.061
+        }
+      ],
+      "importance": 2
     },
     "snowy owl": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 77.392,
+          "lon": -36.475
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 73.154,
+          "lon": 116.634
+        }
+      ],
+      "importance": 6
     },
     "snow owl": {
       "districts": [
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 77.74,
+          "lon": -78.622
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 68.7,
+          "lon": 79.903
+        }
+      ],
+      "importance": 6
     },
     "emperor penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -77.197,
+          "lon": 44.849
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -75.576,
+          "lon": 159.48
+        }
+      ],
+      "importance": 2
     },
     "king penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -81.797,
+          "lon": 29.55
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -62.303,
+          "lon": 135.416
+        }
+      ],
+      "importance": 6
     },
     "gentoo penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -81.813,
+          "lon": 32.865
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -67,
+          "lon": 155.227
+        }
+      ],
+      "importance": 6
     },
     "chinstrap penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -81.715,
+          "lon": -26.015
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -64.8,
+          "lon": 158.262
+        }
+      ],
+      "importance": 6
     },
     "macaroni penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -71.217,
+          "lon": -1.256
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -63.774,
+          "lon": 126.556
+        }
+      ],
+      "importance": 6
     },
     "rockhopper penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -78.72,
+          "lon": -29.212
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -69.51,
+          "lon": 116.098
+        }
+      ],
+      "importance": 6
     },
     "penguin": {
       "districts": [
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -67.917,
+          "lon": -1.179
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -62.383,
+          "lon": 131.992
+        }
+      ],
+      "importance": 2
     },
     "earless seal": {
       "districts": [
         "arctic",
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 70.332,
+          "lon": -39.003
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 65.407,
+          "lon": 105.47
+        },
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -68.155,
+          "lon": -10.654
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -63.433,
+          "lon": 124.481
+        }
+      ],
+      "importance": 4
     },
     "seal": {
       "districts": [
         "arctic",
         "antarctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 69.26,
+          "lon": -34.752
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 68.313,
+          "lon": 85.076
+        },
+        {
+          "district": "antarctic",
+          "index": 0,
+          "lat": -69.419,
+          "lon": 29.507
+        },
+        {
+          "district": "antarctic",
+          "index": 1,
+          "lat": -66.723,
+          "lon": 143.939
+        }
+      ],
+      "importance": 4
     },
     "blue whale": {
       "districts": [
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -39.044,
+          "lon": 27.127
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 44.046,
+          "lon": -20.672
+        }
+      ],
+      "importance": 2
     },
     "sperm whale": {
       "districts": [
         "mediterranean-sea",
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 33.626,
+          "lon": 12.203
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 39.583,
+          "lon": 7.79
+        },
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -36.209,
+          "lon": 31.929
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 51.112,
+          "lon": -18.149
+        }
+      ],
+      "importance": 4
     },
     "orca": {
       "districts": [
         "open-ocean",
         "arctic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -32.402,
+          "lon": 11.49
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 55.038,
+          "lon": -38.355
+        },
+        {
+          "district": "arctic",
+          "index": 0,
+          "lat": 81.736,
+          "lon": -59.488
+        },
+        {
+          "district": "arctic",
+          "index": 1,
+          "lat": 70.695,
+          "lon": 97.35
+        }
+      ],
+      "importance": 2
     },
     "bottlenose dolphin": {
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic",
         "ocean-pacific"
-      ]
+      ],
+      "importance": 2
     },
     "pacific white-sided dolphin": {
       "districts": [
         "ocean-pacific"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-pacific",
+          "index": 0,
+          "lat": 15.54,
+          "lon": -161.868
+        },
+        {
+          "district": "ocean-pacific",
+          "index": 1,
+          "lat": -14.782,
+          "lon": -140.622
+        }
+      ],
+      "importance": 4
     },
     "great white shark": {
       "districts": [
         "ocean-atlantic",
         "ocean-pacific"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 36.021,
+          "lon": -53.49
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": 2.017,
+          "lon": -32.992
+        },
+        {
+          "district": "ocean-pacific",
+          "index": 0,
+          "lat": 19.677,
+          "lon": -141.704
+        },
+        {
+          "district": "ocean-pacific",
+          "index": 1,
+          "lat": -12.891,
+          "lon": -125.115
+        }
+      ],
+      "importance": 2
     },
     "tiger shark": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -12.753,
+          "lon": 147.825
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.142,
+          "lon": -84.215
+        }
+      ],
+      "importance": 8
     },
     "hammerhead shark": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -12.715,
+          "lon": 148.35
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19.438,
+          "lon": -84.418
+        }
+      ],
+      "importance": 8
     },
     "blacktip shark": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -17.199,
+          "lon": 147.213
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.83,
+          "lon": -87.721
+        }
+      ],
+      "importance": 8
     },
     "basking shark": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 25.634,
+          "lon": -31.085
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -7.917,
+          "lon": -14.009
+        }
+      ],
+      "importance": 8
     },
     "sawshark": {
       "districts": [
         "ocean-pacific"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-pacific",
+          "index": 0,
+          "lat": 19.178,
+          "lon": -153.48
+        },
+        {
+          "district": "ocean-pacific",
+          "index": 1,
+          "lat": -13.306,
+          "lon": -131.05
+        }
+      ],
+      "importance": 8
     },
     "manatee": {
       "districts": [
         "ocean-atlantic",
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 32.464,
+          "lon": -45.556
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -3.004,
+          "lon": -28.973
+        },
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 17.21,
+          "lon": -91.455
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 12.041,
+          "lon": -84.746
+        }
+      ],
+      "importance": 4
     },
     "sea star": {
       "districts": [
         "mediterranean-sea",
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 34.714,
+          "lon": 14.489
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 40.955,
+          "lon": 4.746
+        },
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.621,
+          "lon": 149.725
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.905,
+          "lon": -90.589
+        }
+      ],
+      "importance": 10
     },
     "brittle sea star": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.655,
+          "lon": 147.943
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.097,
+          "lon": -87.441
+        }
+      ],
+      "importance": 10
     },
     "feather sea star": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.774,
+          "lon": 148.806
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.757,
+          "lon": -88.395
+        }
+      ],
+      "importance": 10
     },
     "sea urchin": {
       "districts": [
         "mediterranean-sea",
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 32.765,
+          "lon": 14.007
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 40.398,
+          "lon": 4.011
+        },
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -12.358,
+          "lon": 146.979
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19.828,
+          "lon": -86.719
+        }
+      ],
+      "importance": 10
     },
     "sea anemone": {
       "districts": [
         "mediterranean-sea",
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 32.841,
+          "lon": 14.124
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 39.987,
+          "lon": 3.221
+        },
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.812,
+          "lon": 149.692
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.071,
+          "lon": -87.632
+        }
+      ],
+      "importance": 10
     },
     "bubble tip sea anemone": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -21.128,
+          "lon": 149.515
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 21.796,
+          "lon": -87.402
+        }
+      ],
+      "importance": 10
     },
     "rock flower sea anemone": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.105,
+          "lon": 151.975
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.208,
+          "lon": -90.109
+        }
+      ],
+      "importance": 10
     },
     "sea cucumber": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.569,
+          "lon": 150.858
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.131,
+          "lon": -82.029
+        }
+      ],
+      "importance": 10
     },
     "sea sponge": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -14.06,
+          "lon": 145.912
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.345,
+          "lon": -89.277
+        }
+      ],
+      "importance": 10
     },
     "sea conch": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.475,
+          "lon": 149.823
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.269,
+          "lon": -83.904
+        }
+      ],
+      "importance": 10
     },
     "sea snail": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.289,
+          "lon": 151.427
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 21.263,
+          "lon": -85.082
+        }
+      ],
+      "importance": 10
     },
     "sea hare": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.17,
+          "lon": 150.344
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 17.251,
+          "lon": -88.032
+        }
+      ],
+      "importance": 10
     },
     "giant clam": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.407,
+          "lon": 151.6
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.355,
+          "lon": -81.33
+        }
+      ],
+      "importance": 10
     },
     "clownfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -22.386,
+          "lon": 151.64
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.966,
+          "lon": -87.691
+        }
+      ],
+      "importance": 8
     },
     "blue tang": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -20.96,
+          "lon": 151.693
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 14.837,
+          "lon": -83.399
+        }
+      ],
+      "importance": 8
     },
     "yellow tang": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -17.394,
+          "lon": 152.331
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.165,
+          "lon": -81.385
+        }
+      ],
+      "importance": 8
     },
     "mandarinfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -18.06,
+          "lon": 151.231
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.48,
+          "lon": -86.14
+        }
+      ],
+      "importance": 8
     },
     "moorish idol": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.522,
+          "lon": 150.135
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.486,
+          "lon": -86.045
+        }
+      ],
+      "importance": 4
     },
     "royal gramma": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -18.186,
+          "lon": 149.132
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.222,
+          "lon": -84.402
+        }
+      ],
+      "importance": 8
     },
     "six-line wrasse": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.284,
+          "lon": 145.281
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.439,
+          "lon": -87.094
+        }
+      ],
+      "importance": 8
     },
     "firefish goby": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -18.241,
+          "lon": 150.127
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.533,
+          "lon": -84.242
+        }
+      ],
+      "importance": 8
     },
     "copperband butterflyfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.226,
+          "lon": 148.592
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.263,
+          "lon": -86.251
+        }
+      ],
+      "importance": 10
     },
     "foxface rabbitfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.969,
+          "lon": 146.451
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 15.727,
+          "lon": -82.831
+        }
+      ],
+      "importance": 8
     },
     "anthias": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -20.06,
+          "lon": 149.849
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.105,
+          "lon": -84.704
+        }
+      ],
+      "importance": 8
     },
     "blenny": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.979,
+          "lon": 148.15
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.158,
+          "lon": -84.873
+        }
+      ],
+      "importance": 8
     },
     "damselfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -12.938,
+          "lon": 146.203
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.485,
+          "lon": -85.991
+        }
+      ],
+      "importance": 8
     },
     "cardinalfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -14.516,
+          "lon": 146.794
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19.379,
+          "lon": -81.652
+        }
+      ],
+      "importance": 8
     },
     "hawkfish": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.003,
+          "lon": 147.382
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19.408,
+          "lon": -85.787
+        }
+      ],
+      "importance": 8
     },
     "brain coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.163,
+          "lon": 147.1
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.573,
+          "lon": -87.444
+        }
+      ],
+      "importance": 10
     },
     "hard coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.017,
+          "lon": 152.924
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.05,
+          "lon": -91.123
+        }
+      ],
+      "importance": 10
     },
     "soft coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -17.048,
+          "lon": 146.399
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 21.66,
+          "lon": -84.615
+        }
+      ],
+      "importance": 10
     },
     "torch coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.508,
+          "lon": 147.661
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.202,
+          "lon": -82.308
+        }
+      ],
+      "importance": 10
     },
     "hammer coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -22.352,
+          "lon": 150.495
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.797,
+          "lon": -81.362
+        }
+      ],
+      "importance": 10
     },
     "leather coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -17.079,
+          "lon": 150.31
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.536,
+          "lon": -87.366
+        }
+      ],
+      "importance": 10
     },
     "frogspawn coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -21.868,
+          "lon": 150.11
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.589,
+          "lon": -88.073
+        }
+      ],
+      "importance": 10
     },
     "mushroom-coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -14.411,
+          "lon": 148.256
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.49,
+          "lon": -84.286
+        }
+      ],
+      "importance": 10
     },
     "zoanthid coral": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.784,
+          "lon": 146.304
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.797,
+          "lon": -88.228
+        }
+      ],
+      "importance": 10
     },
     "cleaner shrimp": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -18.309,
+          "lon": 148.68
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 23.341,
+          "lon": -87.389
+        }
+      ],
+      "importance": 10
     },
     "peppermint shrimp": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -19.581,
+          "lon": 151.539
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19,
+          "lon": -82.563
+        }
+      ],
+      "importance": 10
     },
     "pistol shrimp": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.168,
+          "lon": 145.939
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.354,
+          "lon": -86.351
+        }
+      ],
+      "importance": 10
     },
     "hermit crab": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -15.645,
+          "lon": 146.622
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.429,
+          "lon": -81.8
+        }
+      ],
+      "importance": 8
     },
     "crab": {
       "districts": [
         "mediterranean",
         "ocean-atlantic",
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 41.928,
+          "lon": 13.262
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 37.621,
+          "lon": -2.941
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 29.434,
+          "lon": -53.23
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -10.16,
+          "lon": -33.197
+        },
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.498,
+          "lon": 145.182
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 24.269,
+          "lon": -87.273
+        }
+      ],
+      "importance": 8
     },
     "lobster": {
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 35.074,
+          "lon": 13.979
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 38.19,
+          "lon": 4.043
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 41.783,
+          "lon": -48.007
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": 6.161,
+          "lon": -26.319
+        }
+      ],
+      "importance": 8
     },
     "marine oyster": {
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 34.038,
+          "lon": 17.48
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 37.695,
+          "lon": 8.437
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 34.197,
+          "lon": -47.776
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -4.51,
+          "lon": -29.123
+        }
+      ],
+      "importance": 10
     },
     "marine scallop": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 25.346,
+          "lon": -52.247
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -13.805,
+          "lon": -31.685
+        }
+      ],
+      "importance": 10
     },
     "marine tube worm": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.468,
+          "lon": 147.937
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 16.544,
+          "lon": -83.673
+        }
+      ],
+      "importance": 10
     },
     "marine bristle worm": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -17.993,
+          "lon": 148.88
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.366,
+          "lon": -90.661
+        }
+      ],
+      "importance": 10
     },
     "marine feather duster worm": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -18.939,
+          "lon": 152.782
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 19.934,
+          "lon": -81.477
+        }
+      ],
+      "importance": 10
     },
     "nassarius sea snail": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -21.228,
+          "lon": 150.352
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 17.217,
+          "lon": -83.207
+        }
+      ],
+      "importance": 10
     },
     "trochus sea snail": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -13.615,
+          "lon": 148.983
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 22.963,
+          "lon": -83.298
+        }
+      ],
+      "importance": 10
     },
     "turbo sea snail": {
       "districts": [
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -20.302,
+          "lon": 151.128
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 18.39,
+          "lon": -81.837
+        }
+      ],
+      "importance": 10
     },
     "seagull": {
       "districts": [
         "mediterranean",
         "mediterranean-sea",
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 38.194,
+          "lon": 21.685
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 35.404,
+          "lon": 7.541
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 35.585,
+          "lon": 14.248
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 38.895,
+          "lon": 4.49
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 24.73,
+          "lon": -43.819
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -11.991,
+          "lon": -29.243
+        }
+      ],
+      "importance": 6
     },
     "marlin": {
       "districts": [
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -45.76,
+          "lon": 38.201
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 42.598,
+          "lon": -26.414
+        }
+      ],
+      "importance": 8
     },
     "barracuda": {
       "districts": [
         "mediterranean-sea",
         "coral-reef"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 36.421,
+          "lon": 12.472
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 39.975,
+          "lon": 3.352
+        },
+        {
+          "district": "coral-reef",
+          "index": 0,
+          "lat": -16.239,
+          "lon": 147.566
+        },
+        {
+          "district": "coral-reef",
+          "index": 1,
+          "lat": 20.229,
+          "lon": -87.055
+        }
+      ],
+      "importance": 8
     },
     "bluefin tuna": {
       "districts": [
         "mediterranean-sea",
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean-sea",
+          "index": 0,
+          "lat": 35.744,
+          "lon": 11.962
+        },
+        {
+          "district": "mediterranean-sea",
+          "index": 1,
+          "lat": 40.87,
+          "lon": 6.02
+        },
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -31.534,
+          "lon": 16.067
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 48.704,
+          "lon": -29.99
+        }
+      ],
+      "importance": 8
     },
     "yellowfin tuna": {
       "districts": [
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -33.423,
+          "lon": 29.871
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 48.956,
+          "lon": -14.057
+        }
+      ],
+      "importance": 8
     },
     "tuna": {
       "districts": [
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -40.549,
+          "lon": 37.981
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 48.534,
+          "lon": -10.886
+        }
+      ],
+      "importance": 8
     },
     "mahi-mahi": {
       "districts": [
         "open-ocean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "open-ocean",
+          "index": 0,
+          "lat": -49.916,
+          "lon": 7.618
+        },
+        {
+          "district": "open-ocean",
+          "index": 1,
+          "lat": 46.839,
+          "lon": -23.634
+        }
+      ],
+      "importance": 8
     },
     "tarpon": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 32.775,
+          "lon": -53.218
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -7.03,
+          "lon": -33.722
+        }
+      ],
+      "importance": 8
     },
     "halibut": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 25.616,
+          "lon": -34.026
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -13.737,
+          "lon": -19.702
+        }
+      ],
+      "importance": 8
     },
     "herring": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "at": [
+        {
+          "district": "ocean-atlantic",
+          "index": 0,
+          "lat": 31.764,
+          "lon": -30.659
+        },
+        {
+          "district": "ocean-atlantic",
+          "index": 1,
+          "lat": -8.363,
+          "lon": -15.293
+        }
+      ],
+      "importance": 8
     },
     "sturgeon": {
       "districts": [
         "central-asia",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 45.95,
+          "lon": 76.49
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 45.354,
+          "lon": 105.997
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 52.154,
+          "lon": 22.724
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 47.863,
+          "lon": 27.032
+        }
+      ],
+      "importance": 8
     },
     "alligator": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 48.275,
+          "lon": -86.041
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 46.978,
+          "lon": -67.407
+        }
+      ],
+      "importance": 4
     },
     "froglet": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": 0.836,
+          "lon": 26.857
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 49.395,
+          "lon": 2.11
+        }
+      ],
+      "importance": 8
     },
     "tadpole": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": -0.275,
+          "lon": 28.757
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 48.523,
+          "lon": 6.438
+        }
+      ],
+      "importance": 10
     },
     "toad": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": 2.813,
+          "lon": 27.101
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 47.771,
+          "lon": -3.486
+        }
+      ],
+      "importance": 8
     },
     "canada goose": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 40.969,
+          "lon": -95.045
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 43.549,
+          "lon": -72.191
+        }
+      ],
+      "importance": 6
     },
     "goose": {
       "districts": [
         "europe-west",
         "europe-north"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.514,
+          "lon": 4.796
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 46.274,
+          "lon": 2.991
+        },
+        {
+          "district": "europe-north",
+          "index": 0,
+          "lat": 61.807,
+          "lon": 8.321
+        },
+        {
+          "district": "europe-north",
+          "index": 1,
+          "lat": 63.115,
+          "lon": 28.505
+        }
+      ],
+      "importance": 6
     },
     "mallard": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": -0.258,
+          "lon": 27.565
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 48.585,
+          "lon": 4.106
+        }
+      ],
+      "importance": 6
     },
     "goldfish": {
       "districts": [
         "china-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "china-forest",
+          "index": 0,
+          "lat": 28.904,
+          "lon": 102.112
+        }
+      ],
+      "importance": 8
     },
     "guppy": {
       "districts": [
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 13.935,
+          "lon": -88.008
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 10.389,
+          "lon": -85.08
+        }
+      ],
+      "importance": 8
     },
     "betta fish": {
       "districts": [
         "southeast-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "southeast-asia",
+          "index": 0,
+          "lat": 0.361,
+          "lon": 117.08
+        },
+        {
+          "district": "southeast-asia",
+          "index": 1,
+          "lat": 3.994,
+          "lon": 102.232
+        }
+      ],
+      "importance": 8
     },
     "zebra danio": {
       "districts": [
         "india"
-      ]
+      ],
+      "at": [
+        {
+          "district": "india",
+          "index": 0,
+          "lat": 18.202,
+          "lon": 82.625
+        },
+        {
+          "district": "india",
+          "index": 1,
+          "lat": 25.633,
+          "lon": 90.629
+        }
+      ],
+      "importance": 8
     },
     "platy": {
       "districts": [
         "central-america"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-america",
+          "index": 0,
+          "lat": 14.877,
+          "lon": -91.009
+        },
+        {
+          "district": "central-america",
+          "index": 1,
+          "lat": 8.857,
+          "lon": -83.519
+        }
+      ],
+      "importance": 8
     },
     "brine shrimp": {
       "districts": [
         "north-america-desert"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-desert",
+          "index": 0,
+          "lat": 35.129,
+          "lon": -113.355
+        }
+      ],
+      "importance": 10
     },
     "snail": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 11.606,
+          "lon": 22.263
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 48.141,
+          "lon": -114.992
+        }
+      ],
+      "importance": 10
     },
     "butterfly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 18.031,
+          "lon": 20.94
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 34.077,
+          "lon": -78.319
+        }
+      ],
+      "importance": 10
     },
     "blue swallowtail butterfly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 31.102,
+          "lon": 14.878
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 53.153,
+          "lon": -88.864
+        }
+      ],
+      "importance": 10
     },
     "swallowtail butterfly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 17.237,
+          "lon": 19.746
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 38.188,
+          "lon": -107.556
+        }
+      ],
+      "importance": 10
     },
     "turquoise butterfly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 14.83,
+          "lon": 21.962
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 38.483,
+          "lon": -112.854
+        }
+      ],
+      "importance": 10
     },
     "caterpillar": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 24.078,
+          "lon": 17.205
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 31.766,
+          "lon": -109.753
+        }
+      ],
+      "importance": 10
     },
     "catterpillar": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 16.83,
+          "lon": -0.831
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 39.299,
+          "lon": -106.617
+        }
+      ],
+      "importance": 10
     },
     "dragonfly": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "importance": 10
     },
     "damselfly": {
       "districts": [
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": -1.45,
+          "lon": 32.904
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 43.266,
+          "lon": 0.574
+        }
+      ],
+      "importance": 10
     },
     "bee": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 28.153,
+          "lon": -2.095
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 45.963,
+          "lon": -106.35
+        }
+      ],
+      "importance": 10
     },
     "hornet": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 12.518,
+          "lon": 11.01
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 36.625,
+          "lon": -87.919
+        }
+      ],
+      "importance": 10
     },
     "wasp": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 14.891,
+          "lon": 14.156
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 32.424,
+          "lon": -86.82
+        }
+      ],
+      "importance": 10
     },
     "ant": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 18.835,
+          "lon": 20.99
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 51.049,
+          "lon": -120.899
+        }
+      ],
+      "importance": 10
     },
     "termite": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 1.598,
+          "lon": 40.267
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -13.898,
+          "lon": 28.403
+        }
+      ],
+      "importance": 10
     },
     "beetle": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 24.276,
+          "lon": 9.404
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 44.842,
+          "lon": -86.184
+        }
+      ],
+      "importance": 10
     },
     "ladybug": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 29.841,
+          "lon": 0.114
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 28.677,
+          "lon": -107.013
+        }
+      ],
+      "importance": 10
     },
     "grasshopper": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 31.849,
+          "lon": 7.787
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 51.736,
+          "lon": -98.006
+        }
+      ],
+      "importance": 10
     },
     "cricket": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 22.584,
+          "lon": 12.291
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 41.487,
+          "lon": -83.988
+        }
+      ],
+      "importance": 10
     },
     "praying mantis": {
       "districts": [
         "mediterranean",
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 40.315,
+          "lon": 20.698
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 34.853,
+          "lon": 0.355
+        },
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 33.369,
+          "lon": 6.881
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 53.094,
+          "lon": -99.988
+        }
+      ],
+      "importance": 10
     },
     "firefly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 36.298,
+          "lon": 1.869
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 22.442,
+          "lon": -103.11
+        }
+      ],
+      "importance": 10
     },
     "moth": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 22.853,
+          "lon": -13.501
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 38.601,
+          "lon": -116.785
+        }
+      ],
+      "importance": 10
     },
     "mosquito": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 26.013,
+          "lon": 4.107
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 29.452,
+          "lon": -101.011
+        }
+      ],
+      "importance": 10
     },
     "fly": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 23.726,
+          "lon": 9.85
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 38.523,
+          "lon": -111.288
+        }
+      ],
+      "importance": 10
     },
     "gnat": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 4.186,
+          "lon": 9.338
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 55.18,
+          "lon": -111.159
+        }
+      ],
+      "importance": 10
     },
     "cockroach": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 20.116,
+          "lon": -12.628
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 46.464,
+          "lon": -119.985
+        }
+      ],
+      "importance": 10
     },
     "spider": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 8.956,
+          "lon": 3.069
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 29.984,
+          "lon": -102.677
+        }
+      ],
+      "importance": 10
     },
     "tarantula": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": 1.122,
+          "lon": -59.417
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": 1.893,
+          "lon": -65.808
+        }
+      ],
+      "importance": 10
     },
     "scorpion": {
       "districts": [
         "africa-desert",
         "north-america-desert"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-desert",
+          "index": 0,
+          "lat": 26.533,
+          "lon": 10.503
+        },
+        {
+          "district": "africa-desert",
+          "index": 1,
+          "lat": 11.79,
+          "lon": 42.192
+        },
+        {
+          "district": "north-america-desert",
+          "index": 0,
+          "lat": 31.949,
+          "lon": -111.333
+        }
+      ],
+      "importance": 10
     },
     "red velvet mite": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 12.326,
+          "lon": -0.004
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 33.915,
+          "lon": -98.224
+        }
+      ],
+      "importance": 10
     },
     "barn owl": {
       "districts": [
         "europe-west",
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 53.263,
+          "lon": 7.62
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 49.831,
+          "lon": 3.582
+        },
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 26.734,
+          "lon": 10.559
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 35.178,
+          "lon": -111.069
+        }
+      ],
+      "importance": 6
     },
     "corn snake": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 47.376,
+          "lon": -84.267
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 47.96,
+          "lon": -75.015
+        }
+      ],
+      "importance": 8
     },
     "ball python": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 1.314,
+          "lon": 41.599
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -17.598,
+          "lon": 32.754
+        }
+      ],
+      "importance": 8
     },
     "tortoise": {
       "districts": [
         "mediterranean",
         "africa-savanna",
         "galapagos"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 42.869,
+          "lon": 13.471
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 39.082,
+          "lon": -0.223
+        },
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -4.885,
+          "lon": 36.226
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -22.591,
+          "lon": 25.249
+        },
+        {
+          "district": "galapagos",
+          "index": 0,
+          "lat": -0.623,
+          "lon": -90.313
+        }
+      ],
+      "importance": 8
     },
     "box turtle": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "north-america-forest",
+          "index": 0,
+          "lat": 41.649,
+          "lon": -94.736
+        },
+        {
+          "district": "north-america-forest",
+          "index": 1,
+          "lat": 49.488,
+          "lon": -74.955
+        }
+      ],
+      "importance": 8
     },
     "bearded dragon": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "importance": 4
     },
     "pigeon": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 18.65,
+          "lon": -13.944
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 48.778,
+          "lon": -77.545
+        }
+      ],
+      "importance": 6
     },
     "indigo bird": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": -0.784,
+          "lon": 36.165
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -17.51,
+          "lon": 27.196
+        }
+      ],
+      "importance": 6
     },
     "canary": {
       "districts": [
         "mediterranean"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 37.61,
+          "lon": 14.6
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 31.873,
+          "lon": 0.93
+        }
+      ],
+      "importance": 6
     },
     "leopard gecko": {
       "districts": [
         "mediterranean",
         "middle-east"
-      ]
+      ],
+      "importance": 8
     },
     "snake": {
       "districts": [
         "mediterranean",
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 41.835,
+          "lon": 12.757
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 35.095,
+          "lon": 7.045
+        },
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 12.919,
+          "lon": -9.196
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 30.685,
+          "lon": -107.994
+        }
+      ],
+      "importance": 8
     },
     "frog": {
       "districts": [
         "mediterranean",
         "rivers-lakes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "mediterranean",
+          "index": 0,
+          "lat": 38.769,
+          "lon": 21.15
+        },
+        {
+          "district": "mediterranean",
+          "index": 1,
+          "lat": 32.272,
+          "lon": 1.337
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 0,
+          "lat": 1.055,
+          "lon": 24.291
+        },
+        {
+          "district": "rivers-lakes",
+          "index": 1,
+          "lat": 53.041,
+          "lon": -0.653
+        }
+      ],
+      "importance": 8
     },
     "hoopoe": {
       "districts": [
@@ -1603,53 +6961,227 @@
       "districts": [
         "europe-west",
         "europe-east"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 53.115,
+          "lon": 6.338
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 51.924,
+          "lon": 4.565
+        },
+        {
+          "district": "europe-east",
+          "index": 0,
+          "lat": 53.689,
+          "lon": 24.981
+        },
+        {
+          "district": "europe-east",
+          "index": 1,
+          "lat": 48.056,
+          "lon": 31.875
+        }
+      ],
+      "importance": 4
     },
     "lovebird": {
       "districts": [
         "africa-savanna"
-      ]
+      ],
+      "at": [
+        {
+          "district": "africa-savanna",
+          "index": 0,
+          "lat": 0.594,
+          "lon": 35.565
+        },
+        {
+          "district": "africa-savanna",
+          "index": 1,
+          "lat": -15.893,
+          "lon": 26.574
+        }
+      ],
+      "importance": 6
     },
     "parrot": {
       "districts": [
         "amazon"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -8.757,
+          "lon": -62.093
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -7.379,
+          "lon": -71.857
+        }
+      ],
+      "importance": 6
     },
     "parakeet": {
       "districts": [
         "australia-outback"
-      ]
+      ],
+      "at": [
+        {
+          "district": "australia-outback",
+          "index": 0,
+          "lat": -29.234,
+          "lon": 125.248
+        },
+        {
+          "district": "australia-outback",
+          "index": 1,
+          "lat": -27.408,
+          "lon": 115.279
+        }
+      ],
+      "importance": 6
     },
     "monkey": {
       "districts": [
         "amazon",
         "africa-rainforest"
-      ]
+      ],
+      "at": [
+        {
+          "district": "amazon",
+          "index": 0,
+          "lat": -5.078,
+          "lon": -59.311
+        },
+        {
+          "district": "amazon",
+          "index": 1,
+          "lat": -2.491,
+          "lon": -67.804
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 0,
+          "lat": -4.44,
+          "lon": 18.626
+        },
+        {
+          "district": "africa-rainforest",
+          "index": 1,
+          "lat": -6.359,
+          "lon": 29.705
+        }
+      ],
+      "importance": 4
     },
     "mouse": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 21.517,
+          "lon": -3.633
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 44.5,
+          "lon": -92.097
+        }
+      ],
+      "importance": 4
     },
     "rat": {
       "districts": [
         "worldwide"
-      ]
+      ],
+      "at": [
+        {
+          "district": "worldwide",
+          "index": 0,
+          "lat": 31.118,
+          "lon": 20.81
+        },
+        {
+          "district": "worldwide",
+          "index": 1,
+          "lat": 47.714,
+          "lon": -70.667
+        }
+      ],
+      "importance": 4
     },
     "hamster": {
       "districts": [
         "central-asia"
-      ]
+      ],
+      "at": [
+        {
+          "district": "central-asia",
+          "index": 0,
+          "lat": 41.771,
+          "lon": 72.011
+        },
+        {
+          "district": "central-asia",
+          "index": 1,
+          "lat": 39.244,
+          "lon": 99.753
+        }
+      ],
+      "importance": 4
     },
     "guinea pig": {
       "districts": [
         "andes"
-      ]
+      ],
+      "at": [
+        {
+          "district": "andes",
+          "index": 0,
+          "lat": -15.621,
+          "lon": -70.336
+        },
+        {
+          "district": "andes",
+          "index": 1,
+          "lat": -25.488,
+          "lon": -68.651
+        }
+      ],
+      "importance": 4
     },
     "flemish giant rabbit": {
       "districts": [
         "europe-west"
-      ]
+      ],
+      "at": [
+        {
+          "district": "europe-west",
+          "index": 0,
+          "lat": 49.754,
+          "lon": 10.302
+        },
+        {
+          "district": "europe-west",
+          "index": 1,
+          "lat": 49.581,
+          "lon": 0.509
+        }
+      ],
+      "importance": 4
     },
     "mole": {
       "districts": [
@@ -1707,27 +7239,32 @@
     "dodo": {
       "districts": [
         "madagascar"
-      ]
+      ],
+      "importance": 4
     },
     "great auk": {
       "districts": [
         "ocean-atlantic"
-      ]
+      ],
+      "importance": 4
     },
     "woolly mammoth": {
       "districts": [
         "siberia"
-      ]
+      ],
+      "importance": 10
     },
     "saber-toothed tiger": {
       "districts": [
         "north-america-plains"
-      ]
+      ],
+      "importance": 4
     },
     "mastodon": {
       "districts": [
         "north-america-forest"
-      ]
+      ],
+      "importance": 4
     }
   },
   "renames": {
@@ -1735,5 +7272,6 @@
     "Sea Eagle": "White-tailed Eagle",
     "Siberian Tiger": "Tiger",
     "Barbary Macaque": "Monkey"
-  }
+  },
+  "importance": "1 (shows from space) to 10 (only at the closest zoom)"
 }

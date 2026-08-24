@@ -182,11 +182,16 @@ struct GlobeView: View {
     /// the country list is the route that does not need a fingertip at all.
     private func drawMarkers(in context: inout GraphicsContext) {
         guard controller.mode != .countries, controller.mode != .capitals else { return }
-        let size = controller.markerSize
+        let fullSize = controller.markerSize
         for placed in controller.markers {
-            if let image = GlobeMarkerImage.thumbnail(named: placed.marker.imageName, size: size * 2) {
+            // Eased so a marker lands rather than simply appearing at full size.
+            let t = placed.presence
+            let eased = 1 - pow(1 - t, 3)
+            let size = fullSize * (0.4 + 0.6 * eased)
+            context.opacity = min(1, t * 1.4)
+            if let image = GlobeMarkerImage.drawable(named: placed.marker.imageName, size: fullSize * 2) {
                 context.draw(
-                    Image(uiImage: image),
+                    image,
                     in: CGRect(
                         x: placed.point.x - size / 2,
                         y: placed.point.y - size / 2 - size * 0.2,
@@ -202,7 +207,7 @@ struct GlobeView: View {
                 )
             }
             // The name once the artwork is big enough to have room under it.
-            if controller.markerScale > 1.0 {
+            if controller.markerScale > 1.0, t > 0.6 {
                 draw(
                     placed.marker.name,
                     at: CGPoint(x: placed.point.x, y: placed.point.y + size * 0.45),
@@ -211,6 +216,7 @@ struct GlobeView: View {
                     isPlace: false
                 )
             }
+            context.opacity = 1
         }
     }
 

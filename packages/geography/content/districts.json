@@ -42,7 +42,7 @@
       ],
       "spreadDegrees": 10,
       "isGeneric": false,
-      "isMarine": true
+      "isMarine": false
     },
     {
       "id": "north-america-forest",

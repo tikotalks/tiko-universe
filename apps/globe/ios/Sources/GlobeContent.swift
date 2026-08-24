@@ -43,8 +43,8 @@ struct GlobeMarker: Identifiable, Equatable, Sendable {
     let point: GeoPoint
     /// Larger shows earlier as the child zooms out.
     let priority: Int
-    /// 1 is a lion, 5 is a sea anemone: what decides how far out it shows.
-    let tier: Int
+    /// 1 shows from space, 10 only at the closest zoom. Authored per subject.
+    let importance: Int
     /// Placed inside one country, and only drawn once the child is looking at
     /// that country — the guarantee that every country has something to find.
     let isCloseUp: Bool
@@ -58,6 +58,12 @@ struct GlobeMarker: Identifiable, Equatable, Sendable {
     let region: String?
     /// False until an editor has been through the entry.
     let isReviewed: Bool
+
+    /// The subject itself, without the marker that happens to carry it: one
+    /// elephant has a dozen markers, and a view should hold one of them.
+    var subjectID: String {
+        id.split(separator: "#").first.map(String.init) ?? id
+    }
 }
 
 private struct ContentFile: Decodable {
@@ -77,7 +83,7 @@ private struct ContentFile: Decodable {
         let name: String
         let glyph: String
         let priority: Int
-        let tier: Int?
+        let importance: Int?
         let region: String?
         let image: String?
         let country: String?
@@ -114,7 +120,7 @@ enum GlobeContent {
                 point: capital.point,
                 // Sovereign capitals surface before a dependency's seat does.
                 priority: country.sovereignty == .sovereign ? 80 : 50,
-                tier: country.sovereignty == .sovereign ? 1 : 2,
+                importance: country.sovereignty == .sovereign ? 2 : 4,
                 isCloseUp: false,
                 countryID: country.id,
                 countryIDs: [country.id],
@@ -143,7 +149,7 @@ enum GlobeContent {
                     imageName: item.image.map { ($0 as NSString).lastPathComponent },
                     point: GeoPoint(lat: marker.lat, lon: marker.lon),
                     priority: item.priority,
-                    tier: item.tier ?? 2,
+                    importance: item.importance ?? 6,
                     isCloseUp: marker.closeUp ?? false,
                     countryID: marker.country ?? item.country,
                     countryIDs: item.countries ?? [item.country].compactMap { $0 },
