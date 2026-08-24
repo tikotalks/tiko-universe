@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const CONTENT_DIR = join(HERE, '..', '..', 'packages', 'geography', 'content')
+const GAPS_FILE = join(HERE, '..', '..', 'packages', 'geography', 'generated', 'media-gaps.json')
 const IMAGE_DIR = join(CONTENT_DIR, 'images')
 const GENERATED_DIR = join(HERE, '..', '..', 'packages', 'geography', 'generated')
 const DOC = join(HERE, '..', '..', 'docs', 'apps', 'globe-media-gaps.md')
@@ -23,6 +24,8 @@ const read = async (name, dir = CONTENT_DIR) => JSON.parse(await readFile(join(d
 const englishName = (entry) => entry.names?.en ?? entry.name ?? entry.id
 const hasArtwork = (mediaId) => Boolean(mediaId) && existsSync(join(IMAGE_DIR, `${mediaId}.png`))
 
+const cities = JSON.parse(await readFile(join(GENERATED_DIR, 'cities.json'), 'utf8')).items
+const flagDir = join(CONTENT_DIR, 'flags')
 const byCountry = await read('country-animals.json')
 const ranges = await read('animal-districts.json')
 const landmarkSource = await read('country-landmarks.json')
@@ -110,10 +113,57 @@ for (const [title, low, high, note] of [
   for (const landmark of band(low, high)) lines.push(`| ${landmark.name} | ${named(landmark.country)} |`)
 }
 
+// Cities: only the ones a child meets first. Seven thousand towns without a
+// picture is not a gap, it is the normal state of a map.
+const cityGaps = cities
+  .filter((city) => city.isCapital || city.importance <= 4)
+  .filter((city) => !city.mediaId)
+  .map((city) => ({
+    id: city.id,
+    name: city.name,
+    country: city.country,
+    countryName: named(city.country),
+    importance: city.importance,
+    isCapital: city.isCapital,
+  }))
+  .sort((a, b) => a.importance - b.importance || a.name.localeCompare(b.name))
+
+// Flags: a country with no artwork falls back to the emoji, and 28 territories
+// have neither.
+const flagGaps = countries
+  .filter((country) => !existsSync(join(flagDir, `${country.id}.png`)))
+  .map((country) => ({ id: country.id, name: country.name }))
+  .sort((a, b) => a.name.localeCompare(b.name))
+
+await writeFile(GAPS_FILE, `${JSON.stringify({
+  schemaVersion: 1,
+  note: 'Built by tools/geography/report-media-gaps.mjs. Everything Globe would show a picture of and cannot. Ordered by importance, 1 being what a child sees from space.',
+  summary: {
+    animals: { missing: missingAnimals.length },
+    landmarks: { missing: landmarks.length, of: totalLandmarks },
+    cities: { missing: cityGaps.length, of: cities.filter((city) => city.isCapital || city.importance <= 4).length },
+    flags: { missing: flagGaps.length, of: countries.length },
+  },
+  animals: missingAnimals.map((animal) => ({
+    name: animal.name,
+    scientificName: animal.scientificName,
+    importance: animal.importance,
+    wantedBy: animal.countries,
+  })),
+  landmarks: landmarks.map((landmark) => ({
+    name: landmark.name,
+    country: landmark.country,
+    countryName: named(landmark.country),
+    importance: landmark.importance,
+  })),
+  cities: cityGaps,
+  flags: flagGaps,
+}, null, 2)}\n`)
+
 lines.push('')
 await writeFile(DOC, `${lines.join('\n')}\n`)
 
 process.stdout.write(
-  `${missingAnimals.length} animals and ${landmarks.length} of ${totalLandmarks} landmarks have no picture ` +
-  `(${band(1, 3).length} of those landmarks show from space)\n`
+  `media gaps: ${missingAnimals.length} animals, ${landmarks.length} of ${totalLandmarks} landmarks, ` +
+  `${cityGaps.length} cities worth a picture, ${flagGaps.length} of ${countries.length} flags\n`
 )
