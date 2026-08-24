@@ -2,78 +2,131 @@
 
 ## Job
 
-A calm, playful, fully offline Earth explorer for children. The child can spin,
-zoom and tap a simplified 3D globe to discover capitals, animals and landmarks
-without needing to read, sign in or understand a quiz interface.
+A calm, playful, fully offline Earth explorer for children. The child gets a
+real round 3D Earth that can be spun in any direction, zoomed from the whole
+planet down toward individual countries, and tapped to hear and discover what
+is there.
 
 Working product name: **Tiko Globe**. Repository/app ID: `globe`.
 
-The app should feel closer to "Google Earth for kids" than a conventional map:
-no roads, businesses, navigation, reviews, traffic, ads or dense geographic
-labels. The Earth itself is the interface.
+The app should feel closer to **Google Earth for kids** than a conventional map,
+but without roads, businesses, navigation, reviews, traffic, ads, satellite
+clutter or dense labels. The Earth itself is the interface.
+
+## Core product statement
+
+**Spin the Earth. Zoom anywhere. Tap something. Hear what it is.**
+
+A child should be able to understand the primary interaction without reading an
+instruction screen.
 
 ## Product principles
 
-- Exploration before testing: the default experience is discovery, not a quiz.
+- The globe is always a true round sphere; never a flat map disguised as a globe.
+- Exploration before testing: Globe is discovery, not a quiz.
 - Fully useful offline after install.
 - iPad-first and touch-first, with iPhone support.
 - No account, login, ads, subscriptions, streaks, coins or reward economy.
-- Visual-first and speech-friendly; reading is optional.
+- Visual-first and speech-first; reading is optional.
 - Large, forgiving touch targets and predictable gestures.
-- Keep the globe intentionally sparse. Interesting objects matter more than map
-  density.
-- Capitals, animals and landmarks are the three first-class content layers.
-- Child mode never opens a browser or external map provider.
-- Parent Mode owns settings, optional downloads and content controls.
-- The same geographic/content dataset should later power Tiko Flags, Map and
+- Keep the Earth intentionally sparse and understandable.
+- **Countries, Capitals, Animals and Landmarks are first-class exploration modes.**
+- Tapping content should teach by naming it, not by asking the child to answer.
+- Child Mode never opens a browser or external map provider.
+- The same canonical geography dataset should later power Tiko Flags, Map and
   Map Puzzle.
 
 ## Core experience
 
-The app opens directly on Earth. There is no onboarding carousel.
+The app opens directly on a complete round Earth floating in the main view.
+There is no onboarding carousel and no map-provider chrome.
 
 The child can:
 
-- drag with one finger to rotate the globe;
-- pinch to zoom;
-- tap a visible marker;
-- tap the Earth to focus a country/region where supported;
-- use a simple Home/Earth action to return to the full globe;
-- optionally use a visible speaker action to hear the selected item's name.
+- drag with one finger to spin Earth freely;
+- pinch to zoom in and out;
+- zoom all the way back out until the complete globe is visible;
+- tap a country in Countries mode;
+- tap a capital, animal or landmark in its corresponding mode;
+- hear the selected country's/item's localized name;
+- tap the speaker again to repeat it;
+- use a simple Earth/Home action to return to the full-globe view.
 
-The globe should continue to work if the device has never had an internet
-connection.
+Rotation, zooming, country selection, content selection and speech must work in
+airplane mode from first launch.
 
-### Default layers
+## Exploration modes
 
-The first public release has exactly three child-facing layers:
+A simple child-facing mode switch changes what the globe emphasizes. Only one
+primary mode needs to be active at a time so the Earth never becomes cluttered.
 
-1. **Capitals**
-2. **Animals**
-3. **Landmarks**
+Initial modes:
 
-All three can be enabled together. A simple layer control can also isolate one
-category. Layer controls should use both icon and text, not color alone.
+1. **Countries**
+2. **Capitals**
+3. **Animals**
+4. **Landmarks**
 
-Possible later layers include nature, oceans, dinosaurs/fossils, food, culture,
-transport and space, but they are explicitly outside the first release.
+The selector should use a large icon plus localized label. Changing mode does not
+reset the current globe position or zoom level.
 
-## Capitals
+Possible later modes include Nature, Oceans, Dinosaurs/Fossils, Food, Culture,
+Transport and Space. The content architecture should support these without
+requiring a new renderer.
 
-Capitals are special locations rather than generic city POIs.
+## Countries mode
 
-At globe scale, only a small number of high-salience markers are visible. More
-capitals appear as the child zooms in. The app must avoid creating a cloud of
-hundreds of labels.
+Countries mode is the geographic foundation of Globe.
 
-A capital card contains, at minimum:
+The globe shows:
 
-- city name;
+- continents and coastlines;
+- country boundaries;
+- progressive country labels where they remain readable;
+- no unrelated animal/landmark marker clutter.
+
+### Country interaction
+
+When the child taps a country:
+
+1. the country becomes visually emphasized;
+2. the app immediately speaks the localized country name;
+3. the country name and flag appear in a simple card/label;
+4. a speaker button lets the child hear the name again;
+5. optional secondary information can show the capital and continent without
+   overwhelming the primary name.
+
+Example:
+
+```text
+[Malta shape highlighted]
+🇲🇹 Malta
+🔊 "Malta"
+Capital: Valletta
+Europe
+```
+
+The first tap should teach **"this shape/place is Malta"**. It should not open a
+quiz or require a second action before speech.
+
+Small countries and islands need forgiving hit targets. Where geographic area is
+too small to tap reliably, the renderer may use an invisible enlarged hit region
+or a nearby accessible label while preserving the correct visible geography.
+
+## Capitals mode
+
+Capitals mode highlights national capitals rather than generic cities.
+
+At full-Earth scale only a carefully selected subset is shown. More capitals
+appear as the child zooms toward a region so labels never turn into a dense cloud.
+
+Tapping a capital should speak the city name immediately and show:
+
+- capital name;
 - country name;
-- country flag;
-- large illustration/photo or Tiko artwork where available;
-- spoken city name;
-- spoken country name;
+- flag;
+- large Tiko illustration/photo where available;
+- repeat-speech action;
 - one short optional fact.
 
 Example:
@@ -81,20 +134,23 @@ Example:
 ```text
 Valletta
 Malta 🇲🇹
-[Speak]
+🔊 "Valletta"
 "Valletta is the capital of Malta."
 ```
 
-Capital markers should be visually consistent and distinguishable from animal
-and landmark markers without relying only on color.
+The launch dataset should cover the national capitals in the canonical Tiko
+country list.
 
-## Animals
+## Animals mode
 
-Animals are not pinned to a single misleading exact coordinate as if that point
-were the animal's only habitat. Each animal entry has one or more broad habitat
-regions and one or more representative marker positions chosen for exploration.
+Animals mode turns Earth into a visual animal-discovery surface.
 
-Examples for an initial pack:
+Animals are not presented as if one exact coordinate were their entire habitat.
+Each entry can have broad habitat regions plus representative discovery markers.
+The UI must distinguish a friendly exploration marker from a scientific range
+map.
+
+Initial content should have broad world representation, for example:
 
 - African elephant;
 - lion;
@@ -117,27 +173,24 @@ Examples for an initial pack:
 - dolphin;
 - sea turtle.
 
-An animal card contains:
+Tapping an animal speaks its name and opens a visual card with:
 
 - common name;
 - large Tiko illustration;
-- spoken name;
-- broad place/region text;
+- broad place/region description;
 - one short child-friendly fact;
-- optional animal sound only when the sound is accurate and appropriately
-  licensed.
+- repeat-speech action;
+- optional accurately sourced/licensed animal sound.
 
-The app must avoid false precision. Content should say things such as "Lives in
-parts of eastern and southern Africa" rather than implying that an animal lives
-at the exact marker point.
+Avoid false precision. Prefer wording such as "Lives in parts of eastern and
+southern Africa" over implying that the animal lives at one pin.
 
-## Landmarks
+## Landmarks mode
 
-Landmarks provide recognizable anchors between abstract geography and real
-places.
+Landmarks connect abstract geography to recognizable real-world places.
 
-The first pack should aim for broad geographic representation, not only Europe
-and North America. Candidate examples:
+The first pack should deliberately represent different continents and cultures.
+Candidate examples include:
 
 - Eiffel Tower;
 - Colosseum;
@@ -154,95 +207,94 @@ and North America. Candidate examples:
 - Sagrada Família;
 - Moai of Rapa Nui;
 - Mount Fuji;
-- Grand Harbour / Valletta landmark content for Malta.
+- landmark content around Valletta / Grand Harbour.
 
-A landmark card contains:
+Tapping a landmark speaks its name and shows:
 
 - landmark name;
 - country;
 - image/illustration;
-- spoken name;
-- one short fact.
+- one short fact;
+- repeat-speech action.
 
-Only use imagery that Tiko owns, generates, commissions or can legally bundle.
-Do not scrape photographs from map/search providers.
-
-## Country discovery
-
-Countries are supporting geography, not a fourth marker layer.
-
-When a child zooms toward or taps a country, the app may show its name and flag
-and emphasize the country shape. Country labels should appear progressively and
-remain sparse.
-
-A lightweight country sheet may later contain:
-
-- country name;
-- flag;
-- capital;
-- continent;
-- selected animals and landmarks already present in the app.
-
-This creates a natural connection between Globe and future Flags/Map games.
+Only bundle imagery that Tiko owns, commissions, generates or can legally
+redistribute. Do not scrape map/search-provider photography.
 
 ## Interaction model
 
-### Rotate
+### Spin
 
-One-finger drag rotates Earth with light momentum. Motion must stop quickly and
-predictably; the globe should never spin wildly.
+One-finger drag rotates the sphere directly. The child should feel as if they are
+holding and turning Earth.
+
+- Rotation works horizontally, vertically and diagonally.
+- Light momentum is allowed.
+- Momentum stops quickly and predictably.
+- The globe must never enter an uncontrolled long spin.
+- Reduced Motion removes or strongly reduces momentum.
 
 ### Zoom
 
-Pinch zoom moves between three conceptual scales:
+Pinch zoom changes the camera distance from the globe.
 
-- **Earth**: continents and a handful of featured markers;
-- **Region**: country boundaries and more markers;
-- **Country**: country label, capital and nearby content.
+Conceptual scales:
 
-The product does not need street-level zoom. A hard maximum zoom avoids blurry
-map data and keeps the experience focused.
+- **Earth** — the complete round planet is visible;
+- **Region** — continents and groups of countries dominate;
+- **Country** — country shape, labels and nearby mode content are easier to
+  inspect.
+
+The child must always be able to zoom back out to a visibly round complete Earth.
+There is no street-level zoom. A maximum zoom keeps the product focused and
+avoids implying street-map precision.
 
 ### Select
 
-Tapping a marker:
+Selection depends on mode:
 
-1. keeps the marker selected;
-2. gently moves it toward a comfortable viewing position if needed;
-3. opens a large bottom card;
-4. exposes the speak action;
-5. never starts audio unexpectedly unless Parent Mode explicitly enables
-   auto-speak.
+- Countries: tap country surface -> highlight + speak country name.
+- Capitals: tap capital marker -> speak capital name + card.
+- Animals: tap animal marker -> speak animal name + card.
+- Landmarks: tap landmark marker -> speak landmark name + card.
 
-Tap outside or swipe the card down to dismiss.
+Selection stays visible until another item is selected or the child dismisses it.
+The app must not require hover, long press or tiny targets.
 
-### Search
+### Mode switching
 
-Child-facing search is not required for v1. Exploration is the primary model.
-A later accessible search/list view can help children who cannot reliably use a
-3D gesture surface and should be considered an accessibility feature, not just a
-power-user feature.
+The current camera position is preserved when changing mode. If the child is
+looking at Japan in Countries mode and switches to Animals, the globe remains on
+Japan and reveals the appropriate nearby animal content.
+
+This makes modes feel like different ways of looking at the same Earth rather
+than separate screens.
+
+### Search/list alternative
+
+Free exploration is primary, but the 3D globe cannot be the only route to
+content. An accessible ordered list should expose countries and currently
+available mode content. Selecting an item from the list moves/focuses the globe
+on it.
 
 ## Visual direction
 
-The globe should use Tiko's visual language rather than a conventional GIS map.
+The globe should be unmistakably Tiko rather than a GIS product.
 
 Recommended treatment:
 
+- clearly spherical Earth with gentle atmosphere/depth;
 - soft ocean color;
-- simple, slightly varied land colors;
-- clear but low-contrast country boundaries;
-- minimal/no terrain texture in v1;
+- simple land colors;
+- subtle country boundaries;
+- selected country gets a strong but friendly highlight;
+- minimal or no terrain texture in v1;
 - no roads;
-- no commercial POIs;
+- no businesses/commercial POIs;
 - no satellite imagery;
 - no tiny labels;
-- large illustrated content markers;
-- gentle depth, atmosphere and lighting without photorealism;
-- dark-mode compatible presentation without turning Earth into a black map.
-
-The globe must still be understandable when all illustrations are hidden and
-VoiceOver is used.
+- large illustrated animal/landmark markers;
+- marker icons remain recognizable without color alone;
+- dark-mode compatible without turning Earth into an unreadable black map.
 
 ## Offline architecture
 
@@ -251,84 +303,88 @@ Tiko Globe is local-first and has no runtime map dependency.
 ```text
 SwiftUI iOS app
   TikoKit / Parent Mode / accessibility
-  GlobeView
+  GlobeView + ModeSelector
        |
        v
 Native iOS globe renderer
-  RealityKit/Metal-backed 3D sphere
-  camera + rotation + hit testing
+  RealityKit/Metal-backed sphere
+  camera + rotation + zoom
+  country polygon hit testing
   marker billboards / overlays
        |
        v
-GlobeCore KMP
+GlobeCore / GeographyCore KMP
+  canonical countries
+  capitals
   content models
-  layer/filter logic
-  geographic coordinates
+  mode/filter logic
+  coordinates
   marker density rules
   localization keys
   content validation
        |
        +--> bundled Natural Earth derived geography
        +--> bundled Tiko content database
-       +--> bundled images/audio
+       +--> bundled flags/images/audio
 ```
 
-The rendering implementation is platform-native. Shared geographic/content rules
-belong in KMP so a later Android client can reuse the same content and behavior.
+The rendering implementation is platform-native. Shared country/content rules
+belong in KMP so later Tiko geography apps and an Android client can reuse them.
 
 ### Why not MapLibre Native for the globe
 
-MapLibre Native is useful for normal native vector maps and supports local data,
-but native globe projection is not currently a production feature. Tiko Globe
-therefore must not depend on MapLibre Native gaining globe support.
+MapLibre Native is useful for conventional vector maps and local map data, but
+native globe projection is not currently a production dependency Tiko should
+rely on. Globe therefore uses a purpose-built native spherical renderer.
 
-A future Tiko Map app can use MapLibre Native for a flat map. Tiko Globe remains
-independent.
+A future flat Tiko Map app can independently evaluate MapLibre Native.
 
 See `docs/adrs/2026-08-24-globe-renderer-and-offline-data.md`.
 
 ## Geographic data
 
-Use **Natural Earth** as the primary v1 base geography.
+Use **Natural Earth** as the primary v1 base geography. It provides appropriately
+scaled public-domain geography for world/region exploration.
 
-Natural Earth provides public-domain vector/raster geography at suitable world
-and regional scales. For this app we need only a small subset:
+Needed subsets:
 
 - land/ocean geometry;
 - admin-0 country polygons/boundaries;
-- major lakes if visually useful;
-- populated places filtered to national capitals;
-- optional continent/region metadata.
+- national capitals;
+- major lakes if useful;
+- continent/region metadata.
 
-Do not bundle the complete Natural Earth dataset. Add a build-time extraction
-step that produces only the simplified assets needed by the app.
+A build-time pipeline should simplify and transform source geography into
+versioned runtime assets. Raw GIS data should not be parsed on every launch.
 
-OpenStreetMap is not required for v1. This keeps the base map small and avoids
-adding ODbL-derived database obligations where the extra street-level detail has
-no product value. If OSM data is introduced later, attribution and share-alike
-requirements must be reviewed explicitly before shipping it.
+OpenStreetMap is not required for v1 because roads, buildings and street-level
+POIs provide no product value here.
 
-### Generated globe assets
+## Shared geography model
 
-The build pipeline should produce versioned assets such as:
+Globe, Flags, Map and Map Puzzle should eventually use one canonical country
+record rather than maintaining incompatible copies.
 
-```text
-assets/globe/
-  geography-v1.json
-  countries-v1.bin
-  capitals-v1.json
-  earth-albedo-v1.webp
-  content-v1.json
-  markers/
-  audio/
+Conceptually:
+
+```json
+{
+  "id": "MLT",
+  "iso2": "MT",
+  "iso3": "MLT",
+  "nameKey": "country.MLT.name",
+  "continent": "EU",
+  "flagAsset": "flags/MT.svg",
+  "capitalId": "capital.valletta",
+  "geometryId": "country.MLT",
+  "labelPoint": { "lat": 35.8997, "lon": 14.5146 },
+  "schemaVersion": 1
+}
 ```
 
-Exact formats can change after the renderer spike. The important boundary is
-that raw GIS data is transformed at build time, not parsed on every launch.
+Globe-specific animal/landmark records reference these stable country IDs.
 
-## Content model
-
-Conceptual shared model:
+Example content record:
 
 ```json
 {
@@ -337,104 +393,72 @@ Conceptual shared model:
   "titleKey": "globe.animal.africanElephant.title",
   "factKey": "globe.animal.africanElephant.fact1",
   "image": "animals/african-elephant.webp",
-  "speech": {
-    "titleKey": "globe.animal.africanElephant.title"
-  },
   "markers": [
     { "lat": -2.1, "lon": 34.7, "region": "east-africa" },
     { "lat": -19.0, "lon": 24.5, "region": "southern-africa" }
   ],
   "countries": ["KEN", "TZA", "BWA", "ZAF"],
-  "minScale": "region",
   "priority": 80,
   "schemaVersion": 1
 }
 ```
 
-Coordinates are representative discovery markers, not scientific habitat
-boundaries. Entries requiring real habitat boundaries can later reference a
-separate generalized region geometry.
+## Marker density
 
-Capital and landmark entries use the same common structure with type-specific
-fields.
+Capitals, Animals and Landmarks must never render every marker simultaneously.
+Each entry has a minimum scale, priority and category. A deterministic collision
+system chooses a readable subset for the current zoom and viewport.
 
-## Marker density and collision
+Suggested tuning targets:
 
-The app must never render all content simultaneously.
-
-Each item has:
-
-- minimum visible scale;
-- priority;
-- category;
-- optional country/region grouping;
-- one or more marker positions.
-
-At each frame/zoom state, a deterministic selection algorithm chooses markers
-based on viewport, scale, priority and minimum screen spacing. The same inputs
-must produce the same visible markers so the UI does not flicker.
-
-Suggested v1 targets:
-
-- Earth scale: roughly 8–20 markers visible;
+- Earth scale: roughly 8–20 markers;
 - region scale: roughly 15–35 markers;
 - country scale: roughly 10–30 markers depending on screen size.
 
-Exact numbers are tuning values, not content rules.
+Countries mode uses progressive labels rather than POI marker density.
 
 ## Localization and speech
 
-All UI and content text uses Tiko's normal localization system.
+All UI, country names and content use Tiko localization keys.
 
-Content must never store English prose as its canonical identifier. Use stable
-keys and locale bundles.
+Speech is a core interaction, not decorative accessibility metadata.
 
-For speech:
-
-- prefer high-quality on-device system TTS for names/facts where pronunciation
-  is acceptable;
-- allow selected names to ship with curated prerecorded pronunciation when TTS
-  performs poorly;
-- speech must work offline for the supported language path;
-- never require a cloud TTS request to use the app.
-
-The first release can localize a smaller curated content pack properly rather
-than shipping hundreds of untranslated entries.
+- Country taps speak the localized country name by default.
+- Capital/animal/landmark taps speak their localized names by default.
+- A visible speaker action repeats the name.
+- Prefer high-quality on-device speech where available.
+- Curated bundled pronunciation can override poor system pronunciation.
+- Core supported-language speech must not require a cloud request.
+- Facts can be spoken optionally but names remain the primary audio response.
 
 ## Accessibility
 
-The 3D globe cannot be the only way to access content.
-
 Required for v1:
 
-- VoiceOver labels for all visible controls and marker selections;
-- at least 44x44 pt effective touch targets for controls;
-- reduced-motion mode that removes momentum and animated camera travel;
+- VoiceOver labels for every control and selectable item;
+- effective touch targets of at least 44x44 pt for controls;
+- forgiving country hit testing;
+- reduced-motion mode;
 - no information conveyed only by color;
-- optional spoken names;
-- no timers or failure sounds;
-- repeatable selection/speech without penalties;
-- an accessible ordered list of currently visible/featured items, reachable
-  without manipulating the globe precisely;
+- repeatable speech without penalties;
 - Dynamic Type for cards and controls;
-- support for Switch Control and external pointer/keyboard basics.
-
-The accessible list can focus the globe when an item is selected, keeping both
-interaction models synchronized.
+- accessible ordered list as an alternative to precise globe manipulation;
+- Switch Control and external pointer/keyboard basics;
+- mode selector usable independently of the 3D surface.
 
 ## Parent Mode
 
-Keep settings deliberately small:
+Keep settings small:
 
-- enabled layers: capitals / animals / landmarks;
-- auto-speak on/off;
+- default mode;
+- spoken names on/off if a caregiver explicitly wants silence;
 - sound effects on/off;
 - reduced animation override where useful;
 - language/content language;
 - reset exploration state;
 - later: optional downloadable content packs.
 
-No Parent Mode setting should be required for first use.
+No Parent Mode setup is required before first use.
 
 ## Privacy and safety
 
@@ -443,193 +467,164 @@ No Parent Mode setting should be required for first use.
 - No advertising or tracking SDK.
 - No child-generated public content.
 - No external web links in Child Mode.
-- Analytics, if added, must follow Tiko's child/privacy doctrine and should not
-  contain precise interaction coordinates that could become an unnecessary
-  behavioral profile.
-- Content facts need an editorial source field internally even if sources are not
-  shown on every child card.
+- No runtime Google Maps, Apple Maps, Mapbox or tile-server dependency.
+- Analytics, if later added, must follow Tiko child/privacy doctrine.
+- Editorial facts keep source/review metadata internally.
 
 ## Content quality rules
 
-Geography content can become politically and scientifically sensitive. The data
-pipeline must distinguish factual display decisions from product styling.
-
-- Country/boundary source and version must be recorded.
-- Disputed boundaries must not be silently hand-drawn by app developers.
-- Avoid presenting representative animal markers as exact habitat science.
-- Landmarks must have verified names and locations.
-- Facts must have an editorial source/reference and review status.
-- Flags and country names should come from the same canonical geography dataset
-  used by the other Tiko geography apps.
-- Content changes should be data changes, not renderer changes.
+- Record source/version for country boundaries and canonical country data.
+- Do not silently hand-draw disputed boundaries.
+- Use the same country IDs/names/flags across all Tiko geography apps.
+- Verify capital and landmark names/coordinates.
+- Do not present representative animal markers as exact habitat science.
+- Every child-facing fact has editorial source/reference and review state.
+- Content changes should normally be data changes rather than renderer changes.
 
 ## Initial content target
 
-A useful v1 does not need thousands of markers.
+Launch target:
 
-Target:
-
-- all widely recognized sovereign-state national capitals supported by the
-  chosen canonical country list;
+- canonical country list with localized names and flags;
+- corresponding national capitals;
 - 40–60 curated animals with broad global representation;
-- 40–60 curated landmarks with broad global representation;
-- country shapes/names/flags required to contextualize those items.
+- 40–60 curated landmarks with broad global representation.
 
-Start smaller internally (for example 20 capitals, 15 animals, 15 landmarks) to
-validate the interaction before scaling content production.
+Internal development should start with a much smaller vertical slice to prove
+interaction and density before content production scales up.
 
 ## App size budget
 
-The app should remain comfortably downloadable as a normal App Store install.
-The world geography itself should be small because there are no roads, buildings
-or satellite tiles.
-
-Initial engineering budget, to validate with real assets:
+Initial engineering targets, to validate against real assets:
 
 - simplified geography: under 25 MB;
 - base globe textures/meshes: under 25 MB;
-- core illustrations: 40–100 MB depending on resolution/count;
-- audio: under 30 MB for curated clips; prefer on-device TTS where practical;
+- core illustrations: 40–100 MB;
+- curated audio: under 30 MB, preferring on-device speech where practical;
 - total v1 target: ideally under 150 MB compressed download.
 
-These are product budgets, not guarantees. CI should report asset size so growth
-is visible.
+CI should report asset-size growth.
 
 ## Performance targets
 
-On supported iPads/iPhones:
-
-- first interactive globe frame within 2 seconds on a warm install target;
-- stable 60 fps during normal rotation on modern supported hardware;
-- minimum acceptable 30 fps on the oldest supported device;
-- no network wait before first interaction;
-- marker collision/density work must not block rendering;
-- app should tolerate rapid spin/zoom/tap without queueing long animations;
-- memory should remain bounded when repeatedly opening content cards.
-
-Respect Low Power Mode and reduced motion by lowering nonessential animation.
+- First interactive Earth frame within roughly 2 seconds on a warm install
+  target.
+- Stable 60 fps during normal spin/zoom on modern supported hardware.
+- Minimum acceptable 30 fps on the oldest supported device.
+- No network wait before first interaction.
+- Country hit testing and marker collision must not block rendering.
+- Rapid spin/zoom/tap must not queue long camera animations.
+- Repeated card opening must not cause unbounded memory growth.
 
 ## MVP
 
 Include:
 
-- native interactive 3D Earth;
+- true native round 3D Earth;
+- free rotation/spinning;
+- pinch zoom from complete Earth to country scale and back;
 - fully bundled offline geography;
-- capitals layer;
-- animals layer;
-- landmarks layer;
-- progressive marker density;
-- marker selection and child-friendly detail card;
+- Countries mode with tap-to-highlight and automatic spoken country name;
+- Capitals mode;
+- Animals mode;
+- Landmarks mode;
+- mode selector preserving camera state;
+- marker density/collision handling;
 - flags/country context;
 - offline speech path;
-- Parent Mode layer/audio settings;
 - accessible list alternative;
-- core TikoKit integration;
-- localization-ready content schema;
+- TikoKit / Parent Mode integration;
+- localization-ready shared geography schema;
 - content validation pipeline.
 
 Exclude from v1:
 
-- roads and street maps;
+- roads/street maps;
 - businesses/POIs;
 - navigation/routing;
 - device location;
 - satellite imagery;
-- live weather;
-- live country data;
+- live weather or live country data;
 - cloud-required content;
 - multiplayer/social features;
 - quizzes, points or scoring;
 - terrain/elevation mesh;
-- AR mode;
+- AR;
 - user-created markers;
-- downloadable community packs.
+- community content packs.
 
-## Future connection to Tiko Geography
+## Tiko Geography family
 
-Globe should be the exploratory member of a four-app geography family:
+Globe is the exploratory member of a four-app family:
 
-1. **Flags** — recognize countries.
+1. **Flags** — recognize countries through their flags.
 2. **Map** — locate countries.
 3. **Map Puzzle** — understand how countries fit together.
-4. **Globe** — explore what exists in those places.
+4. **Globe** — freely explore countries and what exists around the world.
 
-The apps should not copy data into four incompatible formats. Build a shared
-`GeographyCore`/dataset once stable enough, containing canonical countries,
-capitals, flags, localized names and common IDs. Globe-specific content (animals
-and landmarks) can reference the same country IDs.
-
-Do not prematurely force the renderer into this shared layer. Share data and
-rules; keep the UI/rendering appropriate to each app.
+Share canonical geography data and rules, but keep each app's interaction model
+focused and appropriate to its purpose.
 
 ## Implementation order
 
-1. **Renderer spike** — native sphere, rotation, pinch zoom, hit testing and 100
-   synthetic markers on iPad/iPhone.
-2. **Geography build pipeline** — extract/simplify Natural Earth country and
-   capital data into versioned app assets.
-3. **GlobeCore model** — schema, localization keys, filtering, priorities,
-   collision/density decisions and validation.
-4. **Visual globe pass** — Tiko ocean/land styling, country boundaries and
-   camera behavior.
-5. **Marker system** — category visuals, selection, focus and bottom card.
-6. **Capitals vertical slice** — real country/flag/capital content and speech.
-7. **Animals vertical slice** — representative-region rules and illustrations.
-8. **Landmarks vertical slice** — verified coordinates, imagery and facts.
-9. **Accessibility pass** — VoiceOver, visible-item list, reduced motion,
-   Dynamic Type, Switch Control.
-10. **Parent Mode and localization** — category toggles, speech settings and
-    first translated content packs.
-11. **Content scale-up** — expand to launch targets only after marker density
-    and card UX are proven.
-12. **Offline/device QA** — airplane-mode, cold launch, low storage, older
-    device, rotation, multitasking and app termination tests.
+1. Native renderer spike: round sphere, free rotation, pinch zoom and hit testing.
+2. Geography pipeline: Natural Earth countries/capitals -> simplified versioned
+   assets.
+3. Countries vertical slice: polygon hit testing, highlight, localized name,
+   flag and automatic speech.
+4. Shared GeographyCore models and validation.
+5. Mode selector that preserves camera position/zoom.
+6. Capitals mode and progressive density.
+7. Animals mode and representative-region content rules.
+8. Landmarks mode and verified media/content.
+9. Accessibility alternative list and reduced-motion behavior.
+10. Parent Mode, localization and pronunciation QA.
+11. Content scale-up to launch targets.
+12. Offline/device/performance QA.
 
 ## Testing strategy
 
-### Unit/shared tests
+### Shared/data tests
 
-- schema migrations;
-- latitude/longitude validation;
-- country reference validation;
-- deterministic marker priority output;
-- localization key completeness;
-- content asset existence;
-- duplicate IDs;
-- representative animal marker disclosure rules.
-
-### Snapshot/data tests
-
-- generated country asset count;
+- country IDs and ISO mappings;
+- geometry/country-reference validation;
 - capital coverage;
-- canonical IDs stable across dataset updates;
-- no unexpectedly large asset growth;
-- screenshots at fixed globe orientations for major renderer regressions.
+- latitude/longitude validation;
+- localization-key completeness;
+- flag/content asset existence;
+- duplicate IDs;
+- deterministic marker visibility;
+- animal representative-marker disclosure rules.
 
-### Device tests
+### Renderer/device tests
 
-- rotate/pinch/tap under rapid input;
-- VoiceOver exploration;
+- complete Earth remains visibly spherical at minimum zoom;
+- free rotation in all directions;
+- pinch zoom limits;
+- rapid spin/zoom/tap input;
+- country hit testing, including small islands;
+- mode switching preserves camera state;
+- automatic speech matches selected item;
+- VoiceOver and alternative list;
 - reduced motion;
 - airplane mode from first launch;
-- memory after repeated cards;
-- iPad portrait/landscape;
-- iPhone compact layouts.
+- iPad portrait/landscape and iPhone compact layouts.
 
 ## Definition of done
 
-- The app opens directly to a useful Earth with no login.
-- Airplane mode does not remove any v1 geography, capital, animal or landmark
-  functionality.
-- A child can rotate, zoom, select and hear content without reading.
-- Capitals, animals and landmarks remain visually distinguishable without color
-  alone.
-- Marker density remains understandable at all supported zoom levels.
-- VoiceOver users can reach the same content through an ordered alternative to
-  precise globe manipulation.
-- Country/capital data has a recorded source/version and passes validation.
-- Animal entries do not claim false coordinate precision.
-- No runtime dependency on Google Maps, Apple Maps, Mapbox or a tile server.
-- No child-facing external links, ads, tracking or account requirement.
-- The architecture leaves shared country/flag/capital data reusable by Flags,
-  Map and Map Puzzle without coupling those apps to the 3D renderer.
+- The app opens directly to a complete round interactive Earth with no login.
+- A child can spin the globe naturally in any direction.
+- A child can zoom from the full planet toward a country and back out again.
+- Countries, Capitals, Animals and Landmarks are distinct selectable modes.
+- Tapping a country in Countries mode highlights it and speaks its localized
+  name immediately.
+- Tapping a capital, animal or landmark speaks its localized name and exposes a
+  clear visual detail card.
+- All v1 modes remain useful in airplane mode.
+- Marker density remains understandable at every supported zoom level.
+- Small countries remain practically selectable.
+- VoiceOver users can access equivalent content without precise globe gestures.
+- No runtime dependency exists on Google Maps, Apple Maps, Mapbox or a tile
+  server.
+- Shared country/flag/capital data is reusable by Flags, Map and Map Puzzle
+  without coupling those apps to the 3D renderer.
