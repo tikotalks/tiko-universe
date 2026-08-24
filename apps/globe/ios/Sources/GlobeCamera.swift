@@ -149,6 +149,15 @@ struct GlobeCamera: Equatable, Sendable {
         self.distance = min(maxDistance, max(Self.minDistance, distance))
     }
 
+    /// Turn part of the way towards a point, keeping the distance as it is.
+    /// `blend` of 1 puts the point in the middle; a double tap uses half, so it
+    /// moves towards what was tapped rather than snatching it to the centre.
+    mutating func focus(on point: GeoPoint, blend: Double) {
+        let share = min(1, max(0, blend))
+        pitch = min(90, max(-90, pitch + (point.lat - pitch) * share))
+        yaw += GlobeMath.longitudeDelta(-point.lon, yaw) * share
+    }
+
     /// The direction of the camera as seen from the centre of the globe, in
     /// globe space — what the renderer needs to know which half of the planet
     /// is facing away.

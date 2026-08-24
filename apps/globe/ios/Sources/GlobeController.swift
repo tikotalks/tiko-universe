@@ -89,7 +89,13 @@ final class GlobeController: ObservableObject {
     /// How big the artwork is drawn, in points. Big enough to read as a picture
     /// of an animal rather than a pin, at every zoom — a child should be able to
     /// tell a lion from a leopard without going anywhere near it.
-    var markerSize: Double { 108 * markerScale }
+    var markerSize: Double { 108 * markerScale * markerSizeShare }
+
+    /// A phone shows the same globe in a third of the width, so an animal that
+    /// reads well on a tablet covers the country it lives in.
+    private var markerSizeShare: Double {
+        viewSize.width > 0 && viewSize.width < 500 ? 0.72 : 1
+    }
     /// Drives the "back to the whole Earth" action's visibility.
     @Published private(set) var isShowingWholeEarth = true
     /// Whether the zoom controls have anywhere left to go. Published rather than
@@ -465,6 +471,21 @@ final class GlobeController: ObservableObject {
         guard factor > 0 else { return }
         var target = camera
         target.setVisibleRadius(camera.visibleRadiusDegrees / factor)
+        move(to: target)
+    }
+
+    /// Zoom in on a point rather than on the middle of the screen — what a
+    /// double tap means: "closer, *there*".
+    func zoomStep(by factor: Double, towards point: CGPoint, viewSize: CGSize) {
+        guard factor > 0, let anchor = camera.geoPoint(atViewPoint: point, viewSize: viewSize) else {
+            zoomStep(by: factor)
+            return
+        }
+        var target = camera
+        target.setVisibleRadius(camera.visibleRadiusDegrees / factor)
+        // Halfway to the point, so a double tap moves towards what was tapped
+        // without snapping it to the middle.
+        target.focus(on: anchor, blend: 0.5)
         move(to: target)
     }
 

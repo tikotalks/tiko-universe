@@ -15,6 +15,10 @@ struct GlobeView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showingCountryList = false
+    /// A phone has no room for a panel beside the map, so the card takes the
+    /// whole screen there — over the mode bar and the zoom buttons, which are
+    /// no use while you are reading about a chameleon.
+    private var isCompact: Bool { horizontalSizeClass == .compact }
 
     private let appColor = GlobeAppConfig.app.appColor
 
@@ -123,11 +127,18 @@ struct GlobeView: View {
                     landmarks: countryEntities(in: selection, kind: .landmark),
                     onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) }
                 )
-                .frame(width: panelWidth)
-                .padding(.vertical, 12)
-                .padding(.trailing, 12)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
-                .transition(.move(edge: .trailing).combined(with: .opacity))
+                .frame(maxWidth: isCompact ? .infinity : panelWidth)
+                .padding(.vertical, isCompact ? 0 : 12)
+                .padding(.trailing, isCompact ? 0 : 12)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: isCompact ? .center : .trailing
+                )
+                .background(isCompact ? Color(.systemBackground).ignoresSafeArea() : nil)
+                .transition(.move(edge: isCompact ? .bottom : .trailing).combined(with: .opacity))
+                // Over the controls, not beside them.
+                .zIndex(2)
             }
 
             VStack(spacing: 12) {

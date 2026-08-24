@@ -43,11 +43,18 @@ struct GlobeSurfaceView: UIViewRepresentable {
         pan.maximumNumberOfTouches = 1
         let pinch = UIPinchGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handlePinch))
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap))
+        // Two taps zoom in, the way every map does. The single tap waits to see
+        // whether a second one is coming, so a double tap never also selects
+        // whatever happened to be under the finger.
+        let doubleTap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleDoubleTap))
+        doubleTap.numberOfTapsRequired = 2
+        tap.require(toFail: doubleTap)
         pan.delegate = context.coordinator
         pinch.delegate = context.coordinator
         view.addGestureRecognizer(pan)
         view.addGestureRecognizer(pinch)
         view.addGestureRecognizer(tap)
+        view.addGestureRecognizer(doubleTap)
 
         view.isAccessibilityElement = true
         view.accessibilityTraits = [.allowsDirectInteraction, .updatesFrequently]
@@ -133,6 +140,10 @@ struct GlobeSurfaceView: UIViewRepresentable {
                 isPinching = true
                 pinchedDuringDrag = true
                 controller.beginInteraction()
+                // A second finger landing ends the pan before this runs, and the
+                // pan reports the velocity it had at that moment. Left alone it
+                // carries the globe off while the child is still zooming.
+                controller.endDrag(velocityX: 0, velocityY: 0, viewSize: view.bounds.size)
                 // The midpoint between the fingers, in geography.
                 pinchAnchor = controller.camera.geoPoint(
                     atViewPoint: recognizer.location(in: view),
@@ -152,6 +163,15 @@ struct GlobeSurfaceView: UIViewRepresentable {
             default:
                 break
             }
+        }
+
+        @objc func handleDoubleTap(_ recognizer: UITapGestureRecognizer) {
+            guard let view = recognizer.view else { return }
+            controller.zoomStep(
+                by: GlobeController.zoomStepFactor,
+                towards: recognizer.location(in: view),
+                viewSize: view.bounds.size
+            )
         }
 
         @objc func handleTap(_ recognizer: UITapGestureRecognizer) {
