@@ -1,10 +1,16 @@
 {
-  "schemaVersion": 1,
-  "note": "Where an animal lives, at the resolution a child needs: a part of the world, not a country and not a habitat map. Points are representative places inside the district, used to stand markers on the globe. spreadDegrees is how far animals scatter around a district point, so a savanna full of animals does not stack them all on one spot. isGeneric marks districts that span the world — oceans, rivers, \"everywhere\" — which are never used to fill a country with animals it does not have. isMarine marks water districts; an animal that only lives in water is never stood inside a country.",
+  "schemaVersion": 2,
+  "contract": {
+    "purpose": "Broad habitat/region context only; country occurrence truth lives in country-animals.json",
+    "surface": "land or water"
+  },
   "items": [
     {
       "id": "arctic",
-      "name": "The Arctic",
+      "names": {
+        "en": "The Arctic"
+      },
+      "i18nKey": "geography.districts.arctic",
       "points": [
         {
           "lat": 76.0,
@@ -19,13 +25,16 @@
           "lon": -140.0
         }
       ],
-      "spreadDegrees": 10,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 10.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "antarctic",
-      "name": "Antarctica and the Southern Ocean",
+      "names": {
+        "en": "Antarctica and the Southern Ocean"
+      },
+      "i18nKey": "geography.districts.antarctic",
       "points": [
         {
           "lat": -74.0,
@@ -40,13 +49,16 @@
           "lon": -60.0
         }
       ],
-      "spreadDegrees": 10,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 10.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "north-america-forest",
-      "name": "Forests of North America",
+      "names": {
+        "en": "Forests of North America"
+      },
+      "i18nKey": "geography.districts.north-america-forest",
       "points": [
         {
           "lat": 47.5,
@@ -57,13 +69,16 @@
           "lon": -73.0
         }
       ],
-      "spreadDegrees": 7,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 7.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "north-america-plains",
-      "name": "The plains of North America",
+      "names": {
+        "en": "The plains of North America"
+      },
+      "i18nKey": "geography.districts.north-america-plains",
       "points": [
         {
           "lat": 43.5,
@@ -74,13 +89,16 @@
           "lon": -98.0
         }
       ],
-      "spreadDegrees": 5,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 5.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "north-america-west",
-      "name": "The mountains of western North America",
+      "names": {
+        "en": "The mountains of western North America"
+      },
+      "i18nKey": "geography.districts.north-america-west",
       "points": [
         {
           "lat": 44.6,
@@ -91,26 +109,32 @@
           "lon": -117.0
         }
       ],
-      "spreadDegrees": 5,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 5.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "north-america-desert",
-      "name": "The deserts of North America",
+      "names": {
+        "en": "The deserts of North America"
+      },
+      "i18nKey": "geography.districts.north-america-desert",
       "points": [
         {
           "lat": 33.0,
           "lon": -112.0
         }
       ],
-      "spreadDegrees": 4,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 4.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "central-america",
-      "name": "Central America",
+      "names": {
+        "en": "Central America"
+      },
+      "i18nKey": "geography.districts.central-america",
       "points": [
         {
           "lat": 15.5,
@@ -121,13 +145,16 @@
           "lon": -83.5
         }
       ],
-      "spreadDegrees": 3,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 3.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "amazon",
-      "name": "The Amazon rainforest",
+      "names": {
+        "en": "The Amazon rainforest"
+      },
+      "i18nKey": "geography.districts.amazon",
       "points": [
         {
           "lat": -3.5,
@@ -138,13 +165,16 @@
           "lon": -70.0
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "andes",
-      "name": "The Andes",
+      "names": {
+        "en": "The Andes"
+      },
+      "i18nKey": "geography.districts.andes",
       "points": [
         {
           "lat": -16.0,
@@ -155,39 +185,48 @@
           "lon": -70.5
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "south-america-grassland",
-      "name": "The grasslands of South America",
+      "names": {
+        "en": "The grasslands of South America"
+      },
+      "i18nKey": "geography.districts.south-america-grassland",
       "points": [
         {
           "lat": -33.0,
           "lon": -60.0
         }
       ],
-      "spreadDegrees": 5,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 5.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "galapagos",
-      "name": "The Galápagos Islands",
+      "names": {
+        "en": "The Galápagos Islands"
+      },
+      "i18nKey": "geography.districts.galapagos",
       "points": [
         {
           "lat": -0.7,
           "lon": -90.5
         }
       ],
-      "spreadDegrees": 1,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 1.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "africa-savanna",
-      "name": "The African savanna",
+      "names": {
+        "en": "The African savanna"
+      },
+      "i18nKey": "geography.districts.africa-savanna",
       "points": [
         {
           "lat": -2.3,
@@ -202,13 +241,16 @@
           "lon": 36.5
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "africa-rainforest",
-      "name": "The rainforests of central Africa",
+      "names": {
+        "en": "The rainforests of central Africa"
+      },
+      "i18nKey": "geography.districts.africa-rainforest",
       "points": [
         {
           "lat": 0.5,
@@ -219,13 +261,16 @@
           "lon": 29.5
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "africa-desert",
-      "name": "The Sahara and the Horn of Africa",
+      "names": {
+        "en": "The Sahara and the Horn of Africa"
+      },
+      "i18nKey": "geography.districts.africa-desert",
       "points": [
         {
           "lat": 23.0,
@@ -236,13 +281,16 @@
           "lon": 45.0
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "africa-south",
-      "name": "Southern Africa",
+      "names": {
+        "en": "Southern Africa"
+      },
+      "i18nKey": "geography.districts.africa-south",
       "points": [
         {
           "lat": -28.5,
@@ -253,13 +301,16 @@
           "lon": 17.0
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "madagascar",
-      "name": "Madagascar",
+      "names": {
+        "en": "Madagascar"
+      },
+      "i18nKey": "geography.districts.madagascar",
       "points": [
         {
           "lat": -19.0,
@@ -267,12 +318,15 @@
         }
       ],
       "spreadDegrees": 2.5,
-      "isGeneric": false,
-      "isMarine": false
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "europe-west",
-      "name": "Western Europe",
+      "names": {
+        "en": "Western Europe"
+      },
+      "i18nKey": "geography.districts.europe-west",
       "points": [
         {
           "lat": 52.0,
@@ -299,13 +353,16 @@
           "lon": 9.5
         }
       ],
-      "spreadDegrees": 4,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 4.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "europe-north",
-      "name": "Scandinavia and the Baltic",
+      "names": {
+        "en": "Scandinavia and the Baltic"
+      },
+      "i18nKey": "geography.districts.europe-north",
       "points": [
         {
           "lat": 60.5,
@@ -324,13 +381,16 @@
           "lon": 24.5
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "europe-east",
-      "name": "Central and Eastern Europe",
+      "names": {
+        "en": "Central and Eastern Europe"
+      },
+      "i18nKey": "geography.districts.europe-east",
       "points": [
         {
           "lat": 50.5,
@@ -349,13 +409,16 @@
           "lon": 20.5
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "europe-mountains",
-      "name": "The Alps and the Pyrenees",
+      "names": {
+        "en": "The Alps and the Pyrenees"
+      },
+      "i18nKey": "geography.districts.europe-mountains",
       "points": [
         {
           "lat": 46.5,
@@ -366,13 +429,16 @@
           "lon": 0.7
         }
       ],
-      "spreadDegrees": 3,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 3.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "mediterranean",
-      "name": "Around the Mediterranean",
+      "names": {
+        "en": "Around the Mediterranean"
+      },
+      "i18nKey": "geography.districts.mediterranean",
       "points": [
         {
           "lat": 38.5,
@@ -383,13 +449,16 @@
           "lon": 3.0
         }
       ],
-      "spreadDegrees": 5,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 5.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "mediterranean-sea",
-      "name": "The Mediterranean Sea",
+      "names": {
+        "en": "The Mediterranean Sea"
+      },
+      "i18nKey": "geography.districts.mediterranean-sea",
       "points": [
         {
           "lat": 35.4,
@@ -408,13 +477,16 @@
           "lon": 16.5
         }
       ],
-      "spreadDegrees": 3,
-      "isGeneric": false,
-      "isMarine": true
+      "spreadDegrees": 3.0,
+      "surface": "water",
+      "generic": false
     },
     {
       "id": "siberia",
-      "name": "Siberia and the northern forests",
+      "names": {
+        "en": "Siberia and the northern forests"
+      },
+      "i18nKey": "geography.districts.siberia",
       "points": [
         {
           "lat": 60.0,
@@ -425,13 +497,16 @@
           "lon": 125.0
         }
       ],
-      "spreadDegrees": 10,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 10.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "central-asia",
-      "name": "The steppes of Central Asia",
+      "names": {
+        "en": "The steppes of Central Asia"
+      },
+      "i18nKey": "geography.districts.central-asia",
       "points": [
         {
           "lat": 47.0,
@@ -442,13 +517,16 @@
           "lon": 100.0
         }
       ],
-      "spreadDegrees": 7,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 7.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "middle-east",
-      "name": "The Middle East",
+      "names": {
+        "en": "The Middle East"
+      },
+      "i18nKey": "geography.districts.middle-east",
       "points": [
         {
           "lat": 24.0,
@@ -459,13 +537,16 @@
           "lon": 53.0
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "himalaya",
-      "name": "The Himalayas",
+      "names": {
+        "en": "The Himalayas"
+      },
+      "i18nKey": "geography.districts.himalaya",
       "points": [
         {
           "lat": 29.0,
@@ -476,39 +557,48 @@
           "lon": 77.0
         }
       ],
-      "spreadDegrees": 4,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 4.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "china-forest",
-      "name": "The forests of China",
+      "names": {
+        "en": "The forests of China"
+      },
+      "i18nKey": "geography.districts.china-forest",
       "points": [
         {
           "lat": 31.0,
           "lon": 103.5
         }
       ],
-      "spreadDegrees": 4,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 4.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "japan-korea",
-      "name": "Japan and Korea",
+      "names": {
+        "en": "Japan and Korea"
+      },
+      "i18nKey": "geography.districts.japan-korea",
       "points": [
         {
           "lat": 36.5,
           "lon": 138.0
         }
       ],
-      "spreadDegrees": 3,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 3.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "india",
-      "name": "India and South Asia",
+      "names": {
+        "en": "India and South Asia"
+      },
+      "i18nKey": "geography.districts.india",
       "points": [
         {
           "lat": 22.0,
@@ -519,13 +609,16 @@
           "lon": 88.0
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 6.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "southeast-asia",
-      "name": "The rainforests of Southeast Asia",
+      "names": {
+        "en": "The rainforests of Southeast Asia"
+      },
+      "i18nKey": "geography.districts.southeast-asia",
       "points": [
         {
           "lat": 1.0,
@@ -540,13 +633,16 @@
           "lon": 105.0
         }
       ],
-      "spreadDegrees": 7,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 7.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "australia-outback",
-      "name": "The Australian outback",
+      "names": {
+        "en": "The Australian outback"
+      },
+      "i18nKey": "geography.districts.australia-outback",
       "points": [
         {
           "lat": -25.5,
@@ -557,13 +653,16 @@
           "lon": 121.0
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "australia-forest",
-      "name": "The forests of eastern Australia",
+      "names": {
+        "en": "The forests of eastern Australia"
+      },
+      "i18nKey": "geography.districts.australia-forest",
       "points": [
         {
           "lat": -28.5,
@@ -574,13 +673,16 @@
           "lon": 150.5
         }
       ],
-      "spreadDegrees": 4,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 4.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "tasmania",
-      "name": "Tasmania",
+      "names": {
+        "en": "Tasmania"
+      },
+      "i18nKey": "geography.districts.tasmania",
       "points": [
         {
           "lat": -42.0,
@@ -588,12 +690,15 @@
         }
       ],
       "spreadDegrees": 1.5,
-      "isGeneric": false,
-      "isMarine": false
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "new-zealand",
-      "name": "New Zealand",
+      "names": {
+        "en": "New Zealand"
+      },
+      "i18nKey": "geography.districts.new-zealand",
       "points": [
         {
           "lat": -42.5,
@@ -601,12 +706,15 @@
         }
       ],
       "spreadDegrees": 2.5,
-      "isGeneric": false,
-      "isMarine": false
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "pacific-islands",
-      "name": "The Pacific islands",
+      "names": {
+        "en": "The Pacific islands"
+      },
+      "i18nKey": "geography.districts.pacific-islands",
       "points": [
         {
           "lat": -17.5,
@@ -617,26 +725,32 @@
           "lon": 134.5
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "papua",
-      "name": "New Guinea",
+      "names": {
+        "en": "New Guinea"
+      },
+      "i18nKey": "geography.districts.papua",
       "points": [
         {
           "lat": -5.5,
           "lon": 143.0
         }
       ],
-      "spreadDegrees": 3,
-      "isGeneric": false,
-      "isMarine": false
+      "spreadDegrees": 3.0,
+      "surface": "land",
+      "generic": false
     },
     {
       "id": "ocean-atlantic",
-      "name": "The Atlantic Ocean",
+      "names": {
+        "en": "The Atlantic Ocean"
+      },
+      "i18nKey": "geography.districts.ocean-atlantic",
       "points": [
         {
           "lat": 32.0,
@@ -647,13 +761,16 @@
           "lon": -25.0
         }
       ],
-      "spreadDegrees": 12,
-      "isGeneric": true,
-      "isMarine": true
+      "spreadDegrees": 12.0,
+      "surface": "water",
+      "generic": true
     },
     {
       "id": "ocean-pacific",
-      "name": "The Pacific Ocean",
+      "names": {
+        "en": "The Pacific Ocean"
+      },
+      "i18nKey": "geography.districts.ocean-pacific",
       "points": [
         {
           "lat": 12.0,
@@ -664,26 +781,32 @@
           "lon": -130.0
         }
       ],
-      "spreadDegrees": 14,
-      "isGeneric": true,
-      "isMarine": true
+      "spreadDegrees": 14.0,
+      "surface": "water",
+      "generic": true
     },
     {
       "id": "ocean-indian",
-      "name": "The Indian Ocean",
+      "names": {
+        "en": "The Indian Ocean"
+      },
+      "i18nKey": "geography.districts.ocean-indian",
       "points": [
         {
           "lat": -12.0,
           "lon": 75.0
         }
       ],
-      "spreadDegrees": 10,
-      "isGeneric": true,
-      "isMarine": true
+      "spreadDegrees": 10.0,
+      "surface": "water",
+      "generic": true
     },
     {
       "id": "coral-reef",
-      "name": "Coral reefs",
+      "names": {
+        "en": "Coral reefs"
+      },
+      "i18nKey": "geography.districts.coral-reef",
       "points": [
         {
           "lat": -18.2,
@@ -698,13 +821,16 @@
           "lon": 120.0
         }
       ],
-      "spreadDegrees": 6,
-      "isGeneric": true,
-      "isMarine": true
+      "spreadDegrees": 6.0,
+      "surface": "water",
+      "generic": true
     },
     {
       "id": "open-ocean",
-      "name": "The open ocean",
+      "names": {
+        "en": "The open ocean"
+      },
+      "i18nKey": "geography.districts.open-ocean",
       "points": [
         {
           "lat": -40.0,
@@ -719,13 +845,16 @@
           "lon": 90.0
         }
       ],
-      "spreadDegrees": 14,
-      "isGeneric": true,
-      "isMarine": true
+      "spreadDegrees": 14.0,
+      "surface": "water",
+      "generic": true
     },
     {
       "id": "rivers-lakes",
-      "name": "Rivers and lakes",
+      "names": {
+        "en": "Rivers and lakes"
+      },
+      "i18nKey": "geography.districts.rivers-lakes",
       "points": [
         {
           "lat": -2.0,
@@ -740,13 +869,16 @@
           "lon": -91.0
         }
       ],
-      "spreadDegrees": 8,
-      "isGeneric": true,
-      "isMarine": false
+      "spreadDegrees": 8.0,
+      "surface": "land",
+      "generic": true
     },
     {
       "id": "worldwide",
-      "name": "Many places around the world",
+      "names": {
+        "en": "Many places around the world"
+      },
+      "i18nKey": "geography.districts.worldwide",
       "points": [
         {
           "lat": 20.0,
@@ -761,9 +893,109 @@
           "lon": 130.0
         }
       ],
-      "spreadDegrees": 20,
-      "isGeneric": true,
-      "isMarine": false
+      "spreadDegrees": 20.0,
+      "surface": "land",
+      "generic": true
+    },
+    {
+      "id": "north-america-southeast-wetlands",
+      "names": {
+        "en": "Wetlands of the southeastern United States"
+      },
+      "i18nKey": "geography.districts.north-america-southeast-wetlands",
+      "points": [
+        {
+          "lat": 25.6,
+          "lon": -80.7
+        },
+        {
+          "lat": 30.1,
+          "lon": -91.2
+        }
+      ],
+      "spreadDegrees": 3,
+      "surface": "land",
+      "generic": false
+    },
+    {
+      "id": "australia-north",
+      "names": {
+        "en": "Tropical northern Australia"
+      },
+      "i18nKey": "geography.districts.australia-north",
+      "points": [
+        {
+          "lat": -16.2,
+          "lon": 145.4
+        },
+        {
+          "lat": -13.1,
+          "lon": 131.0
+        }
+      ],
+      "spreadDegrees": 4,
+      "surface": "land",
+      "generic": false
+    },
+    {
+      "id": "new-guinea",
+      "names": {
+        "en": "New Guinea"
+      },
+      "i18nKey": "geography.districts.new-guinea",
+      "points": [
+        {
+          "lat": -5.5,
+          "lon": 145.0
+        },
+        {
+          "lat": -7.0,
+          "lon": 141.0
+        }
+      ],
+      "spreadDegrees": 5,
+      "surface": "land",
+      "generic": false
+    },
+    {
+      "id": "borneo-sumatra",
+      "names": {
+        "en": "Borneo and Sumatra"
+      },
+      "i18nKey": "geography.districts.borneo-sumatra",
+      "points": [
+        {
+          "lat": 0.8,
+          "lon": 114.0
+        },
+        {
+          "lat": 0.2,
+          "lon": 101.7
+        }
+      ],
+      "spreadDegrees": 6,
+      "surface": "land",
+      "generic": false
+    },
+    {
+      "id": "philippines-forest",
+      "names": {
+        "en": "Forests of the Philippines"
+      },
+      "i18nKey": "geography.districts.philippines-forest",
+      "points": [
+        {
+          "lat": 9.8,
+          "lon": 124.2
+        },
+        {
+          "lat": 7.2,
+          "lon": 125.3
+        }
+      ],
+      "spreadDegrees": 4,
+      "surface": "land",
+      "generic": false
     }
   ]
 }
