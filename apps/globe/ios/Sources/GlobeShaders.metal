@@ -29,6 +29,8 @@ struct Uniforms {
     float shadowRadius;
     /// Where the waterline of a slab sits this frame.
     float slabBaseRadius;
+    /// What to scale the water sphere by, so it meets the foot of that slab.
+    float surfaceScale;
     /// The colour over the deepest trench; `oceanColor` is the shallow end.
     float4 deepOceanColor;
     int hasBathymetry;
@@ -130,7 +132,7 @@ static inline float3 lifted(float3 position, bool selected, constant Uniforms &u
 vertex OceanInOut ocean_vertex(uint vertexID [[vertex_id]],
                                const device OceanVertex *vertices [[buffer(0)]],
                                constant Uniforms &uniforms [[buffer(1)]]) {
-    float3 position = float3(vertices[vertexID].position);
+    float3 position = float3(vertices[vertexID].position) * uniforms.surfaceScale;
     OceanInOut out;
     out.position = uniforms.viewProjection * float4(position, 1.0);
     out.normal = normalize(position);

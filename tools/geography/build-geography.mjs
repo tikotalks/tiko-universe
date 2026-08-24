@@ -17,7 +17,7 @@
 
 import { createHash } from 'node:crypto'
 import {
-  MAX_MESH_EDGE_DEG, MIN_RING_AREA_DEG2, SIMPLIFY_TOLERANCE_DEG, SMOOTH_PASSES,
+  MAX_MESH_EDGE_DEG, MIN_RING_AREA_DEG2, SIMPLIFY_TOLERANCE_DEG, SMOOTH_PASSES, ringArea,
   loadEarcut, polygonsOf, prepareRing, triangulatePolygon
 } from './geometry.mjs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'

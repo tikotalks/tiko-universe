@@ -66,6 +66,9 @@ struct GlobeUniforms {
     /// Where the waterline of a country's slab sits this frame. A fixed slice
     /// of the globe is a cliff once a child is standing on one island.
     var slabBaseRadius: Float
+    /// What to scale the water sphere by, so the sea always meets the foot of
+    /// that cliff rather than leaving a gap you can see through.
+    var surfaceScale: Float
     /// The sea over the deepest trench, and whether there is a depth image to
     /// read at all.
     var deepOceanColor: SIMD4<Float>
@@ -699,6 +702,14 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
 
     static let sampleCount = 4
 
+    /// Where the sea surface sits this frame: just under the foot of the land,
+    /// wherever that has moved to. Left behind, the water shows a gap at every
+    /// coast that a child can see straight through — the globe stops being
+    /// solid, which is the one thing it always has to be.
+    private var seaRadius: Float {
+        min(GlobeMeshBuilder.landRadius - 0.0004, slabBaseRadius - 0.0007)
+    }
+
     /// How deep a country's slab is this frame. Baked at full depth and pulled
     /// back up as the child comes closer: from the whole Earth the thickness is
     /// what makes the countries read as pieces laid on a ball, and from inside
@@ -799,8 +810,9 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             highlightColor: appearance.highlight,
             selectedBorderColor: appearance.selectedBorder,
             shadowColor: appearance.shadow,
-            shadowRadius: GlobeMeshBuilder.shadowRadius,
+            shadowRadius: max(GlobeMeshBuilder.shadowRadius, seaRadius + 0.0003),
             slabBaseRadius: slabBaseRadius,
+            surfaceScale: seaRadius / GlobeMeshBuilder.oceanRadius,
             deepOceanColor: appearance.deepOcean,
             hasBathymetry: bathymetry == nil ? 0 : 1,
             flatShading: 0
@@ -862,6 +874,8 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             lakeUniforms.oceanColor = appearance.lake
             lakeUniforms.hasBathymetry = 0
             lakeUniforms.flatShading = 1
+            // A lake sits on the land it is in, not on the sea's surface.
+            lakeUniforms.surfaceScale = 1
             encoder.setRenderPipelineState(oceanPipeline)
             encoder.setCullMode(.none)
             encoder.setVertexBuffer(lakeVertices, offset: 0, index: 0)

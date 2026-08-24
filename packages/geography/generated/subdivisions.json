@@ -7,7 +7,7 @@
       "name": "Alberta",
       "parent": "CAN",
       "climate": "steppe",
-      "labelSpanDegrees": 9.4011,
+      "labelSpanDegrees": 9.6794,
       "lat": 55.2816,
       "lon": -115
     },
@@ -16,7 +16,7 @@
       "name": "British Columbia",
       "parent": "CAN",
       "climate": "temperate",
-      "labelSpanDegrees": 11.2019,
+      "labelSpanDegrees": 11.2094,
       "lat": 54.6943,
       "lon": -124.662
     },
@@ -25,7 +25,7 @@
       "name": "Manitoba",
       "parent": "CAN",
       "climate": "boreal",
-      "labelSpanDegrees": 9.4122,
+      "labelSpanDegrees": 9.5666,
       "lat": 54.85,
       "lon": -97.3828
     },
@@ -34,7 +34,7 @@
       "name": "New Brunswick",
       "parent": "CAN",
       "climate": "temperate",
-      "labelSpanDegrees": 2.915,
+      "labelSpanDegrees": 2.9138,
       "lat": 46.5822,
       "lon": -66.4558
     },
@@ -43,7 +43,7 @@
       "name": "Newfoundland and Labrador",
       "parent": "CAN",
       "climate": "boreal",
-      "labelSpanDegrees": 6.291,
+      "labelSpanDegrees": 6.283,
       "lat": 48.6598,
       "lon": -56.2169
     },
@@ -52,7 +52,7 @@
       "name": "Nova Scotia",
       "parent": "CAN",
       "climate": "temperate",
-      "labelSpanDegrees": 2.2327,
+      "labelSpanDegrees": 2.2337,
       "lat": 45.2293,
       "lon": -62.8113
     },
@@ -61,7 +61,7 @@
       "name": "Northwest Territories",
       "parent": "CAN",
       "climate": "polar",
-      "labelSpanDegrees": 14.5414,
+      "labelSpanDegrees": 14.5573,
       "lat": 64.0831,
       "lon": -119.942
     },
@@ -70,7 +70,7 @@
       "name": "Nunavut",
       "parent": "CAN",
       "climate": "polar",
-      "labelSpanDegrees": 13.1094,
+      "labelSpanDegrees": 13.1633,
       "lat": 64.3853,
       "lon": -97.1443
     },
@@ -79,7 +79,7 @@
       "name": "Ontario",
       "parent": "CAN",
       "climate": "boreal",
-      "labelSpanDegrees": 11.1481,
+      "labelSpanDegrees": 11.1578,
       "lat": 50.5244,
       "lon": -84.7943
     },
@@ -88,7 +88,7 @@
       "name": "Prince Edward Island",
       "parent": "CAN",
       "climate": "temperate",
-      "labelSpanDegrees": 0.8139,
+      "labelSpanDegrees": 0.8142,
       "lat": 46.3417,
       "lon": -63.3862
     },
@@ -97,7 +97,7 @@
       "name": "Québec",
       "parent": "CAN",
       "climate": "boreal",
-      "labelSpanDegrees": 13.8876,
+      "labelSpanDegrees": 13.8931,
       "lat": 52.2593,
       "lon": -73.7168
     },
@@ -106,7 +106,7 @@
       "name": "Saskatchewan",
       "parent": "CAN",
       "climate": "steppe",
-      "labelSpanDegrees": 9.2001,
+      "labelSpanDegrees": 9.4978,
       "lat": 54.4965,
       "lon": -105.682
     },
@@ -115,7 +115,7 @@
       "name": "Yukon",
       "parent": "CAN",
       "climate": "polar",
-      "labelSpanDegrees": 9.3464,
+      "labelSpanDegrees": 9.3662,
       "lat": 63.6088,
       "lon": -135.7
     },
@@ -124,7 +124,7 @@
       "name": "Alaska",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 16.3535,
+      "labelSpanDegrees": 16.3532,
       "lat": 65.3609,
       "lon": -151.604
     },
@@ -133,7 +133,7 @@
       "name": "Alabama",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.5642,
+      "labelSpanDegrees": 3.5918,
       "lat": 32.8551,
       "lon": -86.7184
     },
@@ -142,7 +142,7 @@
       "name": "Arkansas",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.6513,
+      "labelSpanDegrees": 3.6828,
       "lat": 34.7563,
       "lon": -92.1428
     },
@@ -151,7 +151,7 @@
       "name": "Arizona",
       "parent": "USA",
       "climate": "desert",
-      "labelSpanDegrees": 5.2771,
+      "labelSpanDegrees": 5.3766,
       "lat": 34.3046,
       "lon": -111.935
     },
@@ -160,7 +160,7 @@
       "name": "California",
       "parent": "USA",
       "climate": "mediterranean",
-      "labelSpanDegrees": 6.4277,
+      "labelSpanDegrees": 6.4463,
       "lat": 36.7496,
       "lon": -119.591
     },
@@ -169,7 +169,7 @@
       "name": "Colorado",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 5.0473,
+      "labelSpanDegrees": 5.3017,
       "lat": 38.9998,
       "lon": -105.543
     },
@@ -178,7 +178,7 @@
       "name": "Connecticut",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 1.1612,
+      "labelSpanDegrees": 1.17,
       "lat": 41.6486,
       "lon": -72.7594
     },
@@ -187,7 +187,7 @@
       "name": "District of Columbia",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 0.1154,
+      "labelSpanDegrees": 0.1168,
       "lat": 38.8922,
       "lon": -77.0113
     },
@@ -196,7 +196,7 @@
       "name": "Delaware",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 0.719,
+      "labelSpanDegrees": 0.7405,
       "lat": 38.8657,
       "lon": -75.4112
     },
@@ -205,7 +205,7 @@
       "name": "Florida",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.6717,
+      "labelSpanDegrees": 3.6768,
       "lat": 28.1568,
       "lon": -81.6228
     },
@@ -214,7 +214,7 @@
       "name": "Georgia",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.8152,
+      "labelSpanDegrees": 3.8271,
       "lat": 32.8547,
       "lon": -83.4078
     },
@@ -223,7 +223,7 @@
       "name": "Hawaii",
       "parent": "USA",
       "climate": "tropical",
-      "labelSpanDegrees": 0.9425,
+      "labelSpanDegrees": 0.9427,
       "lat": 21.4919,
       "lon": -157.999
     },
@@ -232,7 +232,7 @@
       "name": "Iowa",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.9581,
+      "labelSpanDegrees": 3.9647,
       "lat": 42.0423,
       "lon": -93.3891
     },
@@ -241,7 +241,7 @@
       "name": "Idaho",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.8539,
+      "labelSpanDegrees": 4.9398,
       "lat": 43.7825,
       "lon": -114.133
     },
@@ -250,7 +250,7 @@
       "name": "Illinois",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.9239,
+      "labelSpanDegrees": 3.929,
       "lat": 39.946,
       "lon": -89.1991
     },
@@ -259,7 +259,7 @@
       "name": "Indiana",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.1161,
+      "labelSpanDegrees": 3.1456,
       "lat": 39.8874,
       "lon": -86.1396
     },
@@ -268,7 +268,7 @@
       "name": "Kansas",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.5533,
+      "labelSpanDegrees": 4.6787,
       "lat": 38.5,
       "lon": -98.3309
     },
@@ -277,7 +277,7 @@
       "name": "Kentucky",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.2546,
+      "labelSpanDegrees": 3.2561,
       "lat": 37.3994,
       "lon": -85.5729
     },
@@ -286,7 +286,7 @@
       "name": "Louisiana",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.3539,
+      "labelSpanDegrees": 3.3568,
       "lat": 30.5274,
       "lon": -91.9991
     },
@@ -295,7 +295,7 @@
       "name": "Massachusetts",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 1.5001,
+      "labelSpanDegrees": 1.513,
       "lat": 42.3739,
       "lon": -71.9993
     },
@@ -304,7 +304,7 @@
       "name": "Maryland",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 1.5553,
+      "labelSpanDegrees": 1.6129,
       "lat": 39.3874,
       "lon": -77.0454
     },
@@ -313,7 +313,7 @@
       "name": "Maine",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 3.0848,
+      "labelSpanDegrees": 3.0897,
       "lat": 45.148,
       "lon": -69.1973
     },
@@ -322,7 +322,7 @@
       "name": "Michigan",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 3.4562,
+      "labelSpanDegrees": 3.4579,
       "lat": 43.4343,
       "lon": -84.9479
     },
@@ -331,7 +331,7 @@
       "name": "Minnesota",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 5.0121,
+      "labelSpanDegrees": 5.0452,
       "lat": 46.0592,
       "lon": -93.364
     },
@@ -340,7 +340,7 @@
       "name": "Missouri",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 4.2845,
+      "labelSpanDegrees": 4.3268,
       "lat": 38.5487,
       "lon": -92.446
     },
@@ -349,7 +349,7 @@
       "name": "Mississippi",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.4515,
+      "labelSpanDegrees": 3.4513,
       "lat": 32.8657,
       "lon": -89.7189
     },
@@ -358,7 +358,7 @@
       "name": "Montana",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 6.5528,
+      "labelSpanDegrees": 6.7099,
       "lat": 46.9965,
       "lon": -110.044
     },
@@ -367,7 +367,7 @@
       "name": "North Carolina",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.5677,
+      "labelSpanDegrees": 3.5663,
       "lat": 35.6152,
       "lon": -78.866
     },
@@ -376,7 +376,7 @@
       "name": "North Dakota",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.553,
+      "labelSpanDegrees": 4.6594,
       "lat": 47.4675,
       "lon": -100.302
     },
@@ -385,7 +385,7 @@
       "name": "Nebraska",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.5992,
+      "labelSpanDegrees": 4.6492,
       "lat": 41.5002,
       "lon": -99.6855
     },
@@ -394,7 +394,7 @@
       "name": "New Hampshire",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 1.638,
+      "labelSpanDegrees": 1.6399,
       "lat": 43.5993,
       "lon": -71.6301
     },
@@ -403,7 +403,7 @@
       "name": "New Jersey",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 1.4364,
+      "labelSpanDegrees": 1.437,
       "lat": 40.0449,
       "lon": -74.4653
     },
@@ -412,7 +412,7 @@
       "name": "New Mexico",
       "parent": "USA",
       "climate": "desert",
-      "labelSpanDegrees": 5.4093,
+      "labelSpanDegrees": 5.5602,
       "lat": 34.5002,
       "lon": -106.024
     },
@@ -421,7 +421,7 @@
       "name": "Nevada",
       "parent": "USA",
       "climate": "desert",
-      "labelSpanDegrees": 5.325,
+      "labelSpanDegrees": 5.478,
       "lat": 39.4299,
       "lon": -117.02
     },
@@ -430,7 +430,7 @@
       "name": "New York",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.6705,
+      "labelSpanDegrees": 3.6777,
       "lat": 43.1988,
       "lon": -75.3242
     },
@@ -439,7 +439,7 @@
       "name": "Ohio",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.3497,
+      "labelSpanDegrees": 3.3694,
       "lat": 40.0924,
       "lon": -82.6719
     },
@@ -448,7 +448,7 @@
       "name": "Oklahoma",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.2225,
+      "labelSpanDegrees": 4.2372,
       "lat": 35.452,
       "lon": -97.1309
     },
@@ -457,7 +457,7 @@
       "name": "Oregon",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 5.2953,
+      "labelSpanDegrees": 5.3115,
       "lat": 43.8333,
       "lon": -120.386
     },
@@ -466,7 +466,7 @@
       "name": "Pennsylvania",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.4928,
+      "labelSpanDegrees": 3.5402,
       "lat": 40.8601,
       "lon": -77.6094
     },
@@ -475,7 +475,7 @@
       "name": "Rhode Island",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 0.5086,
+      "labelSpanDegrees": 0.5157,
       "lat": 41.6242,
       "lon": -71.5082
     },
@@ -484,7 +484,7 @@
       "name": "South Carolina",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 2.7834,
+      "labelSpanDegrees": 2.792,
       "lat": 33.8578,
       "lon": -80.6471
     },
@@ -493,7 +493,7 @@
       "name": "South Dakota",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 4.6754,
+      "labelSpanDegrees": 4.7367,
       "lat": 44.4711,
       "lon": -100.255
     },
@@ -502,7 +502,7 @@
       "name": "Tennessee",
       "parent": "USA",
       "climate": "subtropical",
-      "labelSpanDegrees": 3.2955,
+      "labelSpanDegrees": 3.2983,
       "lat": 35.7514,
       "lon": -86.3415
     },
@@ -511,7 +511,7 @@
       "name": "Texas",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 8.0579,
+      "labelSpanDegrees": 8.0651,
       "lat": 31.131,
       "lon": -98.7607
     },
@@ -520,7 +520,7 @@
       "name": "Utah",
       "parent": "USA",
       "climate": "desert",
-      "labelSpanDegrees": 4.6272,
+      "labelSpanDegrees": 4.7918,
       "lat": 39.5007,
       "lon": -111.544
     },
@@ -529,7 +529,7 @@
       "name": "Virginia",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 3.2001,
+      "labelSpanDegrees": 3.2094,
       "lat": 37.7403,
       "lon": -78.2431
     },
@@ -538,7 +538,7 @@
       "name": "Vermont",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 1.6615,
+      "labelSpanDegrees": 1.6635,
       "lat": 44.0886,
       "lon": -72.7317
     },
@@ -547,7 +547,7 @@
       "name": "Washington",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 4.4863,
+      "labelSpanDegrees": 4.5402,
       "lat": 47.4865,
       "lon": -120.361
     },
@@ -556,7 +556,7 @@
       "name": "Wisconsin",
       "parent": "USA",
       "climate": "boreal",
-      "labelSpanDegrees": 4.0453,
+      "labelSpanDegrees": 4.0481,
       "lat": 44.3709,
       "lon": -89.5831
     },
@@ -565,7 +565,7 @@
       "name": "West Virginia",
       "parent": "USA",
       "climate": "temperate",
-      "labelSpanDegrees": 2.5474,
+      "labelSpanDegrees": 2.5459,
       "lat": 38.6422,
       "lon": -80.7128
     },
@@ -574,7 +574,7 @@
       "name": "Wyoming",
       "parent": "USA",
       "climate": "steppe",
-      "labelSpanDegrees": 5.0452,
+      "labelSpanDegrees": 5.2994,
       "lat": 42.9999,
       "lon": -107.552
     }

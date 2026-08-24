@@ -14,6 +14,16 @@ export const SIMPLIFY_TOLERANCE_DEG = 0.012
  * than surveyed. Purely cosmetic, and recorded in meta.json as such.
  */
 export const SMOOTH_PASSES = 1
+/**
+ * How far corner-rounding may move a point, in degrees — about three
+ * kilometres. Chaikin cuts every corner by a quarter of the segment either
+ * side of it, which is what a wandering coastline wants and is a disaster on a
+ * long straight border: Algeria and Libya share one, each rounds its own copy
+ * of it, and the two versions part company far enough to see the sea through
+ * the gap. Capped, the rounding still shapes a coast and leaves a ruled border
+ * where it was.
+ */
+export const MAX_SMOOTH_SHIFT_DEG = 0.03
 /** Rings smaller than this are dropped. Vatican City is ~3.6e-5, so it stays. */
 export const MIN_RING_AREA_DEG2 = 2e-5
 /**
@@ -75,8 +85,12 @@ export function smoothRing(points) {
   for (let i = 0; i < points.length; i++) {
     const [ax, ay] = points[i]
     const [bx, by] = points[(i + 1) % points.length]
-    smoothed.push([ax * 0.75 + bx * 0.25, ay * 0.75 + by * 0.25])
-    smoothed.push([ax * 0.25 + bx * 0.75, ay * 0.25 + by * 0.75])
+    const dx = bx - ax
+    const dy = by - ay
+    const length = Math.hypot(dx, dy)
+    const cut = length > 0 ? Math.min(0.25, MAX_SMOOTH_SHIFT_DEG / length) : 0.25
+    smoothed.push([ax + dx * cut, ay + dy * cut])
+    smoothed.push([bx - dx * cut, by - dy * cut])
   }
   return smoothed
 }

@@ -30,11 +30,11 @@
     "countries": 242,
     "rings": 1632,
     "outlinePoints": 137422,
-    "meshVertices": 262081,
-    "meshTriangles": 383359
+    "meshVertices": 275338,
+    "meshTriangles": 409786
   },
   "bytes": {
-    "geometryBin": 7828532
+    "geometryBin": 8251712
   },
   "water": {
     "formatVersion": 1,

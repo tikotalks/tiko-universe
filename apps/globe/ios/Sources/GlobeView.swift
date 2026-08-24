@@ -205,12 +205,15 @@ struct GlobeView: View {
     /// the country list is the route that does not need a fingertip at all.
     private func drawMarkers(in context: inout GraphicsContext) {
         guard controller.mode != .countries else { return }
-        if controller.mode == .capitals {
-            drawPlaces(in: &context)
-            return
-        }
+        // Split by what each marker *is*, not by the mode being switched to.
+        // A city on its way out is still a city: drawn by the incoming mode's
+        // renderer it has no picture to show and falls back to its glyph, which
+        // is how switching from Cities to Animals filled the globe with giant
+        // town-hall symbols for a third of a second.
+        drawPlaces(in: &context)
+
         let fullSize = controller.markerSize
-        for placed in controller.markers {
+        for placed in controller.markers where placed.entity.kind != .capital && placed.entity.kind != .city {
             // Eased so a marker lands rather than simply appearing at full size.
             let t = placed.presence
             let eased = 1 - pow(1 - t, 3)
@@ -254,7 +257,7 @@ struct GlobeView: View {
     /// *is* the point.
     private func drawPlaces(in context: inout GraphicsContext) {
         let scale = min(max(controller.markerScale, 0.8), 2.2)
-        for placed in controller.markers {
+        for placed in controller.markers where placed.entity.kind == .capital || placed.entity.kind == .city {
             let isCapital = placed.entity.kind == .capital
             let eased = 1 - pow(1 - placed.presence, 3)
             let radius = (isCapital ? 7.0 : 4.5) * scale * (0.5 + 0.5 * eased)
