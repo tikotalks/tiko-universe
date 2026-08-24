@@ -1,0 +1,5387 @@
+{
+  "schemaVersion": 1,
+  "note": "Landmarks by country, authored by hand. Every country has at least one. Coordinates are the landmark itself, to three decimals. Tier decides how far out it shows: 1 is the Eiffel Tower, 2 is well known, 3 is a good local landmark. A landmark with no picture in the media library still appears, drawn with its glyph.",
+  "reviewStates": [
+    "draft",
+    "verified"
+  ],
+  "tiers": {
+    "1": "known worldwide",
+    "2": "well known",
+    "3": "local"
+  },
+  "countries": {
+    "FRA": {
+      "country": "France",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Eiffel Tower",
+          "lat": 48.858,
+          "lon": 2.294,
+          "glyph": "🗼",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Louvre",
+          "lat": 48.861,
+          "lon": 2.336,
+          "glyph": "🏛️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Notre-Dame de Paris",
+          "lat": 48.853,
+          "lon": 2.35,
+          "glyph": "⛪",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Arc de Triomphe",
+          "lat": 48.874,
+          "lon": 2.295,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Sacré-Cœur",
+          "lat": 48.887,
+          "lon": 2.343,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Palace of Versailles",
+          "lat": 48.805,
+          "lon": 2.12,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Mont Saint-Michel",
+          "lat": 48.636,
+          "lon": -1.511,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Pont du Gard",
+          "lat": 43.947,
+          "lon": 4.535,
+          "glyph": "🌉",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GBR": {
+      "country": "United Kingdom",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Big Ben",
+          "lat": 51.501,
+          "lon": -0.125,
+          "glyph": "🕰️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Tower Bridge",
+          "lat": 51.506,
+          "lon": -0.075,
+          "glyph": "🌉",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Stonehenge",
+          "lat": 51.179,
+          "lon": -1.826,
+          "glyph": "🪨",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Buckingham Palace",
+          "lat": 51.501,
+          "lon": -0.142,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Edinburgh Castle",
+          "lat": 55.949,
+          "lon": -3.2,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Giant's Causeway",
+          "lat": 55.241,
+          "lon": -6.512,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ITA": {
+      "country": "Italy",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Colosseum",
+          "lat": 41.89,
+          "lon": 12.492,
+          "glyph": "🏛️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Leaning Tower of Pisa",
+          "lat": 43.723,
+          "lon": 10.397,
+          "glyph": "🗼",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "St Mark's Square",
+          "lat": 45.434,
+          "lon": 12.339,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Trevi Fountain",
+          "lat": 41.901,
+          "lon": 12.483,
+          "glyph": "⛲",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Mount Vesuvius",
+          "lat": 40.822,
+          "lon": 14.426,
+          "glyph": "🌋",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Duomo of Florence",
+          "lat": 43.773,
+          "lon": 11.256,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "VAT": {
+      "country": "Vatican City",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "St Peter's Basilica",
+          "lat": 41.902,
+          "lon": 12.454,
+          "glyph": "⛪",
+          "tier": 1,
+          "note": null
+        }
+      ]
+    },
+    "ESP": {
+      "country": "Spain",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sagrada Família",
+          "lat": 41.404,
+          "lon": 2.174,
+          "glyph": "⛪",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Alhambra",
+          "lat": 37.176,
+          "lon": -3.588,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Park Güell",
+          "lat": 41.414,
+          "lon": 2.153,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Seville Cathedral",
+          "lat": 37.386,
+          "lon": -5.993,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PRT": {
+      "country": "Portugal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Belém Tower",
+          "lat": 38.692,
+          "lon": -9.216,
+          "glyph": "🗼",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Pena Palace",
+          "lat": 38.788,
+          "lon": -9.391,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DEU": {
+      "country": "Germany",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Brandenburg Gate",
+          "lat": 52.516,
+          "lon": 13.378,
+          "glyph": "🏛️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Neuschwanstein Castle",
+          "lat": 47.558,
+          "lon": 10.75,
+          "glyph": "🏰",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Cologne Cathedral",
+          "lat": 50.941,
+          "lon": 6.958,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "NLD": {
+      "country": "Netherlands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Windmills of Kinderdijk",
+          "lat": 51.884,
+          "lon": 4.64,
+          "glyph": "🌬️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Rijksmuseum",
+          "lat": 52.36,
+          "lon": 4.885,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Anne Frank House",
+          "lat": 52.375,
+          "lon": 4.884,
+          "glyph": "🏠",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Delta Works",
+          "lat": 51.622,
+          "lon": 3.842,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BEL": {
+      "country": "Belgium",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grand-Place of Brussels",
+          "lat": 50.847,
+          "lon": 4.352,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Atomium",
+          "lat": 50.895,
+          "lon": 4.341,
+          "glyph": "⚛️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "LUX": {
+      "country": "Luxembourg",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Luxembourg Old Town",
+          "lat": 49.611,
+          "lon": 6.131,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CHE": {
+      "country": "Switzerland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Matterhorn",
+          "lat": 45.977,
+          "lon": 7.658,
+          "glyph": "🏔️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Chapel Bridge",
+          "lat": 47.052,
+          "lon": 8.308,
+          "glyph": "🌉",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AUT": {
+      "country": "Austria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Schönbrunn Palace",
+          "lat": 48.185,
+          "lon": 16.312,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Hallstatt",
+          "lat": 47.562,
+          "lon": 13.649,
+          "glyph": "🏔️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "IRL": {
+      "country": "Ireland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Cliffs of Moher",
+          "lat": 52.972,
+          "lon": -9.427,
+          "glyph": "🌊",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Rock of Cashel",
+          "lat": 52.52,
+          "lon": -7.891,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ISL": {
+      "country": "Iceland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Geysir",
+          "lat": 64.313,
+          "lon": -20.302,
+          "glyph": "♨️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Gullfoss",
+          "lat": 64.327,
+          "lon": -20.121,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NOR": {
+      "country": "Norway",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Geirangerfjord",
+          "lat": 62.101,
+          "lon": 7.006,
+          "glyph": "🏔️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Bryggen",
+          "lat": 60.397,
+          "lon": 5.324,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SWE": {
+      "country": "Sweden",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Vasa Museum",
+          "lat": 59.328,
+          "lon": 18.091,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Icehotel",
+          "lat": 67.849,
+          "lon": 20.591,
+          "glyph": "🧊",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "FIN": {
+      "country": "Finland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Suomenlinna",
+          "lat": 60.145,
+          "lon": 24.988,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DNK": {
+      "country": "Denmark",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "The Little Mermaid",
+          "lat": 55.693,
+          "lon": 12.599,
+          "glyph": "🧜",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Kronborg Castle",
+          "lat": 56.039,
+          "lon": 12.622,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GRC": {
+      "country": "Greece",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Acropolis of Athens",
+          "lat": 37.971,
+          "lon": 23.726,
+          "glyph": "🏛️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Meteora",
+          "lat": 39.721,
+          "lon": 21.63,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Santorini",
+          "lat": 36.393,
+          "lon": 25.462,
+          "glyph": "🏘️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "POL": {
+      "country": "Poland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Wawel Castle",
+          "lat": 50.054,
+          "lon": 19.935,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Malbork Castle",
+          "lat": 54.04,
+          "lon": 19.028,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CZE": {
+      "country": "Czech Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Charles Bridge",
+          "lat": 50.086,
+          "lon": 14.411,
+          "glyph": "🌉",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Prague Castle",
+          "lat": 50.091,
+          "lon": 14.401,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "SVK": {
+      "country": "Slovakia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bratislava Castle",
+          "lat": 48.142,
+          "lon": 17.1,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "HUN": {
+      "country": "Hungary",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Hungarian Parliament",
+          "lat": 47.507,
+          "lon": 19.046,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Fisherman's Bastion",
+          "lat": 47.502,
+          "lon": 19.035,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ROU": {
+      "country": "Romania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bran Castle",
+          "lat": 45.515,
+          "lon": 25.367,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Palace of the Parliament",
+          "lat": 44.428,
+          "lon": 26.088,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BGR": {
+      "country": "Bulgaria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Rila Monastery",
+          "lat": 42.133,
+          "lon": 23.34,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "HRV": {
+      "country": "Croatia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Dubrovnik Old Town",
+          "lat": 42.641,
+          "lon": 18.108,
+          "glyph": "🏰",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Plitvice Lakes",
+          "lat": 44.881,
+          "lon": 15.616,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SVN": {
+      "country": "Slovenia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Lake Bled",
+          "lat": 46.363,
+          "lon": 14.094,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SRB": {
+      "country": "Serbia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Belgrade Fortress",
+          "lat": 44.823,
+          "lon": 20.45,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BIH": {
+      "country": "Bosnia and Herzegovina",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Stari Most",
+          "lat": 43.337,
+          "lon": 17.815,
+          "glyph": "🌉",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MNE": {
+      "country": "Montenegro",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bay of Kotor",
+          "lat": 42.424,
+          "lon": 18.771,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MKD": {
+      "country": "North Macedonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ohrid",
+          "lat": 41.113,
+          "lon": 20.802,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ALB": {
+      "country": "Albania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Butrint",
+          "lat": 39.746,
+          "lon": 20.021,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KOS": {
+      "country": "Kosovo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Gracanica Monastery",
+          "lat": 42.6,
+          "lon": 21.194,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "UKR": {
+      "country": "Ukraine",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Saint Sophia Cathedral",
+          "lat": 50.453,
+          "lon": 30.514,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BLR": {
+      "country": "Belarus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mir Castle",
+          "lat": 53.451,
+          "lon": 26.473,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MDA": {
+      "country": "Moldova",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Orheiul Vechi",
+          "lat": 47.336,
+          "lon": 28.978,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LTU": {
+      "country": "Lithuania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Trakai Island Castle",
+          "lat": 54.652,
+          "lon": 24.933,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LVA": {
+      "country": "Latvia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Riga Old Town",
+          "lat": 56.949,
+          "lon": 24.106,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "EST": {
+      "country": "Estonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Tallinn Old Town",
+          "lat": 59.437,
+          "lon": 24.745,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "RUS": {
+      "country": "Russia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Saint Basil's Cathedral",
+          "lat": 55.753,
+          "lon": 37.623,
+          "glyph": "⛪",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "The Kremlin",
+          "lat": 55.752,
+          "lon": 37.617,
+          "glyph": "🏰",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Hermitage Museum",
+          "lat": 59.94,
+          "lon": 30.315,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Lake Baikal",
+          "lat": 53.5,
+          "lon": 108,
+          "glyph": "🏞️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MLT": {
+      "country": "Malta",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grand Harbour",
+          "lat": 35.893,
+          "lon": 14.518,
+          "glyph": "⛵",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "St John's Co-Cathedral",
+          "lat": 35.898,
+          "lon": 14.512,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Ħaġar Qim",
+          "lat": 35.827,
+          "lon": 14.442,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Mdina",
+          "lat": 35.886,
+          "lon": 14.403,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Blue Grotto",
+          "lat": 35.82,
+          "lon": 14.454,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Fort St Angelo",
+          "lat": 35.892,
+          "lon": 14.518,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Mosta Rotunda",
+          "lat": 35.911,
+          "lon": 14.426,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Marsaxlokk",
+          "lat": 35.842,
+          "lon": 14.545,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Dingli Cliffs",
+          "lat": 35.851,
+          "lon": 14.377,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Popeye Village",
+          "lat": 35.928,
+          "lon": 14.336,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Cittadella of Gozo",
+          "lat": 36.046,
+          "lon": 14.239,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Blue Lagoon of Comino",
+          "lat": 36.014,
+          "lon": 14.322,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Ġgantija Temples",
+          "lat": 36.047,
+          "lon": 14.269,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Tarxien Temples",
+          "lat": 35.869,
+          "lon": 14.511,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CYP": {
+      "country": "Cyprus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Tombs of the Kings",
+          "lat": 34.771,
+          "lon": 32.406,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CYN": {
+      "country": "Turkish Republic of Northern Cyprus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kyrenia Castle",
+          "lat": 35.341,
+          "lon": 33.32,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AND": {
+      "country": "Andorra",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Casa de la Vall",
+          "lat": 42.507,
+          "lon": 1.522,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MCO": {
+      "country": "Monaco",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Monte Carlo Casino",
+          "lat": 43.74,
+          "lon": 7.428,
+          "glyph": "🎰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SMR": {
+      "country": "San Marino",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Guaita Tower",
+          "lat": 43.937,
+          "lon": 12.446,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LIE": {
+      "country": "Liechtenstein",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Vaduz Castle",
+          "lat": 47.14,
+          "lon": 9.525,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "FRO": {
+      "country": "Faroe Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Saksun",
+          "lat": 62.248,
+          "lon": -7.183,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ALD": {
+      "country": "Åland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kastelholm Castle",
+          "lat": 60.24,
+          "lon": 20.078,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GGY": {
+      "country": "Guernsey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Castle Cornet",
+          "lat": 49.454,
+          "lon": -2.531,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "JEY": {
+      "country": "Jersey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mont Orgueil",
+          "lat": 49.198,
+          "lon": -2.023,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "IMN": {
+      "country": "Isle of Man",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Peel Castle",
+          "lat": 54.226,
+          "lon": -4.699,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CHN": {
+      "country": "People's Republic of China",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Great Wall of China",
+          "lat": 40.432,
+          "lon": 116.57,
+          "glyph": "🧱",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Forbidden City",
+          "lat": 39.916,
+          "lon": 116.397,
+          "glyph": "🏯",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Terracotta Army",
+          "lat": 34.385,
+          "lon": 109.278,
+          "glyph": "🗿",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Potala Palace",
+          "lat": 29.658,
+          "lon": 91.117,
+          "glyph": "🏯",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "The Bund",
+          "lat": 31.24,
+          "lon": 121.49,
+          "glyph": "🏙️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "JPN": {
+      "country": "Japan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Fuji",
+          "lat": 35.361,
+          "lon": 138.727,
+          "glyph": "🗻",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Fushimi Inari Shrine",
+          "lat": 34.967,
+          "lon": 135.773,
+          "glyph": "⛩️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Tokyo Tower",
+          "lat": 35.659,
+          "lon": 139.746,
+          "glyph": "🗼",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Itsukushima Shrine",
+          "lat": 34.296,
+          "lon": 132.32,
+          "glyph": "⛩️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Himeji Castle",
+          "lat": 34.839,
+          "lon": 134.694,
+          "glyph": "🏯",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "IND": {
+      "country": "India",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Taj Mahal",
+          "lat": 27.175,
+          "lon": 78.042,
+          "glyph": "🕌",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Golden Temple",
+          "lat": 31.62,
+          "lon": 74.877,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Gateway of India",
+          "lat": 18.922,
+          "lon": 72.835,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Hawa Mahal",
+          "lat": 26.924,
+          "lon": 75.827,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KHM": {
+      "country": "Cambodia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Angkor Wat",
+          "lat": 13.413,
+          "lon": 103.867,
+          "glyph": "🛕",
+          "tier": 1,
+          "note": null
+        }
+      ]
+    },
+    "THA": {
+      "country": "Thailand",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grand Palace",
+          "lat": 13.75,
+          "lon": 100.492,
+          "glyph": "🏯",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Wat Arun",
+          "lat": 13.744,
+          "lon": 100.489,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "VNM": {
+      "country": "Vietnam",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ha Long Bay",
+          "lat": 20.91,
+          "lon": 107.184,
+          "glyph": "⛵",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Hoi An Old Town",
+          "lat": 15.877,
+          "lon": 108.327,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LAO": {
+      "country": "Laos",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pha That Luang",
+          "lat": 17.976,
+          "lon": 102.617,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MMR": {
+      "country": "Myanmar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Shwedagon Pagoda",
+          "lat": 16.798,
+          "lon": 96.15,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MYS": {
+      "country": "Malaysia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Petronas Towers",
+          "lat": 3.158,
+          "lon": 101.712,
+          "glyph": "🏙️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "SGP": {
+      "country": "Singapore",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Marina Bay Sands",
+          "lat": 1.283,
+          "lon": 103.86,
+          "glyph": "🏙️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "IDN": {
+      "country": "Indonesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Borobudur",
+          "lat": -7.608,
+          "lon": 110.204,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Mount Bromo",
+          "lat": -7.942,
+          "lon": 112.953,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PHL": {
+      "country": "Philippines",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Banaue Rice Terraces",
+          "lat": 16.934,
+          "lon": 121.058,
+          "glyph": "🌾",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Chocolate Hills",
+          "lat": 9.828,
+          "lon": 124.171,
+          "glyph": "⛰️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BRN": {
+      "country": "Brunei",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Omar Ali Saifuddien Mosque",
+          "lat": 4.889,
+          "lon": 114.941,
+          "glyph": "🕌",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TLS": {
+      "country": "East Timor",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Cristo Rei of Dili",
+          "lat": -8.52,
+          "lon": 125.617,
+          "glyph": "⛰️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KOR": {
+      "country": "South Korea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Gyeongbokgung Palace",
+          "lat": 37.579,
+          "lon": 126.977,
+          "glyph": "🏯",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Bulguksa Temple",
+          "lat": 35.79,
+          "lon": 129.332,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PRK": {
+      "country": "North Korea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Juche Tower",
+          "lat": 39.018,
+          "lon": 125.762,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TWN": {
+      "country": "Taiwan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Taipei 101",
+          "lat": 25.034,
+          "lon": 121.565,
+          "glyph": "🏙️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "HKG": {
+      "country": "Hong Kong",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Victoria Peak",
+          "lat": 22.276,
+          "lon": 114.145,
+          "glyph": "🏙️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MAC": {
+      "country": "Macau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ruins of St Paul's",
+          "lat": 22.198,
+          "lon": 113.541,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MNG": {
+      "country": "Mongolia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Genghis Khan Statue",
+          "lat": 47.808,
+          "lon": 107.53,
+          "glyph": "🗿",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Erdene Zuu Monastery",
+          "lat": 47.201,
+          "lon": 102.842,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KAZ": {
+      "country": "Kazakhstan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Baiterek Tower",
+          "lat": 51.128,
+          "lon": 71.43,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "UZB": {
+      "country": "Uzbekistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Registan",
+          "lat": 39.655,
+          "lon": 66.975,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "TKM": {
+      "country": "Turkmenistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Darvaza Gas Crater",
+          "lat": 40.253,
+          "lon": 58.439,
+          "glyph": "🔥",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KGZ": {
+      "country": "Kyrgyzstan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Burana Tower",
+          "lat": 42.746,
+          "lon": 75.25,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TJK": {
+      "country": "Tajikistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Iskanderkul",
+          "lat": 39.075,
+          "lon": 68.371,
+          "glyph": "🏞️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AFG": {
+      "country": "Afghanistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Band-e Amir",
+          "lat": 34.842,
+          "lon": 67.23,
+          "glyph": "🏞️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PAK": {
+      "country": "Pakistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Badshahi Mosque",
+          "lat": 31.588,
+          "lon": 74.31,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "K2",
+          "lat": 35.881,
+          "lon": 76.513,
+          "glyph": "🏔️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "NPL": {
+      "country": "Nepal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Everest",
+          "lat": 27.988,
+          "lon": 86.925,
+          "glyph": "🏔️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Boudhanath Stupa",
+          "lat": 27.721,
+          "lon": 85.362,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BTN": {
+      "country": "Bhutan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Tiger's Nest",
+          "lat": 27.492,
+          "lon": 89.363,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "BGD": {
+      "country": "Bangladesh",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sixty Dome Mosque",
+          "lat": 22.674,
+          "lon": 89.742,
+          "glyph": "🕌",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LKA": {
+      "country": "Sri Lanka",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sigiriya",
+          "lat": 7.957,
+          "lon": 80.76,
+          "glyph": "🪨",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MDV": {
+      "country": "Maldives",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Malé Friday Mosque",
+          "lat": 4.176,
+          "lon": 73.51,
+          "glyph": "🕌",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Malé Fish Market",
+          "lat": 4.178,
+          "lon": 73.51,
+          "glyph": "🐟",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "IRN": {
+      "country": "Iran",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Persepolis",
+          "lat": 29.936,
+          "lon": 52.89,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Naqsh-e Jahan Square",
+          "lat": 32.658,
+          "lon": 51.678,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "IRQ": {
+      "country": "Iraq",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ziggurat of Ur",
+          "lat": 30.963,
+          "lon": 46.103,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SAU": {
+      "country": "Saudi Arabia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kaaba",
+          "lat": 21.423,
+          "lon": 39.826,
+          "glyph": "🕋",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Al-Ula",
+          "lat": 26.609,
+          "lon": 37.917,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ARE": {
+      "country": "United Arab Emirates",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Burj Khalifa",
+          "lat": 25.197,
+          "lon": 55.274,
+          "glyph": "🏙️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Sheikh Zayed Mosque",
+          "lat": 24.412,
+          "lon": 54.475,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "QAT": {
+      "country": "Qatar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Museum of Islamic Art",
+          "lat": 25.295,
+          "lon": 51.539,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KWT": {
+      "country": "Kuwait",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kuwait Towers",
+          "lat": 29.39,
+          "lon": 48,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BHR": {
+      "country": "Bahrain",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bahrain Fort",
+          "lat": 26.233,
+          "lon": 50.521,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "OMN": {
+      "country": "Oman",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sultan Qaboos Mosque",
+          "lat": 23.583,
+          "lon": 58.388,
+          "glyph": "🕌",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "YEM": {
+      "country": "Yemen",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Old City of Sana'a",
+          "lat": 15.353,
+          "lon": 44.214,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "JOR": {
+      "country": "Jordan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Petra",
+          "lat": 30.329,
+          "lon": 35.444,
+          "glyph": "🏜️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Wadi Rum",
+          "lat": 29.583,
+          "lon": 35.42,
+          "glyph": "🏜️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "ISR": {
+      "country": "Israel",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Western Wall",
+          "lat": 31.777,
+          "lon": 35.234,
+          "glyph": "🕍",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Masada",
+          "lat": 31.315,
+          "lon": 35.354,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PSX": {
+      "country": "Palestine",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Church of the Nativity",
+          "lat": 31.704,
+          "lon": 35.207,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "LBN": {
+      "country": "Lebanon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Baalbek",
+          "lat": 34.007,
+          "lon": 36.204,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SYR": {
+      "country": "Syria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Krak des Chevaliers",
+          "lat": 34.757,
+          "lon": 36.295,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TUR": {
+      "country": "Turkey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Hagia Sophia",
+          "lat": 41.008,
+          "lon": 28.98,
+          "glyph": "🕌",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Cappadocia",
+          "lat": 38.643,
+          "lon": 34.829,
+          "glyph": "🎈",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Pamukkale",
+          "lat": 37.92,
+          "lon": 29.121,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GEO": {
+      "country": "Georgia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Gergeti Trinity Church",
+          "lat": 42.663,
+          "lon": 44.621,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ARM": {
+      "country": "Armenia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Khor Virap",
+          "lat": 39.878,
+          "lon": 44.577,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AZE": {
+      "country": "Azerbaijan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Flame Towers",
+          "lat": 40.36,
+          "lon": 49.833,
+          "glyph": "🏙️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KAS": {
+      "country": "Siachen Glacier",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Siachen Glacier",
+          "lat": 35.421,
+          "lon": 77.109,
+          "glyph": "🏔️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "EGY": {
+      "country": "Egypt",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pyramids of Giza",
+          "lat": 29.979,
+          "lon": 31.134,
+          "glyph": "🔺",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Great Sphinx",
+          "lat": 29.975,
+          "lon": 31.138,
+          "glyph": "🗿",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Karnak Temple",
+          "lat": 25.719,
+          "lon": 32.657,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Abu Simbel",
+          "lat": 22.337,
+          "lon": 31.626,
+          "glyph": "🗿",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MAR": {
+      "country": "Morocco",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Jemaa el-Fnaa",
+          "lat": 31.626,
+          "lon": -7.989,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Hassan II Mosque",
+          "lat": 33.608,
+          "lon": -7.633,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Aït Benhaddou",
+          "lat": 31.047,
+          "lon": -7.129,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DZA": {
+      "country": "Algeria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Casbah of Algiers",
+          "lat": 36.784,
+          "lon": 3.06,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TUN": {
+      "country": "Tunisia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Carthage",
+          "lat": 36.853,
+          "lon": 10.323,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "El Djem Amphitheatre",
+          "lat": 35.296,
+          "lon": 10.707,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LBY": {
+      "country": "Libya",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Leptis Magna",
+          "lat": 32.638,
+          "lon": 14.293,
+          "glyph": "🏛️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SDN": {
+      "country": "Sudan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pyramids of Meroë",
+          "lat": 16.938,
+          "lon": 33.749,
+          "glyph": "🔺",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SDS": {
+      "country": "South Sudan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Boma National Park",
+          "lat": 6.5,
+          "lon": 34,
+          "glyph": "🦌",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ETH": {
+      "country": "Ethiopia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Rock-Hewn Churches of Lalibela",
+          "lat": 12.031,
+          "lon": 39.041,
+          "glyph": "⛪",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "ERI": {
+      "country": "Eritrea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Asmara Old Town",
+          "lat": 15.339,
+          "lon": 38.932,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DJI": {
+      "country": "Djibouti",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Lake Assal",
+          "lat": 11.657,
+          "lon": 42.4,
+          "glyph": "🏞️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SOM": {
+      "country": "Somalia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mogadishu Lighthouse",
+          "lat": 2.031,
+          "lon": 45.354,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SOL": {
+      "country": "Somaliland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Laas Geel Caves",
+          "lat": 9.735,
+          "lon": 44.311,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KEN": {
+      "country": "Kenya",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Maasai Mara",
+          "lat": -1.5,
+          "lon": 35.143,
+          "glyph": "🦁",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Mount Kenya",
+          "lat": -0.152,
+          "lon": 37.308,
+          "glyph": "🏔️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TZA": {
+      "country": "Tanzania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Kilimanjaro",
+          "lat": -3.067,
+          "lon": 37.355,
+          "glyph": "🏔️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Serengeti",
+          "lat": -2.333,
+          "lon": 34.833,
+          "glyph": "🦓",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Stone Town",
+          "lat": -6.163,
+          "lon": 39.189,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "UGA": {
+      "country": "Uganda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bwindi Forest",
+          "lat": -1.055,
+          "lon": 29.674,
+          "glyph": "🦍",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "RWA": {
+      "country": "Rwanda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Volcanoes National Park",
+          "lat": -1.474,
+          "lon": 29.529,
+          "glyph": "🦍",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BDI": {
+      "country": "Burundi",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Karera Falls",
+          "lat": -4.033,
+          "lon": 30.4,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ZAF": {
+      "country": "South Africa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Table Mountain",
+          "lat": -33.963,
+          "lon": 18.41,
+          "glyph": "🏔️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Cape of Good Hope",
+          "lat": -34.357,
+          "lon": 18.472,
+          "glyph": "🌊",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Kruger National Park",
+          "lat": -24.01,
+          "lon": 31.486,
+          "glyph": "🐘",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "ZWE": {
+      "country": "Zimbabwe",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Victoria Falls",
+          "lat": -17.925,
+          "lon": 25.858,
+          "glyph": "💦",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Great Zimbabwe",
+          "lat": -20.268,
+          "lon": 30.934,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ZMB": {
+      "country": "Zambia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mosi-oa-Tunya",
+          "lat": -17.921,
+          "lon": 25.856,
+          "glyph": "💦",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "BWA": {
+      "country": "Botswana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Okavango Delta",
+          "lat": -19.283,
+          "lon": 22.8,
+          "glyph": "🏞️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "NAM": {
+      "country": "Namibia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sossusvlei",
+          "lat": -24.727,
+          "lon": 15.343,
+          "glyph": "🏜️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Fish River Canyon",
+          "lat": -27.596,
+          "lon": 17.615,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AGO": {
+      "country": "Angola",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kalandula Falls",
+          "lat": -9.075,
+          "lon": 16.006,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MOZ": {
+      "country": "Mozambique",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Island of Mozambique",
+          "lat": -15.035,
+          "lon": 40.735,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MWI": {
+      "country": "Malawi",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Lake Malawi",
+          "lat": -12,
+          "lon": 34.583,
+          "glyph": "🏞️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MDG": {
+      "country": "Madagascar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Avenue of the Baobabs",
+          "lat": -20.251,
+          "lon": 44.418,
+          "glyph": "🌳",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "MUS": {
+      "country": "Mauritius",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Le Morne Brabant",
+          "lat": -20.457,
+          "lon": 57.322,
+          "glyph": "🏔️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SYC": {
+      "country": "Seychelles",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Vallée de Mai",
+          "lat": -4.331,
+          "lon": 55.74,
+          "glyph": "🌴",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "COM": {
+      "country": "Comoros",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Karthala",
+          "lat": -11.75,
+          "lon": 43.38,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SWZ": {
+      "country": "Eswatini",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mlilwane Sanctuary",
+          "lat": -26.484,
+          "lon": 31.19,
+          "glyph": "🦓",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LSO": {
+      "country": "Lesotho",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Maletsunyane Falls",
+          "lat": -29.842,
+          "lon": 28.061,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "COD": {
+      "country": "Democratic Republic of the Congo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Virunga National Park",
+          "lat": -0.928,
+          "lon": 29.18,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "COG": {
+      "country": "Republic of the Congo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Basilique Sainte-Anne",
+          "lat": -4.279,
+          "lon": 15.283,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CAF": {
+      "country": "Central African Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Boali Falls",
+          "lat": 4.796,
+          "lon": 18.121,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CMR": {
+      "country": "Cameroon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Cameroon",
+          "lat": 4.203,
+          "lon": 9.17,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TCD": {
+      "country": "Chad",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ennedi Massif",
+          "lat": 17,
+          "lon": 22,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NER": {
+      "country": "Niger",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grand Mosque of Agadez",
+          "lat": 16.973,
+          "lon": 7.991,
+          "glyph": "🕌",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MLI": {
+      "country": "Mali",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Great Mosque of Djenné",
+          "lat": 13.905,
+          "lon": -4.555,
+          "glyph": "🕌",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Timbuktu",
+          "lat": 16.775,
+          "lon": -3.009,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BFA": {
+      "country": "Burkina Faso",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ruins of Loropéni",
+          "lat": 10.278,
+          "lon": -3.583,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SEN": {
+      "country": "Senegal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Gorée Island",
+          "lat": 14.667,
+          "lon": -17.398,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GMB": {
+      "country": "The Gambia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kunta Kinteh Island",
+          "lat": 13.322,
+          "lon": -16.363,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GNB": {
+      "country": "Guinea-Bissau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bijagós Islands",
+          "lat": 11.3,
+          "lon": -15.9,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GIN": {
+      "country": "Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Nimba",
+          "lat": 7.616,
+          "lon": -8.412,
+          "glyph": "🏔️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SLE": {
+      "country": "Sierra Leone",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Cotton Tree",
+          "lat": 8.487,
+          "lon": -13.234,
+          "glyph": "🌳",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LBR": {
+      "country": "Liberia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Providence Island",
+          "lat": 6.313,
+          "lon": -10.803,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CIV": {
+      "country": "Ivory Coast",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Basilica of Our Lady of Peace",
+          "lat": 6.812,
+          "lon": -5.288,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GHA": {
+      "country": "Ghana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Cape Coast Castle",
+          "lat": 5.104,
+          "lon": -1.242,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TGO": {
+      "country": "Togo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Koutammakou",
+          "lat": 10.063,
+          "lon": 1.108,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BEN": {
+      "country": "Benin",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ganvie",
+          "lat": 6.466,
+          "lon": 2.412,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NGA": {
+      "country": "Nigeria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Zuma Rock",
+          "lat": 9.128,
+          "lon": 7.234,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Olumo Rock",
+          "lat": 7.152,
+          "lon": 3.348,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GAB": {
+      "country": "Gabon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Loango National Park",
+          "lat": -2.3,
+          "lon": 9.6,
+          "glyph": "🐘",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GNQ": {
+      "country": "Equatorial Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Basílica de Mongomo",
+          "lat": 1.626,
+          "lon": 11.316,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "STP": {
+      "country": "São Tomé and Príncipe",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pico Cão Grande",
+          "lat": 0.146,
+          "lon": 6.582,
+          "glyph": "⛰️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CPV": {
+      "country": "Cape Verde",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Cidade Velha",
+          "lat": 14.916,
+          "lon": -23.605,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MRT": {
+      "country": "Mauritania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Richat Structure",
+          "lat": 21.124,
+          "lon": -11.401,
+          "glyph": "🎯",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SAH": {
+      "country": "Western Sahara",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Laayoune",
+          "lat": 27.15,
+          "lon": -13.199,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SHN": {
+      "country": "Saint Helena",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Jacob's Ladder",
+          "lat": -15.925,
+          "lon": -5.717,
+          "glyph": "🪜",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "USA": {
+      "country": "United States of America",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Statue of Liberty",
+          "lat": 40.689,
+          "lon": -74.045,
+          "glyph": "🗽",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Golden Gate Bridge",
+          "lat": 37.82,
+          "lon": -122.478,
+          "glyph": "🌉",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Grand Canyon",
+          "lat": 36.099,
+          "lon": -112.113,
+          "glyph": "🏜️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Mount Rushmore",
+          "lat": 43.879,
+          "lon": -103.459,
+          "glyph": "🗿",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "White House",
+          "lat": 38.898,
+          "lon": -77.036,
+          "glyph": "🏛️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Empire State Building",
+          "lat": 40.749,
+          "lon": -73.986,
+          "glyph": "🏙️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Yellowstone",
+          "lat": 44.428,
+          "lon": -110.588,
+          "glyph": "♨️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Space Needle",
+          "lat": 47.62,
+          "lon": -122.349,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CAN": {
+      "country": "Canada",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Niagara Falls",
+          "lat": 43.078,
+          "lon": -79.075,
+          "glyph": "💦",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "CN Tower",
+          "lat": 43.643,
+          "lon": -79.387,
+          "glyph": "🗼",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Banff National Park",
+          "lat": 51.178,
+          "lon": -115.571,
+          "glyph": "🏔️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Château Frontenac",
+          "lat": 46.812,
+          "lon": -71.205,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MEX": {
+      "country": "Mexico",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Chichén Itzá",
+          "lat": 20.683,
+          "lon": -88.569,
+          "glyph": "🔺",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Teotihuacan",
+          "lat": 19.692,
+          "lon": -98.844,
+          "glyph": "🔺",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Palenque",
+          "lat": 17.484,
+          "lon": -92.046,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GTM": {
+      "country": "Guatemala",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Tikal",
+          "lat": 17.222,
+          "lon": -89.623,
+          "glyph": "🛕",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "BLZ": {
+      "country": "Belize",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Great Blue Hole",
+          "lat": 17.316,
+          "lon": -87.535,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "HND": {
+      "country": "Honduras",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Copán",
+          "lat": 14.837,
+          "lon": -89.142,
+          "glyph": "🗿",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SLV": {
+      "country": "El Salvador",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Joya de Cerén",
+          "lat": 13.828,
+          "lon": -89.361,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NIC": {
+      "country": "Nicaragua",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Masaya Volcano",
+          "lat": 11.984,
+          "lon": -86.161,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CRI": {
+      "country": "Costa Rica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Arenal Volcano",
+          "lat": 10.463,
+          "lon": -84.703,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PAN": {
+      "country": "Panama",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Panama Canal",
+          "lat": 9.08,
+          "lon": -79.68,
+          "glyph": "🚢",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "CUB": {
+      "country": "Cuba",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Old Havana",
+          "lat": 23.14,
+          "lon": -82.353,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "JAM": {
+      "country": "Jamaica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Dunn's River Falls",
+          "lat": 18.415,
+          "lon": -77.137,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "HTI": {
+      "country": "Haiti",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Citadelle Laferrière",
+          "lat": 19.574,
+          "lon": -72.244,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DOM": {
+      "country": "Dominican Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Zona Colonial",
+          "lat": 18.473,
+          "lon": -69.884,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BHS": {
+      "country": "The Bahamas",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Blue Holes of Andros",
+          "lat": 24.7,
+          "lon": -77.8,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PRI": {
+      "country": "Puerto Rico",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "El Morro",
+          "lat": 18.471,
+          "lon": -66.124,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TTO": {
+      "country": "Trinidad and Tobago",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pitch Lake",
+          "lat": 10.234,
+          "lon": -61.628,
+          "glyph": "🛢️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BRB": {
+      "country": "Barbados",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Harrison's Cave",
+          "lat": 13.187,
+          "lon": -59.573,
+          "glyph": "🕳️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "LCA": {
+      "country": "Saint Lucia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "The Pitons",
+          "lat": 13.808,
+          "lon": -61.064,
+          "glyph": "⛰️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GRD": {
+      "country": "Grenada",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grand Anse Beach",
+          "lat": 12.006,
+          "lon": -61.767,
+          "glyph": "🏖️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "VCT": {
+      "country": "Saint Vincent and the Grenadines",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "La Soufrière",
+          "lat": 13.331,
+          "lon": -61.177,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "DMA": {
+      "country": "Dominica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Boiling Lake",
+          "lat": 15.318,
+          "lon": -61.294,
+          "glyph": "♨️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ATG": {
+      "country": "Antigua and Barbuda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Nelson's Dockyard",
+          "lat": 17.006,
+          "lon": -61.765,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KNA": {
+      "country": "Saint Kitts and Nevis",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Brimstone Hill Fortress",
+          "lat": 17.368,
+          "lon": -62.836,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ABW": {
+      "country": "Aruba",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "California Lighthouse",
+          "lat": 12.615,
+          "lon": -70.052,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CUW": {
+      "country": "Curaçao",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Queen Emma Bridge",
+          "lat": 12.106,
+          "lon": -68.933,
+          "glyph": "🌉",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SXM": {
+      "country": "Sint Maarten",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Fort Amsterdam",
+          "lat": 18.019,
+          "lon": -63.056,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MAF": {
+      "country": "Saint Martin",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Fort Louis",
+          "lat": 18.069,
+          "lon": -63.084,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BLM": {
+      "country": "Saint Barthélemy",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Gustavia Harbour",
+          "lat": 17.897,
+          "lon": -62.851,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "VGB": {
+      "country": "British Virgin Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "The Baths",
+          "lat": 18.43,
+          "lon": -64.443,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "VIR": {
+      "country": "United States Virgin Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Trunk Bay",
+          "lat": 18.353,
+          "lon": -64.77,
+          "glyph": "🏖️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AIA": {
+      "country": "Anguilla",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Shoal Bay",
+          "lat": 18.245,
+          "lon": -63.019,
+          "glyph": "🏖️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MSR": {
+      "country": "Montserrat",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Soufrière Hills",
+          "lat": 16.712,
+          "lon": -62.181,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CYM": {
+      "country": "Cayman Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Stingray City",
+          "lat": 19.371,
+          "lon": -81.288,
+          "glyph": "🐠",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TCA": {
+      "country": "Turks and Caicos Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grace Bay",
+          "lat": 21.796,
+          "lon": -72.196,
+          "glyph": "🏖️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BMU": {
+      "country": "Bermuda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Royal Naval Dockyard",
+          "lat": 32.327,
+          "lon": -64.836,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "BRA": {
+      "country": "Brazil",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Christ the Redeemer",
+          "lat": -22.952,
+          "lon": -43.211,
+          "glyph": "⛰️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Iguaçu Falls",
+          "lat": -25.687,
+          "lon": -54.445,
+          "glyph": "💦",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Sugarloaf Mountain",
+          "lat": -22.949,
+          "lon": -43.157,
+          "glyph": "🚡",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Amazon Rainforest",
+          "lat": -3.465,
+          "lon": -62.216,
+          "glyph": "🌳",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "ARG": {
+      "country": "Argentina",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Perito Moreno Glacier",
+          "lat": -50.496,
+          "lon": -73.14,
+          "glyph": "🧊",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Iguazú Falls",
+          "lat": -25.695,
+          "lon": -54.437,
+          "glyph": "💦",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Obelisco",
+          "lat": -34.604,
+          "lon": -58.382,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "CHL": {
+      "country": "Chile",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Moai of Rapa Nui",
+          "lat": -27.113,
+          "lon": -109.35,
+          "glyph": "🗿",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Torres del Paine",
+          "lat": -50.943,
+          "lon": -73.407,
+          "glyph": "🏔️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Atacama Desert",
+          "lat": -23.865,
+          "lon": -69.13,
+          "glyph": "🏜️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PER": {
+      "country": "Peru",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Machu Picchu",
+          "lat": -13.163,
+          "lon": -72.545,
+          "glyph": "🏔️",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Nazca Lines",
+          "lat": -14.739,
+          "lon": -75.13,
+          "glyph": "🗿",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "BOL": {
+      "country": "Bolivia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Salar de Uyuni",
+          "lat": -20.133,
+          "lon": -67.489,
+          "glyph": "🧂",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "ECU": {
+      "country": "Ecuador",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Galápagos Islands",
+          "lat": -0.777,
+          "lon": -91.142,
+          "glyph": "🐢",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Mitad del Mundo",
+          "lat": -0.002,
+          "lon": -78.456,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "COL": {
+      "country": "Colombia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Lost City",
+          "lat": 11.038,
+          "lon": -73.925,
+          "glyph": "🗿",
+          "tier": 3,
+          "note": null
+        },
+        {
+          "name": "Cartagena Old Town",
+          "lat": 10.423,
+          "lon": -75.551,
+          "glyph": "🏰",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "VEN": {
+      "country": "Venezuela",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Angel Falls",
+          "lat": 5.969,
+          "lon": -62.536,
+          "glyph": "💦",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "GUY": {
+      "country": "Guyana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kaieteur Falls",
+          "lat": 5.175,
+          "lon": -59.483,
+          "glyph": "💦",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SUR": {
+      "country": "Suriname",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Central Suriname Reserve",
+          "lat": 4.2,
+          "lon": -56.4,
+          "glyph": "🌳",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PRY": {
+      "country": "Paraguay",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Jesuit Ruins of Trinidad",
+          "lat": -27.132,
+          "lon": -55.7,
+          "glyph": "⛪",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "URY": {
+      "country": "Uruguay",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Colonia del Sacramento",
+          "lat": -34.471,
+          "lon": -57.844,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "FLK": {
+      "country": "Falkland Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Volunteer Point",
+          "lat": -51.47,
+          "lon": -57.842,
+          "glyph": "🐧",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GRL": {
+      "country": "Greenland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ilulissat Icefjord",
+          "lat": 69.167,
+          "lon": -51.1,
+          "glyph": "🧊",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "SPM": {
+      "country": "Saint Pierre and Miquelon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Île aux Marins",
+          "lat": 46.771,
+          "lon": -56.157,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "AUS": {
+      "country": "Australia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sydney Opera House",
+          "lat": -33.857,
+          "lon": 151.215,
+          "glyph": "🎭",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Uluru",
+          "lat": -25.345,
+          "lon": 131.036,
+          "glyph": "🪨",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Great Barrier Reef",
+          "lat": -18.286,
+          "lon": 147.7,
+          "glyph": "🐠",
+          "tier": 1,
+          "note": null
+        },
+        {
+          "name": "Sydney Harbour Bridge",
+          "lat": -33.852,
+          "lon": 151.211,
+          "glyph": "🌉",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Twelve Apostles",
+          "lat": -38.665,
+          "lon": 143.104,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NZL": {
+      "country": "New Zealand",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Milford Sound",
+          "lat": -44.641,
+          "lon": 167.897,
+          "glyph": "🏔️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Hobbiton",
+          "lat": -37.872,
+          "lon": 175.683,
+          "glyph": "🏘️",
+          "tier": 2,
+          "note": null
+        },
+        {
+          "name": "Sky Tower",
+          "lat": -36.848,
+          "lon": 174.762,
+          "glyph": "🗼",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PNG": {
+      "country": "Papua New Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kokoda Track",
+          "lat": -9.07,
+          "lon": 147.73,
+          "glyph": "🥾",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "FJI": {
+      "country": "Fiji",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Sri Siva Subramaniya Temple",
+          "lat": -17.622,
+          "lon": 177.463,
+          "glyph": "🛕",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SLB": {
+      "country": "Solomon Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Marovo Lagoon",
+          "lat": -8.7,
+          "lon": 158.1,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "VUT": {
+      "country": "Vanuatu",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mount Yasur",
+          "lat": -19.532,
+          "lon": 169.442,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NCL": {
+      "country": "New Caledonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Heart of Voh",
+          "lat": -20.945,
+          "lon": 164.652,
+          "glyph": "💚",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PYF": {
+      "country": "French Polynesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bora Bora",
+          "lat": -16.5,
+          "lon": -151.741,
+          "glyph": "🏝️",
+          "tier": 2,
+          "note": null
+        }
+      ]
+    },
+    "WSM": {
+      "country": "Samoa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "To Sua Ocean Trench",
+          "lat": -14.023,
+          "lon": -171.494,
+          "glyph": "🌊",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TON": {
+      "country": "Tonga",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Haʻamonga ʻa Maui",
+          "lat": -21.135,
+          "lon": -175.055,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "TUV": {
+      "country": "Tuvalu",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Funafuti Lagoon",
+          "lat": -8.52,
+          "lon": 179.196,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "KIR": {
+      "country": "Kiribati",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Christmas Island",
+          "lat": 1.983,
+          "lon": -157.476,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NRU": {
+      "country": "Nauru",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Buada Lagoon",
+          "lat": -0.535,
+          "lon": 166.926,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PLW": {
+      "country": "Palau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Rock Islands",
+          "lat": 7.15,
+          "lon": 134.376,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "FSM": {
+      "country": "Federated States of Micronesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Nan Madol",
+          "lat": 6.844,
+          "lon": 158.334,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MHL": {
+      "country": "Marshall Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bikini Atoll",
+          "lat": 11.6,
+          "lon": 165.383,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "GUM": {
+      "country": "Guam",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Two Lovers Point",
+          "lat": 13.52,
+          "lon": 144.803,
+          "glyph": "⛰️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "MNP": {
+      "country": "Northern Mariana Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Managaha Island",
+          "lat": 15.235,
+          "lon": 145.716,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ASM": {
+      "country": "American Samoa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Pola Island",
+          "lat": -14.246,
+          "lon": -170.578,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "COK": {
+      "country": "Cook Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Muri Lagoon",
+          "lat": -21.253,
+          "lon": -159.735,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NIU": {
+      "country": "Niue",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Talava Arches",
+          "lat": -18.955,
+          "lon": -169.87,
+          "glyph": "🪨",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "WLF": {
+      "country": "Wallis and Futuna",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Lake Lalolalo",
+          "lat": -13.294,
+          "lon": -176.204,
+          "glyph": "🏞️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "PCN": {
+      "country": "Pitcairn Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Bounty Bay",
+          "lat": -25.063,
+          "lon": -130.096,
+          "glyph": "⛵",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "NFK": {
+      "country": "Norfolk Island",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Kingston",
+          "lat": -29.055,
+          "lon": 167.96,
+          "glyph": "🏘️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "IOA": {
+      "country": "Australian Indian Ocean Territories",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Christmas Island Crabs",
+          "lat": -10.492,
+          "lon": 105.633,
+          "glyph": "🦀",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ATC": {
+      "country": "Ashmore and Cartier Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Ashmore Reef",
+          "lat": -12.256,
+          "lon": 123.045,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "ATA": {
+      "country": "Antarctica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "South Pole",
+          "lat": -90,
+          "lon": 0,
+          "glyph": "❄️",
+          "tier": 1,
+          "note": null
+        }
+      ]
+    },
+    "ATF": {
+      "country": "French Southern and Antarctic Lands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Port-aux-Français",
+          "lat": -49.351,
+          "lon": 70.219,
+          "glyph": "🐧",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "SGS": {
+      "country": "South Georgia and the South Sandwich Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Grytviken",
+          "lat": -54.281,
+          "lon": -36.508,
+          "glyph": "🐧",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "HMD": {
+      "country": "Heard Island and McDonald Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Mawson Peak",
+          "lat": -53.106,
+          "lon": 73.514,
+          "glyph": "🌋",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    },
+    "IOT": {
+      "country": "British Indian Ocean Territory",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "landmarks": [
+        {
+          "name": "Diego Garcia",
+          "lat": -7.313,
+          "lon": 72.411,
+          "glyph": "🏝️",
+          "tier": 3,
+          "note": null
+        }
+      ]
+    }
+  }
+}

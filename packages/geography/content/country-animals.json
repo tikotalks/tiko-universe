@@ -1,0 +1,7653 @@
+{
+  "schemaVersion": 1,
+  "note": "Which animals live in each country, authored by hand. Only animals actually found wild in that country — nothing is added automatically from the surrounding region, because the region can be right while the country is wrong. Names are titles from the Tiko media library; a name with no picture is reported by report-media-gaps.mjs and not shown on the globe. Set review.state to \"verified\" once a person has been through a country.",
+  "reviewStates": [
+    "draft",
+    "verified"
+  ],
+  "countries": {
+    "ABW": {
+      "country": "Aruba",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Lizard",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AFG": {
+      "country": "Afghanistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Persian Leopard",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AGO": {
+      "country": "Angola",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Antelope",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Vervet Monkey",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AIA": {
+      "country": "Anguilla",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ALB": {
+      "country": "Albania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ALD": {
+      "country": "Åland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Eagle",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AND": {
+      "country": "Andorra",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ARE": {
+      "country": "United Arab Emirates",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ARG": {
+      "country": "Argentina",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Penguin",
+          "note": null
+        },
+        {
+          "name": "Cougar",
+          "note": null
+        },
+        {
+          "name": "Armadillo",
+          "note": null
+        },
+        {
+          "name": "Guinea Pig",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ARM": {
+      "country": "Armenia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Armenian Mouflon",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ASM": {
+      "country": "American Samoa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ATA": {
+      "country": "Antarctica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Emperor Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        },
+        {
+          "name": "King Penguin",
+          "note": null
+        },
+        {
+          "name": "Chinstrap Penguin",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ATC": {
+      "country": "Ashmore and Cartier Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ATF": {
+      "country": "French Southern and Antarctic Lands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "King Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        },
+        {
+          "name": "Rockhopper Penguin",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ATG": {
+      "country": "Antigua and Barbuda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AUS": {
+      "country": "Australia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Kangaroo",
+          "note": null
+        },
+        {
+          "name": "Koala",
+          "note": null
+        },
+        {
+          "name": "Wombat",
+          "note": null
+        },
+        {
+          "name": "Emu",
+          "note": null
+        },
+        {
+          "name": "Kookaburra",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AUT": {
+      "country": "Austria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "AZE": {
+      "country": "Azerbaijan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caspian Snowcock",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Sturgeon",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BDI": {
+      "country": "Burundi",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Vervet Monkey",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BEL": {
+      "country": "Belgium",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Mallard",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BEN": {
+      "country": "Benin",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BFA": {
+      "country": "Burkina Faso",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BGD": {
+      "country": "Bangladesh",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Ring-necked Parakeet",
+          "note": null
+        },
+        {
+          "name": "Zebra Danio",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BGR": {
+      "country": "Bulgaria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BHR": {
+      "country": "Bahrain",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BHS": {
+      "country": "The Bahamas",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BIH": {
+      "country": "Bosnia and Herzegovina",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BLM": {
+      "country": "Saint Barthélemy",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BLR": {
+      "country": "Belarus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Beaver",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BLZ": {
+      "country": "Belize",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BMU": {
+      "country": "Bermuda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Lobster",
+          "note": null
+        },
+        {
+          "name": "Humpback Whale",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BOL": {
+      "country": "Bolivia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Llama",
+          "note": null
+        },
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Armadillo",
+          "note": null
+        },
+        {
+          "name": "Guinea Pig",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BRA": {
+      "country": "Brazil",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Amazon River Dolphin",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BRB": {
+      "country": "Barbados",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BRN": {
+      "country": "Brunei",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Orangutan",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BTN": {
+      "country": "Bhutan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Red Panda",
+          "note": null
+        },
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "BWA": {
+      "country": "Botswana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Meerkat",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CAF": {
+      "country": "Central African Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CAN": {
+      "country": "Canada",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Moose",
+          "note": null
+        },
+        {
+          "name": "Grizzly Bear",
+          "note": null
+        },
+        {
+          "name": "Beaver",
+          "note": null
+        },
+        {
+          "name": "Canada Goose",
+          "note": null
+        },
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Polar Bear",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CHE": {
+      "country": "Switzerland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CHL": {
+      "country": "Chile",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Penguin",
+          "note": null
+        },
+        {
+          "name": "Cougar",
+          "note": null
+        },
+        {
+          "name": "Llama",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Blue Whale",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CHN": {
+      "country": "People's Republic of China",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Giant Panda",
+          "note": null
+        },
+        {
+          "name": "Red Panda",
+          "note": null
+        },
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CIV": {
+      "country": "Ivory Coast",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CMR": {
+      "country": "Cameroon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Mandrill",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "COD": {
+      "country": "Democratic Republic of the Congo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Okapi",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "COG": {
+      "country": "Republic of the Congo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Mandrill",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "COK": {
+      "country": "Cook Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "COL": {
+      "country": "Colombia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "COM": {
+      "country": "Comoros",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Lemur",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CPV": {
+      "country": "Cape Verde",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Lobster",
+          "note": null
+        },
+        {
+          "name": "Blue Whale",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CRI": {
+      "country": "Costa Rica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CUB": {
+      "country": "Cuba",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CUW": {
+      "country": "Curaçao",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CYM": {
+      "country": "Cayman Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CYN": {
+      "country": "Turkish Republic of Northern Cyprus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CYP": {
+      "country": "Cyprus",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "CZE": {
+      "country": "Czech Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DEU": {
+      "country": "Germany",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DJI": {
+      "country": "Djibouti",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DMA": {
+      "country": "Dominica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Amazon Parrot",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DNK": {
+      "country": "Denmark",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Swan",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DOM": {
+      "country": "Dominican Republic",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "DZA": {
+      "country": "Algeria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Barn Owl",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ECU": {
+      "country": "Ecuador",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Blue-footed Booby",
+          "note": null
+        },
+        {
+          "name": "Tortoise",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Jaguar",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "EGY": {
+      "country": "Egypt",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Barn Owl",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ERI": {
+      "country": "Eritrea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ESP": {
+      "country": "Spain",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "EST": {
+      "country": "Estonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Beaver",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ETH": {
+      "country": "Ethiopia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Vulture",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FIN": {
+      "country": "Finland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Wolverine",
+          "note": null
+        },
+        {
+          "name": "Reindeer",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Swan",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FJI": {
+      "country": "Fiji",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FLK": {
+      "country": "Falkland Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Penguin",
+          "note": null
+        },
+        {
+          "name": "King Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FRA": {
+      "country": "France",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FRO": {
+      "country": "Faroe Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Sperm Whale",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "FSM": {
+      "country": "Federated States of Micronesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Giant Clam",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GAB": {
+      "country": "Gabon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Mandrill",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GBR": {
+      "country": "United Kingdom",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GEO": {
+      "country": "Georgia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Sturgeon",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GGY": {
+      "country": "Guernsey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GHA": {
+      "country": "Ghana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GIN": {
+      "country": "Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GMB": {
+      "country": "The Gambia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Vervet Monkey",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GNB": {
+      "country": "Guinea-Bissau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GNQ": {
+      "country": "Equatorial Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Mandrill",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GRC": {
+      "country": "Greece",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GRD": {
+      "country": "Grenada",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GRL": {
+      "country": "Greenland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Polar Bear",
+          "note": null
+        },
+        {
+          "name": "Arctic Fox",
+          "note": null
+        },
+        {
+          "name": "Walrus",
+          "note": null
+        },
+        {
+          "name": "Narwhal",
+          "note": null
+        },
+        {
+          "name": "Snowy Owl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GTM": {
+      "country": "Guatemala",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GUM": {
+      "country": "Guam",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "GUY": {
+      "country": "Guyana",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HKG": {
+      "country": "Hong Kong",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Ring-necked Parakeet",
+          "note": null
+        },
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HMD": {
+      "country": "Heard Island and McDonald Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "King Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Macaroni Penguin",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HND": {
+      "country": "Honduras",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HRV": {
+      "country": "Croatia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HTI": {
+      "country": "Haiti",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "HUN": {
+      "country": "Hungary",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IDN": {
+      "country": "Indonesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Orangutan",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IMN": {
+      "country": "Isle of Man",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IND": {
+      "country": "India",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Leopard",
+          "note": null
+        },
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Ring-necked Parakeet",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IOA": {
+      "country": "Australian Indian Ocean Territories",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IOT": {
+      "country": "British Indian Ocean Territory",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IRL": {
+      "country": "Ireland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IRN": {
+      "country": "Iran",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Persian Leopard",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Sturgeon",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "IRQ": {
+      "country": "Iraq",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ISL": {
+      "country": "Iceland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Arctic Fox",
+          "note": null
+        },
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Sperm Whale",
+          "note": null
+        },
+        {
+          "name": "Reindeer",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ISR": {
+      "country": "Israel",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ITA": {
+      "country": "Italy",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "JAM": {
+      "country": "Jamaica",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "JEY": {
+      "country": "Jersey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "JOR": {
+      "country": "Jordan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "JPN": {
+      "country": "Japan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Snow Owl",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KAS": {
+      "country": "Siachen Glacier",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KAZ": {
+      "country": "Kazakhstan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Saiga Antelope",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Sturgeon",
+          "note": null
+        },
+        {
+          "name": "Hamster",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KEN": {
+      "country": "Kenya",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Cheetah",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KGZ": {
+      "country": "Kyrgyzstan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KHM": {
+      "country": "Cambodia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KIR": {
+      "country": "Kiribati",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Giant Clam",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KNA": {
+      "country": "Saint Kitts and Nevis",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KOR": {
+      "country": "South Korea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Snow Owl",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KOS": {
+      "country": "Kosovo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "KWT": {
+      "country": "Kuwait",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LAO": {
+      "country": "Laos",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LBN": {
+      "country": "Lebanon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LBR": {
+      "country": "Liberia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LBY": {
+      "country": "Libya",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Barn Owl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LCA": {
+      "country": "Saint Lucia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Amazon Parrot",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LIE": {
+      "country": "Liechtenstein",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LKA": {
+      "country": "Sri Lanka",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Leopard",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Ring-necked Parakeet",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LSO": {
+      "country": "Lesotho",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Antelope",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LTU": {
+      "country": "Lithuania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Beaver",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LUX": {
+      "country": "Luxembourg",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "LVA": {
+      "country": "Latvia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Beaver",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MAC": {
+      "country": "Macau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        },
+        {
+          "name": "Ring-necked Parakeet",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MAF": {
+      "country": "Saint Martin",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MAR": {
+      "country": "Morocco",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Barbary Macaque",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MCO": {
+      "country": "Monaco",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Lobster",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MDA": {
+      "country": "Moldova",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MDG": {
+      "country": "Madagascar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Lemur",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Tortoise",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MDV": {
+      "country": "Maldives",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MEX": {
+      "country": "Mexico",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Coyote",
+          "note": null
+        },
+        {
+          "name": "Armadillo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Tarantula",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MHL": {
+      "country": "Marshall Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Giant Clam",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MKD": {
+      "country": "North Macedonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MLI": {
+      "country": "Mali",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MLT": {
+      "country": "Malta",
+      "review": {
+        "state": "verified",
+        "by": "sil",
+        "at": "2026-08-24"
+      },
+      "animals": [
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Rabbit",
+          "note": null
+        },
+        {
+          "name": "Leopard Gecko",
+          "note": null
+        },
+        {
+          "name": "Snake",
+          "note": null
+        },
+        {
+          "name": "Frog",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Bottlenose Dolphin",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Weasel",
+          "note": null
+        },
+        {
+          "name": "Maltese Wall Lizard",
+          "note": null
+        }
+      ],
+      "alsoWanted": [
+        {
+          "name": "Shrew",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Bat",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Octopus",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Squid",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Blue Rock-Thrush",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Sparrow",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Moorhen",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Swift",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Heron",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Egret",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Kingfisher",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Bee-eater",
+          "note": "no picture in the media library"
+        },
+        {
+          "name": "Skink",
+          "note": "no picture in the media library"
+        }
+      ]
+    },
+    "MMR": {
+      "country": "Myanmar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MNE": {
+      "country": "Montenegro",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MNG": {
+      "country": "Mongolia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Saiga Antelope",
+          "note": null
+        },
+        {
+          "name": "Gray Wolf",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MNP": {
+      "country": "Northern Mariana Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MOZ": {
+      "country": "Mozambique",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MRT": {
+      "country": "Mauritania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MSR": {
+      "country": "Montserrat",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MUS": {
+      "country": "Mauritius",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MWI": {
+      "country": "Malawi",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Antelope",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "MYS": {
+      "country": "Malaysia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Orangutan",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Asian Elephant",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NAM": {
+      "country": "Namibia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Meerkat",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Cheetah",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NCL": {
+      "country": "New Caledonia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Cassowary",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NER": {
+      "country": "Niger",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NFK": {
+      "country": "Norfolk Island",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NGA": {
+      "country": "Nigeria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NIC": {
+      "country": "Nicaragua",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NIU": {
+      "country": "Niue",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NLD": {
+      "country": "Netherlands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Mallard",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Swan",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NOR": {
+      "country": "Norway",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Reindeer",
+          "note": null
+        },
+        {
+          "name": "Wolverine",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NPL": {
+      "country": "Nepal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Red Panda",
+          "note": null
+        },
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Bearded Vulture",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NRU": {
+      "country": "Nauru",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "NZL": {
+      "country": "New Zealand",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "OMN": {
+      "country": "Oman",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PAK": {
+      "country": "Pakistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Persian Leopard",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PAN": {
+      "country": "Panama",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PCN": {
+      "country": "Pitcairn Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PER": {
+      "country": "Peru",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Llama",
+          "note": null
+        },
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Guinea Pig",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Blue-footed Booby",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PHL": {
+      "country": "Philippines",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Philippine Eagle",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PLW": {
+      "country": "Palau",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Giant Clam",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PNG": {
+      "country": "Papua New Guinea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Cassowary",
+          "note": null
+        },
+        {
+          "name": "Sugar Glider",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "POL": {
+      "country": "Poland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PRI": {
+      "country": "Puerto Rico",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PRK": {
+      "country": "North Korea",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Snow Owl",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PRT": {
+      "country": "Portugal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PRY": {
+      "country": "Paraguay",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Armadillo",
+          "note": null
+        },
+        {
+          "name": "Tapir",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Guinea Pig",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PSX": {
+      "country": "Palestine",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "PYF": {
+      "country": "French Polynesia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Blacktip Shark",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "QAT": {
+      "country": "Qatar",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ROU": {
+      "country": "Romania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "RUS": {
+      "country": "Russia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Siberian Tiger",
+          "note": null
+        },
+        {
+          "name": "Reindeer",
+          "note": null
+        },
+        {
+          "name": "Wolverine",
+          "note": null
+        },
+        {
+          "name": "Walrus",
+          "note": null
+        },
+        {
+          "name": "Snowy Owl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "RWA": {
+      "country": "Rwanda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Vervet Monkey",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SAH": {
+      "country": "Western Sahara",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SAU": {
+      "country": "Saudi Arabia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SDN": {
+      "country": "Sudan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SDS": {
+      "country": "South Sudan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Antelope",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SEN": {
+      "country": "Senegal",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Vervet Monkey",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SGP": {
+      "country": "Singapore",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SGS": {
+      "country": "South Georgia and the South Sandwich Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "King Penguin",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Orca",
+          "note": null
+        },
+        {
+          "name": "Macaroni Penguin",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SHN": {
+      "country": "Saint Helena",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Sperm Whale",
+          "note": null
+        },
+        {
+          "name": "Lobster",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SLB": {
+      "country": "Solomon Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Cassowary",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SLE": {
+      "country": "Sierra Leone",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SLV": {
+      "country": "El Salvador",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Tree Frog",
+          "note": null
+        },
+        {
+          "name": "Armadillo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SMR": {
+      "country": "San Marino",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Fox",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "European Hare",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SOL": {
+      "country": "Somaliland",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SOM": {
+      "country": "Somalia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Cheetah",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SPM": {
+      "country": "Saint Pierre and Miquelon",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Atlantic Puffin",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Lobster",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SRB": {
+      "country": "Serbia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "European Badger",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "STP": {
+      "country": "São Tomé and Príncipe",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Parrot",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SUR": {
+      "country": "Suriname",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SVK": {
+      "country": "Slovakia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SVN": {
+      "country": "Slovenia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Red Deer",
+          "note": null
+        },
+        {
+          "name": "Fox",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SWE": {
+      "country": "Sweden",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Moose",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Reindeer",
+          "note": null
+        },
+        {
+          "name": "Wolverine",
+          "note": null
+        },
+        {
+          "name": "Eurasian Lynx",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SWZ": {
+      "country": "Eswatini",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Rhinoceros",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Antelope",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Warthog",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SXM": {
+      "country": "Sint Maarten",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SYC": {
+      "country": "Seychelles",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Tortoise",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "SYR": {
+      "country": "Syria",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TCA": {
+      "country": "Turks and Caicos Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TCD": {
+      "country": "Chad",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Ostrich",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TGO": {
+      "country": "Togo",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Baboon",
+          "note": null
+        },
+        {
+          "name": "Guinea Fowl",
+          "note": null
+        },
+        {
+          "name": "Ball Python",
+          "note": null
+        },
+        {
+          "name": "Termite",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "THA": {
+      "country": "Thailand",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Betta Fish",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TJK": {
+      "country": "Tajikistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Snow Leopard",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TKM": {
+      "country": "Turkmenistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TLS": {
+      "country": "East Timor",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Saltwater Crocodile",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TON": {
+      "country": "Tonga",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TTO": {
+      "country": "Trinidad and Tobago",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TUN": {
+      "country": "Tunisia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Fennec Fox",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TUR": {
+      "country": "Turkey",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Bezoar Ibex",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        },
+        {
+          "name": "Golden Eagle",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TUV": {
+      "country": "Tuvalu",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TWN": {
+      "country": "Taiwan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Koi Fish",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Praying Mantis",
+          "note": null
+        },
+        {
+          "name": "Snow Owl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "TZA": {
+      "country": "Tanzania",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Wildebeest",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "UGA": {
+      "country": "Uganda",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Gorilla",
+          "note": null
+        },
+        {
+          "name": "Chimpanzee",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "UKR": {
+      "country": "Ukraine",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Wolf",
+          "note": null
+        },
+        {
+          "name": "Wild Boar",
+          "note": null
+        },
+        {
+          "name": "Brown Bear",
+          "note": null
+        },
+        {
+          "name": "Stork",
+          "note": null
+        },
+        {
+          "name": "Sturgeon",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "URY": {
+      "country": "Uruguay",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Armadillo",
+          "note": null
+        },
+        {
+          "name": "Guinea Pig",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Earless Seal",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "USA": {
+      "country": "United States of America",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Bison",
+          "note": null
+        },
+        {
+          "name": "Grizzly Bear",
+          "note": null
+        },
+        {
+          "name": "Bald Eagle",
+          "note": null
+        },
+        {
+          "name": "Coyote",
+          "note": null
+        },
+        {
+          "name": "Alligator",
+          "note": null
+        },
+        {
+          "name": "Bobcat",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "UZB": {
+      "country": "Uzbekistan",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Saiga Antelope",
+          "note": null
+        },
+        {
+          "name": "Steppe Eagle",
+          "note": null
+        },
+        {
+          "name": "Marbled-polecat",
+          "note": null
+        },
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Hamster",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VAT": {
+      "country": "Vatican City",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Pigeon",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Common Hedgehog",
+          "note": null
+        },
+        {
+          "name": "Butterfly",
+          "note": null
+        },
+        {
+          "name": "Bee",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VCT": {
+      "country": "Saint Vincent and the Grenadines",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Amazon Parrot",
+          "note": null
+        },
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VEN": {
+      "country": "Venezuela",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Jaguar",
+          "note": null
+        },
+        {
+          "name": "Sloth",
+          "note": null
+        },
+        {
+          "name": "Scarlet Macaw",
+          "note": null
+        },
+        {
+          "name": "Toucan",
+          "note": null
+        },
+        {
+          "name": "Flamingo",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VGB": {
+      "country": "British Virgin Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VIR": {
+      "country": "United States Virgin Islands",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Crab",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VNM": {
+      "country": "Vietnam",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Asian Elephant",
+          "note": null
+        },
+        {
+          "name": "Tiger",
+          "note": null
+        },
+        {
+          "name": "Hornbill",
+          "note": null
+        },
+        {
+          "name": "Tarsier",
+          "note": null
+        },
+        {
+          "name": "Peafowl",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "VUT": {
+      "country": "Vanuatu",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Cassowary",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "WLF": {
+      "country": "Wallis and Futuna",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "WSM": {
+      "country": "Samoa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Sea Turtle",
+          "note": null
+        },
+        {
+          "name": "Clownfish",
+          "note": null
+        },
+        {
+          "name": "Hermit Crab",
+          "note": null
+        },
+        {
+          "name": "Seagull",
+          "note": null
+        },
+        {
+          "name": "Sea Star",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "YEM": {
+      "country": "Yemen",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Camel",
+          "note": null
+        },
+        {
+          "name": "Caracal",
+          "note": null
+        },
+        {
+          "name": "Striped Hyena",
+          "note": null
+        },
+        {
+          "name": "Chameleon",
+          "note": null
+        },
+        {
+          "name": "Scorpion",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ZAF": {
+      "country": "South Africa",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Meerkat",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Rhinoceros",
+          "note": null
+        },
+        {
+          "name": "Penguin",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ZMB": {
+      "country": "Zambia",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Giraffe",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    },
+    "ZWE": {
+      "country": "Zimbabwe",
+      "review": {
+        "state": "draft",
+        "by": null,
+        "at": null
+      },
+      "animals": [
+        {
+          "name": "African Elephant",
+          "note": null
+        },
+        {
+          "name": "Lion",
+          "note": null
+        },
+        {
+          "name": "Rhinoceros",
+          "note": null
+        },
+        {
+          "name": "Zebra",
+          "note": null
+        },
+        {
+          "name": "Hippopotamus",
+          "note": null
+        }
+      ],
+      "alsoWanted": []
+    }
+  }
+}

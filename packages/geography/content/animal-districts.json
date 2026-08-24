@@ -1,0 +1,1739 @@
+{
+  "schemaVersion": 1,
+  "note": "Where each animal lives, as district ids from districts.json. This is what spreads an animal across the region it belongs to; the per-country lists in country-animals.json are what a child finds when they zoom into one country. Keys are titles from the Tiko media library.",
+  "animals": {
+    "african elephant": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "elephant": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "asian elephant": {
+      "districts": [
+        "india",
+        "southeast-asia"
+      ]
+    },
+    "lion": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "cheetah": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "leopard": {
+      "districts": [
+        "africa-savanna",
+        "india"
+      ]
+    },
+    "persian leopard": {
+      "districts": [
+        "middle-east"
+      ]
+    },
+    "giraffe": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "zebra": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "wildebeest": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "wildebeests": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "hippopotamus": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "rhino": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "rhinoceros": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "warthog": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "hyena": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "striped hyena": {
+      "districts": [
+        "africa-desert",
+        "middle-east"
+      ]
+    },
+    "meerkat": {
+      "districts": [
+        "africa-south"
+      ]
+    },
+    "gorilla": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "chimpanzee": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "chimpansee": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "mandrill": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "baboon": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "vervet monkey": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "okapi": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "aardvark": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "pangolin": {
+      "districts": [
+        "africa-savanna",
+        "southeast-asia"
+      ]
+    },
+    "antelope": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "gazelle": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "thomson's gazelle": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "greater kudu": {
+      "districts": [
+        "africa-south"
+      ]
+    },
+    "caracal": {
+      "districts": [
+        "africa-desert",
+        "middle-east"
+      ]
+    },
+    "serval": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "fennec fox": {
+      "districts": [
+        "africa-desert"
+      ]
+    },
+    "ostrich": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "flamingo": {
+      "districts": [
+        "africa-savanna",
+        "mediterranean"
+      ]
+    },
+    "hornbill": {
+      "districts": [
+        "africa-rainforest",
+        "southeast-asia"
+      ]
+    },
+    "african grey parrot": {
+      "districts": [
+        "africa-rainforest"
+      ]
+    },
+    "african crocodile": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "guinea fowl": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "lemur": {
+      "districts": [
+        "madagascar"
+      ]
+    },
+    "chameleon": {
+      "districts": [
+        "mediterranean",
+        "madagascar",
+        "africa-savanna"
+      ]
+    },
+    "bearded vulture": {
+      "districts": [
+        "himalaya",
+        "europe-mountains"
+      ]
+    },
+    "vulture": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "black vulture": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "flying vulture": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "sitting vulture": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "saiga antelope": {
+      "districts": [
+        "central-asia"
+      ]
+    },
+    "tiger": {
+      "districts": [
+        "india",
+        "southeast-asia"
+      ]
+    },
+    "snow leopard": {
+      "districts": [
+        "himalaya"
+      ]
+    },
+    "red panda": {
+      "districts": [
+        "himalaya"
+      ]
+    },
+    "giant panda": {
+      "districts": [
+        "china-forest"
+      ]
+    },
+    "orangutan": {
+      "districts": [
+        "southeast-asia"
+      ]
+    },
+    "tarsier": {
+      "districts": [
+        "southeast-asia"
+      ]
+    },
+    "saltwater crocodile": {
+      "districts": [
+        "southeast-asia",
+        "australia-outback"
+      ]
+    },
+    "philippine eagle": {
+      "districts": [
+        "southeast-asia"
+      ]
+    },
+    "steppe eagle": {
+      "districts": [
+        "central-asia"
+      ]
+    },
+    "caspian snowcock": {
+      "districts": [
+        "central-asia"
+      ]
+    },
+    "bezoar ibex": {
+      "districts": [
+        "middle-east"
+      ]
+    },
+    "armenian mouflon": {
+      "districts": [
+        "middle-east"
+      ]
+    },
+    "marbled-polecat": {
+      "districts": [
+        "central-asia"
+      ]
+    },
+    "musk ox": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "eurasian lynx": {
+      "districts": [
+        "europe-east",
+        "europe-north",
+        "siberia"
+      ]
+    },
+    "lynx": {
+      "districts": [
+        "europe-east",
+        "europe-north",
+        "siberia"
+      ]
+    },
+    "ring-necked parakeet": {
+      "districts": [
+        "india"
+      ]
+    },
+    "peafowl": {
+      "districts": [
+        "india"
+      ]
+    },
+    "koi fish": {
+      "districts": [
+        "japan-korea"
+      ]
+    },
+    "red-eared slider": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "european badger": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "badger": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "european hare": {
+      "districts": [
+        "mediterranean",
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "european robin": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "eurasian otter": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "common hedgehog": {
+      "districts": [
+        "mediterranean",
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "hedgehog": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "red deer": {
+      "districts": [
+        "europe-west",
+        "europe-east",
+        "europe-north"
+      ]
+    },
+    "deer": {
+      "districts": [
+        "europe-west",
+        "europe-east",
+        "north-america-forest"
+      ]
+    },
+    "red fox": {
+      "districts": [
+        "mediterranean",
+        "europe-west",
+        "europe-north",
+        "north-america-forest"
+      ]
+    },
+    "fox": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "wild boar": {
+      "districts": [
+        "mediterranean",
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "fire salamander": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "sand lizard": {
+      "districts": [
+        "mediterranean",
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "golden eagle": {
+      "districts": [
+        "europe-mountains",
+        "north-america-west"
+      ]
+    },
+    "white-tailed eagle": {
+      "districts": [
+        "europe-north",
+        "europe-east"
+      ]
+    },
+    "atlantic puffin": {
+      "districts": [
+        "europe-north",
+        "ocean-atlantic"
+      ]
+    },
+    "magpie": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "stork": {
+      "districts": [
+        "europe-west",
+        "europe-east",
+        "africa-savanna"
+      ]
+    },
+    "swan": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "black swan": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "common frog": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "wolf": {
+      "districts": [
+        "europe-east",
+        "europe-north",
+        "north-america-forest",
+        "siberia"
+      ]
+    },
+    "gray wolf": {
+      "districts": [
+        "north-america-forest",
+        "siberia"
+      ]
+    },
+    "wolverine": {
+      "districts": [
+        "siberia",
+        "europe-north",
+        "north-america-forest"
+      ]
+    },
+    "ferret": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "brown bear": {
+      "districts": [
+        "europe-east",
+        "europe-north",
+        "siberia",
+        "north-america-west"
+      ]
+    },
+    "bear": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "american black bear": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "grizzly bear": {
+      "districts": [
+        "north-america-west"
+      ]
+    },
+    "bison": {
+      "districts": [
+        "north-america-plains"
+      ]
+    },
+    "bighorn sheep": {
+      "districts": [
+        "north-america-west"
+      ]
+    },
+    "cougar": {
+      "districts": [
+        "north-america-west",
+        "andes"
+      ]
+    },
+    "bobcat": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "coyote": {
+      "districts": [
+        "north-america-plains"
+      ]
+    },
+    "moose": {
+      "districts": [
+        "north-america-forest",
+        "siberia"
+      ]
+    },
+    "elk": {
+      "districts": [
+        "north-america-west"
+      ]
+    },
+    "mule deer": {
+      "districts": [
+        "north-america-west"
+      ]
+    },
+    "beaver": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "muskrat": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "eastern chipmunk": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "squirrel": {
+      "districts": [
+        "europe-west",
+        "europe-east",
+        "north-america-forest"
+      ]
+    },
+    "possum": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "armadillo": {
+      "districts": [
+        "north-america-desert",
+        "south-america-grassland"
+      ]
+    },
+    "star-nosed mole": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "vancouver island marmot": {
+      "districts": [
+        "north-america-west"
+      ]
+    },
+    "harpy eagle": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "jaguar": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "sloth": {
+      "districts": [
+        "amazon",
+        "central-america"
+      ]
+    },
+    "tapir": {
+      "districts": [
+        "amazon",
+        "southeast-asia"
+      ]
+    },
+    "scarlet macaw": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "macaw": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "blue and yellow macaw": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "amazon parrot": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "toucan": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "tree frog": {
+      "districts": [
+        "amazon",
+        "central-america"
+      ]
+    },
+    "amazon river dolphin": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "llama": {
+      "districts": [
+        "andes"
+      ]
+    },
+    "blue-footed booby": {
+      "districts": [
+        "galapagos"
+      ]
+    },
+    "basilisk": {
+      "districts": [
+        "central-america"
+      ]
+    },
+    "kangaroo": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "wallaby": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "koala": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "wombat": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "quokka": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "echidna": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "platypus": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "dingo": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "tasmanian devil": {
+      "districts": [
+        "tasmania"
+      ]
+    },
+    "tasmanian tiger": {
+      "districts": [
+        "tasmania"
+      ]
+    },
+    "kookaburra": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "emu": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "cassowary": {
+      "districts": [
+        "papua",
+        "australia-forest"
+      ]
+    },
+    "sugar glider": {
+      "districts": [
+        "australia-forest",
+        "papua"
+      ]
+    },
+    "sugarglider": {
+      "districts": [
+        "australia-forest",
+        "papua"
+      ]
+    },
+    "frill-necked lizard": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "blue-tongue skink": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "redback spider": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "sydney funnel-web spider": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "cockatoo": {
+      "districts": [
+        "australia-forest"
+      ]
+    },
+    "cockatiel": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "budgerigar parakeet": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "freshwater crocodile": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "polar bear": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "arctic fox": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "polar fox": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "arctic hare": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "arctic animal": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "walrus": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "narwhal": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "beluga": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "reindeer": {
+      "districts": [
+        "arctic",
+        "siberia"
+      ]
+    },
+    "snowy owl": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "snow owl": {
+      "districts": [
+        "arctic"
+      ]
+    },
+    "emperor penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "king penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "gentoo penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "chinstrap penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "macaroni penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "rockhopper penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "penguin": {
+      "districts": [
+        "antarctic"
+      ]
+    },
+    "earless seal": {
+      "districts": [
+        "arctic",
+        "antarctic"
+      ]
+    },
+    "seal": {
+      "districts": [
+        "arctic",
+        "antarctic"
+      ]
+    },
+    "blue whale": {
+      "districts": [
+        "open-ocean"
+      ]
+    },
+    "sperm whale": {
+      "districts": [
+        "mediterranean-sea",
+        "open-ocean"
+      ]
+    },
+    "orca": {
+      "districts": [
+        "open-ocean",
+        "arctic"
+      ]
+    },
+    "bottlenose dolphin": {
+      "districts": [
+        "mediterranean-sea",
+        "ocean-atlantic",
+        "ocean-pacific"
+      ]
+    },
+    "pacific white-sided dolphin": {
+      "districts": [
+        "ocean-pacific"
+      ]
+    },
+    "great white shark": {
+      "districts": [
+        "ocean-atlantic",
+        "ocean-pacific"
+      ]
+    },
+    "tiger shark": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "hammerhead shark": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "blacktip shark": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "basking shark": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "sawshark": {
+      "districts": [
+        "ocean-pacific"
+      ]
+    },
+    "manatee": {
+      "districts": [
+        "ocean-atlantic",
+        "central-america"
+      ]
+    },
+    "sea star": {
+      "districts": [
+        "mediterranean-sea",
+        "coral-reef"
+      ]
+    },
+    "brittle sea star": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "feather sea star": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea urchin": {
+      "districts": [
+        "mediterranean-sea",
+        "coral-reef"
+      ]
+    },
+    "sea anemone": {
+      "districts": [
+        "mediterranean-sea",
+        "coral-reef"
+      ]
+    },
+    "bubble tip sea anemone": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "rock flower sea anemone": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea cucumber": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea sponge": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea conch": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea snail": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "sea hare": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "giant clam": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "clownfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "blue tang": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "yellow tang": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "mandarinfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "moorish idol": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "royal gramma": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "six-line wrasse": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "firefish goby": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "copperband butterflyfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "foxface rabbitfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "anthias": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "blenny": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "damselfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "cardinalfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "hawkfish": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "brain coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "hard coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "soft coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "torch coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "hammer coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "leather coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "frogspawn coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "mushroom-coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "zoanthid coral": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "cleaner shrimp": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "peppermint shrimp": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "pistol shrimp": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "hermit crab": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "crab": {
+      "districts": [
+        "mediterranean",
+        "ocean-atlantic",
+        "coral-reef"
+      ]
+    },
+    "lobster": {
+      "districts": [
+        "mediterranean-sea",
+        "ocean-atlantic"
+      ]
+    },
+    "marine oyster": {
+      "districts": [
+        "mediterranean-sea",
+        "ocean-atlantic"
+      ]
+    },
+    "marine scallop": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "marine tube worm": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "marine bristle worm": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "marine feather duster worm": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "nassarius sea snail": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "trochus sea snail": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "turbo sea snail": {
+      "districts": [
+        "coral-reef"
+      ]
+    },
+    "seagull": {
+      "districts": [
+        "mediterranean",
+        "mediterranean-sea",
+        "ocean-atlantic"
+      ]
+    },
+    "marlin": {
+      "districts": [
+        "open-ocean"
+      ]
+    },
+    "barracuda": {
+      "districts": [
+        "mediterranean-sea",
+        "coral-reef"
+      ]
+    },
+    "bluefin tuna": {
+      "districts": [
+        "mediterranean-sea",
+        "open-ocean"
+      ]
+    },
+    "yellowfin tuna": {
+      "districts": [
+        "open-ocean"
+      ]
+    },
+    "tuna": {
+      "districts": [
+        "open-ocean"
+      ]
+    },
+    "mahi-mahi": {
+      "districts": [
+        "open-ocean"
+      ]
+    },
+    "tarpon": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "halibut": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "herring": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "sturgeon": {
+      "districts": [
+        "central-asia",
+        "europe-east"
+      ]
+    },
+    "alligator": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "froglet": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "tadpole": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "toad": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "canada goose": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "goose": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "mallard": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "goldfish": {
+      "districts": [
+        "china-forest"
+      ]
+    },
+    "guppy": {
+      "districts": [
+        "central-america"
+      ]
+    },
+    "betta fish": {
+      "districts": [
+        "southeast-asia"
+      ]
+    },
+    "zebra danio": {
+      "districts": [
+        "india"
+      ]
+    },
+    "platy": {
+      "districts": [
+        "central-america"
+      ]
+    },
+    "brine shrimp": {
+      "districts": [
+        "north-america-desert"
+      ]
+    },
+    "snail": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "butterfly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "blue swallowtail butterfly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "swallowtail butterfly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "turquoise butterfly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "caterpillar": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "catterpillar": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "dragonfly": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "damselfly": {
+      "districts": [
+        "rivers-lakes"
+      ]
+    },
+    "bee": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "hornet": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "wasp": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "ant": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "termite": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "beetle": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "ladybug": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "grasshopper": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "cricket": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "praying mantis": {
+      "districts": [
+        "mediterranean",
+        "worldwide"
+      ]
+    },
+    "firefly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "moth": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "mosquito": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "fly": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "gnat": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "cockroach": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "spider": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "tarantula": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "scorpion": {
+      "districts": [
+        "africa-desert",
+        "north-america-desert"
+      ]
+    },
+    "red velvet mite": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "barn owl": {
+      "districts": [
+        "europe-west",
+        "worldwide"
+      ]
+    },
+    "corn snake": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "ball python": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "tortoise": {
+      "districts": [
+        "mediterranean",
+        "africa-savanna",
+        "galapagos"
+      ]
+    },
+    "box turtle": {
+      "districts": [
+        "north-america-forest"
+      ]
+    },
+    "bearded dragon": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "pigeon": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "indigo bird": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "canary": {
+      "districts": [
+        "mediterranean"
+      ]
+    },
+    "leopard gecko": {
+      "districts": [
+        "mediterranean",
+        "middle-east"
+      ]
+    },
+    "snake": {
+      "districts": [
+        "mediterranean",
+        "worldwide"
+      ]
+    },
+    "frog": {
+      "districts": [
+        "mediterranean",
+        "rivers-lakes"
+      ]
+    },
+    "hoopoe": {
+      "districts": [
+        "mediterranean"
+      ]
+    },
+    "rabbit": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "lovebird": {
+      "districts": [
+        "africa-savanna"
+      ]
+    },
+    "parrot": {
+      "districts": [
+        "amazon"
+      ]
+    },
+    "parakeet": {
+      "districts": [
+        "australia-outback"
+      ]
+    },
+    "monkey": {
+      "districts": [
+        "amazon",
+        "africa-rainforest"
+      ]
+    },
+    "mouse": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "rat": {
+      "districts": [
+        "worldwide"
+      ]
+    },
+    "hamster": {
+      "districts": [
+        "central-asia"
+      ]
+    },
+    "guinea pig": {
+      "districts": [
+        "andes"
+      ]
+    },
+    "flemish giant rabbit": {
+      "districts": [
+        "europe-west"
+      ]
+    },
+    "mole": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "heron": {
+      "districts": [
+        "europe-west",
+        "rivers-lakes"
+      ]
+    },
+    "buzzard": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "grass snake": {
+      "districts": [
+        "europe-west"
+      ]
+    },
+    "roe deer": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "pine marten": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "stoat": {
+      "districts": [
+        "europe-west",
+        "europe-north"
+      ]
+    },
+    "weasel": {
+      "districts": [
+        "europe-west",
+        "europe-east"
+      ]
+    },
+    "harbour seal": {
+      "districts": [
+        "europe-west",
+        "arctic"
+      ]
+    },
+    "dodo": {
+      "districts": [
+        "madagascar"
+      ]
+    },
+    "great auk": {
+      "districts": [
+        "ocean-atlantic"
+      ]
+    },
+    "woolly mammoth": {
+      "districts": [
+        "siberia"
+      ]
+    },
+    "saber-toothed tiger": {
+      "districts": [
+        "north-america-plains"
+      ]
+    },
+    "mastodon": {
+      "districts": [
+        "north-america-forest"
+      ]
+    }
+  },
+  "renames": {
+    "Hare": "European Hare",
+    "Sea Eagle": "White-tailed Eagle",
+    "Siberian Tiger": "Tiger",
+    "Barbary Macaque": "Monkey"
+  }
+}

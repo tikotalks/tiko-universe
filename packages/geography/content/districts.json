@@ -1,0 +1,769 @@
+{
+  "schemaVersion": 1,
+  "note": "Where an animal lives, at the resolution a child needs: a part of the world, not a country and not a habitat map. Points are representative places inside the district, used to stand markers on the globe. spreadDegrees is how far animals scatter around a district point, so a savanna full of animals does not stack them all on one spot. isGeneric marks districts that span the world — oceans, rivers, \"everywhere\" — which are never used to fill a country with animals it does not have. isMarine marks water districts; an animal that only lives in water is never stood inside a country.",
+  "items": [
+    {
+      "id": "arctic",
+      "name": "The Arctic",
+      "points": [
+        {
+          "lat": 76.0,
+          "lon": -45.0
+        },
+        {
+          "lat": 72.0,
+          "lon": 105.0
+        },
+        {
+          "lat": 70.0,
+          "lon": -140.0
+        }
+      ],
+      "spreadDegrees": 10,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "antarctic",
+      "name": "Antarctica and the Southern Ocean",
+      "points": [
+        {
+          "lat": -74.0,
+          "lon": 5.0
+        },
+        {
+          "lat": -67.0,
+          "lon": 140.0
+        },
+        {
+          "lat": -62.0,
+          "lon": -60.0
+        }
+      ],
+      "spreadDegrees": 10,
+      "isGeneric": false,
+      "isMarine": true
+    },
+    {
+      "id": "north-america-forest",
+      "name": "Forests of North America",
+      "points": [
+        {
+          "lat": 47.5,
+          "lon": -93.0
+        },
+        {
+          "lat": 45.0,
+          "lon": -73.0
+        }
+      ],
+      "spreadDegrees": 7,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "north-america-plains",
+      "name": "The plains of North America",
+      "points": [
+        {
+          "lat": 43.5,
+          "lon": -101.0
+        },
+        {
+          "lat": 39.0,
+          "lon": -98.0
+        }
+      ],
+      "spreadDegrees": 5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "north-america-west",
+      "name": "The mountains of western North America",
+      "points": [
+        {
+          "lat": 44.6,
+          "lon": -110.5
+        },
+        {
+          "lat": 50.5,
+          "lon": -117.0
+        }
+      ],
+      "spreadDegrees": 5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "north-america-desert",
+      "name": "The deserts of North America",
+      "points": [
+        {
+          "lat": 33.0,
+          "lon": -112.0
+        }
+      ],
+      "spreadDegrees": 4,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "central-america",
+      "name": "Central America",
+      "points": [
+        {
+          "lat": 15.5,
+          "lon": -89.0
+        },
+        {
+          "lat": 9.7,
+          "lon": -83.5
+        }
+      ],
+      "spreadDegrees": 3,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "amazon",
+      "name": "The Amazon rainforest",
+      "points": [
+        {
+          "lat": -3.5,
+          "lon": -62.0
+        },
+        {
+          "lat": -2.0,
+          "lon": -70.0
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "andes",
+      "name": "The Andes",
+      "points": [
+        {
+          "lat": -16.0,
+          "lon": -69.0
+        },
+        {
+          "lat": -30.0,
+          "lon": -70.5
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "south-america-grassland",
+      "name": "The grasslands of South America",
+      "points": [
+        {
+          "lat": -33.0,
+          "lon": -60.0
+        }
+      ],
+      "spreadDegrees": 5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "galapagos",
+      "name": "The Galápagos Islands",
+      "points": [
+        {
+          "lat": -0.7,
+          "lon": -90.5
+        }
+      ],
+      "spreadDegrees": 1,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "africa-savanna",
+      "name": "The African savanna",
+      "points": [
+        {
+          "lat": -2.3,
+          "lon": 34.8
+        },
+        {
+          "lat": -19.0,
+          "lon": 24.5
+        },
+        {
+          "lat": -1.4,
+          "lon": 36.5
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "africa-rainforest",
+      "name": "The rainforests of central Africa",
+      "points": [
+        {
+          "lat": 0.5,
+          "lon": 20.0
+        },
+        {
+          "lat": -1.5,
+          "lon": 29.5
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "africa-desert",
+      "name": "The Sahara and the Horn of Africa",
+      "points": [
+        {
+          "lat": 23.0,
+          "lon": 13.0
+        },
+        {
+          "lat": 9.5,
+          "lon": 45.0
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "africa-south",
+      "name": "Southern Africa",
+      "points": [
+        {
+          "lat": -28.5,
+          "lon": 24.5
+        },
+        {
+          "lat": -22.0,
+          "lon": 17.0
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "madagascar",
+      "name": "Madagascar",
+      "points": [
+        {
+          "lat": -19.0,
+          "lon": 46.8
+        }
+      ],
+      "spreadDegrees": 2.5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "europe-west",
+      "name": "Western Europe",
+      "points": [
+        {
+          "lat": 52.0,
+          "lon": 5.3
+        },
+        {
+          "lat": 48.5,
+          "lon": 2.4
+        },
+        {
+          "lat": 52.5,
+          "lon": -1.5
+        },
+        {
+          "lat": 51.0,
+          "lon": 10.0
+        },
+        {
+          "lat": 47.0,
+          "lon": 8.2
+        },
+        {
+          "lat": 55.8,
+          "lon": 9.5
+        }
+      ],
+      "spreadDegrees": 4,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "europe-north",
+      "name": "Scandinavia and the Baltic",
+      "points": [
+        {
+          "lat": 60.5,
+          "lon": 15.0
+        },
+        {
+          "lat": 63.0,
+          "lon": 26.0
+        },
+        {
+          "lat": 61.0,
+          "lon": 8.5
+        },
+        {
+          "lat": 57.0,
+          "lon": 24.5
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "europe-east",
+      "name": "Central and Eastern Europe",
+      "points": [
+        {
+          "lat": 50.5,
+          "lon": 19.0
+        },
+        {
+          "lat": 46.0,
+          "lon": 25.0
+        },
+        {
+          "lat": 49.0,
+          "lon": 31.0
+        },
+        {
+          "lat": 44.0,
+          "lon": 20.5
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "europe-mountains",
+      "name": "The Alps and the Pyrenees",
+      "points": [
+        {
+          "lat": 46.5,
+          "lon": 10.5
+        },
+        {
+          "lat": 42.7,
+          "lon": 0.7
+        }
+      ],
+      "spreadDegrees": 3,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "mediterranean",
+      "name": "Around the Mediterranean",
+      "points": [
+        {
+          "lat": 38.5,
+          "lon": 15.5
+        },
+        {
+          "lat": 36.5,
+          "lon": 3.0
+        }
+      ],
+      "spreadDegrees": 5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "mediterranean-sea",
+      "name": "The Mediterranean Sea",
+      "points": [
+        {
+          "lat": 35.4,
+          "lon": 14.9
+        },
+        {
+          "lat": 38.3,
+          "lon": 5.5
+        },
+        {
+          "lat": 34.4,
+          "lon": 24.5
+        },
+        {
+          "lat": 42.0,
+          "lon": 16.5
+        }
+      ],
+      "spreadDegrees": 3,
+      "isGeneric": false,
+      "isMarine": true
+    },
+    {
+      "id": "siberia",
+      "name": "Siberia and the northern forests",
+      "points": [
+        {
+          "lat": 60.0,
+          "lon": 95.0
+        },
+        {
+          "lat": 64.0,
+          "lon": 125.0
+        }
+      ],
+      "spreadDegrees": 10,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "central-asia",
+      "name": "The steppes of Central Asia",
+      "points": [
+        {
+          "lat": 47.0,
+          "lon": 70.0
+        },
+        {
+          "lat": 45.0,
+          "lon": 100.0
+        }
+      ],
+      "spreadDegrees": 7,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "middle-east",
+      "name": "The Middle East",
+      "points": [
+        {
+          "lat": 24.0,
+          "lon": 45.0
+        },
+        {
+          "lat": 33.0,
+          "lon": 53.0
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "himalaya",
+      "name": "The Himalayas",
+      "points": [
+        {
+          "lat": 29.0,
+          "lon": 84.0
+        },
+        {
+          "lat": 33.5,
+          "lon": 77.0
+        }
+      ],
+      "spreadDegrees": 4,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "china-forest",
+      "name": "The forests of China",
+      "points": [
+        {
+          "lat": 31.0,
+          "lon": 103.5
+        }
+      ],
+      "spreadDegrees": 4,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "japan-korea",
+      "name": "Japan and Korea",
+      "points": [
+        {
+          "lat": 36.5,
+          "lon": 138.0
+        }
+      ],
+      "spreadDegrees": 3,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "india",
+      "name": "India and South Asia",
+      "points": [
+        {
+          "lat": 22.0,
+          "lon": 79.0
+        },
+        {
+          "lat": 26.5,
+          "lon": 88.0
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "southeast-asia",
+      "name": "The rainforests of Southeast Asia",
+      "points": [
+        {
+          "lat": 1.0,
+          "lon": 113.0
+        },
+        {
+          "lat": 1.5,
+          "lon": 102.0
+        },
+        {
+          "lat": 13.0,
+          "lon": 105.0
+        }
+      ],
+      "spreadDegrees": 7,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "australia-outback",
+      "name": "The Australian outback",
+      "points": [
+        {
+          "lat": -25.5,
+          "lon": 133.0
+        },
+        {
+          "lat": -22.0,
+          "lon": 121.0
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "australia-forest",
+      "name": "The forests of eastern Australia",
+      "points": [
+        {
+          "lat": -28.5,
+          "lon": 152.0
+        },
+        {
+          "lat": -33.5,
+          "lon": 150.5
+        }
+      ],
+      "spreadDegrees": 4,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "tasmania",
+      "name": "Tasmania",
+      "points": [
+        {
+          "lat": -42.0,
+          "lon": 146.5
+        }
+      ],
+      "spreadDegrees": 1.5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "new-zealand",
+      "name": "New Zealand",
+      "points": [
+        {
+          "lat": -42.5,
+          "lon": 172.5
+        }
+      ],
+      "spreadDegrees": 2.5,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "pacific-islands",
+      "name": "The Pacific islands",
+      "points": [
+        {
+          "lat": -17.5,
+          "lon": 178.0
+        },
+        {
+          "lat": 7.0,
+          "lon": 134.5
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "papua",
+      "name": "New Guinea",
+      "points": [
+        {
+          "lat": -5.5,
+          "lon": 143.0
+        }
+      ],
+      "spreadDegrees": 3,
+      "isGeneric": false,
+      "isMarine": false
+    },
+    {
+      "id": "ocean-atlantic",
+      "name": "The Atlantic Ocean",
+      "points": [
+        {
+          "lat": 32.0,
+          "lon": -42.0
+        },
+        {
+          "lat": -5.0,
+          "lon": -25.0
+        }
+      ],
+      "spreadDegrees": 12,
+      "isGeneric": true,
+      "isMarine": true
+    },
+    {
+      "id": "ocean-pacific",
+      "name": "The Pacific Ocean",
+      "points": [
+        {
+          "lat": 12.0,
+          "lon": -150.0
+        },
+        {
+          "lat": -22.0,
+          "lon": -130.0
+        }
+      ],
+      "spreadDegrees": 14,
+      "isGeneric": true,
+      "isMarine": true
+    },
+    {
+      "id": "ocean-indian",
+      "name": "The Indian Ocean",
+      "points": [
+        {
+          "lat": -12.0,
+          "lon": 75.0
+        }
+      ],
+      "spreadDegrees": 10,
+      "isGeneric": true,
+      "isMarine": true
+    },
+    {
+      "id": "coral-reef",
+      "name": "Coral reefs",
+      "points": [
+        {
+          "lat": -18.2,
+          "lon": 147.0
+        },
+        {
+          "lat": 19.0,
+          "lon": -87.0
+        },
+        {
+          "lat": -8.0,
+          "lon": 120.0
+        }
+      ],
+      "spreadDegrees": 6,
+      "isGeneric": true,
+      "isMarine": true
+    },
+    {
+      "id": "open-ocean",
+      "name": "The open ocean",
+      "points": [
+        {
+          "lat": -40.0,
+          "lon": 20.0
+        },
+        {
+          "lat": 45.0,
+          "lon": -30.0
+        },
+        {
+          "lat": -30.0,
+          "lon": 90.0
+        }
+      ],
+      "spreadDegrees": 14,
+      "isGeneric": true,
+      "isMarine": true
+    },
+    {
+      "id": "rivers-lakes",
+      "name": "Rivers and lakes",
+      "points": [
+        {
+          "lat": -2.0,
+          "lon": 30.5
+        },
+        {
+          "lat": 48.0,
+          "lon": 8.0
+        },
+        {
+          "lat": 30.0,
+          "lon": -91.0
+        }
+      ],
+      "spreadDegrees": 8,
+      "isGeneric": true,
+      "isMarine": false
+    },
+    {
+      "id": "worldwide",
+      "name": "Many places around the world",
+      "points": [
+        {
+          "lat": 20.0,
+          "lon": 5.0
+        },
+        {
+          "lat": 41.0,
+          "lon": -96.0
+        },
+        {
+          "lat": -12.0,
+          "lon": 130.0
+        }
+      ],
+      "spreadDegrees": 20,
+      "isGeneric": true,
+      "isMarine": false
+    }
+  ]
+}

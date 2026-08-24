@@ -11,8 +11,12 @@
     "workers/*"
   ],
   "scripts": {
-    "check": "npm run scaffold:check && npm run generated:check && npm run glyphs:check && npm run arlez:check && npm run lint && npm run typecheck && npm run test",
+    "check": "npm run scaffold:check && npm run generated:check && npm run glyphs:check && npm run geography:check && npm run arlez:check && npm run lint && npm run typecheck && npm run test",
     "glyphs:check": "node tools/check-glyph-packs.mjs",
+    "geography:check": "node tools/geography/check-content-sources.mjs && node tools/geography/build-geography.mjs --check && node tools/geography/build-water.mjs --check && node tools/geography/check-placements.mjs",
+    "geography:gaps": "node tools/geography/report-media-gaps.mjs",
+    "geography:content": "node tools/geography/build-animals.mjs --write && node tools/geography/build-landmarks.mjs --write && node tools/geography/report-media-gaps.mjs",
+    "geography:build": "npm --prefix tools/geography install --no-audit --no-fund && node tools/geography/build-geography.mjs && node tools/geography/build-water.mjs",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",
