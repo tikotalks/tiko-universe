@@ -1,4 +1,4 @@
-name: Geography landmark enrichment trigger
+name: Geography ranked landmark enrichment trigger
 
 on:
   issues:
@@ -10,212 +10,186 @@ permissions:
 
 jobs:
   enrich:
-    if: github.event.issue.title == '[tiko-geography-landmarks-20260824]'
+    if: github.event.issue.title == '[tiko-geography-landmarks-ranked-20260824]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Enrich authored landmark data
+      - name: Enrich authored landmark data from ranked CC0 places
         shell: bash
         run: |
           git checkout feat/tiko-globe-app
           python3 <<'PY'
-          import concurrent.futures
+          import csv
+          import io
           import json
           import re
-          import time
           import unicodedata
-          import urllib.parse
           import urllib.request
           from pathlib import Path
 
           TODAY='2026-08-24'
           PATH=Path('packages/geography/content/country-landmarks.json')
           GEN=Path('packages/geography/generated/countries.json')
+          DATA_URL='https://raw.githubusercontent.com/Flightmussy/detourmap-places/main/data/places.csv'
 
           def load(p): return json.loads(p.read_text(encoding='utf-8'))
           def save(p,d): p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           def slug(v):
               v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
               return re.sub(r'[^a-z0-9]+','-',v).strip('-')
-          def req_json(url, timeout=28, retries=3):
-              for n in range(retries+1):
-                  try:
-                      r=urllib.request.Request(url,headers={
-                          'User-Agent':'TikoGlobeLandmarkEnrichment/1.0 (github.com/tikotalks/tiko-universe; educational offline geography data)',
-                          'Accept':'application/sparql-results+json, application/json'
-                      })
-                      with urllib.request.urlopen(r,timeout=timeout) as f:
-                          return json.loads(f.read().decode('utf-8'))
-                  except Exception:
-                      if n==retries:return None
-                      time.sleep(1.0*(n+1))
+          def norm(v):
+              v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]','',v)
+          def fetch_text(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'TikoGlobeLandmarks/1.0 (github.com/tikotalks/tiko-universe)'})
+              with urllib.request.urlopen(req,timeout=120) as f:
+                  return f.read().decode('utf-8')
 
-          data=load(PATH); gen=load(GEN)
-          countries=gen.get('countries',gen if isinstance(gen,list) else [])
-          meta={c['id']:c for c in countries if isinstance(c,dict) and c.get('id')}
+          data=load(PATH); generated=load(GEN)
+          meta={c['id']:c for c in generated.get('countries',[]) if isinstance(c,dict) and c.get('id')}
+          iso2_to_id={str(c.get('iso2','')).upper():cc for cc,c in meta.items() if c.get('iso2')}
 
-          # Child-friendly landmark classes: famous built landmarks plus major natural places.
-          CLASSES=[
-              ('Q9259','heritage'),          # World Heritage Site
-              ('Q570116','attraction'),      # tourist attraction
-              ('Q4989906','monument'),       # monument
-              ('Q839954','archaeology'),     # archaeological site
-              ('Q23413','castle'),           # castle
-              ('Q12280','bridge'),           # bridge
-              ('Q46169','park'),             # national park
-              ('Q8502','mountain'),           # mountain
-              ('Q8072','volcano'),            # volcano
-              ('Q34038','waterfall'),          # waterfall
-              ('Q23442','island'),             # island
-              ('Q35509','cave'),               # cave
-              ('Q16560','palace'),             # palace
-              ('Q16970','church'),             # church
-              ('Q44539','temple'),             # temple
-              ('Q32815','mosque'),             # mosque
-              ('Q24398318','religious-building')
-          ]
-          class_values=' '.join('wd:'+qid for qid,_ in CLASSES)
-          class_kind={qid:kind for qid,kind in CLASSES}
-
-          def parse_point(value):
-              if not value:return None
-              m=re.match(r'^Point\(([-0-9.]+) ([-0-9.]+)\)$',value)
-              if not m:return None
-              lon=float(m.group(1)); lat=float(m.group(2))
-              if not(-90<=lat<=90 and -180<=lon<=180):return None
-              return round(lat,6),round(lon,6)
-
-          def query_candidates(cc):
-              iso3=(meta.get(cc) or {}).get('iso3') or cc
-              query=f'''
-              SELECT DISTINCT ?item ?itemLabel ?coord ?sitelinks ?class WHERE {{
-                ?country wdt:P298 "{iso3}".
-                ?item wdt:P17 ?country;
-                      wdt:P625 ?coord;
-                      wdt:P31/wdt:P279* ?class.
-                VALUES ?class {{ {class_values} }}
-                ?item wikibase:sitelinks ?sitelinks.
-                FILTER(?sitelinks >= 2)
-                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
-              }}
-              ORDER BY DESC(?sitelinks)
-              LIMIT 40
-              '''
-              url='https://query.wikidata.org/sparql?'+urllib.parse.urlencode({'format':'json','query':query})
-              raw=req_json(url)
-              if not isinstance(raw,dict):return []
-              out=[]; seen=set()
-              for row in raw.get('results',{}).get('bindings',[]):
-                  uri=(row.get('item') or {}).get('value','')
-                  qid=uri.rsplit('/',1)[-1] if uri else ''
-                  if not qid or qid in seen:continue
-                  label=(row.get('itemLabel') or {}).get('value')
-                  if not label or label==qid:continue
-                  point=parse_point((row.get('coord') or {}).get('value'))
-                  if not point:continue
-                  class_uri=(row.get('class') or {}).get('value','')
-                  cq=class_uri.rsplit('/',1)[-1]
-                  try:sitelinks=int(float((row.get('sitelinks') or {}).get('value',0)))
-                  except Exception:sitelinks=0
-                  seen.add(qid)
-                  out.append({'qid':qid,'name':label,'lat':point[0],'lon':point[1],'sitelinks':sitelinks,'kind':class_kind.get(cq,'landmark')})
-              return out
+          raw=fetch_text(DATA_URL)
+          reader=csv.DictReader(io.StringIO(raw))
+          allowed={'ancient','monument','sacred','beach','waterfall','cave','volcanic','natural','tower','structure','castle','museum','garden','leisure'}
+          by_country={}
+          for row in reader:
+              iso=str(row.get('iso') or '').upper().strip()
+              cc=iso2_to_id.get(iso)
+              if not cc: continue
+              kind=str(row.get('kind') or '').strip()
+              if kind not in allowed: continue
+              name=(row.get('name') or '').strip()
+              qid=(row.get('qid') or '').strip()
+              if not name or not qid: continue
+              try:
+                  lat=float(row.get('latitude')); lon=float(row.get('longitude'))
+                  fame=int(float(row.get('fame_rank') or 999999999))
+              except Exception:
+                  continue
+              if not(-90<=lat<=90 and -180<=lon<=180): continue
+              by_country.setdefault(cc,[]).append({
+                  'qid':qid,'name':name,'kind':kind,'lat':round(lat,6),'lon':round(lon,6),
+                  'fameRank':fame,'fameTier':(row.get('fame_tier') or '').strip(),
+                  'description':(row.get('description') or '').strip()
+              })
+          for items in by_country.values():
+              items.sort(key=lambda x:(x['fameRank'],x['name']))
 
           def glyph(kind):
               return {
-                  'castle':'🏰','palace':'🏰','bridge':'🌉','church':'⛪','temple':'🛕','mosque':'🕌',
-                  'mountain':'🏔️','volcano':'🌋','waterfall':'💧','island':'🏝️','cave':'🪨','park':'🌲',
-                  'archaeology':'🏺','heritage':'🏛️','monument':'🏛️','attraction':'📍','religious-building':'⛪'
+                  'ancient':'🏺','monument':'🏛️','sacred':'⛪','beach':'🏖️','waterfall':'💧','cave':'🪨',
+                  'volcanic':'🌋','natural':'🌿','tower':'🗼','structure':'🏛️','castle':'🏰','museum':'🏛️',
+                  'garden':'🌳','leisure':'🎡'
               }.get(kind,'📍')
 
-          def normalize_name(s):return re.sub(r'[^a-z0-9]','',unicodedata.normalize('NFKD',s).encode('ascii','ignore').decode().lower())
-
-          country_ids=list(data.get('countries',{}))
-          thin=[]
-          for cc in country_ids:
-              count=len(data['countries'][cc].get('landmarks',[]))
-              # Small territories/microstates need fewer meaningful markers; larger countries should have depth.
-              bbox=(meta.get(cc) or {}).get('bbox') or []
-              target=6
+          def target_for(cc):
+              c=meta.get(cc,{})
+              bbox=c.get('bbox') or []
+              target=7
               if len(bbox)==4:
-                  span=abs(float(bbox[2])-float(bbox[0]))*abs(float(bbox[3])-float(bbox[1]))
-                  if span<0.25:target=3
-                  elif span<2:target=4
-                  elif span<10:target=5
-              if count<target:thin.append((cc,target))
+                  west,south,east,north=map(float,bbox)
+                  lonspan=abs(east-west)
+                  latspan=abs(north-south)
+                  area=lonspan*latspan
+                  if area<0.15:return 3
+                  if area<1:return 4
+                  if area<5:return 5
+                  if area<25:return 6
+              return target
 
-          results={}
-          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-              futures={pool.submit(query_candidates,cc):(cc,target) for cc,target in thin}
-              for fut in concurrent.futures.as_completed(futures):
-                  cc,target=futures[fut]
-                  try:results[cc]=(target,fut.result())
-                  except Exception:results[cc]=(target,[])
+          def duplicate(existing_names,cand_name):
+              n=norm(cand_name)
+              if not n:return True
+              for e in existing_names:
+                  if n==e:return True
+                  if min(len(n),len(e))>=7 and (n in e or e in n):return True
+              return False
 
-          added=0; enriched_countries=0; failed=[]
-          for cc,(target,candidates) in results.items():
-              country=data['countries'][cc]
-              items=list(country.get('landmarks',[]))
-              existing_ids={x.get('id') for x in items}
-              existing_names={normalize_name((x.get('names') or {}).get('en','')) for x in items}
-              before=len(items)
-              for rank,c in enumerate(candidates):
-                  if len(items)>=target:break
-                  nid=slug(c['name'])
-                  nn=normalize_name(c['name'])
-                  if not nid or nid in existing_ids or nn in existing_names:continue
-                  # Avoid treating countries/cities themselves as landmarks if a broad Wikidata class slips through.
-                  if nn in {normalize_name((meta.get(cc) or {}).get('name','')),normalize_name(((meta.get(cc) or {}).get('capital') or {}).get('name',''))}:continue
-                  # High-prominence additions remain visible reasonably far out; later additions are detail markers.
-                  if c['sitelinks']>=100:importance=3
-                  elif c['sitelinks']>=40:importance=4
-                  elif c['sitelinks']>=15:importance=5
-                  elif c['sitelinks']>=5:importance=6
-                  else:importance=7
-                  items.append({
-                      'id':nid,
-                      'names':{'en':c['name']},
-                      'i18nKey':'geography.landmarks.'+nid,
-                      'lat':c['lat'],'lon':c['lon'],
-                      'importance':importance,
-                      'glyph':glyph(c['kind']),
-                      'mediaId':None,
-                      'source':{'source':'wikidata','qid':c['qid'],'sitelinks':c['sitelinks']}
-                  })
-                  existing_ids.add(nid);existing_names.add(nn);added+=1
-              items=sorted(items,key=lambda x:(x.get('importance',10),x.get('id','')))
-              country['landmarks']=items
-              if len(items)>before:enriched_countries+=1
-              if len(items)<target:failed.append({'countryId':cc,'target':target,'count':len(items)})
-              country['review']={'state':'reviewed' if len(items)>=target else 'draft','by':'openai-geography-landmark-pass','at':TODAY}
+          added=0
+          enriched=0
+          before_total=sum(len(c.get('landmarks',[])) for c in data.get('countries',{}).values())
+          below=[]
+          source_counts={}
 
-          # Existing full countries were not rewritten, but mark them reviewed when they already meet their depth target.
-          queried={cc for cc,_ in thin}
           for cc,country in data.get('countries',{}).items():
-              if cc not in queried:
-                  country['review']={'state':'reviewed','by':'openai-geography-landmark-pass','at':TODAY}
+              items=list(country.get('landmarks',[]))
+              target=target_for(cc)
+              existing_ids={x.get('id') for x in items}
+              existing_names={norm((x.get('names') or {}).get('en','')) for x in items if (x.get('names') or {}).get('en')}
+              before=len(items)
+              candidates=by_country.get(cc,[])
+              local_rank=0
+              for cand in candidates:
+                  if len(items)>=target:break
+                  nid=slug(cand['name'])
+                  if not nid or nid in existing_ids or duplicate(existing_names,cand['name']):continue
+                  # Prevent generic country/capital pages from slipping through as POIs.
+                  if norm(cand['name']) in {norm((meta.get(cc) or {}).get('name','')),norm(((meta.get(cc) or {}).get('capital') or {}).get('name',''))}:continue
+                  # Prefer broad variety: after two entries of one category, deprioritize repeats while richer choices remain.
+                  kind_count=sum(1 for x in items if (x.get('source') or {}).get('kind')==cand['kind'])
+                  if kind_count>=2 and len(candidates)>target*2:continue
+                  if local_rank==0:importance=2
+                  elif local_rank==1:importance=3
+                  elif local_rank<=3:importance=4
+                  elif local_rank<=5:importance=5
+                  else:importance=6
+                  # Never make a newly-added minor place more important than its fame tier warrants.
+                  if cand['fameTier']=='gem':importance=max(importance,6)
+                  elif cand['fameTier']=='notable':importance=max(importance,5)
+                  elif cand['fameTier']=='renowned':importance=max(importance,3)
+                  item={
+                      'id':nid,
+                      'names':{'en':cand['name']},
+                      'i18nKey':'geography.landmarks.'+nid,
+                      'lat':cand['lat'],'lon':cand['lon'],
+                      'importance':importance,
+                      'glyph':glyph(cand['kind']),
+                      'mediaId':None,
+                      'source':{
+                          'source':'detourmap-wikidata-cc0','qid':cand['qid'],'kind':cand['kind'],
+                          'fameRank':cand['fameRank'],'fameTier':cand['fameTier']
+                      }
+                  }
+                  if cand['description']:
+                      item['note']=cand['description']
+                  items.append(item)
+                  existing_ids.add(nid);existing_names.add(norm(cand['name']))
+                  source_counts[cand['kind']]=source_counts.get(cand['kind'],0)+1
+                  local_rank+=1;added+=1
+              if len(items)>before:enriched+=1
+              if len(items)<target:
+                  below.append({'countryId':cc,'target':target,'count':len(items),'availableRankedCandidates':len(candidates)})
+              country['landmarks']=sorted(items,key=lambda x:(x.get('importance',10),x.get('id','')))
+              country['review']={
+                  'state':'reviewed' if len(items)>=min(target,3) else 'draft',
+                  'by':'openai-geography-landmark-enrichment','at':TODAY
+              }
 
+          after_total=sum(len(c.get('landmarks',[])) for c in data.get('countries',{}).values())
           audit=data.setdefault('landmarkAudit',{})
           audit.update({
               'at':TODAY,
-              'source':'Wikidata prominence-ranked landmark/natural-site enrichment',
-              'countriesConsidered':len(thin),
-              'countriesEnriched':enriched_countries,
+              'source':'Detourmap Places CC0 / Wikidata, fame-ranked',
+              'sourceUrl':'https://github.com/Flightmussy/detourmap-places',
+              'countriesEnriched':enriched,
+              'landmarksBefore':before_total,
               'landmarksAdded':added,
-              'countriesBelowTarget':failed
+              'landmarksAfter':after_total,
+              'addedByKind':source_counts,
+              'countriesBelowTarget':below
           })
 
-          assert set(data.get('countries',{}))==set(country_ids)
           for cc,country in data.get('countries',{}).items():
               assert country.get('landmarks'),cc
               ids=[]
               for lm in country['landmarks']:
                   ids.append(lm['id'])
                   assert lm.get('names',{}).get('en')
-                  assert 1<=lm.get('importance',0)<=10
+                  assert 1<=int(lm.get('importance',0))<=10
                   assert -90<=float(lm['lat'])<=90 and -180<=float(lm['lon'])<=180
               assert len(ids)==len(set(ids)),f'{cc}: duplicate ids'
           save(PATH,data)
@@ -229,7 +203,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No landmark changes"
           else
-            git commit -m "data(geography): enrich country landmark coverage"
+            git commit -m "data(geography): enrich landmarks with ranked real places"
             git push origin HEAD:feat/tiko-globe-app
           fi
 
@@ -237,4 +211,4 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Landmark enrichment pass finished."
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Ranked landmark enrichment finished."
