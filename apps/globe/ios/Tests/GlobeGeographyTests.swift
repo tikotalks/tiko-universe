@@ -77,7 +77,9 @@ final class GlobeGeographyTests: XCTestCase {
     }
 
     func testLandMeshSitsOnTheSphere() throws {
-        let vertices = GlobeMeshBuilder.landVertices(for: try geography)
+        let geography = try geography
+        let units = GlobeMeshBuilder.units(for: geography, subdivisions: nil)
+        let vertices = GlobeMeshBuilder.landVertices(for: geography, subdivisions: nil, units: units)
         XCTAssertFalse(vertices.isEmpty)
         for vertex in stride(from: 0, to: vertices.count, by: 501).map({ vertices[$0] }) {
             let length = sqrt(vertex.x * vertex.x + vertex.y * vertex.y + vertex.z * vertex.z)
@@ -108,7 +110,9 @@ final class GlobeGeographyTests: XCTestCase {
     }
 
     func testEveryFaceLooksStraightOutOfTheGlobe() throws {
-        let vertices = GlobeMeshBuilder.landVertices(for: try geography)
+        let geography = try geography
+        let units = GlobeMeshBuilder.units(for: geography, subdivisions: nil)
+        let vertices = GlobeMeshBuilder.landVertices(for: geography, subdivisions: nil, units: units)
         for vertex in stride(from: 0, to: vertices.count, by: 997).map({ vertices[$0] }) {
             let position = simd_normalize(SIMD3<Float>(vertex.x, vertex.y, vertex.z))
             let normal = SIMD3<Float>(vertex.nx, vertex.ny, vertex.nz)
@@ -173,8 +177,11 @@ final class GlobeGeographyTests: XCTestCase {
 
     func testEveryCountryHasACutEdgeUnderneathIt() throws {
         let geography = try geography
-        let faces = GlobeMeshBuilder.landVertices(for: geography)
-        let walls = GlobeMeshBuilder.wallVertices(for: geography, faceCount: faces.count)
+        let units = GlobeMeshBuilder.units(for: geography, subdivisions: nil)
+        let faces = GlobeMeshBuilder.landVertices(for: geography, subdivisions: nil, units: units)
+        let walls = GlobeMeshBuilder.wallVertices(
+            for: geography, subdivisions: nil, units: units, faceCount: faces.count
+        )
         XCTAssertFalse(walls.vertices.isEmpty)
         for index in stride(from: 0, to: walls.indices.count, by: 601) {
             let vertex = Int(walls.indices[index]) - faces.count
@@ -185,5 +192,37 @@ final class GlobeGeographyTests: XCTestCase {
         XCTAssertEqual(radii[0], GlobeMeshBuilder.landRadius, accuracy: 0.0005)
         XCTAssertEqual(radii[1], GlobeMeshBuilder.landBaseRadius, accuracy: 0.0005)
         XCTAssertLessThan(GlobeMeshBuilder.oceanRadius, GlobeMeshBuilder.landBaseRadius, "the water sits under the slabs")
+    }
+
+    func testTheStatesAreDrawnInsteadOfTheCountriesTheyBelongTo() throws {
+        let geography = try geography
+        let subdivisions = try XCTUnwrap(
+            GlobeSubdivisionGeometry.loadFromBundle(Bundle(for: GlobeGeographyTests.self))
+                ?? GlobeSubdivisionGeometry.loadFromBundle(),
+            "the states and provinces should ship with the app"
+        )
+        XCTAssertEqual(subdivisions.items.count, 64, "fifty-one states and thirteen provinces")
+        XCTAssertEqual(subdivisions.parents, ["USA", "CAN"])
+        XCTAssertTrue(subdivisions.items.contains { $0.name == "Alaska" && $0.climate == .boreal })
+        XCTAssertTrue(subdivisions.items.contains { $0.name == "Arizona" && $0.climate == .desert })
+
+        let units = GlobeMeshBuilder.units(for: geography, subdivisions: subdivisions)
+        var parentIndices = Set<Int>()
+        for (index, country) in geography.countries.enumerated() where subdivisions.parents.contains(country.id) {
+            parentIndices.insert(index)
+        }
+        // Every piece of the United States is drawn, and the United States
+        // itself is not drawn underneath them.
+        let wholeCountries = units.filter { !$0.isSubdivision }.map(\.countryIndex)
+        XCTAssertTrue(parentIndices.isDisjoint(with: Set(wholeCountries)))
+        XCTAssertEqual(units.filter(\.isSubdivision).count, subdivisions.items.count)
+
+        // Selection still answers to the country: tapping Texas lifts the
+        // United States, so the shadow it casts is one range, not fifty.
+        let ranges = GlobeMeshBuilder.landIndexRanges(for: geography, units: units)
+        for index in parentIndices {
+            XCTAssertFalse(ranges[index].isEmpty, "a country drawn as its states still owns their triangles")
+        }
+        XCTAssertEqual(Set(units.map(\.colorIndex)).count, units.count, "every piece has its own colour slot")
     }
 }

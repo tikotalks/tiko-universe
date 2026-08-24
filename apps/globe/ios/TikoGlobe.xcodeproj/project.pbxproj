@@ -34,6 +34,7 @@
 		B3353E4A0BAAAADAC4C0D9B7 /* GlobeContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */; };
 		B656E56930ED301B90A2D39A /* GlobeCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */; };
 		BCFB5825328B93123492A674 /* GlobeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430A2D66EA2E11C77432EBFD /* GlobeContent.swift */; };
+		C687C56A38F935034F80CCB7 /* GlobeSubdivisions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */; };
 		D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738B434CE752431B9D1DC059 /* GlobeCountryList.swift */; };
 		D7CEBD46F962A7F1B3A747D7 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7A205FB2FCEC1447AD619F /* TikoKit */; };
 		D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404C639172C12A5CC9251A0E /* GlobeWater.swift */; };
@@ -100,6 +101,7 @@
 		B87E9B8878B9CE10B46FD0D0 /* TikoGlobeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoGlobeUITests.swift; sourceTree = "<group>"; };
 		B9CFF8C7DD288CC33EF9BD94 /* GlobeNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeNaming.swift; sourceTree = "<group>"; };
 		C49FEA29EDBDFA0BD92A7B54 /* TikoGlobe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoGlobe.entitlements; sourceTree = "<group>"; };
+		CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeSubdivisions.swift; sourceTree = "<group>"; };
 		DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GlobeShaders.metal; sourceTree = "<group>"; };
 		DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeDetailPanel.swift; sourceTree = "<group>"; };
 		E18B513C64AD268F1F1BC951 /* GlobeMiniMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMiniMap.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */,
 				5614E2D52B9B3D980E632516 /* GlobeSeas.swift */,
 				DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */,
+				CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */,
 				20705001102714B73B9D6D0D /* GlobeSurfaceView.swift */,
 				F50F0DEF7E3EFE99B4974EAF /* GlobeView.swift */,
 				404C639172C12A5CC9251A0E /* GlobeWater.swift */,
@@ -422,6 +425,7 @@
 				205AD9431DD7D2E3C64EF0C8 /* GlobeRenderer.swift in Sources */,
 				094AAC5FC8D7FA4F30242468 /* GlobeSeas.swift in Sources */,
 				392D444EBD1B960337607337 /* GlobeShaders.metal in Sources */,
+				C687C56A38F935034F80CCB7 /* GlobeSubdivisions.swift in Sources */,
 				37021294967523035372768B /* GlobeSurfaceView.swift in Sources */,
 				384B83750F4692E443D96AB2 /* GlobeView.swift in Sources */,
 				D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */,

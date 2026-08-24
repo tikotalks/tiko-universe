@@ -26,11 +26,26 @@ const GENERATED_DIR = join(HERE, '..', '..', 'packages', 'geography', 'generated
  * against at 50 m — Ducie Island is a ring of sand — so the check has to be as
  * strict as the geometry allows and no stricter.
  */
-const span = new Map(
+const shapes = new Map(
   JSON.parse(await readFile(join(GENERATED_DIR, 'countries.json'), 'utf8')).countries
-    .map((country) => [country.id, country.labelSpanDegrees ?? 0])
+    .map((country) => [country.id, country])
 )
-const isTiny = (id) => (span.get(id) ?? 0) < 0.6
+
+/**
+ * True when a country's outline cannot be trusted to contain its own territory:
+ * either it is a speck at this resolution, or it is scattered so widely that
+ * whole islands of it are missing. South Georgia and the South Sandwich Islands
+ * spans twelve degrees of longitude and its drawn part is under one — Mount
+ * Larsen stands on Thule Island, which the 50 m outline does not have at all.
+ */
+const isTiny = (id) => {
+  const country = shapes.get(id)
+  if (!country) return true
+  const size = country.labelSpanDegrees ?? 0
+  if (size < 0.6) return true
+  const [minLon, minLat, maxLon, maxLat] = country.bbox ?? [0, 0, 0, 0]
+  return Math.max(maxLon - minLon, maxLat - minLat) / Math.max(size, 0.01) > 4
+}
 
 const animals = JSON.parse(await readFile(join(CONTENT_DIR, 'animals.json'), 'utf8')).items
 const landmarks = JSON.parse(await readFile(join(CONTENT_DIR, 'landmarks.json'), 'utf8')).items
@@ -107,7 +122,10 @@ for (const landmark of landmarks) {
   for (const marker of markers) {
     const country = marker.country ?? landmark.country
     if (!country) continue
-    const reach = isTiny(country) ? ISLAND_REACH_DEGREES : 0.75
+    // About 110 km. The 50 m outline drops whole islets — Thule Island, which
+    // Mount Larsen stands on, is not in it at all — while a landmark filed
+    // under the wrong country is out by hundreds of kilometres.
+    const reach = isTiny(country) ? ISLAND_REACH_DEGREES : 1.0
     if (!isInsideCountry(country, marker) && !countriesNear(marker, reach).includes(country)) {
       problems.push(`${landmark.name} is filed under ${country} but sits nowhere near it`)
     }

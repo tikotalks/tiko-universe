@@ -90,7 +90,10 @@ struct GlobeView: View {
                     GlobeSurfaceView(
                         controller: controller,
                         meshes: meshes,
-                        climates: controller.countries.map(\.climate),
+                        // The countries' climates, then every state's: the mesh
+                        // points each piece at its own entry in this table.
+                        climates: controller.countries.map(\.climate)
+                            + (controller.subdivisions?.items.map(\.climate) ?? []),
                         appearance: GlobeAppearance.appearance(for: colorScheme)
                     )
                     .ignoresSafeArea(edges: .bottom)
@@ -304,6 +307,9 @@ struct GlobeView: View {
                 drawWaterName(label, in: &context)
             }
             for label in controller.islandLabels {
+                drawIslandName(label, in: &context)
+            }
+            for label in controller.subdivisionLabels {
                 drawIslandName(label, in: &context)
             }
             for label in controller.labels {

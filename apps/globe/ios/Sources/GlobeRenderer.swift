@@ -122,21 +122,85 @@ enum GlobeMeshBuilder {
     /// And the light the coastline itself catches, the way a bevelled edge does.
     static let coastShade: Float = 1.06
 
-    /// The top faces, in the order the geometry file stores them, so the fill
-    /// indices still address them.
-    static func landVertices(for geography: GlobeGeography) -> [GlobeLandVertex] {
-        let geometry = geography.geometry
+    /// One drawable piece of land: a country, or one state of a country drawn
+    /// state by state. Selection still answers to the country — tapping Texas
+    /// lifts the United States — while the colour answers to the piece.
+    struct Unit {
+        let countryIndex: Int
+        let colorIndex: Int
+        let ringOffset: Int
+        let ringCount: Int
+        let meshVertexOffset: Int
+        let meshVertexCount: Int
+        let meshIndexOffset: Int
+        let meshIndexCount: Int
+        /// Where its rings and mesh live: the country file, or the state file.
+        let isSubdivision: Bool
+    }
+
+    /// What the globe actually draws, in order. A country whose states are on
+    /// file is drawn as those instead of as itself, so the two are never laid
+    /// on top of each other.
+    static func units(for geography: GlobeGeography, subdivisions: GlobeSubdivisionGeometry?) -> [Unit] {
+        let indexByID = Dictionary(
+            uniqueKeysWithValues: geography.countries.enumerated().map { ($0.element.id, $0.offset) }
+        )
+        let drawnAsParts = subdivisions?.parents ?? []
+        var units: [Unit] = []
+
+        for (index, country) in geography.geometry.countries.enumerated() where !drawnAsParts.contains(country.id) {
+            units.append(Unit(
+                countryIndex: index,
+                colorIndex: index,
+                ringOffset: country.ringOffset,
+                ringCount: country.ringCount,
+                meshVertexOffset: country.meshVertexOffset,
+                meshVertexCount: country.meshVertexCount,
+                meshIndexOffset: country.meshIndexOffset,
+                meshIndexCount: country.meshIndexCount,
+                isSubdivision: false
+            ))
+        }
+        // Grouped by parent, so a country's own triangles stay contiguous and
+        // the shadow it casts when lifted is still one range.
+        if let subdivisions {
+            for parent in drawnAsParts.sorted() {
+                for (offset, item) in subdivisions.items.enumerated() where item.parent == parent {
+                    units.append(Unit(
+                        countryIndex: indexByID[parent] ?? 0,
+                        colorIndex: geography.countries.count + offset,
+                        ringOffset: item.ringOffset,
+                        ringCount: item.ringCount,
+                        meshVertexOffset: item.meshVertexOffset,
+                        meshVertexCount: item.meshVertexCount,
+                        meshIndexOffset: item.meshIndexOffset,
+                        meshIndexCount: item.meshIndexCount,
+                        isSubdivision: true
+                    ))
+                }
+            }
+        }
+        return units
+    }
+
+    /// The top faces, in the order the units are drawn, so the fill indices
+    /// still address them.
+    static func landVertices(
+        for geography: GlobeGeography,
+        subdivisions: GlobeSubdivisionGeometry?,
+        units: [Unit]
+    ) -> [GlobeLandVertex] {
         var vertices: [GlobeLandVertex] = []
-        vertices.reserveCapacity(geometry.meshVertices.count)
-        for (index, country) in geometry.countries.enumerated() {
-            let colorIndex = Float(index)
-            for offset in 0..<country.meshVertexCount {
-                let point = geometry.meshVertices[country.meshVertexOffset + offset]
+        vertices.reserveCapacity(geography.geometry.meshVertices.count + (subdivisions?.meshVertices.count ?? 0))
+        for unit in units {
+            let source = unit.isSubdivision ? subdivisions!.meshVertices : geography.geometry.meshVertices
+            for offset in 0..<unit.meshVertexCount {
+                let point = source[unit.meshVertexOffset + offset]
                 let position = GlobeMath.unitVector(lat: Double(point.y), lon: Double(point.x)) * landRadius
                 let normal = simd_normalize(position)
                 vertices.append(GlobeLandVertex(
                     x: position.x, y: position.y, z: position.z,
-                    country: Float(index), color: colorIndex, shade: 1,
+                    country: Float(unit.countryIndex), color: Float(unit.colorIndex), shade: 1,
                     nx: normal.x, ny: normal.y, nz: normal.z
                 ))
             }
@@ -144,27 +208,35 @@ enum GlobeMeshBuilder {
         return vertices
     }
 
-    static func landIndices(for geography: GlobeGeography) -> [UInt32] {
-        let geometry = geography.geometry
+    static func landIndices(
+        for geography: GlobeGeography,
+        subdivisions: GlobeSubdivisionGeometry?,
+        units: [Unit]
+    ) -> [UInt32] {
         var indices: [UInt32] = []
-        indices.reserveCapacity(geometry.meshIndices.count)
-        for country in geometry.countries {
-            let base = UInt32(country.meshVertexOffset)
-            for offset in 0..<country.meshIndexCount {
-                indices.append(base + geometry.meshIndices[country.meshIndexOffset + offset])
+        indices.reserveCapacity(geography.geometry.meshIndices.count + (subdivisions?.meshIndices.count ?? 0))
+        var base: UInt32 = 0
+        for unit in units {
+            let source = unit.isSubdivision ? subdivisions!.meshIndices : geography.geometry.meshIndices
+            for offset in 0..<unit.meshIndexCount {
+                indices.append(base + source[unit.meshIndexOffset + offset])
             }
+            base += UInt32(unit.meshVertexCount)
         }
         return indices
     }
 
     /// Where each country's own triangles sit in that list, so one country can
-    /// be drawn on its own — which is what casting its shadow needs.
-    static func landIndexRanges(for geography: GlobeGeography) -> [Range<Int>] {
-        var ranges: [Range<Int>] = []
+    /// be drawn on its own — which is what casting its shadow needs. A country
+    /// drawn as its states owns all of their triangles together.
+    static func landIndexRanges(for geography: GlobeGeography, units: [Unit]) -> [Range<Int>] {
+        var ranges = Array(repeating: 0..<0, count: geography.countries.count)
         var start = 0
-        for country in geography.geometry.countries {
-            ranges.append(start..<(start + country.meshIndexCount))
-            start += country.meshIndexCount
+        for unit in units {
+            let end = start + unit.meshIndexCount
+            let existing = ranges[unit.countryIndex]
+            ranges[unit.countryIndex] = existing.isEmpty ? start..<end : existing.lowerBound..<end
+            start = end
         }
         return ranges
     }
@@ -172,20 +244,42 @@ enum GlobeMeshBuilder {
     /// The cut edge around every country: one quad per outline segment, dropped
     /// from the top face to the base. Appended to the same buffer as the faces,
     /// with its own indices, so the whole planet is still one draw.
-    static func wallVertices(for geography: GlobeGeography, faceCount: Int) -> (vertices: [GlobeLandVertex], indices: [UInt32]) {
+    static func wallVertices(
+        for geography: GlobeGeography,
+        subdivisions: GlobeSubdivisionGeometry?,
+        units: [Unit],
+        faceCount: Int
+    ) -> (vertices: [GlobeLandVertex], indices: [UInt32]) {
         let geometry = geography.geometry
         var vertices: [GlobeLandVertex] = []
         var indices: [UInt32] = []
         vertices.reserveCapacity(geometry.outlinePoints.count * 4)
         indices.reserveCapacity(geometry.outlinePoints.count * 6)
 
-        for (index, country) in geometry.countries.enumerated() {
-            let colorIndex = Float(index)
-            for ringIndex in country.ringOffset..<(country.ringOffset + country.ringCount) {
-                let ring = geometry.rings[ringIndex]
+        for unit in units {
+            let colorIndex = Float(unit.colorIndex)
+            let index = unit.countryIndex
+            for ringIndex in unit.ringOffset..<(unit.ringOffset + unit.ringCount) {
+                // Two files, one shape: only the offsets and the count matter
+                // here, so they are read out rather than passed around.
+                let pointOffset: Int
+                let pointCount: Int
+                let outline: [SIMD2<Float>]
+                if unit.isSubdivision, let subdivisions {
+                    let ring = subdivisions.rings[ringIndex]
+                    pointOffset = ring.pointOffset
+                    pointCount = ring.pointCount
+                    outline = subdivisions.outlinePoints
+                } else {
+                    let ring = geometry.rings[ringIndex]
+                    pointOffset = ring.pointOffset
+                    pointCount = ring.pointCount
+                    outline = geometry.outlinePoints
+                }
+                let ring = (pointOffset: pointOffset, pointCount: pointCount)
                 guard ring.pointCount >= 2 else { continue }
                 let points = (0..<ring.pointCount).map { offset -> SIMD3<Float> in
-                    let point = geometry.outlinePoints[ring.pointOffset + offset]
+                    let point = outline[pointOffset + offset]
                     return GlobeMath.unitVector(lat: Double(point.y), lon: Double(point.x))
                 }
                 let outward = outwardSign(of: points)
@@ -428,10 +522,17 @@ struct GlobeMeshes: Sendable {
     /// Where each country's triangles sit in `landIndices`.
     var countryIndexRanges: [Range<Int>]
 
-    static func build(for geography: GlobeGeography, water: GlobeWater?) -> GlobeMeshes {
-        let faces = GlobeMeshBuilder.landVertices(for: geography)
-        var faceIndices = GlobeMeshBuilder.landIndices(for: geography)
-        let walls = GlobeMeshBuilder.wallVertices(for: geography, faceCount: faces.count)
+    static func build(
+        for geography: GlobeGeography,
+        water: GlobeWater?,
+        subdivisions: GlobeSubdivisionGeometry? = nil
+    ) -> GlobeMeshes {
+        let units = GlobeMeshBuilder.units(for: geography, subdivisions: subdivisions)
+        let faces = GlobeMeshBuilder.landVertices(for: geography, subdivisions: subdivisions, units: units)
+        var faceIndices = GlobeMeshBuilder.landIndices(for: geography, subdivisions: subdivisions, units: units)
+        let walls = GlobeMeshBuilder.wallVertices(
+            for: geography, subdivisions: subdivisions, units: units, faceCount: faces.count
+        )
         faceIndices.append(contentsOf: walls.indices)
         let border = GlobeMeshBuilder.borderVertices(for: geography)
         let sphere = GlobeMeshBuilder.sphere()
@@ -447,7 +548,7 @@ struct GlobeMeshes: Sendable {
             riverIndices: rivers.indices,
             lake: water.map(GlobeMeshBuilder.lakeVertices) ?? [],
             lakeIndices: water?.lakeIndices ?? [],
-            countryIndexRanges: GlobeMeshBuilder.landIndexRanges(for: geography)
+            countryIndexRanges: GlobeMeshBuilder.landIndexRanges(for: geography, units: units)
         )
     }
 }

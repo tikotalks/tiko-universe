@@ -163,8 +163,18 @@ const payload = `${JSON.stringify({
 const file = join(OUT_DIR, 'cities.json')
 if (CHECK) {
   const committed = existsSync(file) ? await readFile(file, 'utf8') : ''
-  // The pictures come from a live library, so only the geography is compared.
-  const strip = (text) => text.replace(/\n\s*"mediaId": "[^"]*",?/g, '')
+  // The pictures come from a live library that can gain one at any time, so
+  // only the geography is compared — parsed rather than pattern-matched,
+  // because dropping a line of JSON leaves the comma behind.
+  const strip = (text) => {
+    try {
+      const parsed = JSON.parse(text)
+      for (const item of parsed.items ?? []) delete item.mediaId
+      return JSON.stringify(parsed)
+    } catch {
+      return text
+    }
+  }
   if (strip(committed) !== strip(payload)) {
     process.stderr.write('cities.json does not match the source data — run node tools/geography/build-cities.mjs\n')
     process.exit(1)

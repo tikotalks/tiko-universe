@@ -1,0 +1,582 @@
+{
+  "schemaVersion": 1,
+  "note": "Built by tools/geography/build-subdivisions.mjs from Natural Earth v5.1.2 ne_50m_admin_1_states_provinces_lakes. Climate is authored, because latitude alone puts Seattle and Nevada in the same band.",
+  "items": [
+    {
+      "id": "CA-AB",
+      "name": "Alberta",
+      "parent": "CAN",
+      "climate": "steppe",
+      "labelSpanDegrees": 9.4011,
+      "lat": 55.2816,
+      "lon": -115
+    },
+    {
+      "id": "CA-BC",
+      "name": "British Columbia",
+      "parent": "CAN",
+      "climate": "temperate",
+      "labelSpanDegrees": 11.2019,
+      "lat": 54.6943,
+      "lon": -124.662
+    },
+    {
+      "id": "CA-MB",
+      "name": "Manitoba",
+      "parent": "CAN",
+      "climate": "boreal",
+      "labelSpanDegrees": 9.4122,
+      "lat": 54.85,
+      "lon": -97.3828
+    },
+    {
+      "id": "CA-NB",
+      "name": "New Brunswick",
+      "parent": "CAN",
+      "climate": "temperate",
+      "labelSpanDegrees": 2.915,
+      "lat": 46.5822,
+      "lon": -66.4558
+    },
+    {
+      "id": "CA-NL",
+      "name": "Newfoundland and Labrador",
+      "parent": "CAN",
+      "climate": "boreal",
+      "labelSpanDegrees": 6.291,
+      "lat": 48.6598,
+      "lon": -56.2169
+    },
+    {
+      "id": "CA-NS",
+      "name": "Nova Scotia",
+      "parent": "CAN",
+      "climate": "temperate",
+      "labelSpanDegrees": 2.2327,
+      "lat": 45.2293,
+      "lon": -62.8113
+    },
+    {
+      "id": "CA-NT",
+      "name": "Northwest Territories",
+      "parent": "CAN",
+      "climate": "polar",
+      "labelSpanDegrees": 14.5414,
+      "lat": 64.0831,
+      "lon": -119.942
+    },
+    {
+      "id": "CA-NU",
+      "name": "Nunavut",
+      "parent": "CAN",
+      "climate": "polar",
+      "labelSpanDegrees": 13.1094,
+      "lat": 64.3853,
+      "lon": -97.1443
+    },
+    {
+      "id": "CA-ON",
+      "name": "Ontario",
+      "parent": "CAN",
+      "climate": "boreal",
+      "labelSpanDegrees": 11.1481,
+      "lat": 50.5244,
+      "lon": -84.7943
+    },
+    {
+      "id": "CA-PE",
+      "name": "Prince Edward Island",
+      "parent": "CAN",
+      "climate": "temperate",
+      "labelSpanDegrees": 0.8139,
+      "lat": 46.3417,
+      "lon": -63.3862
+    },
+    {
+      "id": "CA-QC",
+      "name": "Québec",
+      "parent": "CAN",
+      "climate": "boreal",
+      "labelSpanDegrees": 13.8876,
+      "lat": 52.2593,
+      "lon": -73.7168
+    },
+    {
+      "id": "CA-SK",
+      "name": "Saskatchewan",
+      "parent": "CAN",
+      "climate": "steppe",
+      "labelSpanDegrees": 9.2001,
+      "lat": 54.4965,
+      "lon": -105.682
+    },
+    {
+      "id": "CA-YT",
+      "name": "Yukon",
+      "parent": "CAN",
+      "climate": "polar",
+      "labelSpanDegrees": 9.3464,
+      "lat": 63.6088,
+      "lon": -135.7
+    },
+    {
+      "id": "US-AK",
+      "name": "Alaska",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 16.3535,
+      "lat": 65.3609,
+      "lon": -151.604
+    },
+    {
+      "id": "US-AL",
+      "name": "Alabama",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.5642,
+      "lat": 32.8551,
+      "lon": -86.7184
+    },
+    {
+      "id": "US-AR",
+      "name": "Arkansas",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.6513,
+      "lat": 34.7563,
+      "lon": -92.1428
+    },
+    {
+      "id": "US-AZ",
+      "name": "Arizona",
+      "parent": "USA",
+      "climate": "desert",
+      "labelSpanDegrees": 5.2771,
+      "lat": 34.3046,
+      "lon": -111.935
+    },
+    {
+      "id": "US-CA",
+      "name": "California",
+      "parent": "USA",
+      "climate": "mediterranean",
+      "labelSpanDegrees": 6.4277,
+      "lat": 36.7496,
+      "lon": -119.591
+    },
+    {
+      "id": "US-CO",
+      "name": "Colorado",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 5.0473,
+      "lat": 38.9998,
+      "lon": -105.543
+    },
+    {
+      "id": "US-CT",
+      "name": "Connecticut",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 1.1612,
+      "lat": 41.6486,
+      "lon": -72.7594
+    },
+    {
+      "id": "US-DC",
+      "name": "District of Columbia",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 0.1154,
+      "lat": 38.8922,
+      "lon": -77.0113
+    },
+    {
+      "id": "US-DE",
+      "name": "Delaware",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 0.719,
+      "lat": 38.8657,
+      "lon": -75.4112
+    },
+    {
+      "id": "US-FL",
+      "name": "Florida",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.6717,
+      "lat": 28.1568,
+      "lon": -81.6228
+    },
+    {
+      "id": "US-GA",
+      "name": "Georgia",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.8152,
+      "lat": 32.8547,
+      "lon": -83.4078
+    },
+    {
+      "id": "US-HI",
+      "name": "Hawaii",
+      "parent": "USA",
+      "climate": "tropical",
+      "labelSpanDegrees": 0.9425,
+      "lat": 21.4919,
+      "lon": -157.999
+    },
+    {
+      "id": "US-IA",
+      "name": "Iowa",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.9581,
+      "lat": 42.0423,
+      "lon": -93.3891
+    },
+    {
+      "id": "US-ID",
+      "name": "Idaho",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.8539,
+      "lat": 43.7825,
+      "lon": -114.133
+    },
+    {
+      "id": "US-IL",
+      "name": "Illinois",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.9239,
+      "lat": 39.946,
+      "lon": -89.1991
+    },
+    {
+      "id": "US-IN",
+      "name": "Indiana",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.1161,
+      "lat": 39.8874,
+      "lon": -86.1396
+    },
+    {
+      "id": "US-KS",
+      "name": "Kansas",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.5533,
+      "lat": 38.5,
+      "lon": -98.3309
+    },
+    {
+      "id": "US-KY",
+      "name": "Kentucky",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.2546,
+      "lat": 37.3994,
+      "lon": -85.5729
+    },
+    {
+      "id": "US-LA",
+      "name": "Louisiana",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.3539,
+      "lat": 30.5274,
+      "lon": -91.9991
+    },
+    {
+      "id": "US-MA",
+      "name": "Massachusetts",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 1.5001,
+      "lat": 42.3739,
+      "lon": -71.9993
+    },
+    {
+      "id": "US-MD",
+      "name": "Maryland",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 1.5553,
+      "lat": 39.3874,
+      "lon": -77.0454
+    },
+    {
+      "id": "US-ME",
+      "name": "Maine",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 3.0848,
+      "lat": 45.148,
+      "lon": -69.1973
+    },
+    {
+      "id": "US-MI",
+      "name": "Michigan",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 3.4562,
+      "lat": 43.4343,
+      "lon": -84.9479
+    },
+    {
+      "id": "US-MN",
+      "name": "Minnesota",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 5.0121,
+      "lat": 46.0592,
+      "lon": -93.364
+    },
+    {
+      "id": "US-MO",
+      "name": "Missouri",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 4.2845,
+      "lat": 38.5487,
+      "lon": -92.446
+    },
+    {
+      "id": "US-MS",
+      "name": "Mississippi",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.4515,
+      "lat": 32.8657,
+      "lon": -89.7189
+    },
+    {
+      "id": "US-MT",
+      "name": "Montana",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 6.5528,
+      "lat": 46.9965,
+      "lon": -110.044
+    },
+    {
+      "id": "US-NC",
+      "name": "North Carolina",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.5677,
+      "lat": 35.6152,
+      "lon": -78.866
+    },
+    {
+      "id": "US-ND",
+      "name": "North Dakota",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.553,
+      "lat": 47.4675,
+      "lon": -100.302
+    },
+    {
+      "id": "US-NE",
+      "name": "Nebraska",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.5992,
+      "lat": 41.5002,
+      "lon": -99.6855
+    },
+    {
+      "id": "US-NH",
+      "name": "New Hampshire",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 1.638,
+      "lat": 43.5993,
+      "lon": -71.6301
+    },
+    {
+      "id": "US-NJ",
+      "name": "New Jersey",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 1.4364,
+      "lat": 40.0449,
+      "lon": -74.4653
+    },
+    {
+      "id": "US-NM",
+      "name": "New Mexico",
+      "parent": "USA",
+      "climate": "desert",
+      "labelSpanDegrees": 5.4093,
+      "lat": 34.5002,
+      "lon": -106.024
+    },
+    {
+      "id": "US-NV",
+      "name": "Nevada",
+      "parent": "USA",
+      "climate": "desert",
+      "labelSpanDegrees": 5.325,
+      "lat": 39.4299,
+      "lon": -117.02
+    },
+    {
+      "id": "US-NY",
+      "name": "New York",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.6705,
+      "lat": 43.1988,
+      "lon": -75.3242
+    },
+    {
+      "id": "US-OH",
+      "name": "Ohio",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.3497,
+      "lat": 40.0924,
+      "lon": -82.6719
+    },
+    {
+      "id": "US-OK",
+      "name": "Oklahoma",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.2225,
+      "lat": 35.452,
+      "lon": -97.1309
+    },
+    {
+      "id": "US-OR",
+      "name": "Oregon",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 5.2953,
+      "lat": 43.8333,
+      "lon": -120.386
+    },
+    {
+      "id": "US-PA",
+      "name": "Pennsylvania",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.4928,
+      "lat": 40.8601,
+      "lon": -77.6094
+    },
+    {
+      "id": "US-RI",
+      "name": "Rhode Island",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 0.5086,
+      "lat": 41.6242,
+      "lon": -71.5082
+    },
+    {
+      "id": "US-SC",
+      "name": "South Carolina",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 2.7834,
+      "lat": 33.8578,
+      "lon": -80.6471
+    },
+    {
+      "id": "US-SD",
+      "name": "South Dakota",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 4.6754,
+      "lat": 44.4711,
+      "lon": -100.255
+    },
+    {
+      "id": "US-TN",
+      "name": "Tennessee",
+      "parent": "USA",
+      "climate": "subtropical",
+      "labelSpanDegrees": 3.2955,
+      "lat": 35.7514,
+      "lon": -86.3415
+    },
+    {
+      "id": "US-TX",
+      "name": "Texas",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 8.0579,
+      "lat": 31.131,
+      "lon": -98.7607
+    },
+    {
+      "id": "US-UT",
+      "name": "Utah",
+      "parent": "USA",
+      "climate": "desert",
+      "labelSpanDegrees": 4.6272,
+      "lat": 39.5007,
+      "lon": -111.544
+    },
+    {
+      "id": "US-VA",
+      "name": "Virginia",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 3.2001,
+      "lat": 37.7403,
+      "lon": -78.2431
+    },
+    {
+      "id": "US-VT",
+      "name": "Vermont",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 1.6615,
+      "lat": 44.0886,
+      "lon": -72.7317
+    },
+    {
+      "id": "US-WA",
+      "name": "Washington",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 4.4863,
+      "lat": 47.4865,
+      "lon": -120.361
+    },
+    {
+      "id": "US-WI",
+      "name": "Wisconsin",
+      "parent": "USA",
+      "climate": "boreal",
+      "labelSpanDegrees": 4.0453,
+      "lat": 44.3709,
+      "lon": -89.5831
+    },
+    {
+      "id": "US-WV",
+      "name": "West Virginia",
+      "parent": "USA",
+      "climate": "temperate",
+      "labelSpanDegrees": 2.5474,
+      "lat": 38.6422,
+      "lon": -80.7128
+    },
+    {
+      "id": "US-WY",
+      "name": "Wyoming",
+      "parent": "USA",
+      "climate": "steppe",
+      "labelSpanDegrees": 5.0452,
+      "lat": 42.9999,
+      "lon": -107.552
+    }
+  ]
+}

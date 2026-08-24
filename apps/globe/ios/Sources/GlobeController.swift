@@ -31,6 +31,12 @@ struct GlobePlacedMarker: Identifiable, Equatable {
 /// How much of the world's detail is visible at a given zoom. Importance is
 /// authored 1…10; this table says how deep to go, and is a presentation choice
 /// that can be retuned without touching the data.
+extension GlobeController {
+    /// Below this much of the world on screen, a country's states are what a
+    /// child is looking at, and their names are worth more than its own.
+    static let subdivisionLabelRadius: Double = 26
+}
+
 enum GlobeImportanceBands {
     static func deepest(forVisibleRadius degrees: Double) -> Int {
         switch degrees {
@@ -95,12 +101,17 @@ final class GlobeController: ObservableObject {
     /// And the islands inside countries, which the country layer cannot name:
     /// Sicily belongs to Italy, and Italy's own label is somewhere else.
     @Published private(set) var islandLabels: [GlobeLabel] = []
+    /// State and province names, which only appear once a child has zoomed in.
+    @Published private(set) var subdivisionLabels: [GlobeLabel] = []
     private var seas: [GlobePlace] = []
     private var islands: [GlobePlace] = []
     /// Parts of countries with names of their own — Alaska, Scotland, the
     /// Caribbean Netherlands — which the country layer cannot name because the
     /// country's own label is somewhere else entirely.
     private var territories: [GlobePlace] = []
+    /// The states and provinces drawn in place of their countries. Their names
+    /// wait until a child is looking at the country they belong to.
+    @Published private(set) var subdivisions: GlobeSubdivisionGeometry?
 
     /// Set by the surface view; labels cannot be placed without it.
     var viewSize: CGSize = .zero
@@ -172,11 +183,20 @@ final class GlobeController: ObservableObject {
                 // Water is a nice-to-have: a missing river file must not cost
                 // the child the Earth.
                 let water = try? GlobeWater.loadFromBundle()
-                return (geography, GlobeMeshes.build(for: geography, water: water))
+                // The states of the two countries big enough that one colour
+                // across the whole thing says nothing. Missing is not fatal:
+                // both are then drawn whole, as they were before.
+                let subdivisions = GlobeSubdivisionGeometry.loadFromBundle()
+                return (
+                    geography,
+                    GlobeMeshes.build(for: geography, water: water, subdivisions: subdivisions),
+                    subdivisions
+                )
             }.value
             let geography = loaded.0
             self.geography = geography
             meshes = loaded.1
+            subdivisions = loaded.2
             content = GlobeContentLibrary.load(countries: geography.countries)
             seas = GlobePlaces.load("seas")
             islands = GlobePlaces.load("islands")
@@ -472,6 +492,7 @@ final class GlobeController: ObservableObject {
         placeLabels()
         placeSeaLabels()
         placeIslandLabels()
+        placeSubdivisionLabels()
         placeMarkers()
 
         if var animation = focusAnimation {
@@ -611,6 +632,43 @@ final class GlobeController: ObservableObject {
         // cannot land on top of each other.
         let next = place(islands + territories, roomNeeded: 0.05)
         if next != islandLabels { islandLabels = next }
+    }
+
+    /// A state's name, once the child is close enough that the country's own
+    /// name is no longer the useful one. Held back deliberately: at the whole
+    /// Earth "United States" is what a child is looking for, not "Nevada".
+    private func placeSubdivisionLabels() {
+        guard let subdivisions, viewSize.width > 0 else {
+            if !subdivisionLabels.isEmpty { subdivisionLabels = [] }
+            return
+        }
+        let visibleRadius = max(camera.visibleRadiusDegrees, 0.001)
+        guard visibleRadius < Self.subdivisionLabelRadius else {
+            if !subdivisionLabels.isEmpty { subdivisionLabels = [] }
+            return
+        }
+        let cameraDirection = camera.globeSpaceCameraDirection
+        let horizon = Float(camera.insetHorizonCosine)
+
+        var next: [GlobeLabel] = []
+        var placed: [CGRect] = []
+        for item in subdivisions.items.sorted(by: { $0.labelSpanDegrees > $1.labelSpanDegrees }) {
+            let normal = GlobeMath.unitVector(item.labelPoint)
+            guard simd_dot(normal, cameraDirection) > horizon else { continue }
+            guard let point = camera.viewPoint(for: item.labelPoint, viewSize: viewSize) else { continue }
+            guard point.x > 4, point.y > 4, point.x < viewSize.width - 4, point.y < viewSize.height - 4 else { continue }
+            let label = GlobeLabel(
+                id: item.id,
+                text: item.name,
+                point: point,
+                prominence: min(item.labelSpanDegrees / visibleRadius, 1.2)
+            )
+            let box = Self.chipBox(for: label)
+            guard !placed.contains(where: { $0.intersects(box) }) else { continue }
+            placed.append(box)
+            next.append(label)
+        }
+        if next != subdivisionLabels { subdivisionLabels = next }
     }
 
     private func place(_ places: [GlobePlace], roomNeeded: Double) -> [GlobeLabel] {
