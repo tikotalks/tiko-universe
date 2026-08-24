@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "contract": {
+    "purpose": "Peoples, traditions and historical figures a child can meet on the map",
+    "identity": "items[].id is stable and independent of mediaId",
+    "care": "Name a people or a tradition, never a costume for a modern nationality. Historical figures are named as history: a Viking is a Viking, not a Norwegian."
+  },
+  "countries": {
+    "NOR": { "people": [
+      { "id": "viking", "name": "Viking", "era": "historical", "importance": 2, "lat": 60.39, "lon": 5.32,
+        "note": "Seafarers and traders of the Norse world, a thousand years ago." }
+    ] },
+    "SWE": { "people": [
+      { "id": "sami", "name": "Sámi", "era": "living", "importance": 3, "lat": 67.86, "lon": 20.23,
+        "note": "The indigenous people of the far north, herders of reindeer." }
+    ] },
+    "FIN": { "people": [
+      { "id": "sami", "name": "Sámi", "era": "living", "importance": 3, "lat": 68.9, "lon": 27.0,
+        "note": "The indigenous people of the far north, herders of reindeer." }
+    ] },
+    "ISL": { "people": [
+      { "id": "viking", "name": "Viking", "era": "historical", "importance": 3, "lat": 64.14, "lon": -21.94,
+        "note": "Iceland was settled by Norse families who sailed west." }
+    ] },
+    "DNK": { "people": [
+      { "id": "viking", "name": "Viking", "era": "historical", "importance": 3, "lat": 55.68, "lon": 12.57,
+        "note": "Seafarers and traders of the Norse world, a thousand years ago." }
+    ] },
+    "USA": { "people": [
+      { "id": "native-american", "name": "Native American peoples", "era": "living", "importance": 2, "lat": 36.0, "lon": -109.0,
+        "note": "The many nations who lived here long before anybody sailed in." },
+      { "id": "cowboy", "name": "Cowboy", "era": "historical", "importance": 3, "lat": 32.78, "lon": -99.5,
+        "note": "Riders who drove cattle across the western plains." }
+    ] },
+    "CAN": { "people": [
+      { "id": "inuit", "name": "Inuit", "era": "living", "importance": 2, "lat": 68.0, "lon": -85.0,
+        "note": "People of the Arctic, at home where the sea freezes." }
+    ] },
+    "GRL": { "people": [
+      { "id": "inuit", "name": "Inuit", "era": "living", "importance": 2, "lat": 69.22, "lon": -51.1,
+        "note": "People of the Arctic, at home where the sea freezes." }
+    ] },
+    "JPN": { "people": [
+      { "id": "samurai", "name": "Samurai", "era": "historical", "importance": 2, "lat": 34.99, "lon": 135.78,
+        "note": "Warriors who served Japan's lords for seven hundred years." },
+      { "id": "geisha", "name": "Geisha", "era": "living", "importance": 4, "lat": 35.0, "lon": 135.77,
+        "note": "Artists of dance, music and conversation, trained for years." }
+    ] },
+    "MEX": { "people": [
+      { "id": "maya", "name": "Maya", "era": "living", "importance": 2, "lat": 20.68, "lon": -88.57,
+        "note": "Builders of cities and astronomers — and still here, millions strong." }
+    ] },
+    "GTM": { "people": [
+      { "id": "maya", "name": "Maya", "era": "living", "importance": 2, "lat": 14.83, "lon": -91.52,
+        "note": "Builders of cities and astronomers — and still here, millions strong." }
+    ] },
+    "EGY": { "people": [
+      { "id": "pharaoh", "name": "Pharaoh", "era": "historical", "importance": 2, "lat": 25.72, "lon": 32.61,
+        "note": "The rulers of ancient Egypt, buried under mountains of stone." }
+    ] },
+    "KEN": { "people": [
+      { "id": "maasai", "name": "Maasai", "era": "living", "importance": 2, "lat": -1.5, "lon": 35.8,
+        "note": "Herders of the Rift Valley, known for their red shukas." }
+    ] },
+    "TZA": { "people": [
+      { "id": "maasai", "name": "Maasai", "era": "living", "importance": 2, "lat": -3.4, "lon": 35.9,
+        "note": "Herders of the Rift Valley, known for their red shukas." }
+    ] },
+    "NZL": { "people": [
+      { "id": "maori", "name": "Māori", "era": "living", "importance": 2, "lat": -38.14, "lon": 176.25,
+        "note": "The first people of Aotearoa, who navigated here by stars and swell." }
+    ] },
+    "AUS": { "people": [
+      { "id": "aboriginal-australians", "name": "Aboriginal Australians", "era": "living", "importance": 2, "lat": -25.34, "lon": 131.03,
+        "note": "The oldest continuing cultures on Earth, here for 60,000 years." }
+    ] },
+    "PER": { "people": [
+      { "id": "quechua", "name": "Quechua", "era": "living", "importance": 2, "lat": -13.53, "lon": -71.97,
+        "note": "Speakers of the language of the Inca, farming the high Andes." }
+    ] },
+    "BOL": { "people": [
+      { "id": "aymara", "name": "Aymara", "era": "living", "importance": 3, "lat": -16.5, "lon": -68.15,
+        "note": "People of the high plateau around Lake Titicaca." }
+    ] },
+    "RUS": { "people": [
+      { "id": "cossack", "name": "Cossack", "era": "historical", "importance": 4, "lat": 47.23, "lon": 39.72,
+        "note": "Horsemen of the southern steppe." }
+    ] },
+    "MNG": { "people": [
+      { "id": "mongol-horseman", "name": "Mongol horseman", "era": "historical", "importance": 2, "lat": 47.92, "lon": 106.92,
+        "note": "Riders of the steppe, who once crossed a continent on horseback." }
+    ] },
+    "CHN": { "people": [
+      { "id": "terracotta-warrior", "name": "Terracotta warrior", "era": "historical", "importance": 3, "lat": 34.38, "lon": 109.28,
+        "note": "An army of clay, buried to guard an emperor." }
+    ] },
+    "GRC": { "people": [
+      { "id": "ancient-greek", "name": "Ancient Greek", "era": "historical", "importance": 2, "lat": 37.97, "lon": 23.73,
+        "note": "Philosophers, playwrights and the first Olympians." }
+    ] },
+    "ITA": { "people": [
+      { "id": "roman-legionary", "name": "Roman legionary", "era": "historical", "importance": 2, "lat": 41.89, "lon": 12.49,
+        "note": "The soldiers of an empire that reached from Britain to Egypt." },
+      { "id": "gondolier", "name": "Gondolier", "era": "living", "importance": 5, "lat": 45.44, "lon": 12.34,
+        "note": "Rowers who steer Venice's boats standing up." }
+    ] },
+    "ESP": { "people": [
+      { "id": "flamenco-dancer", "name": "Flamenco dancer", "era": "living", "importance": 3, "lat": 37.39, "lon": -5.99,
+        "note": "Dance, song and guitar from Andalusia." }
+    ] },
+    "IND": { "people": [
+      { "id": "mahout", "name": "Mahout", "era": "living", "importance": 4, "lat": 26.28, "lon": 91.66,
+        "note": "Keepers who live and work alongside elephants." }
+    ] },
+    "ARG": { "people": [
+      { "id": "gaucho", "name": "Gaucho", "era": "living", "importance": 3, "lat": -34.0, "lon": -60.0,
+        "note": "Horsemen of the pampas." }
+    ] },
+    "SAU": { "people": [
+      { "id": "bedouin", "name": "Bedouin", "era": "living", "importance": 3, "lat": 24.0, "lon": 45.0,
+        "note": "Desert people who move with their herds." }
+    ] }
+  }
+}

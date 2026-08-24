@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+// Compiles the people pack: the peoples, traditions and historical figures a
+// child can meet on the map, from country-people.json.
+//
+//   node tools/geography/build-people.mjs           report
+//   node tools/geography/build-people.mjs --write   write content/people.json
+//
+// The care rule lives in the authored file and is worth repeating here: this
+// names a people or a tradition, never a costume for a modern nationality. A
+// Viking is a Viking, not a Norwegian.
+
+import { readFile, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const HERE = dirname(fileURLToPath(import.meta.url))
+const CONTENT_DIR = join(HERE, '..', '..', 'packages', 'geography', 'content')
+const IMAGE_DIR = join(CONTENT_DIR, 'images')
+const MEDIA_API = 'https://media.tikoapi.org/v1/media'
+const CDN = 'https://data.tikocdn.org/cdn-cgi/image'
+const WRITE = process.argv.includes('--write')
+const SCHEMA_VERSION = 1
+
+/** id → the media title that pictures it, where the library already has one. */
+const ARTWORK = {
+  viking: 'Viking Person',
+  sami: 'Sami Person',
+  inuit: 'Inuit Person',
+  cowboy: 'Cowboy',
+  samurai: 'Samurai',
+  geisha: 'Geisha',
+  maya: 'Maya Person',
+  'native-american': 'Native American Person',
+  maasai: 'Masai Person',
+  maori: 'Maori-Person',
+  'aboriginal-australians': 'Aboriginal Person',
+  pharaoh: 'Egyptian Pharaoh',
+  cossack: 'Russian Person',
+}
+
+const slug = (value) => value.toLowerCase()
+  .normalize('NFKD').replace(/[̀-ͯ]/g, '')
+  .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+async function findPicture(title) {
+  const response = await fetch(`${MEDIA_API}?search=${encodeURIComponent(title)}&type=image&limit=25`)
+  if (!response.ok) return null
+  const data = (await response.json()).data ?? []
+  return data.find((item) => (item.title ?? '').toLowerCase() === title.toLowerCase()) ?? null
+}
+
+async function download(item, id) {
+  const file = join(IMAGE_DIR, `${id}.png`)
+  if (existsSync(file)) return `images/${id}.png`
+  const path = new URL(item.original_url ?? `https://data.tikocdn.org/${item.file_name}`).pathname
+  const response = await fetch(`${CDN}/width=320,quality=85,f=png${path}`)
+  if (!response.ok) return null
+  await writeFile(file, Buffer.from(await response.arrayBuffer()))
+  return `images/${id}.png`
+}
+
+const source = JSON.parse(await readFile(join(CONTENT_DIR, 'country-people.json'), 'utf8'))
+const people = new Map()
+const problems = []
+
+for (const [countryId, entry] of Object.entries(source.countries)) {
+  for (const person of entry.people ?? []) {
+    const id = person.id ?? slug(person.name)
+    if (!(person.importance >= 1 && person.importance <= 10)) {
+      problems.push(`${countryId} ${id} has importance ${person.importance}`)
+    }
+    if (!(person.lat >= -90 && person.lat <= 90) || !(person.lon >= -180 && person.lon <= 180)) {
+      problems.push(`${countryId} ${id} is off the planet`)
+      continue
+    }
+    if (!['living', 'historical'].includes(person.era)) {
+      problems.push(`${countryId} ${id} is neither living nor historical`)
+    }
+
+    const existing = people.get(id)
+    const marker = { lat: person.lat, lon: person.lon, country: countryId, importance: person.importance }
+    if (existing) {
+      existing.markers.push(marker)
+      if (!existing.countries.includes(countryId)) existing.countries.push(countryId)
+      existing.importance = Math.min(existing.importance, person.importance)
+      continue
+    }
+    people.set(id, {
+      id: `person.${id}`,
+      name: person.name,
+      glyph: person.era === 'historical' ? '🛡️' : '🧑',
+      importance: person.importance,
+      era: person.era,
+      note: person.note ?? null,
+      countries: [countryId],
+      markers: [marker],
+      mediaId: null,
+      review: { state: 'draft', source: null },
+    })
+  }
+}
+
+if (problems.length > 0) {
+  for (const problem of problems) process.stderr.write(`${problem}\n`)
+  process.exit(1)
+}
+
+let withArt = 0
+for (const [id, item] of people) {
+  const title = ARTWORK[id]
+  if (!title) continue
+  const picture = WRITE ? await findPicture(title) : null
+  if (!picture) continue
+  const image = await download(picture, id)
+  if (!image) continue
+  item.mediaId = id
+  item.image = image
+  withArt += 1
+}
+
+const items = [...people.values()].sort((a, b) => a.importance - b.importance || a.name.localeCompare(b.name))
+
+if (WRITE) {
+  await writeFile(join(CONTENT_DIR, 'people.json'), `${JSON.stringify({
+    schemaVersion: SCHEMA_VERSION,
+    note: 'Compiled by tools/geography/build-people.mjs from country-people.json. Peoples and traditions, and figures from history named as history.',
+    items,
+  }, null, 2)}\n`)
+}
+
+const living = items.filter((item) => item.era === 'living').length
+process.stdout.write(
+  `people ok: ${items.length} (${living} living, ${items.length - living} from history) ` +
+  `in ${Object.keys(source.countries).length} countries, ${withArt} with a picture\n`
+)

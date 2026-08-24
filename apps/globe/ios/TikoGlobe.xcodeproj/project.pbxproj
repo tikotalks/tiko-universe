@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		094AAC5FC8D7FA4F30242468 /* GlobeSeas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5614E2D52B9B3D980E632516 /* GlobeSeas.swift */; };
 		0959C493F16F426CCB882D0A /* GlobeCountryNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */; };
+		0CC33F14CC37A1572054EEF4 /* mode-people.png in Resources */ = {isa = PBXBuildFile; fileRef = 80FF77B02510742CB5842370 /* mode-people.png */; };
 		1AF18118B91520EC77D3AFDE /* GlobeMomentumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */; };
 		1C968C601B629A11084A173F /* GlobeDetailPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */; };
 		205AD9431DD7D2E3C64EF0C8 /* GlobeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */; };
@@ -88,6 +89,7 @@
 		69424DF8CBD6A225DEF38B86 /* mode-animals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-animals.png"; sourceTree = "<group>"; };
 		71157EB169D449CC0B4820D1 /* TikoGlobeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		738B434CE752431B9D1DC059 /* GlobeCountryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCountryList.swift; sourceTree = "<group>"; };
+		80FF77B02510742CB5842370 /* mode-people.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-people.png"; sourceTree = "<group>"; };
 		87C00B4E3BE21ED67AFC5A81 /* TikoGlobeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeographyTests.swift; sourceTree = "<group>"; };
 		8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCamera.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 				0EDA4289462845E736B7DBFF /* mode-capitals.png */,
 				98C8953DF39609607B929F38 /* mode-countries.png */,
 				5C678A15648BBE26561A2E70 /* mode-landmarks.png */,
+				80FF77B02510742CB5842370 /* mode-people.png */,
 			);
 			path = Media;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				31804001BDE889FF191469F3 /* mode-capitals.png in Resources */,
 				571F95A46713C8BAE23F641F /* mode-countries.png in Resources */,
 				B24A873AB3E0EE5AB027135B /* mode-landmarks.png in Resources */,
+				0CC33F14CC37A1572054EEF4 /* mode-people.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

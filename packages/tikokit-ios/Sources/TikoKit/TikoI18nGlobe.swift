@@ -11,6 +11,8 @@ extension TikoLocalTranslations {
         "globe.hint.explore": "Spin the Earth. Tap a country.",
         "globe.mode.countries": "Countries",
         "globe.mode.capitals": "Cities",
+        "globe.mode.people": "People",
+        "globe.card.people": "People",
         "globe.mode.animals": "Animals",
         "globe.mode.landmarks": "Landmarks",
         "globe.mode.picker": "What to look for",

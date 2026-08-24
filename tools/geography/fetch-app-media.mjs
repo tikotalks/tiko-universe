@@ -23,6 +23,7 @@ const MODE_ICONS = [
   ['capitals', 'Empire State Building'],
   ['animals', 'Giraffe'],
   ['landmarks', 'Eiffel Tower'],
+  ['people', 'Kids in Traditional Clothing'],
 ]
 
 /** The app icon's artwork: a clay Earth, which is what the globe now looks like. */

@@ -204,6 +204,7 @@ struct GlobeDetailPanel: View {
             case .city: i18n.t("globe.card.city")
             case .animal: i18n.t("globe.card.animal")
             case .landmark: i18n.t("globe.card.landmark")
+            case .person: i18n.t("globe.card.people")
             }
         }
     }
@@ -216,6 +217,7 @@ struct GlobeDetailPanel: View {
             case .capital, .city: GlobeMode.capitals.systemImage
             case .animal: GlobeMode.animals.systemImage
             case .landmark: GlobeMode.landmarks.systemImage
+            case .person: GlobeMode.people.systemImage
             }
         }
     }

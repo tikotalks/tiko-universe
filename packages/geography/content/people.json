@@ -1,0 +1,637 @@
+{
+  "schemaVersion": 1,
+  "note": "Compiled by tools/geography/build-people.mjs from country-people.json. Peoples and traditions, and figures from history named as history.",
+  "items": [
+    {
+      "id": "person.aboriginal-australians",
+      "name": "Aboriginal Australians",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "The oldest continuing cultures on Earth, here for 60,000 years.",
+      "countries": [
+        "AUS"
+      ],
+      "markers": [
+        {
+          "lat": -25.34,
+          "lon": 131.03,
+          "country": "AUS",
+          "importance": 2
+        }
+      ],
+      "mediaId": "aboriginal-australians",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/aboriginal-australians.png"
+    },
+    {
+      "id": "person.ancient-greek",
+      "name": "Ancient Greek",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "Philosophers, playwrights and the first Olympians.",
+      "countries": [
+        "GRC"
+      ],
+      "markers": [
+        {
+          "lat": 37.97,
+          "lon": 23.73,
+          "country": "GRC",
+          "importance": 2
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.inuit",
+      "name": "Inuit",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "People of the Arctic, at home where the sea freezes.",
+      "countries": [
+        "CAN",
+        "GRL"
+      ],
+      "markers": [
+        {
+          "lat": 68,
+          "lon": -85,
+          "country": "CAN",
+          "importance": 2
+        },
+        {
+          "lat": 69.22,
+          "lon": -51.1,
+          "country": "GRL",
+          "importance": 2
+        }
+      ],
+      "mediaId": "inuit",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/inuit.png"
+    },
+    {
+      "id": "person.maasai",
+      "name": "Maasai",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "Herders of the Rift Valley, known for their red shukas.",
+      "countries": [
+        "KEN",
+        "TZA"
+      ],
+      "markers": [
+        {
+          "lat": -1.5,
+          "lon": 35.8,
+          "country": "KEN",
+          "importance": 2
+        },
+        {
+          "lat": -3.4,
+          "lon": 35.9,
+          "country": "TZA",
+          "importance": 2
+        }
+      ],
+      "mediaId": "maasai",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/maasai.png"
+    },
+    {
+      "id": "person.maori",
+      "name": "Māori",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "The first people of Aotearoa, who navigated here by stars and swell.",
+      "countries": [
+        "NZL"
+      ],
+      "markers": [
+        {
+          "lat": -38.14,
+          "lon": 176.25,
+          "country": "NZL",
+          "importance": 2
+        }
+      ],
+      "mediaId": "maori",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/maori.png"
+    },
+    {
+      "id": "person.maya",
+      "name": "Maya",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "Builders of cities and astronomers — and still here, millions strong.",
+      "countries": [
+        "MEX",
+        "GTM"
+      ],
+      "markers": [
+        {
+          "lat": 20.68,
+          "lon": -88.57,
+          "country": "MEX",
+          "importance": 2
+        },
+        {
+          "lat": 14.83,
+          "lon": -91.52,
+          "country": "GTM",
+          "importance": 2
+        }
+      ],
+      "mediaId": "maya",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/maya.png"
+    },
+    {
+      "id": "person.mongol-horseman",
+      "name": "Mongol horseman",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "Riders of the steppe, who once crossed a continent on horseback.",
+      "countries": [
+        "MNG"
+      ],
+      "markers": [
+        {
+          "lat": 47.92,
+          "lon": 106.92,
+          "country": "MNG",
+          "importance": 2
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.native-american",
+      "name": "Native American peoples",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "The many nations who lived here long before anybody sailed in.",
+      "countries": [
+        "USA"
+      ],
+      "markers": [
+        {
+          "lat": 36,
+          "lon": -109,
+          "country": "USA",
+          "importance": 2
+        }
+      ],
+      "mediaId": "native-american",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/native-american.png"
+    },
+    {
+      "id": "person.pharaoh",
+      "name": "Pharaoh",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "The rulers of ancient Egypt, buried under mountains of stone.",
+      "countries": [
+        "EGY"
+      ],
+      "markers": [
+        {
+          "lat": 25.72,
+          "lon": 32.61,
+          "country": "EGY",
+          "importance": 2
+        }
+      ],
+      "mediaId": "pharaoh",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/pharaoh.png"
+    },
+    {
+      "id": "person.quechua",
+      "name": "Quechua",
+      "glyph": "🧑",
+      "importance": 2,
+      "era": "living",
+      "note": "Speakers of the language of the Inca, farming the high Andes.",
+      "countries": [
+        "PER"
+      ],
+      "markers": [
+        {
+          "lat": -13.53,
+          "lon": -71.97,
+          "country": "PER",
+          "importance": 2
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.roman-legionary",
+      "name": "Roman legionary",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "The soldiers of an empire that reached from Britain to Egypt.",
+      "countries": [
+        "ITA"
+      ],
+      "markers": [
+        {
+          "lat": 41.89,
+          "lon": 12.49,
+          "country": "ITA",
+          "importance": 2
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.samurai",
+      "name": "Samurai",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "Warriors who served Japan's lords for seven hundred years.",
+      "countries": [
+        "JPN"
+      ],
+      "markers": [
+        {
+          "lat": 34.99,
+          "lon": 135.78,
+          "country": "JPN",
+          "importance": 2
+        }
+      ],
+      "mediaId": "samurai",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/samurai.png"
+    },
+    {
+      "id": "person.viking",
+      "name": "Viking",
+      "glyph": "🛡️",
+      "importance": 2,
+      "era": "historical",
+      "note": "Seafarers and traders of the Norse world, a thousand years ago.",
+      "countries": [
+        "NOR",
+        "ISL",
+        "DNK"
+      ],
+      "markers": [
+        {
+          "lat": 60.39,
+          "lon": 5.32,
+          "country": "NOR",
+          "importance": 2
+        },
+        {
+          "lat": 64.14,
+          "lon": -21.94,
+          "country": "ISL",
+          "importance": 3
+        },
+        {
+          "lat": 55.68,
+          "lon": 12.57,
+          "country": "DNK",
+          "importance": 3
+        }
+      ],
+      "mediaId": "viking",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/viking.png"
+    },
+    {
+      "id": "person.aymara",
+      "name": "Aymara",
+      "glyph": "🧑",
+      "importance": 3,
+      "era": "living",
+      "note": "People of the high plateau around Lake Titicaca.",
+      "countries": [
+        "BOL"
+      ],
+      "markers": [
+        {
+          "lat": -16.5,
+          "lon": -68.15,
+          "country": "BOL",
+          "importance": 3
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.bedouin",
+      "name": "Bedouin",
+      "glyph": "🧑",
+      "importance": 3,
+      "era": "living",
+      "note": "Desert people who move with their herds.",
+      "countries": [
+        "SAU"
+      ],
+      "markers": [
+        {
+          "lat": 24,
+          "lon": 45,
+          "country": "SAU",
+          "importance": 3
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.cowboy",
+      "name": "Cowboy",
+      "glyph": "🛡️",
+      "importance": 3,
+      "era": "historical",
+      "note": "Riders who drove cattle across the western plains.",
+      "countries": [
+        "USA"
+      ],
+      "markers": [
+        {
+          "lat": 32.78,
+          "lon": -99.5,
+          "country": "USA",
+          "importance": 3
+        }
+      ],
+      "mediaId": "cowboy",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/cowboy.png"
+    },
+    {
+      "id": "person.flamenco-dancer",
+      "name": "Flamenco dancer",
+      "glyph": "🧑",
+      "importance": 3,
+      "era": "living",
+      "note": "Dance, song and guitar from Andalusia.",
+      "countries": [
+        "ESP"
+      ],
+      "markers": [
+        {
+          "lat": 37.39,
+          "lon": -5.99,
+          "country": "ESP",
+          "importance": 3
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.gaucho",
+      "name": "Gaucho",
+      "glyph": "🧑",
+      "importance": 3,
+      "era": "living",
+      "note": "Horsemen of the pampas.",
+      "countries": [
+        "ARG"
+      ],
+      "markers": [
+        {
+          "lat": -34,
+          "lon": -60,
+          "country": "ARG",
+          "importance": 3
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.sami",
+      "name": "Sámi",
+      "glyph": "🧑",
+      "importance": 3,
+      "era": "living",
+      "note": "The indigenous people of the far north, herders of reindeer.",
+      "countries": [
+        "SWE",
+        "FIN"
+      ],
+      "markers": [
+        {
+          "lat": 67.86,
+          "lon": 20.23,
+          "country": "SWE",
+          "importance": 3
+        },
+        {
+          "lat": 68.9,
+          "lon": 27,
+          "country": "FIN",
+          "importance": 3
+        }
+      ],
+      "mediaId": "sami",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/sami.png"
+    },
+    {
+      "id": "person.terracotta-warrior",
+      "name": "Terracotta warrior",
+      "glyph": "🛡️",
+      "importance": 3,
+      "era": "historical",
+      "note": "An army of clay, buried to guard an emperor.",
+      "countries": [
+        "CHN"
+      ],
+      "markers": [
+        {
+          "lat": 34.38,
+          "lon": 109.28,
+          "country": "CHN",
+          "importance": 3
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.cossack",
+      "name": "Cossack",
+      "glyph": "🛡️",
+      "importance": 4,
+      "era": "historical",
+      "note": "Horsemen of the southern steppe.",
+      "countries": [
+        "RUS"
+      ],
+      "markers": [
+        {
+          "lat": 47.23,
+          "lon": 39.72,
+          "country": "RUS",
+          "importance": 4
+        }
+      ],
+      "mediaId": "cossack",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/cossack.png"
+    },
+    {
+      "id": "person.geisha",
+      "name": "Geisha",
+      "glyph": "🧑",
+      "importance": 4,
+      "era": "living",
+      "note": "Artists of dance, music and conversation, trained for years.",
+      "countries": [
+        "JPN"
+      ],
+      "markers": [
+        {
+          "lat": 35,
+          "lon": 135.77,
+          "country": "JPN",
+          "importance": 4
+        }
+      ],
+      "mediaId": "geisha",
+      "review": {
+        "state": "draft",
+        "source": null
+      },
+      "image": "images/geisha.png"
+    },
+    {
+      "id": "person.mahout",
+      "name": "Mahout",
+      "glyph": "🧑",
+      "importance": 4,
+      "era": "living",
+      "note": "Keepers who live and work alongside elephants.",
+      "countries": [
+        "IND"
+      ],
+      "markers": [
+        {
+          "lat": 26.28,
+          "lon": 91.66,
+          "country": "IND",
+          "importance": 4
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    },
+    {
+      "id": "person.gondolier",
+      "name": "Gondolier",
+      "glyph": "🧑",
+      "importance": 5,
+      "era": "living",
+      "note": "Rowers who steer Venice's boats standing up.",
+      "countries": [
+        "ITA"
+      ],
+      "markers": [
+        {
+          "lat": 45.44,
+          "lon": 12.34,
+          "country": "ITA",
+          "importance": 5
+        }
+      ],
+      "mediaId": null,
+      "review": {
+        "state": "draft",
+        "source": null
+      }
+    }
+  ]
+}

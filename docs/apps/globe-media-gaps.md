@@ -9,8 +9,8 @@ in for a sea turtle tells a child something false, and they have no way to know.
 A **landmark** with no picture is still on the globe, drawn with its glyph. The
 place is real either way; only the artwork is missing.
 
-At the time of writing: **334 animals** and
-**1250 of 1270 landmarks** have no picture.
+At the time of writing: **332 animals** and
+**1412 of 1432 landmarks** have no picture.
 
 ## Animals
 
@@ -35,7 +35,6 @@ zoom — then by how many countries are waiting on it.
 | Black rhinoceros | Diceros bicornis | 2 | Cameroon, Kenya, Namibia, Tanzania |
 | European bison | Bison bonasus | 2 | Germany, Poland, Romania |
 | Red-crowned crane | Grus japonensis | 2 | Japan, South Korea, North Korea |
-| Reindeer | Rangifer tarandus | 2 | Finland, Norway, Sweden |
 | Vicuña | Vicugna vicugna | 2 | Bolivia, Chile, Peru |
 | Western lowland gorilla | Gorilla gorilla gorilla | 2 | Central African Republic, Republic of the Congo, Gabon |
 | White rhinoceros | Ceratotherium simum | 2 | Eswatini, South Africa, Zimbabwe |
@@ -50,8 +49,8 @@ zoom — then by how many countries are waiting on it.
 | Markhor | Capra falconeri | 2 | Afghanistan, Pakistan |
 | Masai giraffe | Giraffa camelopardalis tippelskirchi | 2 | Kenya, Tanzania |
 | Mountain gorilla | Gorilla beringei beringei | 2 | Rwanda, Uganda |
-| Orangutan | Pongo | 2 | Indonesia, Malaysia |
 | Przewalski's horse | Equus ferus przewalskii | 2 | Kazakhstan, Mongolia |
+| Reindeer | Rangifer tarandus | 2 | Norway, Sweden |
 | Saola | Pseudoryx nghetinhensis | 2 | Laos, Vietnam |
 | Wildebeest | Connochaetes taurinus | 2 | Kenya, Tanzania |
 | Alpaca | Vicugna pacos | 2 | Peru |
@@ -59,7 +58,6 @@ zoom — then by how many countries are waiting on it.
 | Asiatic cheetah | Acinonyx jubatus venaticus | 2 | Iran |
 | Axolotl | Ambystoma mexicanum | 2 | Mexico |
 | Bactrian camel | Camelus bactrianus | 2 | Mongolia |
-| Beaver | Castor canadensis | 2 | Canada |
 | Blue whale | Balaenoptera musculus | 2 | Sri Lanka |
 | Bonobo | Pan paniscus | 2 | Democratic Republic of the Congo |
 | Eastern lowland gorilla | Gorilla beringei graueri | 2 | Democratic Republic of the Congo |
@@ -162,7 +160,6 @@ zoom — then by how many countries are waiting on it.
 | Japanese giant salamander | Andrias japonicus | 3 | Japan |
 | Javan rhinoceros | Rhinoceros sondaicus | 3 | Indonesia |
 | Killer whale | Orcinus orca | 3 | Norway |
-| Kookaburra | Dacelo novaeguineae | 3 | Australia |
 | Kordofan giraffe | Giraffa camelopardalis antiquorum | 3 | Chad |
 | Leatherback sea turtle | Dermochelys coriacea | 3 | Gabon |
 | Manatee | Trichechus manatus | 3 | United States of America |
@@ -338,6 +335,7 @@ zoom — then by how many countries are waiting on it.
 | Hoopoe | — | 6 | its world range |
 | Llama | — | 6 | its world range |
 | Mole | — | 6 | its world range |
+| Orangutan | Pongo | 6 | its world range |
 | Stoat | — | 6 | its world range |
 | Weasel | — | 6 | its world range |
 | Madagascar hissing cockroach | Gromphadorhina portentosa | 7 | Madagascar |
@@ -364,6 +362,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Acropolis of Athens | Greece |
 | Ajanta Caves | India |
 | Al-Masjid Al-Haram | Saudi Arabia |
+| Amazon River | Brazil |
 | Angkor | Cambodia |
 | Antigua | Antigua and Barbuda |
 | Auschwitz concentration camp | Poland |
@@ -425,6 +424,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Palmyra | Syria |
 | Popocatépetl | Mexico |
 | Pyramids of Giza | Egypt |
+| Red Square | Russia |
 | Saaremaa | Estonia |
 | Saimaa | Finland |
 | Saint Basil's Cathedral | Russia |
@@ -464,6 +464,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Beqaa Valley | Lebanon |
 | Białowieża Forest | Belarus |
 | Bibi-Khanym Mosque | Uzbekistan |
+| Blue Mosque | Turkey |
 | Bouvet Island | Norway |
 | Brú na Bóinne | Ireland |
 | Burkhan Khaldun | Mongolia |
@@ -480,6 +481,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Crimean Bridge | Ukraine |
 | Damavand | Iran |
 | Darién National Park | Panama |
+| Delphi | Greece |
 | Dja Faunal Reserve | Cameroon |
 | Djoudj National Bird Sanctuary | Senegal |
 | Dojran Lake | North Macedonia |
@@ -501,6 +503,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Heaven Lake | North Korea |
 | Hiiumaa | Estonia |
 | Hill of Crosses | Lithuania |
+| Hiroshima Peace Memorial | Japan |
 | Horezu monastery | Romania |
 | Hortobágy National Park | Hungary |
 | Hunga Tonga–Hunga Haʻapai | Tonga |
@@ -515,6 +518,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Jbel Toubkal | Morocco |
 | Jebel Barkal | Sudan |
 | Jerónimos Monastery | Portugal |
+| Jungfraujoch | Switzerland |
 | Kasubi Tombs | Uganda |
 | Kerkouane | Tunisia |
 | Khan Tengri | Kyrgyzstan |
@@ -523,6 +527,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Kinabalu Park | Malaysia |
 | Kiyomizu-dera Temple | Japan |
 | Ko Samui | Thailand |
+| Komodo National Park | Indonesia |
 | Köpet Dag | Turkmenistan |
 | Krakatoa | Indonesia |
 | Krk | Croatia |
@@ -535,6 +540,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Lake Kivu | Democratic Republic of the Congo |
 | Lake Kyoga | Uganda |
 | Lake Ladoga | Russia |
+| Lake Louise | Canada |
 | Lake Lugano | Switzerland |
 | Lake Managua | Nicaragua |
 | Lake Nakuru | Kenya |
@@ -546,11 +552,14 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Lake Skadar | Montenegro |
 | Lake Tana | Ethiopia |
 | Lake Taupō | New Zealand |
+| Lake Titicaca | Peru |
 | Lake Volta | Ghana |
 | Lake Winnipeg | Canada |
 | Lake Zaysan | Kazakhstan |
 | Lala Mustafa Pasha Mosque | Cyprus |
+| Loch Ness | United Kingdom |
 | Lord Howe Island | Australia |
+| Luxor Temple | Egypt |
 | Maglić | Bosnia and Herzegovina |
 | Maiden Tower | Azerbaijan |
 | Malaita | Solomon Islands |
@@ -564,6 +573,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Minaret of Jam | Afghanistan |
 | Mineirão | Brazil |
 | moai | Chile |
+| Mont Blanc | France |
 | Monte Titano | San Marino |
 | Mount Ararat | Turkey |
 | Mount Kailash | People's Republic of China |
@@ -577,10 +587,14 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Nesvizh Castle | Belarus |
 | Nevado del Ruiz | Colombia |
 | Newgrange | Ireland |
+| Ngorongoro Crater | Tanzania |
+| Niagara Falls | United States of America |
 | Niokolo-Koba National Park | Senegal |
 | Northeast Greenland National Park | Greenland |
 | Onze-Lieve-Vrouwekathedraal | Belgium |
 | Palace of the Shirvanshahs | Azerbaijan |
+| Pantanal | Brazil |
+| Pantheon | Italy |
 | Paro Taktsang | Bhutan |
 | Parthenon | Greece |
 | Pendjari National Park | Benin |
@@ -588,8 +602,10 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Pinatubo | Philippines |
 | Plain of Jars | Laos |
 | Pohnpei | Federated States of Micronesia |
+| Pompeii | Italy |
 | Postojna Cave | Slovenia |
 | Praslin | Seychelles |
+| Preikestolen | Norway |
 | Qal’at al Bahrain | Bahrain |
 | Qasr Amra | Jordan |
 | Quba Mosque | Saudi Arabia |
@@ -597,10 +613,13 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Red Fort | India |
 | Riga Cathedral | Latvia |
 | Río Plátano Biosphere Reserve | Honduras |
+| Robben Island | South Africa |
+| Roman Forum | Italy |
 | Rukwa Lake | Tanzania |
 | Saint Vincent | Saint Vincent and the Grenadines |
 | Sal | Cape Verde |
 | Santiago | Cape Verde |
+| Santorini caldera | Greece |
 | São Paulo Museum of Art | Brazil |
 | Savai'i | Samoa |
 | Shkhara | Georgia |
@@ -626,6 +645,8 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Tongatapu | Tonga |
 | Tonlé Sap | Cambodia |
 | Tournai Cathedral | Belgium |
+| Tower of Belém | Portugal |
+| Tower of London | United Kingdom |
 | Triglav | Slovenia |
 | Tsingy de Bemaraha Strict Nature Reserve | Madagascar |
 | Tsodilo | Botswana |
@@ -633,9 +654,11 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Umayyad Mosque | Syria |
 | Upolu | Samoa |
 | Ur | Iraq |
+| Valley of the Kings | Egypt |
 | Vanua Levu | Fiji |
 | Vasco da Gama Bridge | Portugal |
 | Vat Phou | Laos |
+| Vatican Museums | Italy |
 | Vättern | Sweden |
 | Venus of Willendorf | Austria |
 | Vieques | Puerto Rico |
@@ -644,6 +667,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 | Vredefort crater | South Africa |
 | W National Park | Niger |
 | Wat Phra Kaew | Thailand |
+| Westminster Abbey | United Kingdom |
 | Wikipedia Monument | Poland |
 | Zubarah | Qatar |
 
@@ -655,63 +679,99 @@ Visible once a child is looking at a region.
 | --- | --- |
 | Aachen Cathedral | Germany |
 | Abraj Al Bait | Saudi Arabia |
+| Aletsch Glacier | Switzerland |
 | Alexander Nevsky Cathedral | Estonia |
+| Amber Fort | India |
+| Amboseli | Kenya |
 | Angkor Thom | Cambodia |
 | Apollonia | Albania |
 | Apostolic Palace | Vatican City |
+| Astronomical Clock | Czech Republic |
+| Ayutthaya | Thailand |
 | Bagrati Cathedral | Georgia |
 | Baku TV Tower | Azerbaijan |
 | Ban Chiang | Thailand |
 | Batu Caves | Malaysia |
+| Bay of Fundy | Canada |
 | Beerenberg | Norway |
 | Belvedere | Austria |
+| Berlin Wall Memorial | Germany |
 | Birka | Sweden |
+| Black Forest | Germany |
 | Blue Mosque | Afghanistan |
+| Blue Mountains | Australia |
 | Bojnice Castle | Slovakia |
 | Boyana Church | Bulgaria |
 | Brest Fortress | Belarus |
 | Buda Castle | Hungary |
 | Capernaum | Israel |
+| Carcassonne | France |
+| Český Krumlov | Czech Republic |
+| Champs-Élysées | France |
 | Chersonesus | Ukraine |
 | Chillon Castle | Switzerland |
 | Chogha Zanbil | Iran |
+| Church of the Savior on Blood | Russia |
+| Copacabana | Brazil |
+| Copper Canyon | Mexico |
 | Diocletian's Palace | Croatia |
+| Douro Valley | Portugal |
+| Drakensberg | South Africa |
 | Drottningholm Palace | Sweden |
+| Egyptian Museum | Egypt |
 | Ellora Caves | India |
 | Ephesus | Turkey |
 | Erebuni Fortress | Armenia |
 | Erta Ale | Ethiopia |
 | Etchmiadzin Cathedral | Armenia |
 | Fasil Ghebbi | Ethiopia |
+| Fitz Roy | Argentina |
+| Gamla Stan | Sweden |
+| Grand Canal | Italy |
 | Great Manmade River | Libya |
 | Great Mosque of Aleppo | Syria |
 | Great Mosque of Kairouan | Tunisia |
+| Great Rift Valley | Kenya |
+| Grossglockner | Austria |
+| Hadrian's Wall | United Kingdom |
 | Hallasan | South Korea |
+| Hallstatt Lake | Austria |
 | Harappa | Pakistan |
 | Hekla | Iceland |
 | Hel Peninsula | Poland |
 | Helsinki Cathedral | Finland |
 | Hkakabo Razi | Myanmar |
+| Hofburg | Austria |
 | Ichkeul National Park | Tunisia |
 | Ilha da Queimada Grande | Brazil |
 | Imam Ali Mosque | Iraq |
 | Isabela Island | Ecuador |
 | Ishtar Gate | Iraq |
+| Kakadu National Park | Australia |
 | Karakul | Tajikistan |
 | Karlštejn Castle | Czech Republic |
+| Keukenhof | Netherlands |
 | Khao Yai National Park | Thailand |
 | Khone Phapheng Falls | Laos |
 | Khyber Pass | Pakistan |
+| Knossos | Greece |
 | Koutoubia Mosque | Morocco |
+| Kraków Old Town | Poland |
 | Kyiv Pechersk Lavra | Ukraine |
 | L'Anse aux Meadows | Canada |
 | Lago de Atitlán | Guatemala |
 | Lake Bohinj | Slovenia |
+| Lake Geneva | Switzerland |
 | Lake Ritsa | Georgia |
+| Lake Toba | Indonesia |
 | Lake Van | Turkey |
 | Laki | Iceland |
+| Lençóis Maranhenses | Brazil |
+| Leshan Giant Buddha | People's Republic of China |
+| Li River | People's Republic of China |
 | Lighthouse of Alexandria | Egypt |
 | Llullaillaco | Argentina |
+| Lofoten | Norway |
 | Lombok Island | Indonesia |
 | Mactan | Philippines |
 | Madeira Island | Portugal |
@@ -719,9 +779,13 @@ Visible once a child is looking at a region.
 | Mausoleum of Khoja Ahmed Yasawi | Kazakhstan |
 | Merapi | Indonesia |
 | Mexico City Metropolitan Cathedral | Mexico |
+| Mezquita of Córdoba | Spain |
+| Milan Cathedral | Italy |
 | Monastery of Saint John of Rila | Bulgaria |
+| Monument Valley | United States of America |
 | Mount Arafat | Saudi Arabia |
 | Mount Elgon | Uganda |
+| Mount Nemrut | Turkey |
 | Mount Nimba Strict Nature Reserve | Ivory Coast |
 | Mount Nyiragongo | Democratic Republic of the Congo |
 | Mount Olympus | Greece |
@@ -734,53 +798,87 @@ Visible once a child is looking at a region.
 | National Art Museum of Azerbaijan | Azerbaijan |
 | Nisa | Turkmenistan |
 | Norak Dam | Tajikistan |
+| North Cape | Norway |
 | Nyamuragira | Democratic Republic of the Congo |
 | Ojos del Salado | Argentina |
+| Old Quebec | Canada |
+| Olympia | Greece |
 | Øresund Bridge | Denmark |
 | Osorno | Chile |
 | Parinacota | Bolivia |
+| Parliament Hill | Canada |
 | Pashupatinath Temple | Nepal |
 | Petäjävesi Old Church | Finland |
+| Phi Phi Islands | Thailand |
 | Phou Bia | Laos |
 | Pico Cristóbal Colón | Colombia |
 | Pico do Fogo | Cape Verde |
 | Poopó Lake | Bolivia |
+| Prado Museum | Spain |
 | Prague Astronomical Clock | Czech Republic |
 | Puerto Princesa Subterranean River National Park | Philippines |
 | Qal'at Bani Hammad | Algeria |
+| Raja Ampat | Indonesia |
+| Reichstag | Germany |
 | Rhine Falls | Switzerland |
 | Riga Castle | Latvia |
 | Robinson Crusoe Island | Chile |
 | Roskilde Cathedral | Denmark |
+| Rotorua geysers | New Zealand |
 | Rügen | Germany |
 | Rwenzori Mountains National Park | Uganda |
 | Salamis | Cyprus |
 | Sangay National Park | Ecuador |
+| Santiago de Compostela Cathedral | Spain |
 | Sarygamysh Lake | Turkmenistan |
+| Senso-ji | Japan |
 | Seokguram | South Korea |
 | Sirmium | Serbia |
 | Sistine Chapel | Vatican City |
+| Skellig Michael | Ireland |
 | Škocjan Caves | Slovenia |
 | Sparta | Greece |
+| St Paul's Cathedral | United Kingdom |
 | Studenica monastery | Serbia |
+| Suez Canal | Egypt |
+| Summer Palace | People's Republic of China |
 | Susa | Iran |
 | Széchenyi Chain Bridge | Hungary |
 | Tamgaly | Kazakhstan |
+| Tanah Lot | Indonesia |
+| Tatra Mountains | Poland |
 | Tatra National Park | Slovakia |
 | Teide | Spain |
+| Temple of Heaven | People's Republic of China |
 | Thien Duong Cave | Vietnam |
+| Times Square | United States of America |
+| Todai-ji | Japan |
+| Tongariro Crossing | New Zealand |
 | Tongariro National Park | New Zealand |
 | Toompea Castle | Estonia |
+| Topkapi Palace | Turkey |
+| Trans-Siberian Railway | Russia |
+| Tulum | Mexico |
 | Tuol Sleng torture center | Cambodia |
 | Umm ar-Rasas | Jordan |
 | Urnes Stave Church | Norway |
 | Uxmal | Mexico |
+| Valdés Peninsula | Argentina |
+| Van Gogh Museum | Netherlands |
+| Varanasi Ghats | India |
 | Vis (island) | Croatia |
 | Wachau | Austria |
+| Wadden Sea | Netherlands |
+| Wat Pho | Thailand |
 | Wawel Cathedral | Poland |
+| White Temple | Thailand |
+| Wieliczka Salt Mine | Poland |
 | Winter Palace | Russia |
 | Yad Vashem | Israel |
+| Zhangjiajie | People's Republic of China |
 | Zorkul | Afghanistan |
+| Zugspitze | Germany |
+| Abisko National Park | Sweden |
 | Abu Simbel | Egypt |
 | Abuja National Mosque | Nigeria |
 | Abuko Nature Reserve | The Gambia |
@@ -789,10 +887,12 @@ Visible once a child is looking at a region.
 | Ada Kaleh | Romania |
 | Adulis | Eritrea |
 | African Renaissance Monument | Senegal |
+| Afsluitdijk | Netherlands |
 | Aïr and Ténéré National Nature Reserve | Niger |
 | Akosombo Dam | Ghana |
 | Al Fateh Grand Mosque | Bahrain |
 | Al-Askari Shrine | Iraq |
+| Alcatraz | United States of America |
 | Alcázar de Colón | Dominican Republic |
 | Alhambra | Spain |
 | Alpamayo | Peru |
@@ -800,6 +900,7 @@ Visible once a child is looking at a region.
 | Amber Mountain National Park | Madagascar |
 | Ananda Temple | Myanmar |
 | Angel Falls | Venezuela |
+| Angel of Independence | Mexico |
 | Ankaratra | Madagascar |
 | Aoudaghost | Mauritania |
 | Aranuka | Kiribati |
@@ -818,6 +919,7 @@ Visible once a child is looking at a region.
 | Avenue of the Baobabs | Madagascar |
 | Avukana Buddha statue | Sri Lanka |
 | Aydar Lake | Uzbekistan |
+| Backwaters of Kerala | India |
 | Badshahi Mosque | Pakistan |
 | Baitul Mukarram National Mosque | Bangladesh |
 | Bălănești Hill | Moldova |
@@ -834,13 +936,20 @@ Visible once a child is looking at a region.
 | Belém Tower | Portugal |
 | Bequia | Saint Vincent and the Grenadines |
 | Berg Castle | Luxembourg |
+| Bern Old Town | Switzerland |
+| Binnenhof | Netherlands |
+| Blarney Castle | Ireland |
 | Blue and John Crow Mountains National Park | Jamaica |
 | Blue Mountain Peak | Jamaica |
+| Blyde River Canyon | South Africa |
 | Bolaven Plateau | Laos |
+| Bom Jesus do Monte | Portugal |
+| Bondi Beach | Australia |
 | Bora Bora | French Polynesia |
 | Borobudur | Indonesia |
 | Bosnian pyramid claims | Bosnia and Herzegovina |
 | Botanical Garden of Mérida | Venezuela |
+| Boulders Beach | South Africa |
 | Boyoma Falls | Democratic Republic of the Congo |
 | Bran Castle | Romania |
 | Brandberg | Namibia |
@@ -850,19 +959,23 @@ Visible once a child is looking at a region.
 | Brokopondo Reservoir | Suriname |
 | Buckingham Palace | United Kingdom |
 | Buddha Dordenma statue | Bhutan |
+| Cabo da Roca | Portugal |
 | Calf of Man | Isle of Man |
 | Capanda Dam | Angola |
 | Cape of Good Hope | South Africa |
 | Cappadocia | Turkey |
 | Căpriana monastery | Moldova |
 | Caracol | Belize |
+| Castel Sant'Angelo | Italy |
 | Castillo de San Pedro de la Roca | Cuba |
 | Cathedral of Our Lady of the Assumption | Haiti |
 | Cayman Brac | Cayman Islands |
+| Cenote Ik Kil | Mexico |
 | Central Island | Kenya |
 | Central Suriname Nature Reserve | Suriname |
 | Cerro Chirripó | Costa Rica |
 | Cerro El Pital | El Salvador |
+| Chambord | France |
 | Charles Bridge | Czech Republic |
 | Che Guevara Mausoleum | Cuba |
 | Chiang Kai-shek Memorial Hall | Taiwan |
@@ -875,6 +988,7 @@ Visible once a child is looking at a region.
 | Church of the Nativity | Palestine |
 | Citadel of Salah Ed-Din | Syria |
 | Cliffs of Moher | Ireland |
+| Colca Canyon | Peru |
 | Cologne Cathedral | Germany |
 | Concepción | Nicaragua |
 | Corisco | Equatorial Guinea |
@@ -885,6 +999,7 @@ Visible once a child is looking at a region.
 | Day Forest National Park | Djibouti |
 | Dettifoss | Iceland |
 | Dharahara | Nepal |
+| Diani Beach | Kenya |
 | Djamaa El Kebir of Algiers | Algeria |
 | Djinguereber Mosque | Mali |
 | Dublin Castle | Ireland |
@@ -911,6 +1026,7 @@ Visible once a child is looking at a region.
 | Fort Zeelandia | Taiwan |
 | Fort Zeelandia | Suriname |
 | Fortaleza Ozama | Dominican Republic |
+| Franz Josef Glacier | New Zealand |
 | Friendship Bridge | Paraguay |
 | Fuvahmulah | Maldives |
 | Galápagos Islands | Ecuador |
@@ -946,6 +1062,7 @@ Visible once a child is looking at a region.
 | Great Mosque of Sana'a | Yemen |
 | Great Sand Sea | Libya |
 | Guaíra Falls | Paraguay |
+| Guggenheim Bilbao | Spain |
 | Gurgi Mosque | Libya |
 | Guri Dam | Venezuela |
 | Gyeongbokgung Palace | South Korea |
@@ -955,6 +1072,7 @@ Visible once a child is looking at a region.
 | Hassan Tower | Morocco |
 | Havana Cathedral | Cuba |
 | Hegra | Saudi Arabia |
+| Heidelberg Castle | Germany |
 | Hermann Castle | Estonia |
 | Hermitage Museum | Russia |
 | Himeji Castle | Japan |
@@ -992,6 +1110,7 @@ Visible once a child is looking at a region.
 | Kalyan Minaret | Uzbekistan |
 | Kao | Tonga |
 | Kaohsiung Mosque | Taiwan |
+| Kapellbrücke | Switzerland |
 | Karfiguéla waterfalls | Burkina Faso |
 | Kariba Dam | Zimbabwe |
 | Karnak Temple | Egypt |
@@ -1001,6 +1120,7 @@ Visible once a child is looking at a region.
 | Ketchaoua Mosque | Algeria |
 | Khami | Zimbabwe |
 | Kili Island | Marshall Islands |
+| Konark Sun Temple | India |
 | Kondoa Rock Art Sites | Tanzania |
 | Kossou Dam | Ivory Coast |
 | Koutammakou | Benin |
@@ -1052,6 +1172,7 @@ Visible once a child is looking at a region.
 | Manantali Dam | Mali |
 | Manuae | Cook Islands |
 | Manuel Antonio National Park | Costa Rica |
+| Maracanã | Brazil |
 | Margat | Syria |
 | Marib Dam | Yemen |
 | Mariinskyi Palace | Ukraine |
@@ -1060,6 +1181,7 @@ Visible once a child is looking at a region.
 | Mauritius Island | Mauritius |
 | Mavrovo National Park | North Macedonia |
 | Mbamu | Republic of the Congo |
+| Melk Abbey | Austria |
 | Merelava | Vanuatu |
 | Merowe Dam | Sudan |
 | Meteora | Greece |
@@ -1069,7 +1191,9 @@ Visible once a child is looking at a region.
 | Mogadishu Cathedral | Somalia |
 | Monastery of Saint Naum | North Macedonia |
 | Mont Saint-Michel | France |
+| Monte Albán | Mexico |
 | Monte Binga | Mozambique |
+| Moraine Lake | Canada |
 | Morne Diablotins | Dominica |
 | Morne Trois Pitons National Park | Dominica |
 | Mosi-oa-Tunya | Zambia |
@@ -1078,6 +1202,7 @@ Visible once a child is looking at a region.
 | Mosque of Sheikh Ibrahim Al-Ibrahim | Venezuela |
 | Mosque of the Companions, Massawa | Eritrea |
 | Moucha Island | Djibouti |
+| Mount Athos | Greece |
 | Mount Balbi | Papua New Guinea |
 | Mount Jamanota | Aruba |
 | Mount Liamuiga | Saint Kitts and Nevis |
@@ -1093,7 +1218,9 @@ Visible once a child is looking at a region.
 | Mount Vesuvius | Italy |
 | Mousa Ali | Eritrea |
 | Murchison Falls | Uganda |
+| Musée d'Orsay | France |
 | Musée océanographique de Monaco | Monaco |
+| Museum Island | Germany |
 | Museum of the Revolution | Cuba |
 | Mutarazi Falls | Zimbabwe |
 | Nabro Volcano | Eritrea |
@@ -1120,6 +1247,7 @@ Visible once a child is looking at a region.
 | Nuuk Cathedral | Greenland |
 | Nyungwe Forest | Rwanda |
 | Okavango Delta | Botswana |
+| Olduvai Gorge | Tanzania |
 | Orchid Island | Taiwan |
 | Ordu-Baliq | Mongolia |
 | Ostrog monastery | Montenegro |
@@ -1127,12 +1255,14 @@ Visible once a child is looking at a region.
 | Osun-Osogbo Grove | Nigeria |
 | Otrar | Kazakhstan |
 | Ouagadougou Cathedral | Burkina Faso |
+| Ouro Preto | Brazil |
 | Palace of Versailles | France |
 | Palm Jebel Ali | United Arab Emirates |
 | Palm Jumeirah | United Arab Emirates |
 | Panama Canal | Panama |
 | Panamá Viejo | Panama |
 | Panjshir Valley | Afghanistan |
+| Peace Palace | Netherlands |
 | Peleș Castle | Romania |
 | Perim | Yemen |
 | Perito Moreno Glacier | Argentina |
@@ -1153,21 +1283,30 @@ Visible once a child is looking at a region.
 | Punakha Dzong | Bhutan |
 | Qacha's Nek | Lesotho |
 | Qilakitsoq | Greenland |
+| Quebrada de Humahuaca | Argentina |
 | Quissama National Park | Angola |
+| Railay Beach | Thailand |
+| Rainbow Mountain | Peru |
 | Registan | Uzbekistan |
+| Rhine Valley | Germany |
 | Rijksmuseum | Netherlands |
+| Ring of Kerry | Ireland |
 | Rock-Hewn Churches of Lalibela | Ethiopia |
 | Rogun Dam | Tajikistan |
 | Roman amphitheatre of Durrës | Albania |
 | Rongerik Atoll | Marshall Islands |
 | Roseires Dam | Sudan |
 | Rova of Antananarivo | Madagascar |
+| Royal Palace of Madrid | Spain |
 | Royal Palaces of Abomey | Benin |
 | Ruacana Falls | Namibia |
 | Rusumo Falls | Rwanda |
 | Ruvubu National Park | Burundi |
 | Sacré-Cœur | France |
+| Sacsayhuamán | Peru |
+| Sainte-Chapelle | France |
 | Salar de Uyuni | Bolivia |
+| Salzburg Old Town | Austria |
 | Samanid Mausoleum | Uzbekistan |
 | Sankore Madrasah | Mali |
 | Sans-Souci Palace | Haiti |
@@ -1179,23 +1318,29 @@ Visible once a child is looking at a region.
 | Šarena Mosque | North Macedonia |
 | Satawal | Federated States of Micronesia |
 | Schönbrunn Palace | Austria |
+| Segovia Aqueduct | Spain |
+| Selous Game Reserve | Tanzania |
 | Serengeti | Tanzania |
 | Shaheed Minar | Bangladesh |
 | Shanidar Cave | Iraq |
 | Sheikh Zayed Mosque | United Arab Emirates |
 | Sherbro Island | Sierra Leone |
+| Shibuya Crossing | Japan |
 | Shimbiris | Somalia |
 | Shwedagon Pagoda | Myanmar |
 | Sigiriya | Sri Lanka |
 | Silhouette Island | Seychelles |
 | Sino-Korean Friendship Bridge | North Korea |
+| Siwa Oasis | Egypt |
 | Snaefell | Isle of Man |
 | Śniardwy | Poland |
+| Snowdon | United Kingdom |
 | Sofala | Mozambique |
 | Soroca Fort | Moldova |
 | Sørvágsvatn | Faroe Islands |
 | Sossusvlei | Namibia |
 | South Aral Sea | Uzbekistan |
+| Spanish Steps | Italy |
 | Srebarna Nature Reserve | Bulgaria |
 | St John's Co-Cathedral | Malta |
 | St Mark's Square | Italy |
@@ -1204,6 +1349,7 @@ Visible once a child is looking at a region.
 | Sterkfontein | South Africa |
 | Stockholm Palace | Sweden |
 | Sugarloaf Mountain | Brazil |
+| Sukhothai | Thailand |
 | Sultan Abdul Samad Jamek Mosque | Malaysia |
 | Sultan Qaboos Grand Mosque | Oman |
 | Sun Moon Lake | Taiwan |
@@ -1216,6 +1362,7 @@ Visible once a child is looking at a region.
 | Tarso Toussidé | Chad |
 | Tatamailau | East Timor |
 | Taveuni | Fiji |
+| Temple of Poseidon | Greece |
 | Temple of the Tooth | Sri Lanka |
 | Teotihuacan | Mexico |
 | Terracotta Army | People's Republic of China |
@@ -1233,25 +1380,31 @@ Visible once a child is looking at a region.
 | Tórshavn Cathedral | Faroe Islands |
 | Transfăgărășan | Romania |
 | Trevi Fountain | Italy |
+| Trinity College Library | Ireland |
 | Triumphal Arch, Chișinău | Moldova |
 | Türkmenbaşy Mosque | Turkmenistan |
 | Turku Castle | Finland |
 | Twyfelfontein | Namibia |
 | Ulawun | Papua New Guinea |
 | Vaduz Cathedral | Liechtenstein |
+| Valley of Geysers | Russia |
 | Verla | Finland |
 | Victoria Peak | Hong Kong |
 | Vilnius Cathedral | Lithuania |
+| Visby city wall | Sweden |
 | Volcan Baru | Panama |
 | Volcán Momotombo | Nicaragua |
 | Wadi Rum | Jordan |
 | Warbah Island | Kuwait |
+| Warsaw Old Town | Poland |
 | Wat Arun | Thailand |
 | White House | United States of America |
 | Windmills of Kinderdijk | Netherlands |
+| Windsor Castle | United Kingdom |
 | Xunantunich | Belize |
 | Yellowstone | United States of America |
 | Ypacaraí Lake | Paraguay |
+| Zaanse Schans | Netherlands |
 | Afri-Ski | Lesotho |
 | An-Nur Mosque | East Timor |
 | Arba'a Rukun Mosque | Somalia |
@@ -1262,12 +1415,14 @@ Visible once a child is looking at a region.
 | Beveridge Reef | Niue |
 | Blue Beach Military Cemetery at San Carlos | Falkland Islands |
 | Bobo Dioulasso Grand Mosque | Burkina Faso |
+| Bohemian Switzerland | Czech Republic |
 | Booby Island | Saint Kitts and Nevis |
 | Boubou Hama National Museum | Niger |
 | Brazzaville Zoo | Republic of the Congo |
 | Brickdam Cathedral | Guyana |
 | Cacheu Mangroves Natural Park | Guinea-Bissau |
 | Cahora Bassa Dam | Mozambique |
+| Caminito | Argentina |
 | Cathedral of Our Lady, N'Djamena | Chad |
 | Cathedral of Saints Peter and Paul, Douala | Cameroon |
 | Cathedral of the Immaculate Conception, Port of Spain | Trinidad and Tobago |
@@ -1280,6 +1435,8 @@ Visible once a child is looking at a region.
 | Christ the King Cathedral | Burundi |
 | Church of Our Lady of Remedies | Angola |
 | Chutes de la Kagera | Burundi |
+| Circus Maximus | Italy |
+| Colosseum Arch of Constantine | Italy |
 | Cultural & Museum Centre Karonga | Malawi |
 | Curaçao synagogue | Curaçao |
 | Dabous Giraffes | Niger |
@@ -1289,6 +1446,7 @@ Visible once a child is looking at a region.
 | Dog Island | Anguilla |
 | Dona Ana Bridge | Mozambique |
 | Edea Hydroelectric Power Station | Cameroon |
+| Eisriesenwelt | Austria |
 | El Cajón Dam | Honduras |
 | Etpison Museum | Palau |
 | Farol de D. Maria Pia | Cape Verde |
@@ -1348,6 +1506,7 @@ Visible once a child is looking at a region.
 | Nidhe Israel Synagogue | Barbados |
 | Nugaal | Somalia |
 | Obelisk of Montevideo | Uruguay |
+| Óbidos | Portugal |
 | Outamba-Kilimi National Park | Sierra Leone |
 | Papua New Guinea National Museum and Art Gallery | Papua New Guinea |
 | Pecixe | Guinea-Bissau |
@@ -1389,6 +1548,7 @@ Visible once a child is looking at a region.
 | Toktogul Dam | Kyrgyzstan |
 | Tombo Island | Guinea |
 | Trou aux Cerfs | Mauritius |
+| Verdon Gorge | France |
 | West Caicos | Turks and Caicos Islands |
 | Whelk Point Fort | British Virgin Islands |
 | White Witch of Rose Hall | Jamaica |

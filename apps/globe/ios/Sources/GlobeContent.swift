@@ -7,6 +7,7 @@ enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
     case capitals
     case animals
     case landmarks
+    case people
 
     var id: String { rawValue }
 
@@ -25,6 +26,7 @@ enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
         case .capitals: "building.2.fill"
         case .animals: "pawprint.fill"
         case .landmarks: "building.columns.fill"
+        case .people: "person.2.fill"
         }
     }
 }
@@ -38,6 +40,7 @@ struct GlobeEntity: Identifiable, Equatable, Sendable {
         case city
         case animal
         case landmark
+        case person
 
         /// The half of the translation key that says what sort of thing this is.
         var translationNamespace: String {
@@ -46,6 +49,7 @@ struct GlobeEntity: Identifiable, Equatable, Sendable {
             case .city: "geography.cities"
             case .animal: "geography.animals"
             case .landmark: "geography.landmarks"
+            case .person: "geography.people"
             }
         }
     }
@@ -106,6 +110,7 @@ struct GlobeContentLibrary: Sendable {
         }
         library.add(pack: "animals", kind: .animal, mode: .animals, from: bundle)
         library.add(pack: "landmarks", kind: .landmark, mode: .landmarks, from: bundle)
+        library.add(pack: "people", kind: .person, mode: .people, from: bundle)
         return library
     }
 

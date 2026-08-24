@@ -3,11 +3,11 @@
   "note": "Built by tools/geography/report-media-gaps.mjs. Everything Globe would show a picture of and cannot. Ordered by importance, 1 being what a child sees from space.",
   "summary": {
     "animals": {
-      "missing": 334
+      "missing": 332
     },
     "landmarks": {
-      "missing": 1250,
-      "of": 1270
+      "missing": 1412,
+      "of": 1432
     },
     "cities": {
       "missing": 223,
@@ -265,16 +265,6 @@
       ]
     },
     {
-      "name": "Reindeer",
-      "scientificName": "Rangifer tarandus",
-      "importance": 2,
-      "wantedBy": [
-        "FIN",
-        "NOR",
-        "SWE"
-      ]
-    },
-    {
       "name": "Vicuña",
       "scientificName": "Vicugna vicugna",
       "importance": 2,
@@ -404,21 +394,21 @@
       ]
     },
     {
-      "name": "Orangutan",
-      "scientificName": "Pongo",
-      "importance": 2,
-      "wantedBy": [
-        "IDN",
-        "MYS"
-      ]
-    },
-    {
       "name": "Przewalski's horse",
       "scientificName": "Equus ferus przewalskii",
       "importance": 2,
       "wantedBy": [
         "KAZ",
         "MNG"
+      ]
+    },
+    {
+      "name": "Reindeer",
+      "scientificName": "Rangifer tarandus",
+      "importance": 2,
+      "wantedBy": [
+        "NOR",
+        "SWE"
       ]
     },
     {
@@ -477,14 +467,6 @@
       "importance": 2,
       "wantedBy": [
         "MNG"
-      ]
-    },
-    {
-      "name": "Beaver",
-      "scientificName": "Castor canadensis",
-      "importance": 2,
-      "wantedBy": [
-        "CAN"
       ]
     },
     {
@@ -1383,14 +1365,6 @@
       "importance": 3,
       "wantedBy": [
         "NOR"
-      ]
-    },
-    {
-      "name": "Kookaburra",
-      "scientificName": "Dacelo novaeguineae",
-      "importance": 3,
-      "wantedBy": [
-        "AUS"
       ]
     },
     {
@@ -2862,6 +2836,12 @@
       "wantedBy": []
     },
     {
+      "name": "Orangutan",
+      "scientificName": "Pongo",
+      "importance": 6,
+      "wantedBy": []
+    },
+    {
       "name": "Stoat",
       "scientificName": null,
       "importance": 6,
@@ -3001,6 +2981,12 @@
       "name": "Al-Masjid Al-Haram",
       "country": "SAU",
       "countryName": "Saudi Arabia",
+      "importance": 2
+    },
+    {
+      "name": "Amazon River",
+      "country": "BRA",
+      "countryName": "Brazil",
       "importance": 2
     },
     {
@@ -3370,6 +3356,12 @@
       "importance": 2
     },
     {
+      "name": "Red Square",
+      "country": "RUS",
+      "countryName": "Russia",
+      "importance": 2
+    },
+    {
       "name": "Saaremaa",
       "country": "EST",
       "countryName": "Estonia",
@@ -3604,6 +3596,12 @@
       "importance": 3
     },
     {
+      "name": "Blue Mosque",
+      "country": "TUR",
+      "countryName": "Turkey",
+      "importance": 3
+    },
+    {
       "name": "Bouvet Island",
       "country": "NOR",
       "countryName": "Norway",
@@ -3697,6 +3695,12 @@
       "name": "Darién National Park",
       "country": "PAN",
       "countryName": "Panama",
+      "importance": 3
+    },
+    {
+      "name": "Delphi",
+      "country": "GRC",
+      "countryName": "Greece",
       "importance": 3
     },
     {
@@ -3826,6 +3830,12 @@
       "importance": 3
     },
     {
+      "name": "Hiroshima Peace Memorial",
+      "country": "JPN",
+      "countryName": "Japan",
+      "importance": 3
+    },
+    {
       "name": "Horezu monastery",
       "country": "ROU",
       "countryName": "Romania",
@@ -3910,6 +3920,12 @@
       "importance": 3
     },
     {
+      "name": "Jungfraujoch",
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "importance": 3
+    },
+    {
       "name": "Kasubi Tombs",
       "country": "UGA",
       "countryName": "Uganda",
@@ -3955,6 +3971,12 @@
       "name": "Ko Samui",
       "country": "THA",
       "countryName": "Thailand",
+      "importance": 3
+    },
+    {
+      "name": "Komodo National Park",
+      "country": "IDN",
+      "countryName": "Indonesia",
       "importance": 3
     },
     {
@@ -4030,6 +4052,12 @@
       "importance": 3
     },
     {
+      "name": "Lake Louise",
+      "country": "CAN",
+      "countryName": "Canada",
+      "importance": 3
+    },
+    {
       "name": "Lake Lugano",
       "country": "CHE",
       "countryName": "Switzerland",
@@ -4096,6 +4124,12 @@
       "importance": 3
     },
     {
+      "name": "Lake Titicaca",
+      "country": "PER",
+      "countryName": "Peru",
+      "importance": 3
+    },
+    {
       "name": "Lake Volta",
       "country": "GHA",
       "countryName": "Ghana",
@@ -4120,9 +4154,21 @@
       "importance": 3
     },
     {
+      "name": "Loch Ness",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 3
+    },
+    {
       "name": "Lord Howe Island",
       "country": "AUS",
       "countryName": "Australia",
+      "importance": 3
+    },
+    {
+      "name": "Luxor Temple",
+      "country": "EGY",
+      "countryName": "Egypt",
       "importance": 3
     },
     {
@@ -4204,6 +4250,12 @@
       "importance": 3
     },
     {
+      "name": "Mont Blanc",
+      "country": "FRA",
+      "countryName": "France",
+      "importance": 3
+    },
+    {
       "name": "Monte Titano",
       "country": "SMR",
       "countryName": "San Marino",
@@ -4282,6 +4334,18 @@
       "importance": 3
     },
     {
+      "name": "Ngorongoro Crater",
+      "country": "TZA",
+      "countryName": "Tanzania",
+      "importance": 3
+    },
+    {
+      "name": "Niagara Falls",
+      "country": "USA",
+      "countryName": "United States of America",
+      "importance": 3
+    },
+    {
       "name": "Niokolo-Koba National Park",
       "country": "SEN",
       "countryName": "Senegal",
@@ -4303,6 +4367,18 @@
       "name": "Palace of the Shirvanshahs",
       "country": "AZE",
       "countryName": "Azerbaijan",
+      "importance": 3
+    },
+    {
+      "name": "Pantanal",
+      "country": "BRA",
+      "countryName": "Brazil",
+      "importance": 3
+    },
+    {
+      "name": "Pantheon",
+      "country": "ITA",
+      "countryName": "Italy",
       "importance": 3
     },
     {
@@ -4348,6 +4424,12 @@
       "importance": 3
     },
     {
+      "name": "Pompeii",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 3
+    },
+    {
       "name": "Postojna Cave",
       "country": "SVN",
       "countryName": "Slovenia",
@@ -4357,6 +4439,12 @@
       "name": "Praslin",
       "country": "SYC",
       "countryName": "Seychelles",
+      "importance": 3
+    },
+    {
+      "name": "Preikestolen",
+      "country": "NOR",
+      "countryName": "Norway",
       "importance": 3
     },
     {
@@ -4402,6 +4490,18 @@
       "importance": 3
     },
     {
+      "name": "Robben Island",
+      "country": "ZAF",
+      "countryName": "South Africa",
+      "importance": 3
+    },
+    {
+      "name": "Roman Forum",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 3
+    },
+    {
       "name": "Rukwa Lake",
       "country": "TZA",
       "countryName": "Tanzania",
@@ -4423,6 +4523,12 @@
       "name": "Santiago",
       "country": "CPV",
       "countryName": "Cape Verde",
+      "importance": 3
+    },
+    {
+      "name": "Santorini caldera",
+      "country": "GRC",
+      "countryName": "Greece",
       "importance": 3
     },
     {
@@ -4576,6 +4682,18 @@
       "importance": 3
     },
     {
+      "name": "Tower of Belém",
+      "country": "PRT",
+      "countryName": "Portugal",
+      "importance": 3
+    },
+    {
+      "name": "Tower of London",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 3
+    },
+    {
       "name": "Triglav",
       "country": "SVN",
       "countryName": "Slovenia",
@@ -4618,6 +4736,12 @@
       "importance": 3
     },
     {
+      "name": "Valley of the Kings",
+      "country": "EGY",
+      "countryName": "Egypt",
+      "importance": 3
+    },
+    {
       "name": "Vanua Levu",
       "country": "FJI",
       "countryName": "Fiji",
@@ -4633,6 +4757,12 @@
       "name": "Vat Phou",
       "country": "LAO",
       "countryName": "Laos",
+      "importance": 3
+    },
+    {
+      "name": "Vatican Museums",
+      "country": "ITA",
+      "countryName": "Italy",
       "importance": 3
     },
     {
@@ -4684,6 +4814,12 @@
       "importance": 3
     },
     {
+      "name": "Westminster Abbey",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 3
+    },
+    {
       "name": "Wikipedia Monument",
       "country": "POL",
       "countryName": "Poland",
@@ -4708,9 +4844,27 @@
       "importance": 4
     },
     {
+      "name": "Aletsch Glacier",
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "importance": 4
+    },
+    {
       "name": "Alexander Nevsky Cathedral",
       "country": "EST",
       "countryName": "Estonia",
+      "importance": 4
+    },
+    {
+      "name": "Amber Fort",
+      "country": "IND",
+      "countryName": "India",
+      "importance": 4
+    },
+    {
+      "name": "Amboseli",
+      "country": "KEN",
+      "countryName": "Kenya",
       "importance": 4
     },
     {
@@ -4729,6 +4883,18 @@
       "name": "Apostolic Palace",
       "country": "VAT",
       "countryName": "Vatican City",
+      "importance": 4
+    },
+    {
+      "name": "Astronomical Clock",
+      "country": "CZE",
+      "countryName": "Czech Republic",
+      "importance": 4
+    },
+    {
+      "name": "Ayutthaya",
+      "country": "THA",
+      "countryName": "Thailand",
       "importance": 4
     },
     {
@@ -4756,6 +4922,12 @@
       "importance": 4
     },
     {
+      "name": "Bay of Fundy",
+      "country": "CAN",
+      "countryName": "Canada",
+      "importance": 4
+    },
+    {
       "name": "Beerenberg",
       "country": "NOR",
       "countryName": "Norway",
@@ -4768,15 +4940,33 @@
       "importance": 4
     },
     {
+      "name": "Berlin Wall Memorial",
+      "country": "DEU",
+      "countryName": "Germany",
+      "importance": 4
+    },
+    {
       "name": "Birka",
       "country": "SWE",
       "countryName": "Sweden",
       "importance": 4
     },
     {
+      "name": "Black Forest",
+      "country": "DEU",
+      "countryName": "Germany",
+      "importance": 4
+    },
+    {
       "name": "Blue Mosque",
       "country": "AFG",
       "countryName": "Afghanistan",
+      "importance": 4
+    },
+    {
+      "name": "Blue Mountains",
+      "country": "AUS",
+      "countryName": "Australia",
       "importance": 4
     },
     {
@@ -4810,6 +5000,24 @@
       "importance": 4
     },
     {
+      "name": "Carcassonne",
+      "country": "FRA",
+      "countryName": "France",
+      "importance": 4
+    },
+    {
+      "name": "Český Krumlov",
+      "country": "CZE",
+      "countryName": "Czech Republic",
+      "importance": 4
+    },
+    {
+      "name": "Champs-Élysées",
+      "country": "FRA",
+      "countryName": "France",
+      "importance": 4
+    },
+    {
       "name": "Chersonesus",
       "country": "UKR",
       "countryName": "Ukraine",
@@ -4828,15 +5036,51 @@
       "importance": 4
     },
     {
+      "name": "Church of the Savior on Blood",
+      "country": "RUS",
+      "countryName": "Russia",
+      "importance": 4
+    },
+    {
+      "name": "Copacabana",
+      "country": "BRA",
+      "countryName": "Brazil",
+      "importance": 4
+    },
+    {
+      "name": "Copper Canyon",
+      "country": "MEX",
+      "countryName": "Mexico",
+      "importance": 4
+    },
+    {
       "name": "Diocletian's Palace",
       "country": "HRV",
       "countryName": "Croatia",
       "importance": 4
     },
     {
+      "name": "Douro Valley",
+      "country": "PRT",
+      "countryName": "Portugal",
+      "importance": 4
+    },
+    {
+      "name": "Drakensberg",
+      "country": "ZAF",
+      "countryName": "South Africa",
+      "importance": 4
+    },
+    {
       "name": "Drottningholm Palace",
       "country": "SWE",
       "countryName": "Sweden",
+      "importance": 4
+    },
+    {
+      "name": "Egyptian Museum",
+      "country": "EGY",
+      "countryName": "Egypt",
       "importance": 4
     },
     {
@@ -4876,6 +5120,24 @@
       "importance": 4
     },
     {
+      "name": "Fitz Roy",
+      "country": "ARG",
+      "countryName": "Argentina",
+      "importance": 4
+    },
+    {
+      "name": "Gamla Stan",
+      "country": "SWE",
+      "countryName": "Sweden",
+      "importance": 4
+    },
+    {
+      "name": "Grand Canal",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 4
+    },
+    {
       "name": "Great Manmade River",
       "country": "LBY",
       "countryName": "Libya",
@@ -4894,9 +5156,33 @@
       "importance": 4
     },
     {
+      "name": "Great Rift Valley",
+      "country": "KEN",
+      "countryName": "Kenya",
+      "importance": 4
+    },
+    {
+      "name": "Grossglockner",
+      "country": "AUT",
+      "countryName": "Austria",
+      "importance": 4
+    },
+    {
+      "name": "Hadrian's Wall",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 4
+    },
+    {
       "name": "Hallasan",
       "country": "KOR",
       "countryName": "South Korea",
+      "importance": 4
+    },
+    {
+      "name": "Hallstatt Lake",
+      "country": "AUT",
+      "countryName": "Austria",
       "importance": 4
     },
     {
@@ -4930,6 +5216,12 @@
       "importance": 4
     },
     {
+      "name": "Hofburg",
+      "country": "AUT",
+      "countryName": "Austria",
+      "importance": 4
+    },
+    {
       "name": "Ichkeul National Park",
       "country": "TUN",
       "countryName": "Tunisia",
@@ -4960,6 +5252,12 @@
       "importance": 4
     },
     {
+      "name": "Kakadu National Park",
+      "country": "AUS",
+      "countryName": "Australia",
+      "importance": 4
+    },
+    {
       "name": "Karakul",
       "country": "TJK",
       "countryName": "Tajikistan",
@@ -4969,6 +5267,12 @@
       "name": "Karlštejn Castle",
       "country": "CZE",
       "countryName": "Czech Republic",
+      "importance": 4
+    },
+    {
+      "name": "Keukenhof",
+      "country": "NLD",
+      "countryName": "Netherlands",
       "importance": 4
     },
     {
@@ -4990,9 +5294,21 @@
       "importance": 4
     },
     {
+      "name": "Knossos",
+      "country": "GRC",
+      "countryName": "Greece",
+      "importance": 4
+    },
+    {
       "name": "Koutoubia Mosque",
       "country": "MAR",
       "countryName": "Morocco",
+      "importance": 4
+    },
+    {
+      "name": "Kraków Old Town",
+      "country": "POL",
+      "countryName": "Poland",
       "importance": 4
     },
     {
@@ -5020,9 +5336,21 @@
       "importance": 4
     },
     {
+      "name": "Lake Geneva",
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "importance": 4
+    },
+    {
       "name": "Lake Ritsa",
       "country": "GEO",
       "countryName": "Georgia",
+      "importance": 4
+    },
+    {
+      "name": "Lake Toba",
+      "country": "IDN",
+      "countryName": "Indonesia",
       "importance": 4
     },
     {
@@ -5038,6 +5366,24 @@
       "importance": 4
     },
     {
+      "name": "Lençóis Maranhenses",
+      "country": "BRA",
+      "countryName": "Brazil",
+      "importance": 4
+    },
+    {
+      "name": "Leshan Giant Buddha",
+      "country": "CHN",
+      "countryName": "People's Republic of China",
+      "importance": 4
+    },
+    {
+      "name": "Li River",
+      "country": "CHN",
+      "countryName": "People's Republic of China",
+      "importance": 4
+    },
+    {
       "name": "Lighthouse of Alexandria",
       "country": "EGY",
       "countryName": "Egypt",
@@ -5047,6 +5393,12 @@
       "name": "Llullaillaco",
       "country": "ARG",
       "countryName": "Argentina",
+      "importance": 4
+    },
+    {
+      "name": "Lofoten",
+      "country": "NOR",
+      "countryName": "Norway",
       "importance": 4
     },
     {
@@ -5092,9 +5444,27 @@
       "importance": 4
     },
     {
+      "name": "Mezquita of Córdoba",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 4
+    },
+    {
+      "name": "Milan Cathedral",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 4
+    },
+    {
       "name": "Monastery of Saint John of Rila",
       "country": "BGR",
       "countryName": "Bulgaria",
+      "importance": 4
+    },
+    {
+      "name": "Monument Valley",
+      "country": "USA",
+      "countryName": "United States of America",
       "importance": 4
     },
     {
@@ -5107,6 +5477,12 @@
       "name": "Mount Elgon",
       "country": "UGA",
       "countryName": "Uganda",
+      "importance": 4
+    },
+    {
+      "name": "Mount Nemrut",
+      "country": "TUR",
+      "countryName": "Turkey",
       "importance": 4
     },
     {
@@ -5182,6 +5558,12 @@
       "importance": 4
     },
     {
+      "name": "North Cape",
+      "country": "NOR",
+      "countryName": "Norway",
+      "importance": 4
+    },
+    {
       "name": "Nyamuragira",
       "country": "COD",
       "countryName": "Democratic Republic of the Congo",
@@ -5191,6 +5573,18 @@
       "name": "Ojos del Salado",
       "country": "ARG",
       "countryName": "Argentina",
+      "importance": 4
+    },
+    {
+      "name": "Old Quebec",
+      "country": "CAN",
+      "countryName": "Canada",
+      "importance": 4
+    },
+    {
+      "name": "Olympia",
+      "country": "GRC",
+      "countryName": "Greece",
       "importance": 4
     },
     {
@@ -5212,6 +5606,12 @@
       "importance": 4
     },
     {
+      "name": "Parliament Hill",
+      "country": "CAN",
+      "countryName": "Canada",
+      "importance": 4
+    },
+    {
       "name": "Pashupatinath Temple",
       "country": "NPL",
       "countryName": "Nepal",
@@ -5221,6 +5621,12 @@
       "name": "Petäjävesi Old Church",
       "country": "FIN",
       "countryName": "Finland",
+      "importance": 4
+    },
+    {
+      "name": "Phi Phi Islands",
+      "country": "THA",
+      "countryName": "Thailand",
       "importance": 4
     },
     {
@@ -5248,6 +5654,12 @@
       "importance": 4
     },
     {
+      "name": "Prado Museum",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 4
+    },
+    {
       "name": "Prague Astronomical Clock",
       "country": "CZE",
       "countryName": "Czech Republic",
@@ -5263,6 +5675,18 @@
       "name": "Qal'at Bani Hammad",
       "country": "DZA",
       "countryName": "Algeria",
+      "importance": 4
+    },
+    {
+      "name": "Raja Ampat",
+      "country": "IDN",
+      "countryName": "Indonesia",
+      "importance": 4
+    },
+    {
+      "name": "Reichstag",
+      "country": "DEU",
+      "countryName": "Germany",
       "importance": 4
     },
     {
@@ -5290,6 +5714,12 @@
       "importance": 4
     },
     {
+      "name": "Rotorua geysers",
+      "country": "NZL",
+      "countryName": "New Zealand",
+      "importance": 4
+    },
+    {
       "name": "Rügen",
       "country": "DEU",
       "countryName": "Germany",
@@ -5314,9 +5744,21 @@
       "importance": 4
     },
     {
+      "name": "Santiago de Compostela Cathedral",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 4
+    },
+    {
       "name": "Sarygamysh Lake",
       "country": "TKM",
       "countryName": "Turkmenistan",
+      "importance": 4
+    },
+    {
+      "name": "Senso-ji",
+      "country": "JPN",
+      "countryName": "Japan",
       "importance": 4
     },
     {
@@ -5338,6 +5780,12 @@
       "importance": 4
     },
     {
+      "name": "Skellig Michael",
+      "country": "IRL",
+      "countryName": "Ireland",
+      "importance": 4
+    },
+    {
       "name": "Škocjan Caves",
       "country": "SVN",
       "countryName": "Slovenia",
@@ -5350,9 +5798,27 @@
       "importance": 4
     },
     {
+      "name": "St Paul's Cathedral",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 4
+    },
+    {
       "name": "Studenica monastery",
       "country": "SRB",
       "countryName": "Serbia",
+      "importance": 4
+    },
+    {
+      "name": "Suez Canal",
+      "country": "EGY",
+      "countryName": "Egypt",
+      "importance": 4
+    },
+    {
+      "name": "Summer Palace",
+      "country": "CHN",
+      "countryName": "People's Republic of China",
       "importance": 4
     },
     {
@@ -5374,6 +5840,18 @@
       "importance": 4
     },
     {
+      "name": "Tanah Lot",
+      "country": "IDN",
+      "countryName": "Indonesia",
+      "importance": 4
+    },
+    {
+      "name": "Tatra Mountains",
+      "country": "POL",
+      "countryName": "Poland",
+      "importance": 4
+    },
+    {
       "name": "Tatra National Park",
       "country": "SVK",
       "countryName": "Slovakia",
@@ -5386,9 +5864,33 @@
       "importance": 4
     },
     {
+      "name": "Temple of Heaven",
+      "country": "CHN",
+      "countryName": "People's Republic of China",
+      "importance": 4
+    },
+    {
       "name": "Thien Duong Cave",
       "country": "VNM",
       "countryName": "Vietnam",
+      "importance": 4
+    },
+    {
+      "name": "Times Square",
+      "country": "USA",
+      "countryName": "United States of America",
+      "importance": 4
+    },
+    {
+      "name": "Todai-ji",
+      "country": "JPN",
+      "countryName": "Japan",
+      "importance": 4
+    },
+    {
+      "name": "Tongariro Crossing",
+      "country": "NZL",
+      "countryName": "New Zealand",
       "importance": 4
     },
     {
@@ -5401,6 +5903,24 @@
       "name": "Toompea Castle",
       "country": "EST",
       "countryName": "Estonia",
+      "importance": 4
+    },
+    {
+      "name": "Topkapi Palace",
+      "country": "TUR",
+      "countryName": "Turkey",
+      "importance": 4
+    },
+    {
+      "name": "Trans-Siberian Railway",
+      "country": "RUS",
+      "countryName": "Russia",
+      "importance": 4
+    },
+    {
+      "name": "Tulum",
+      "country": "MEX",
+      "countryName": "Mexico",
       "importance": 4
     },
     {
@@ -5428,6 +5948,24 @@
       "importance": 4
     },
     {
+      "name": "Valdés Peninsula",
+      "country": "ARG",
+      "countryName": "Argentina",
+      "importance": 4
+    },
+    {
+      "name": "Van Gogh Museum",
+      "country": "NLD",
+      "countryName": "Netherlands",
+      "importance": 4
+    },
+    {
+      "name": "Varanasi Ghats",
+      "country": "IND",
+      "countryName": "India",
+      "importance": 4
+    },
+    {
       "name": "Vis (island)",
       "country": "HRV",
       "countryName": "Croatia",
@@ -5440,7 +5978,31 @@
       "importance": 4
     },
     {
+      "name": "Wadden Sea",
+      "country": "NLD",
+      "countryName": "Netherlands",
+      "importance": 4
+    },
+    {
+      "name": "Wat Pho",
+      "country": "THA",
+      "countryName": "Thailand",
+      "importance": 4
+    },
+    {
       "name": "Wawel Cathedral",
+      "country": "POL",
+      "countryName": "Poland",
+      "importance": 4
+    },
+    {
+      "name": "White Temple",
+      "country": "THA",
+      "countryName": "Thailand",
+      "importance": 4
+    },
+    {
+      "name": "Wieliczka Salt Mine",
       "country": "POL",
       "countryName": "Poland",
       "importance": 4
@@ -5458,10 +6020,28 @@
       "importance": 4
     },
     {
+      "name": "Zhangjiajie",
+      "country": "CHN",
+      "countryName": "People's Republic of China",
+      "importance": 4
+    },
+    {
       "name": "Zorkul",
       "country": "AFG",
       "countryName": "Afghanistan",
       "importance": 4
+    },
+    {
+      "name": "Zugspitze",
+      "country": "DEU",
+      "countryName": "Germany",
+      "importance": 4
+    },
+    {
+      "name": "Abisko National Park",
+      "country": "SWE",
+      "countryName": "Sweden",
+      "importance": 5
     },
     {
       "name": "Abu Simbel",
@@ -5512,6 +6092,12 @@
       "importance": 5
     },
     {
+      "name": "Afsluitdijk",
+      "country": "NLD",
+      "countryName": "Netherlands",
+      "importance": 5
+    },
+    {
       "name": "Aïr and Ténéré National Nature Reserve",
       "country": "NER",
       "countryName": "Niger",
@@ -5533,6 +6119,12 @@
       "name": "Al-Askari Shrine",
       "country": "IRQ",
       "countryName": "Iraq",
+      "importance": 5
+    },
+    {
+      "name": "Alcatraz",
+      "country": "USA",
+      "countryName": "United States of America",
       "importance": 5
     },
     {
@@ -5575,6 +6167,12 @@
       "name": "Angel Falls",
       "country": "VEN",
       "countryName": "Venezuela",
+      "importance": 5
+    },
+    {
+      "name": "Angel of Independence",
+      "country": "MEX",
+      "countryName": "Mexico",
       "importance": 5
     },
     {
@@ -5686,6 +6284,12 @@
       "importance": 5
     },
     {
+      "name": "Backwaters of Kerala",
+      "country": "IND",
+      "countryName": "India",
+      "importance": 5
+    },
+    {
       "name": "Badshahi Mosque",
       "country": "PAK",
       "countryName": "Pakistan",
@@ -5782,6 +6386,24 @@
       "importance": 5
     },
     {
+      "name": "Bern Old Town",
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "importance": 5
+    },
+    {
+      "name": "Binnenhof",
+      "country": "NLD",
+      "countryName": "Netherlands",
+      "importance": 5
+    },
+    {
+      "name": "Blarney Castle",
+      "country": "IRL",
+      "countryName": "Ireland",
+      "importance": 5
+    },
+    {
       "name": "Blue and John Crow Mountains National Park",
       "country": "JAM",
       "countryName": "Jamaica",
@@ -5794,9 +6416,27 @@
       "importance": 5
     },
     {
+      "name": "Blyde River Canyon",
+      "country": "ZAF",
+      "countryName": "South Africa",
+      "importance": 5
+    },
+    {
       "name": "Bolaven Plateau",
       "country": "LAO",
       "countryName": "Laos",
+      "importance": 5
+    },
+    {
+      "name": "Bom Jesus do Monte",
+      "country": "PRT",
+      "countryName": "Portugal",
+      "importance": 5
+    },
+    {
+      "name": "Bondi Beach",
+      "country": "AUS",
+      "countryName": "Australia",
       "importance": 5
     },
     {
@@ -5821,6 +6461,12 @@
       "name": "Botanical Garden of Mérida",
       "country": "VEN",
       "countryName": "Venezuela",
+      "importance": 5
+    },
+    {
+      "name": "Boulders Beach",
+      "country": "ZAF",
+      "countryName": "South Africa",
       "importance": 5
     },
     {
@@ -5878,6 +6524,12 @@
       "importance": 5
     },
     {
+      "name": "Cabo da Roca",
+      "country": "PRT",
+      "countryName": "Portugal",
+      "importance": 5
+    },
+    {
       "name": "Calf of Man",
       "country": "IMN",
       "countryName": "Isle of Man",
@@ -5914,6 +6566,12 @@
       "importance": 5
     },
     {
+      "name": "Castel Sant'Angelo",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 5
+    },
+    {
       "name": "Castillo de San Pedro de la Roca",
       "country": "CUB",
       "countryName": "Cuba",
@@ -5929,6 +6587,12 @@
       "name": "Cayman Brac",
       "country": "CYM",
       "countryName": "Cayman Islands",
+      "importance": 5
+    },
+    {
+      "name": "Cenote Ik Kil",
+      "country": "MEX",
+      "countryName": "Mexico",
       "importance": 5
     },
     {
@@ -5953,6 +6617,12 @@
       "name": "Cerro El Pital",
       "country": "SLV",
       "countryName": "El Salvador",
+      "importance": 5
+    },
+    {
+      "name": "Chambord",
+      "country": "FRA",
+      "countryName": "France",
       "importance": 5
     },
     {
@@ -6028,6 +6698,12 @@
       "importance": 5
     },
     {
+      "name": "Colca Canyon",
+      "country": "PER",
+      "countryName": "Peru",
+      "importance": 5
+    },
+    {
       "name": "Cologne Cathedral",
       "country": "DEU",
       "countryName": "Germany",
@@ -6085,6 +6761,12 @@
       "name": "Dharahara",
       "country": "NPL",
       "countryName": "Nepal",
+      "importance": 5
+    },
+    {
+      "name": "Diani Beach",
+      "country": "KEN",
+      "countryName": "Kenya",
       "importance": 5
     },
     {
@@ -6241,6 +6923,12 @@
       "name": "Fortaleza Ozama",
       "country": "DOM",
       "countryName": "Dominican Republic",
+      "importance": 5
+    },
+    {
+      "name": "Franz Josef Glacier",
+      "country": "NZL",
+      "countryName": "New Zealand",
       "importance": 5
     },
     {
@@ -6454,6 +7142,12 @@
       "importance": 5
     },
     {
+      "name": "Guggenheim Bilbao",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 5
+    },
+    {
       "name": "Gurgi Mosque",
       "country": "LBY",
       "countryName": "Libya",
@@ -6505,6 +7199,12 @@
       "name": "Hegra",
       "country": "SAU",
       "countryName": "Saudi Arabia",
+      "importance": 5
+    },
+    {
+      "name": "Heidelberg Castle",
+      "country": "DEU",
+      "countryName": "Germany",
       "importance": 5
     },
     {
@@ -6730,6 +7430,12 @@
       "importance": 5
     },
     {
+      "name": "Kapellbrücke",
+      "country": "CHE",
+      "countryName": "Switzerland",
+      "importance": 5
+    },
+    {
       "name": "Karfiguéla waterfalls",
       "country": "BFA",
       "countryName": "Burkina Faso",
@@ -6781,6 +7487,12 @@
       "name": "Kili Island",
       "country": "MHL",
       "countryName": "Marshall Islands",
+      "importance": 5
+    },
+    {
+      "name": "Konark Sun Temple",
+      "country": "IND",
+      "countryName": "India",
       "importance": 5
     },
     {
@@ -7090,6 +7802,12 @@
       "importance": 5
     },
     {
+      "name": "Maracanã",
+      "country": "BRA",
+      "countryName": "Brazil",
+      "importance": 5
+    },
+    {
       "name": "Margat",
       "country": "SYR",
       "countryName": "Syria",
@@ -7135,6 +7853,12 @@
       "name": "Mbamu",
       "country": "COG",
       "countryName": "Republic of the Congo",
+      "importance": 5
+    },
+    {
+      "name": "Melk Abbey",
+      "country": "AUT",
+      "countryName": "Austria",
       "importance": 5
     },
     {
@@ -7192,9 +7916,21 @@
       "importance": 5
     },
     {
+      "name": "Monte Albán",
+      "country": "MEX",
+      "countryName": "Mexico",
+      "importance": 5
+    },
+    {
       "name": "Monte Binga",
       "country": "MOZ",
       "countryName": "Mozambique",
+      "importance": 5
+    },
+    {
+      "name": "Moraine Lake",
+      "country": "CAN",
+      "countryName": "Canada",
       "importance": 5
     },
     {
@@ -7243,6 +7979,12 @@
       "name": "Moucha Island",
       "country": "DJI",
       "countryName": "Djibouti",
+      "importance": 5
+    },
+    {
+      "name": "Mount Athos",
+      "country": "GRC",
+      "countryName": "Greece",
       "importance": 5
     },
     {
@@ -7336,9 +8078,21 @@
       "importance": 5
     },
     {
+      "name": "Musée d'Orsay",
+      "country": "FRA",
+      "countryName": "France",
+      "importance": 5
+    },
+    {
       "name": "Musée océanographique de Monaco",
       "country": "MCO",
       "countryName": "Monaco",
+      "importance": 5
+    },
+    {
+      "name": "Museum Island",
+      "country": "DEU",
+      "countryName": "Germany",
       "importance": 5
     },
     {
@@ -7498,6 +8252,12 @@
       "importance": 5
     },
     {
+      "name": "Olduvai Gorge",
+      "country": "TZA",
+      "countryName": "Tanzania",
+      "importance": 5
+    },
+    {
       "name": "Orchid Island",
       "country": "TWN",
       "countryName": "Taiwan",
@@ -7540,6 +8300,12 @@
       "importance": 5
     },
     {
+      "name": "Ouro Preto",
+      "country": "BRA",
+      "countryName": "Brazil",
+      "importance": 5
+    },
+    {
       "name": "Palace of Versailles",
       "country": "FRA",
       "countryName": "France",
@@ -7573,6 +8339,12 @@
       "name": "Panjshir Valley",
       "country": "AFG",
       "countryName": "Afghanistan",
+      "importance": 5
+    },
+    {
+      "name": "Peace Palace",
+      "country": "NLD",
+      "countryName": "Netherlands",
       "importance": 5
     },
     {
@@ -7696,9 +8468,27 @@
       "importance": 5
     },
     {
+      "name": "Quebrada de Humahuaca",
+      "country": "ARG",
+      "countryName": "Argentina",
+      "importance": 5
+    },
+    {
       "name": "Quissama National Park",
       "country": "AGO",
       "countryName": "Angola",
+      "importance": 5
+    },
+    {
+      "name": "Railay Beach",
+      "country": "THA",
+      "countryName": "Thailand",
+      "importance": 5
+    },
+    {
+      "name": "Rainbow Mountain",
+      "country": "PER",
+      "countryName": "Peru",
       "importance": 5
     },
     {
@@ -7708,9 +8498,21 @@
       "importance": 5
     },
     {
+      "name": "Rhine Valley",
+      "country": "DEU",
+      "countryName": "Germany",
+      "importance": 5
+    },
+    {
       "name": "Rijksmuseum",
       "country": "NLD",
       "countryName": "Netherlands",
+      "importance": 5
+    },
+    {
+      "name": "Ring of Kerry",
+      "country": "IRL",
+      "countryName": "Ireland",
       "importance": 5
     },
     {
@@ -7750,6 +8552,12 @@
       "importance": 5
     },
     {
+      "name": "Royal Palace of Madrid",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 5
+    },
+    {
       "name": "Royal Palaces of Abomey",
       "country": "BEN",
       "countryName": "Benin",
@@ -7780,9 +8588,27 @@
       "importance": 5
     },
     {
+      "name": "Sacsayhuamán",
+      "country": "PER",
+      "countryName": "Peru",
+      "importance": 5
+    },
+    {
+      "name": "Sainte-Chapelle",
+      "country": "FRA",
+      "countryName": "France",
+      "importance": 5
+    },
+    {
       "name": "Salar de Uyuni",
       "country": "BOL",
       "countryName": "Bolivia",
+      "importance": 5
+    },
+    {
+      "name": "Salzburg Old Town",
+      "country": "AUT",
+      "countryName": "Austria",
       "importance": 5
     },
     {
@@ -7852,6 +8678,18 @@
       "importance": 5
     },
     {
+      "name": "Segovia Aqueduct",
+      "country": "ESP",
+      "countryName": "Spain",
+      "importance": 5
+    },
+    {
+      "name": "Selous Game Reserve",
+      "country": "TZA",
+      "countryName": "Tanzania",
+      "importance": 5
+    },
+    {
       "name": "Serengeti",
       "country": "TZA",
       "countryName": "Tanzania",
@@ -7879,6 +8717,12 @@
       "name": "Sherbro Island",
       "country": "SLE",
       "countryName": "Sierra Leone",
+      "importance": 5
+    },
+    {
+      "name": "Shibuya Crossing",
+      "country": "JPN",
+      "countryName": "Japan",
       "importance": 5
     },
     {
@@ -7912,6 +8756,12 @@
       "importance": 5
     },
     {
+      "name": "Siwa Oasis",
+      "country": "EGY",
+      "countryName": "Egypt",
+      "importance": 5
+    },
+    {
       "name": "Snaefell",
       "country": "IMN",
       "countryName": "Isle of Man",
@@ -7921,6 +8771,12 @@
       "name": "Śniardwy",
       "country": "POL",
       "countryName": "Poland",
+      "importance": 5
+    },
+    {
+      "name": "Snowdon",
+      "country": "GBR",
+      "countryName": "United Kingdom",
       "importance": 5
     },
     {
@@ -7951,6 +8807,12 @@
       "name": "South Aral Sea",
       "country": "UZB",
       "countryName": "Uzbekistan",
+      "importance": 5
+    },
+    {
+      "name": "Spanish Steps",
+      "country": "ITA",
+      "countryName": "Italy",
       "importance": 5
     },
     {
@@ -7999,6 +8861,12 @@
       "name": "Sugarloaf Mountain",
       "country": "BRA",
       "countryName": "Brazil",
+      "importance": 5
+    },
+    {
+      "name": "Sukhothai",
+      "country": "THA",
+      "countryName": "Thailand",
       "importance": 5
     },
     {
@@ -8071,6 +8939,12 @@
       "name": "Taveuni",
       "country": "FJI",
       "countryName": "Fiji",
+      "importance": 5
+    },
+    {
+      "name": "Temple of Poseidon",
+      "country": "GRC",
+      "countryName": "Greece",
       "importance": 5
     },
     {
@@ -8176,6 +9050,12 @@
       "importance": 5
     },
     {
+      "name": "Trinity College Library",
+      "country": "IRL",
+      "countryName": "Ireland",
+      "importance": 5
+    },
+    {
       "name": "Triumphal Arch, Chișinău",
       "country": "MDA",
       "countryName": "Moldova",
@@ -8212,6 +9092,12 @@
       "importance": 5
     },
     {
+      "name": "Valley of Geysers",
+      "country": "RUS",
+      "countryName": "Russia",
+      "importance": 5
+    },
+    {
       "name": "Verla",
       "country": "FIN",
       "countryName": "Finland",
@@ -8227,6 +9113,12 @@
       "name": "Vilnius Cathedral",
       "country": "LTU",
       "countryName": "Lithuania",
+      "importance": 5
+    },
+    {
+      "name": "Visby city wall",
+      "country": "SWE",
+      "countryName": "Sweden",
       "importance": 5
     },
     {
@@ -8254,6 +9146,12 @@
       "importance": 5
     },
     {
+      "name": "Warsaw Old Town",
+      "country": "POL",
+      "countryName": "Poland",
+      "importance": 5
+    },
+    {
       "name": "Wat Arun",
       "country": "THA",
       "countryName": "Thailand",
@@ -8272,6 +9170,12 @@
       "importance": 5
     },
     {
+      "name": "Windsor Castle",
+      "country": "GBR",
+      "countryName": "United Kingdom",
+      "importance": 5
+    },
+    {
       "name": "Xunantunich",
       "country": "BLZ",
       "countryName": "Belize",
@@ -8287,6 +9191,12 @@
       "name": "Ypacaraí Lake",
       "country": "PRY",
       "countryName": "Paraguay",
+      "importance": 5
+    },
+    {
+      "name": "Zaanse Schans",
+      "country": "NLD",
+      "countryName": "Netherlands",
       "importance": 5
     },
     {
@@ -8350,6 +9260,12 @@
       "importance": 6
     },
     {
+      "name": "Bohemian Switzerland",
+      "country": "CZE",
+      "countryName": "Czech Republic",
+      "importance": 6
+    },
+    {
       "name": "Booby Island",
       "country": "KNA",
       "countryName": "Saint Kitts and Nevis",
@@ -8383,6 +9299,12 @@
       "name": "Cahora Bassa Dam",
       "country": "MOZ",
       "countryName": "Mozambique",
+      "importance": 6
+    },
+    {
+      "name": "Caminito",
+      "country": "ARG",
+      "countryName": "Argentina",
       "importance": 6
     },
     {
@@ -8458,6 +9380,18 @@
       "importance": 6
     },
     {
+      "name": "Circus Maximus",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 6
+    },
+    {
+      "name": "Colosseum Arch of Constantine",
+      "country": "ITA",
+      "countryName": "Italy",
+      "importance": 6
+    },
+    {
       "name": "Cultural & Museum Centre Karonga",
       "country": "MWI",
       "countryName": "Malawi",
@@ -8509,6 +9443,12 @@
       "name": "Edea Hydroelectric Power Station",
       "country": "CMR",
       "countryName": "Cameroon",
+      "importance": 6
+    },
+    {
+      "name": "Eisriesenwelt",
+      "country": "AUT",
+      "countryName": "Austria",
       "importance": 6
     },
     {
@@ -8866,6 +9806,12 @@
       "importance": 6
     },
     {
+      "name": "Óbidos",
+      "country": "PRT",
+      "countryName": "Portugal",
+      "importance": 6
+    },
+    {
       "name": "Outamba-Kilimi National Park",
       "country": "SLE",
       "countryName": "Sierra Leone",
@@ -9109,6 +10055,12 @@
       "name": "Trou aux Cerfs",
       "country": "MUS",
       "countryName": "Mauritius",
+      "importance": 6
+    },
+    {
+      "name": "Verdon Gorge",
+      "country": "FRA",
+      "countryName": "France",
       "importance": 6
     },
     {

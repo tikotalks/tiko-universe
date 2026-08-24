@@ -343,6 +343,7 @@ final class GlobeController: ObservableObject {
         let mode: GlobeMode = switch kind {
         case .animal: .animals
         case .landmark: .landmarks
+        case .person: .people
         case .capital, .city: .capitals
         }
         var seen = Set<String>()
