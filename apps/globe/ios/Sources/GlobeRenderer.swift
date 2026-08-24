@@ -82,6 +82,9 @@ struct GlobeAppearance: Equatable {
     /// Rivers are drawn in their own colour and weight, always.
     var riverWidth: Float
     var river: SIMD4<Float>
+    /// And a lake matches the river that feeds it. It borrowed the sea's colour
+    /// until the sea's colour became the pale one a continental shelf wants.
+    var lake: SIMD4<Float>
     var border: SIMD4<Float>
     var selectedBorder: SIMD4<Float>
     var highlight: SIMD4<Float>
@@ -717,11 +720,16 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
         // rather than lifted off the surface.
         encoder.setDepthBias(-0.00004, slopeScale: -1.2, clamp: -0.001)
         if let lakeVertices, let lakeIndices, lakeIndexCount > 0 {
+            // A lake is drawn by the ocean's shader but is not the ocean: its own
+            // colour, and no sea floor underneath it to tint it.
+            var lakeUniforms = uniforms
+            lakeUniforms.oceanColor = appearance.lake
+            lakeUniforms.hasBathymetry = 0
             encoder.setRenderPipelineState(oceanPipeline)
             encoder.setCullMode(.none)
             encoder.setVertexBuffer(lakeVertices, offset: 0, index: 0)
-            encoder.setVertexBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
-            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
+            encoder.setVertexBytes(&lakeUniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
+            encoder.setFragmentBytes(&lakeUniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
             encoder.drawIndexedPrimitives(
                 type: .triangle, indexCount: lakeIndexCount, indexType: .uint32,
                 indexBuffer: lakeIndices, indexBufferOffset: 0

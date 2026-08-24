@@ -150,7 +150,12 @@ struct GlobeCamera: Equatable, Sendable {
     /// capped well under the gap between the surface and the camera so a
     /// country can never rise past the lens.
     var selectionLiftDistance: Double {
-        min(0.0156 * distance, 0.25 * max(0, distance - 1))
+        // A fraction of what the child can actually see, rather than of how far
+        // away the camera is. Sized from the distance, a country lifts by the
+        // same amount whether the screen holds a hemisphere or one island — and
+        // an island the size of Malta ends up hovering over its own sea.
+        let visibleArc = visibleRadiusDegrees * .pi / 180
+        return min(0.06, max(0.0003, 0.05 * visibleArc))
     }
 
     /// Cosine of the angle from the sub-camera point to the horizon. A surface

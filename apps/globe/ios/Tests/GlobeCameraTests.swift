@@ -143,4 +143,20 @@ final class GlobeCameraTests: XCTestCase {
         XCTAssertGreaterThan(far.hitToleranceDegrees(viewSize: size), near.hitToleranceDegrees(viewSize: size))
         XCTAssertLessThan(near.hitToleranceDegrees(viewSize: size), 0.5)
     }
+
+    func testTheLiftLooksTheSameHoweverFarInTheChildHasZoomed() {
+        var camera = GlobeCamera()
+        var seen: [Double] = []
+        for distance in [3.5, 2.0, 1.4, 1.05, 1.005] {
+            camera.distance = distance
+            let visibleArc = camera.visibleRadiusDegrees * .pi / 180
+            // What the lift is worth as a share of the half-screen, which is
+            // what the eye actually judges it by.
+            seen.append(camera.selectionLiftDistance / visibleArc)
+        }
+        for share in seen {
+            XCTAssertGreaterThan(share, 0.02, "a country still has to pop off the surface")
+            XCTAssertLessThan(share, 0.2, "and never float above its own sea")
+        }
+    }
 }
