@@ -241,6 +241,9 @@ struct GlobeView: View {
             for label in controller.seaLabels {
                 drawWaterName(label, in: &context)
             }
+            for label in controller.islandLabels {
+                drawIslandName(label, in: &context)
+            }
             for label in controller.labels {
                 draw(label.text, at: label.point, size: labelSize(for: label), in: &context, isPlace: false)
             }
@@ -272,6 +275,22 @@ struct GlobeView: View {
         )
         text.shading = .color(waterNameColor.opacity(0.85))
         context.draw(text, at: label.point, anchor: .center)
+    }
+
+    /// An island's name is land, so it is written like a place rather than like
+    /// water — but quieter than a country, which is the thing it belongs to.
+    private func drawIslandName(_ label: GlobeLabel, in context: inout GraphicsContext) {
+        let size = min(15.0, max(9.0, 9 + label.prominence * 5))
+        var text = context.resolve(
+            Text(label.text)
+                .font(.system(size: size, weight: .medium, design: .rounded))
+        )
+        text.shading = .color(islandNameColor)
+        context.draw(text, at: label.point, anchor: .center)
+    }
+
+    private var islandNameColor: Color {
+        colorScheme == .dark ? Color(white: 0.78) : Color(red: 0.24, green: 0.26, blue: 0.20)
     }
 
     private var waterNameColor: Color {

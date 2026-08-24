@@ -92,7 +92,11 @@ final class GlobeController: ObservableObject {
     /// And the names of the water they sit in, which are geography in every
     /// mode rather than a mode of their own.
     @Published private(set) var seaLabels: [GlobeLabel] = []
-    private var seas: [GlobeSea] = []
+    /// And the islands inside countries, which the country layer cannot name:
+    /// Sicily belongs to Italy, and Italy's own label is somewhere else.
+    @Published private(set) var islandLabels: [GlobeLabel] = []
+    private var seas: [GlobePlace] = []
+    private var islands: [GlobePlace] = []
 
     /// Set by the surface view; labels cannot be placed without it.
     var viewSize: CGSize = .zero
@@ -170,7 +174,8 @@ final class GlobeController: ObservableObject {
             self.geography = geography
             meshes = loaded.1
             content = GlobeContentLibrary.load(countries: geography.countries)
-            seas = GlobeSeas.load()
+            seas = GlobePlaces.load("seas")
+            islands = GlobePlaces.load("islands")
             // Most important first, then by id — a stable order that owes
             // nothing to how the data was generated.
             rankedByMode = content.occurrences.mapValues { occurrences in
@@ -461,6 +466,7 @@ final class GlobeController: ObservableObject {
         advanceMarkerPresence(by: seconds)
         placeLabels()
         placeSeaLabels()
+        placeIslandLabels()
         placeMarkers()
 
         if var animation = focusAnimation {
@@ -589,10 +595,19 @@ final class GlobeController: ObservableObject {
     /// choose pass. A name shows when the zoom has reached its importance and
     /// when its water is wide enough on screen to carry it.
     private func placeSeaLabels() {
-        guard viewSize.width > 0, !seas.isEmpty else {
-            if !seaLabels.isEmpty { seaLabels = [] }
-            return
-        }
+        let next = place(seas, roomNeeded: 0.07)
+        if next != seaLabels { seaLabels = next }
+    }
+
+    /// Islands need less room than an ocean does — a name beside a small island
+    /// still reads — but they wait until there is something to see.
+    private func placeIslandLabels() {
+        let next = place(islands, roomNeeded: 0.05)
+        if next != islandLabels { islandLabels = next }
+    }
+
+    private func place(_ places: [GlobePlace], roomNeeded: Double) -> [GlobeLabel] {
+        guard viewSize.width > 0, !places.isEmpty else { return [] }
         let cameraDirection = camera.globeSpaceCameraDirection
         let horizon = Float(camera.insetHorizonCosine)
         let visibleRadius = max(camera.visibleRadiusDegrees, 0.001)
@@ -600,17 +615,17 @@ final class GlobeController: ObservableObject {
 
         var next: [GlobeLabel] = []
         var placed: [CGRect] = []
-        for sea in seas where sea.importance <= deepest {
-            // Room for the name in the water it names, not just on the screen.
-            let span = sea.reachDegrees / visibleRadius
-            guard span > 0.07 else { continue }
-            let normal = GlobeMath.unitVector(sea.point)
+        for place in places where place.importance <= deepest {
+            // Room for the name in the place it names, not just on the screen.
+            let span = place.reachDegrees / visibleRadius
+            guard span > roomNeeded else { continue }
+            let normal = GlobeMath.unitVector(place.point)
             guard simd_dot(normal, cameraDirection) > horizon else { continue }
-            guard let point = camera.viewPoint(for: sea.point, viewSize: viewSize) else { continue }
+            guard let point = camera.viewPoint(for: place.point, viewSize: viewSize) else { continue }
             guard point.x > 4, point.y > 4, point.x < viewSize.width - 4, point.y < viewSize.height - 4 else { continue }
             let label = GlobeLabel(
-                id: sea.id,
-                text: sea.name(languageCode: languageCode),
+                id: place.id,
+                text: place.name(languageCode: languageCode),
                 point: point,
                 prominence: min(span, 1.4)
             )
@@ -619,7 +634,7 @@ final class GlobeController: ObservableObject {
             placed.append(box)
             next.append(label)
         }
-        if next != seaLabels { seaLabels = next }
+        return next
     }
 
     /// Roughly the chip a name will be drawn in — enough to keep two of them

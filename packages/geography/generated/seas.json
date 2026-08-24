@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "note": "Built by tools/geography/build-seas.mjs from Natural Earth v5.1.2 ne_50m_geography_marine_polys. The point is the place inside the water furthest from any shore.",
+  "note": "Built by tools/geography/build-places.mjs from Natural Earth v5.1.2 ne_50m_geography_marine_polys. The point is the place inside the water furthest from any shore.",
   "items": [
     {
       "id": "arctic-ocean",
@@ -35,9 +35,9 @@
       },
       "kind": "ocean",
       "importance": 1,
-      "reachDegrees": 7.286,
-      "lat": 82.7139,
-      "lon": -143.5417
+      "reachDegrees": 4.921,
+      "lat": 77.0445,
+      "lon": -158.0469
     },
     {
       "id": "atlantic-ocean",
@@ -146,9 +146,9 @@
       },
       "kind": "ocean",
       "importance": 1,
-      "reachDegrees": 19.182,
-      "lat": 19.4419,
-      "lon": -134.4445
+      "reachDegrees": 19.492,
+      "lat": 19.7568,
+      "lon": -134.0941
     },
     {
       "id": "southern-ocean",
@@ -183,9 +183,9 @@
       },
       "kind": "ocean",
       "importance": 1,
-      "reachDegrees": 5.702,
-      "lat": -66.2358,
-      "lon": -165.8333
+      "reachDegrees": 4.082,
+      "lat": -67.3599,
+      "lon": 99.4356
     },
     {
       "id": "arabian-sea",
@@ -812,9 +812,9 @@
       },
       "kind": "sea",
       "importance": 4,
-      "reachDegrees": 3.17,
-      "lat": -75.1092,
-      "lon": -167.6389
+      "reachDegrees": 3.171,
+      "lat": -75.1117,
+      "lon": -167.6462
     },
     {
       "id": "sea-of-japan",
@@ -1367,9 +1367,9 @@
       },
       "kind": "sea",
       "importance": 6,
-      "reachDegrees": 3.811,
-      "lat": 56.5157,
-      "lon": -173.0556
+      "reachDegrees": 3.897,
+      "lat": 56.4226,
+      "lon": -172.9502
     },
     {
       "id": "celebes-sea",
@@ -1441,9 +1441,9 @@
       },
       "kind": "sea",
       "importance": 6,
-      "reachDegrees": 1.151,
-      "lat": 70.1647,
-      "lon": -166.1806
+      "reachDegrees": 2.005,
+      "lat": 69.2556,
+      "lon": -171.851
     },
     {
       "id": "davis-strait",

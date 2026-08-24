@@ -1,9 +1,10 @@
 import Foundation
 
-/// A named piece of water: the five oceans, then seas, gulfs, bays and straits.
-/// Natural Earth carries the names in twenty-six languages, so a Dutch child
-/// reads "Middellandse Zee" without Tiko translating anything itself.
-struct GlobeSea: Identifiable, Equatable, Sendable {
+/// A named place that is not a country: an ocean, a sea, or an island inside
+/// some country's borders. Natural Earth carries the names in twenty-six
+/// languages, so a Dutch child reads "Middellandse Zee" and "Sicilië" without
+/// Tiko translating anything itself.
+struct GlobePlace: Identifiable, Equatable, Sendable {
     let id: String
     let fallbackName: String
     /// Language code → name, straight from the source data.
@@ -11,8 +12,8 @@ struct GlobeSea: Identifiable, Equatable, Sendable {
     let point: GeoPoint
     /// 1 for an ocean, up to 10 for a strait only worth naming close in.
     let importance: Int
-    /// How far the label point is from the nearest shore, in degrees. A name
-    /// wider than its own water is worse than no name at all.
+    /// How far the label point is from that place's own edge, in degrees. A name
+    /// wider than the thing it names is worse than no name at all.
     let reachDegrees: Double
 
     func name(languageCode: String) -> String {
@@ -20,15 +21,17 @@ struct GlobeSea: Identifiable, Equatable, Sendable {
     }
 }
 
-enum GlobeSeas {
-    static func load(from bundle: Bundle = .main) -> [GlobeSea] {
-        guard let url = bundle.url(forResource: "seas", withExtension: "json", subdirectory: "generated")
-            ?? bundle.url(forResource: "seas", withExtension: "json"),
+enum GlobePlaces {
+    /// `seas` or `islands`. A missing pack is not fatal: the globe still works,
+    /// it just says less.
+    static func load(_ name: String, from bundle: Bundle = .main) -> [GlobePlace] {
+        guard let url = bundle.url(forResource: name, withExtension: "json", subdirectory: "generated")
+            ?? bundle.url(forResource: name, withExtension: "json"),
             let data = try? Data(contentsOf: url),
             let file = try? JSONDecoder().decode(Pack.self, from: data)
         else { return [] }
         return file.items.map {
-            GlobeSea(
+            GlobePlace(
                 id: $0.id,
                 fallbackName: $0.name,
                 names: $0.names ?? [:],
