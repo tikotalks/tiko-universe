@@ -35,9 +35,9 @@
       },
       "kind": "Island group",
       "importance": 2,
-      "reachDegrees": 3.638,
-      "lat": -0.035,
-      "lon": 113.737
+      "reachDegrees": 3.639,
+      "lat": -0.041,
+      "lon": 113.7329
     },
     {
       "id": "melanesia",
@@ -72,9 +72,9 @@
       },
       "kind": "Island group",
       "importance": 2,
-      "reachDegrees": 8.91,
+      "reachDegrees": 8.909,
       "lat": -17.9548,
-      "lon": 166.9622
+      "lon": 166.9613
     },
     {
       "id": "micronesia",
@@ -146,9 +146,9 @@
       },
       "kind": "Island group",
       "importance": 2,
-      "reachDegrees": 20.832,
-      "lat": -14.9805,
-      "lon": -155.1643
+      "reachDegrees": 20.833,
+      "lat": -14.9818,
+      "lon": -155.1755
     },
     {
       "id": "british-isles",
@@ -517,8 +517,8 @@
       "kind": "Island group",
       "importance": 3,
       "reachDegrees": 5.515,
-      "lat": 0.3117,
-      "lon": -161.4114
+      "lat": 0.3079,
+      "lon": -161.4042
     },
     {
       "id": "line-islands",
@@ -738,9 +738,9 @@
       },
       "kind": "Island group",
       "importance": 4,
-      "reachDegrees": 0.61,
-      "lat": 54.6002,
-      "lon": -164.1503
+      "reachDegrees": 0.628,
+      "lat": 54.3012,
+      "lon": -165.1379
     },
     {
       "id": "andaman-islands",
@@ -1813,7 +1813,7 @@
       "importance": 5,
       "reachDegrees": 0.114,
       "lat": 7.0955,
-      "lon": 93.7729
+      "lon": 93.7728
     },
     {
       "id": "greater-antilles",
@@ -2070,9 +2070,9 @@
       },
       "kind": "Island",
       "importance": 5,
-      "reachDegrees": 0.929,
-      "lat": 57.1467,
-      "lon": -64.0867
+      "reachDegrees": 0.928,
+      "lat": 57.1492,
+      "lon": -64.0882
     },
     {
       "id": "lesser-antilles",
@@ -3218,8 +3218,8 @@
       "kind": "Island",
       "importance": 5,
       "reachDegrees": 0.54,
-      "lat": -53.8847,
-      "lon": -68.7446
+      "lat": -53.8844,
+      "lon": -68.7457
     },
     {
       "id": "tuamotus",
@@ -3920,9 +3920,9 @@
       },
       "kind": "Island group",
       "importance": 6,
-      "reachDegrees": 1.578,
-      "lat": -17.3936,
-      "lon": 178.3454
+      "reachDegrees": 1.579,
+      "lat": -17.4586,
+      "lon": 178.3439
     },
     {
       "id": "guam",
@@ -4291,7 +4291,7 @@
       "kind": "Island",
       "importance": 6,
       "reachDegrees": 0.41,
-      "lat": 80.566,
+      "lat": 80.5659,
       "lon": 94.9784
     },
     {
@@ -4734,9 +4734,9 @@
       },
       "kind": "Island",
       "importance": 6,
-      "reachDegrees": 0.397,
-      "lat": 79.457,
-      "lon": 96.376
+      "reachDegrees": 0.404,
+      "lat": 79.4794,
+      "lon": 96.2019
     },
     {
       "id": "okinawa-island",
@@ -5771,8 +5771,8 @@
       "kind": "Island group",
       "importance": 7,
       "reachDegrees": 0.038,
-      "lat": -50.5694,
-      "lon": 166.1753
+      "lat": -50.5693,
+      "lon": 166.1759
     },
     {
       "id": "axel-heiberg-island",
@@ -6882,7 +6882,7 @@
       "importance": 7,
       "reachDegrees": 0.229,
       "lat": -51.6954,
-      "lon": -58.6895
+      "lon": -58.6897
     },
     {
       "id": "edge-ya",
@@ -7992,7 +7992,7 @@
       "importance": 7,
       "reachDegrees": 0.089,
       "lat": -62.0322,
-      "lon": -58.3745
+      "lon": -58.3744
     },
     {
       "id": "king-island",
@@ -8434,9 +8434,9 @@
       },
       "kind": "Island",
       "importance": 7,
-      "reachDegrees": 0.076,
-      "lat": 68.31,
-      "lon": 14.641
+      "reachDegrees": 0.077,
+      "lat": 68.3299,
+      "lon": 14.6933
     },
     {
       "id": "lombok",
@@ -11542,9 +11542,9 @@
       },
       "kind": "Island",
       "importance": 7,
-      "reachDegrees": 0.113,
-      "lat": 68.7275,
-      "lon": 15.0582
+      "reachDegrees": 0.111,
+      "lat": 68.476,
+      "lon": 15.5221
     },
     {
       "id": "vize-island",
@@ -11729,7 +11729,7 @@
       "importance": 7,
       "reachDegrees": 0.289,
       "lat": 71.2576,
-      "lon": -179.0815
+      "lon": -179.0819
     },
     {
       "id": "zanzibar-archipelago",
@@ -12024,8 +12024,8 @@
       "kind": "Island",
       "importance": 8,
       "reachDegrees": 0.207,
-      "lat": 24.6627,
-      "lon": -78.0154
+      "lat": 24.6628,
+      "lon": -78.0155
     },
     {
       "id": "anticosti-island",
@@ -15835,8 +15835,8 @@
       "kind": "Island",
       "importance": 9,
       "reachDegrees": 0.029,
-      "lat": 57.1704,
-      "lon": -170.2736
+      "lat": 57.1697,
+      "lon": -170.2754
     },
     {
       "id": "prince-patrick-island",

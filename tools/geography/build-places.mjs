@@ -61,10 +61,23 @@ function islandImportance({ scalerank }) {
 }
 
 function ringsOf(geometry) {
+  return polygonsOf(geometry).flat()
+}
+
+/** Each polygon with its own holes, rather than every ring in one heap. */
+function polygonsOf(geometry) {
   if (!geometry) return []
-  return geometry.type === 'MultiPolygon'
-    ? geometry.coordinates.flat()
-    : geometry.coordinates
+  return geometry.type === 'MultiPolygon' ? geometry.coordinates : [geometry.coordinates]
+}
+
+/**
+ * The name goes on the biggest piece. The Caribbean Netherlands is three specks
+ * a thousand kilometres apart, and the middle of all three is open sea.
+ */
+function largestPart(geometry) {
+  const polygons = polygonsOf(geometry).filter((polygon) => polygon[0]?.length >= 4)
+  if (polygons.length === 0) return []
+  return polygons.reduce((best, polygon) => (area(polygon[0]) > area(best[0]) ? polygon : best))
 }
 
 function area(ring) {
@@ -190,7 +203,7 @@ function compile(collection, { pick, importanceOf, minArea }) {
     if (seen.has(id)) continue
     seen.add(id)
 
-    const { point, reach } = labelPoint(unwrap(rings))
+    const { point, reach } = labelPoint(unwrap(largestPart(feature.geometry)))
     const names = {}
     for (const [key, value] of Object.entries(properties)) {
       if (!key.startsWith('name_') || !value) continue
@@ -291,8 +304,35 @@ await emit(
   islands.items
 )
 
+// -------------------------------------------------------------- territories --
+
+// The parts of countries that have names of their own: Alaska, Zanzibar,
+// Scotland, the Canaries — and the Caribbean Netherlands, which is as close as
+// any Natural Earth layer gets to naming Bonaire.
+const SUBUNITS = 'ne_50m_admin_0_map_subunits'
+const territories = compile(await geojson(SUBUNITS), {
+  // A subunit whose code matches its country is the whole country under
+  // another spelling, and the country layer already draws that.
+  pick: (properties) => properties.su_a3 !== properties.adm0_a3 && properties.name !== properties.admin,
+  importanceOf: ({ scalerank, labelrank }) => Math.min(10, Math.max(3, 2 + Math.round((labelrank ?? scalerank ?? 5)))),
+  minArea: MIN_ISLAND_AREA_DEG2,
+})
+validate(territories.items, 'territories')
+for (const part of ['Alaska', 'Caribbean Netherlands', 'Scotland']) {
+  if (!territories.items.some((item) => item.name === part)) {
+    process.stderr.write(`territories: ${part} is missing\n`)
+    process.exit(1)
+  }
+}
+await emit(
+  'territories.json',
+  `Built by tools/geography/build-places.mjs from Natural Earth ${NE_RELEASE} ${SUBUNITS}. Parts of countries with names of their own.`,
+  territories.items
+)
+
 const oceans = water.items.filter((item) => item.kind === 'ocean').length
 process.stdout.write(
   `places ok: ${water.items.length} named waters (${oceans} oceans), ` +
-  `${islands.items.length} named islands, ${water.skipped.length + islands.skipped.length} too small to name\n`
+  `${islands.items.length} named islands, ${territories.items.length} named parts of countries, ` +
+  `${water.skipped.length + islands.skipped.length + territories.skipped.length} too small to name\n`
 )

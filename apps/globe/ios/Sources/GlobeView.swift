@@ -201,7 +201,11 @@ struct GlobeView: View {
     /// Taps are matched against the same positions in `GlobeController.tap`, and
     /// the country list is the route that does not need a fingertip at all.
     private func drawMarkers(in context: inout GraphicsContext) {
-        guard controller.mode != .countries, controller.mode != .capitals else { return }
+        guard controller.mode != .countries else { return }
+        if controller.mode == .capitals {
+            drawPlaces(in: &context)
+            return
+        }
         let fullSize = controller.markerSize
         for placed in controller.markers {
             // Eased so a marker lands rather than simply appearing at full size.
@@ -240,6 +244,57 @@ struct GlobeView: View {
         }
     }
 
+    /// Cities: a round mark where the place actually is, sized by what sort of
+    /// place it is, with its picture above it once there is room. A capital is
+    /// filled in the app's colour; a town is a smaller white dot. Both are a
+    /// point on the map rather than a picture standing on one, because a city
+    /// *is* the point.
+    private func drawPlaces(in context: inout GraphicsContext) {
+        let scale = min(max(controller.markerScale, 0.8), 2.2)
+        for placed in controller.markers {
+            let isCapital = placed.entity.kind == .capital
+            let eased = 1 - pow(1 - placed.presence, 3)
+            let radius = (isCapital ? 7.0 : 4.5) * scale * (0.5 + 0.5 * eased)
+            context.opacity = min(1, placed.presence * 1.4)
+
+            // The picture, when the child is close enough for it to mean
+            // something and the library has one at all.
+            if scale > 1.2, placed.presence > 0.6,
+               let image = GlobeMarkerImage.drawable(named: placed.entity.imageName, size: 96) {
+                let size = 46 * scale
+                context.draw(image, in: CGRect(
+                    x: placed.point.x - size / 2,
+                    y: placed.point.y - size - radius * 1.6,
+                    width: size,
+                    height: size
+                ))
+            }
+
+            let dot = CGRect(
+                x: placed.point.x - radius,
+                y: placed.point.y - radius,
+                width: radius * 2,
+                height: radius * 2
+            )
+            context.fill(Path(ellipseIn: dot.insetBy(dx: -radius * 0.34, dy: -radius * 0.34)), with: .color(.white))
+            context.fill(
+                Path(ellipseIn: dot),
+                with: .color(isCapital ? appColor.palette.primary : Color(white: 0.35))
+            )
+
+            if isCapital || scale > 1.1 {
+                draw(
+                    GlobeNaming.displayName(for: placed.entity, i18n: i18n),
+                    at: CGPoint(x: placed.point.x, y: placed.point.y + radius + 11 * scale),
+                    size: (isCapital ? 13 : 11) * min(scale, 1.5),
+                    in: &context,
+                    isPlace: true
+                )
+            }
+            context.opacity = 1
+        }
+    }
+
     /// Country names, drawn over the globe rather than into it: the renderer
     /// stays a renderer, and the text gets Dynamic Type and the system's font
     /// rendering for free. VoiceOver ignores them — it has the country list.
@@ -253,14 +308,6 @@ struct GlobeView: View {
             }
             for label in controller.labels {
                 draw(label.text, at: label.point, size: labelSize(for: label), in: &context, isPlace: false)
-            }
-            if controller.mode == .capitals {
-                for placed in controller.markers {
-                    draw(
-                        GlobeNaming.displayName(for: placed.entity, i18n: i18n),
-                        at: placed.point, size: 13, in: &context, isPlace: true
-                    )
-                }
             }
             drawMarkers(in: &context)
         }

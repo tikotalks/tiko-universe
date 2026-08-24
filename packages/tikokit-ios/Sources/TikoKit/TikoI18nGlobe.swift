@@ -20,6 +20,7 @@ extension TikoLocalTranslations {
         "globe.card.about": "About",
         "globe.card.animalsHere": "Animals here",
         "globe.card.landmarksHere": "Places to see",
+        "globe.card.city": "City",
         "globe.card.capitalCity": "Capital city",
         "globe.card.animal": "Animal",
         "globe.card.landmark": "Landmark",

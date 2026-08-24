@@ -201,6 +201,7 @@ struct GlobeDetailPanel: View {
         case .entity(let entity, _):
             switch entity.kind {
             case .capital: i18n.t("globe.card.capitalCity")
+            case .city: i18n.t("globe.card.city")
             case .animal: i18n.t("globe.card.animal")
             case .landmark: i18n.t("globe.card.landmark")
             }
@@ -212,7 +213,7 @@ struct GlobeDetailPanel: View {
         case .country: GlobeMode.countries.systemImage
         case .entity(let entity, _):
             switch entity.kind {
-            case .capital: GlobeMode.capitals.systemImage
+            case .capital, .city: GlobeMode.capitals.systemImage
             case .animal: GlobeMode.animals.systemImage
             case .landmark: GlobeMode.landmarks.systemImage
             }

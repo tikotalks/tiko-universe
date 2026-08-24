@@ -35,6 +35,7 @@ enum GlobeMode: String, CaseIterable, Identifiable, Sendable {
 struct GlobeEntity: Identifiable, Equatable, Sendable {
     enum Kind: String, Sendable {
         case capital
+        case city
         case animal
         case landmark
 
@@ -42,6 +43,7 @@ struct GlobeEntity: Identifiable, Equatable, Sendable {
         var translationNamespace: String {
             switch self {
             case .capital: "geography.capitals"
+            case .city: "geography.cities"
             case .animal: "geography.animals"
             case .landmark: "geography.landmarks"
             }
@@ -97,10 +99,51 @@ struct GlobeContentLibrary: Sendable {
     /// Capitals still work, and the app says nothing it cannot back up.
     static func load(from bundle: Bundle = .main, countries: [GlobeCountry]) -> GlobeContentLibrary {
         var library = GlobeContentLibrary()
-        library.addCapitals(from: countries)
+        if !library.addCities(from: bundle) {
+            // Without the pack there is still one seat of government per
+            // country in the geography itself, which is better than none.
+            library.addCapitals(from: countries)
+        }
         library.add(pack: "animals", kind: .animal, mode: .animals, from: bundle)
         library.add(pack: "landmarks", kind: .landmark, mode: .landmarks, from: bundle)
         return library
+    }
+
+    /// Every named place: the capitals — all of them, because South Africa has
+    /// three — then the capitals of states and provinces, then the towns.
+    /// Returns false when the pack is missing, so the caller can fall back.
+    private mutating func addCities(from bundle: Bundle) -> Bool {
+        guard let url = bundle.url(forResource: "cities", withExtension: "json", subdirectory: "generated")
+            ?? bundle.url(forResource: "cities", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let file = try? JSONDecoder().decode(CityPack.self, from: data)
+        else { return false }
+
+        var found: [GlobeOccurrence] = []
+        found.reserveCapacity(file.items.count)
+        for item in file.items {
+            entities[item.id] = GlobeEntity(
+                id: item.id,
+                kind: item.isCapital ? .capital : .city,
+                fallbackName: item.name,
+                glyph: item.isCapital ? "🏛️" : "🏙️",
+                imageName: item.mediaId.map { "\($0).png" },
+                isReviewed: true
+            )
+            found.append(GlobeOccurrence(
+                id: item.id,
+                entityID: item.id,
+                point: GeoPoint(lat: item.lat, lon: item.lon),
+                importance: item.importance,
+                countryID: item.country,
+                countryIDs: [item.country],
+                region: item.region,
+                note: nil,
+                isWithinCountry: false
+            ))
+        }
+        occurrences[.capitals] = found
+        return true
     }
 
     private mutating func addCapitals(from countries: [GlobeCountry]) {
@@ -159,6 +202,22 @@ struct GlobeContentLibrary: Sendable {
         }
         occurrences[mode] = found
     }
+}
+
+private struct CityPack: Decodable {
+    struct Item: Decodable {
+        let id: String
+        let name: String
+        let kind: String
+        let isCapital: Bool
+        let country: String
+        let region: String?
+        let importance: Int
+        let lat: Double
+        let lon: Double
+        let mediaId: String?
+    }
+    let items: [Item]
 }
 
 // MARK: - Reading the packs

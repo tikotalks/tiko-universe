@@ -97,6 +97,10 @@ final class GlobeController: ObservableObject {
     @Published private(set) var islandLabels: [GlobeLabel] = []
     private var seas: [GlobePlace] = []
     private var islands: [GlobePlace] = []
+    /// Parts of countries with names of their own — Alaska, Scotland, the
+    /// Caribbean Netherlands — which the country layer cannot name because the
+    /// country's own label is somewhere else entirely.
+    private var territories: [GlobePlace] = []
 
     /// Set by the surface view; labels cannot be placed without it.
     var viewSize: CGSize = .zero
@@ -176,6 +180,7 @@ final class GlobeController: ObservableObject {
             content = GlobeContentLibrary.load(countries: geography.countries)
             seas = GlobePlaces.load("seas")
             islands = GlobePlaces.load("islands")
+            territories = GlobePlaces.load("territories")
             // Most important first, then by id — a stable order that owes
             // nothing to how the data was generated.
             rankedByMode = content.occurrences.mapValues { occurrences in
@@ -285,7 +290,7 @@ final class GlobeController: ObservableObject {
         let mode: GlobeMode = switch kind {
         case .animal: .animals
         case .landmark: .landmarks
-        case .capital: .capitals
+        case .capital, .city: .capitals
         }
         var seen = Set<String>()
         var found: [(entity: GlobeEntity, importance: Int)] = []
@@ -602,7 +607,9 @@ final class GlobeController: ObservableObject {
     /// Islands need less room than an ocean does — a name beside a small island
     /// still reads — but they wait until there is something to see.
     private func placeIslandLabels() {
-        let next = place(islands, roomNeeded: 0.05)
+        // One pass over both, so an island and the territory it belongs to
+        // cannot land on top of each other.
+        let next = place(islands + territories, roomNeeded: 0.05)
         if next != islandLabels { islandLabels = next }
     }
 

@@ -146,9 +146,9 @@
       },
       "kind": "ocean",
       "importance": 1,
-      "reachDegrees": 19.492,
-      "lat": 19.7568,
-      "lon": -134.0941
+      "reachDegrees": 19.49,
+      "lat": 19.7512,
+      "lon": -134.0975
     },
     {
       "id": "southern-ocean",
@@ -812,9 +812,9 @@
       },
       "kind": "sea",
       "importance": 4,
-      "reachDegrees": 3.171,
+      "reachDegrees": 3.172,
       "lat": -75.1117,
-      "lon": -167.6462
+      "lon": -167.6522
     },
     {
       "id": "sea-of-japan",
@@ -1368,8 +1368,8 @@
       "kind": "sea",
       "importance": 6,
       "reachDegrees": 3.897,
-      "lat": 56.4226,
-      "lon": -172.9502
+      "lat": 56.4229,
+      "lon": -172.9533
     },
     {
       "id": "celebes-sea",
@@ -1442,8 +1442,8 @@
       "kind": "sea",
       "importance": 6,
       "reachDegrees": 2.005,
-      "lat": 69.2556,
-      "lon": -171.851
+      "lat": 69.2567,
+      "lon": -171.8481
     },
     {
       "id": "davis-strait",
