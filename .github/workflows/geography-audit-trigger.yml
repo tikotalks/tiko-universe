@@ -1,0 +1,50 @@
+name: Geography audit trigger
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  audit:
+    if: github.event.issue.title == '[tiko-geography-audit-20260824]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover the reviewed audit script
+        shell: bash
+        run: |
+          git show e43d7efe5a96fb58ef6cd955e13e87b3bb443d7b:.github/workflows/geography-data-audit-once.yml > /tmp/audit-workflow.yml
+          python3 - <<'PY'
+          from pathlib import Path
+          lines = Path('/tmp/audit-workflow.yml').read_text().splitlines()
+          start = next(i for i, line in enumerate(lines) if "python3 <<'PY'" in line) + 1
+          end = next(i for i in range(start, len(lines)) if lines[i].strip() == 'PY')
+          body = lines[start:end]
+          # Embedded workflow used ten spaces before the Python body.
+          body = [line[10:] if line.startswith('          ') else line for line in body]
+          Path('/tmp/audit.py').write_text('\n'.join(body) + '\n')
+          PY
+
+      - name: Checkout Globe branch and update authored data
+        shell: bash
+        run: |
+          git checkout feat/tiko-globe-app
+          python3 /tmp/audit.py
+          git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json
+          git config user.name "Tiko Geography Audit"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- packages/geography/content/country-animals.json packages/geography/content/country-landmarks.json packages/geography/content/animal-districts.json packages/geography/content/districts.json
+          git commit -m "data(geography): audit country animals and normalize landmark contracts"
+          git push origin HEAD:feat/tiko-globe-app
+
+      - name: Close trigger issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Geography audit completed."
