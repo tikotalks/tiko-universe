@@ -19,8 +19,8 @@
         "en": "Aruba"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -71,10 +71,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 12.553,
-          "lon": -69.937,
+          "lat": 12.501,
+          "lon": -70.029,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 144558725
           }
         }
       ],
@@ -95,8 +96,8 @@
         "en": "Afghanistan"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -111,10 +112,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "snow-leopard",
-          "lat": 34.164,
-          "lon": 66.497,
+          "lat": 38.2,
+          "lon": 73.936,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 314593271
           }
         },
         {
@@ -128,10 +130,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "persian-leopard",
-          "lat": 34.347,
-          "lon": 67.144,
+          "lat": 33.741,
+          "lon": 73.079,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 85196191
           }
         },
         {
@@ -163,10 +166,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "marbled-polecat",
-          "lat": 34.277,
-          "lon": 67.858,
+          "lat": 29.407,
+          "lon": 65.745,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 202870083
           }
         },
         {
@@ -180,10 +184,11 @@
           "status": "wild",
           "importance": 7,
           "mediaId": "scorpion",
-          "lat": 35.246,
-          "lon": 66.9,
+          "lat": 31.367,
+          "lon": 74.268,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 312182814
           }
         }
       ]
@@ -194,8 +199,8 @@
         "en": "Angola"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -246,10 +251,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "antelope",
-          "lat": -10.74,
-          "lon": 18.403,
+          "lat": -17.814,
+          "lon": 23.103,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 191988223
           }
         },
         {
@@ -296,8 +302,8 @@
         "en": "Anguilla"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -330,10 +336,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "crab",
-          "lat": 18.228,
-          "lon": -63.077,
+          "lat": 18.217,
+          "lon": -63.067,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 86127895
           }
         },
         {
@@ -347,10 +354,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 18.268,
-          "lon": -63.022,
+          "lat": 18.228,
+          "lon": -63.055,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 331382298
           }
         },
         {
@@ -390,7 +398,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -493,7 +501,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -542,10 +550,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "common-hedgehog",
-          "lat": 60.165,
-          "lon": 19.822,
+          "lat": 60.113,
+          "lon": 19.915,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 329446084
           }
         },
         {
@@ -559,10 +568,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "european-hare",
-          "lat": 60.191,
-          "lon": 19.943,
+          "lat": 60.142,
+          "lon": 20.236,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 284850863
           }
         }
       ],
@@ -584,7 +594,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -687,7 +697,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -772,7 +782,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -873,7 +883,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -888,10 +898,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "armenian-mouflon",
-          "lat": 40.459,
-          "lon": 44.801,
+          "lat": 39.222,
+          "lon": 45.458,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 370262888
           }
         },
         {
@@ -973,8 +984,8 @@
         "en": "American Samoa"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1007,10 +1018,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "clownfish",
-          "lat": -14.278,
-          "lon": -170.757,
+          "lat": -14.283,
+          "lon": -170.665,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 149512083
           }
         },
         {
@@ -1042,10 +1054,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": -14.295,
-          "lon": -170.787,
+          "lat": -14.286,
+          "lon": -170.684,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 356401979
           }
         },
         {
@@ -1075,7 +1088,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1160,7 +1173,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1234,7 +1247,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1335,8 +1348,8 @@
         "en": "Antigua and Barbuda"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1387,10 +1400,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "crab",
-          "lat": 17.663,
-          "lon": -61.791,
+          "lat": 17.044,
+          "lon": -61.753,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 259707905
           }
         },
         {
@@ -1404,10 +1418,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 17.352,
-          "lon": -61.791,
+          "lat": 17.081,
+          "lon": -61.779,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 72640106
           }
         },
         {
@@ -1437,7 +1452,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1592,7 +1607,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1695,7 +1710,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1797,7 +1812,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -1830,10 +1845,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "chimpanzee",
-          "lat": -3.322,
-          "lon": 30.184,
+          "lat": -2.485,
+          "lon": 29.273,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 238153002
           }
         },
         {
@@ -1898,7 +1914,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2001,7 +2017,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2104,7 +2120,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2207,7 +2223,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2309,8 +2325,8 @@
         "en": "Bulgaria"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2343,10 +2359,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "eurasian-lynx",
-          "lat": 42.656,
-          "lon": 25.31,
+          "lat": 42.678,
+          "lon": 26.307,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 220491815
           }
         },
         {
@@ -2412,7 +2429,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2494,8 +2511,8 @@
         "en": "The Bahamas"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2582,10 +2599,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 26.385,
-          "lon": -77.564,
+          "lat": 25.082,
+          "lon": -77.27,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 373449246
           }
         }
       ]
@@ -2596,8 +2614,8 @@
         "en": "Bosnia and Herzegovina"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2666,10 +2684,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "red-deer",
-          "lat": 43.961,
-          "lon": 17.922,
+          "lat": 45.245,
+          "lon": 17.761,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 172628360
           }
         },
         {
@@ -2698,8 +2717,8 @@
         "en": "Saint Barthélemy"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2732,10 +2751,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "crab",
-          "lat": 17.908,
-          "lon": -62.859,
+          "lat": 17.903,
+          "lon": -62.852,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 295915190
           }
         },
         {
@@ -2749,10 +2769,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 17.914,
-          "lon": -62.81,
+          "lat": 17.902,
+          "lon": -62.835,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 152073826
           }
         },
         {
@@ -2792,7 +2813,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2895,7 +2916,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -2946,10 +2967,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "tapir",
-          "lat": 17.523,
-          "lon": -88.752,
+          "lat": 17.167,
+          "lon": -88.905,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 382217318
           }
         },
         {
@@ -2996,7 +3018,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3046,10 +3068,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "lobster",
-          "lat": 32.321,
-          "lon": -64.769,
+          "lat": 32.337,
+          "lon": -64.739,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 201546458
           }
         },
         {
@@ -3097,7 +3120,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3199,7 +3222,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3319,7 +3342,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3412,7 +3435,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3515,7 +3538,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3616,8 +3639,8 @@
         "en": "Botswana"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3668,10 +3691,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "giraffe",
-          "lat": -20.971,
-          "lon": 24.125,
+          "lat": -20.419,
+          "lon": 24.528,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 382202637
           }
         },
         {
@@ -3737,7 +3761,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3839,7 +3863,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -3958,7 +3982,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4061,7 +4085,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4164,7 +4188,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4266,7 +4290,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4369,7 +4393,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4471,8 +4495,8 @@
         "en": "Democratic Republic of the Congo"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4487,10 +4511,11 @@
           "status": "wild",
           "importance": 1,
           "mediaId": "okapi",
-          "lat": -1.649,
-          "lon": 24.945,
+          "lat": 2.474,
+          "lon": 25.109,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 301368948
           }
         },
         {
@@ -4573,8 +4598,8 @@
         "en": "Republic of the Congo"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4625,10 +4650,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "african-elephant",
-          "lat": 1.045,
-          "lon": 15.299,
+          "lat": 0.134,
+          "lon": 13.434,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 327697350
           }
         },
         {
@@ -4676,7 +4702,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4777,7 +4803,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4879,7 +4905,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -4979,7 +5005,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5078,7 +5104,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5180,7 +5206,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5282,7 +5308,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5384,7 +5410,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5453,10 +5479,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "crab",
-          "lat": 19.32,
-          "lon": -81.241,
+          "lat": 19.338,
+          "lon": -81.381,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 353845893
           }
         },
         {
@@ -5485,7 +5512,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5559,7 +5586,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5643,7 +5670,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5746,7 +5773,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5849,7 +5876,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -5933,7 +5960,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6037,10 +6064,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 15.51,
-          "lon": -61.256,
+          "lat": 15.584,
+          "lon": -61.469,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 357649431
           }
         }
       ]
@@ -6052,7 +6080,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6155,7 +6183,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6257,7 +6285,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6359,7 +6387,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6460,7 +6488,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6562,7 +6590,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6663,7 +6691,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6766,7 +6794,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6869,7 +6897,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -6971,7 +6999,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7074,7 +7102,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7107,10 +7135,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "clownfish",
-          "lat": -17.385,
-          "lon": 178.365,
+          "lat": -16.576,
+          "lon": 146.008,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 119836826
           }
         },
         {
@@ -7175,7 +7204,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7277,7 +7306,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7379,7 +7408,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7480,7 +7509,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7513,10 +7542,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "clownfish",
-          "lat": 6.938,
-          "lon": 158.5,
+          "lat": 6.979,
+          "lon": 158.128,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 65486755
           }
         },
         {
@@ -7581,7 +7611,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7683,7 +7713,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7786,7 +7816,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7889,7 +7919,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -7989,7 +8019,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8092,7 +8122,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8194,7 +8224,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8296,7 +8326,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8398,8 +8428,8 @@
         "en": "Equatorial Guinea"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8414,10 +8444,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "gorilla",
-          "lat": 2.102,
-          "lon": 9.831,
+          "lat": 2.332,
+          "lon": 10.109,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 346281038
           }
         },
         {
@@ -8501,7 +8532,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8604,7 +8635,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8697,7 +8728,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8798,7 +8829,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -8899,7 +8930,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9000,7 +9031,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9102,7 +9133,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9222,7 +9253,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9324,7 +9355,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9426,7 +9457,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9529,7 +9560,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9580,10 +9611,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "crab",
-          "lat": 19.398,
-          "lon": -71.993,
+          "lat": 18.439,
+          "lon": -71.912,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 54621258
           }
         },
         {
@@ -9622,7 +9654,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9725,7 +9757,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9845,7 +9877,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -9947,7 +9979,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10068,7 +10100,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10100,10 +10132,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "clownfish",
-          "lat": -10.466,
-          "lon": 105.782,
+          "lat": -10.453,
+          "lon": 105.632,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 12959856
           }
         },
         {
@@ -10117,10 +10150,11 @@
           "status": "wild",
           "importance": 7,
           "mediaId": "sea-star",
-          "lat": -10.386,
-          "lon": 105.639,
+          "lat": -10.45,
+          "lon": 105.602,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 191644
           }
         }
       ],
@@ -10142,7 +10176,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10242,7 +10276,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10345,7 +10379,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10447,7 +10481,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10548,7 +10582,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10651,7 +10685,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10753,7 +10787,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10856,7 +10890,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -10957,7 +10991,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11058,7 +11092,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11141,7 +11175,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11244,7 +11278,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11342,7 +11376,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11444,7 +11478,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11565,7 +11599,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11666,7 +11700,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11750,7 +11784,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11836,10 +11870,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 2.472,
-          "lon": -157.756,
+          "lat": 1.315,
+          "lon": 103.975,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 381889985
           }
         },
         {
@@ -11869,7 +11904,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -11970,7 +12005,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12073,7 +12108,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12088,10 +12123,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "brown-bear",
-          "lat": 42.594,
-          "lon": 20.861,
+          "lat": 42.187,
+          "lon": 20.945,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 170595649
           }
         },
         {
@@ -12122,10 +12158,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "wild-boar",
-          "lat": 42.649,
-          "lon": 20.77,
+          "lat": 42.674,
+          "lon": 21.204,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 384221507
           }
         },
         {
@@ -12139,10 +12176,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "red-deer",
-          "lat": 42.53,
-          "lon": 20.781,
+          "lat": 42.848,
+          "lon": 21.055,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 270909030
           }
         },
         {
@@ -12156,10 +12194,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "fox",
-          "lat": 42.555,
-          "lon": 20.966,
+          "lat": 42.599,
+          "lon": 20.903,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 289014670
           }
         }
       ]
@@ -12171,7 +12210,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12255,7 +12294,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12322,7 +12361,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12423,7 +12462,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12524,7 +12563,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12625,7 +12664,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12744,7 +12783,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12847,7 +12886,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -12950,7 +12989,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13016,7 +13055,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13119,7 +13158,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13222,7 +13261,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13325,7 +13364,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13383,7 +13422,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13485,7 +13524,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13579,7 +13618,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13671,7 +13710,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13772,8 +13811,8 @@
         "en": "Madagascar"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13788,10 +13827,11 @@
           "status": "wild",
           "importance": 1,
           "mediaId": "lemur",
-          "lat": -18.628,
-          "lon": 46.704,
+          "lat": -18.522,
+          "lon": 47.801,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 391066294
           }
         },
         {
@@ -13875,7 +13915,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -13976,7 +14016,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14009,10 +14049,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "coyote",
-          "lat": 24.363,
-          "lon": -100.716,
+          "lat": 31.822,
+          "lon": -106.563,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 393941441
           }
         },
         {
@@ -14095,7 +14136,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14181,10 +14222,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 7.417,
-          "lon": 171.171,
+          "lat": 8.302,
+          "lon": 171.157,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 181032920
           }
         },
         {
@@ -14214,7 +14256,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14317,7 +14359,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14403,10 +14445,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "ostrich",
-          "lat": 18.413,
-          "lon": -3.592,
+          "lat": 10.769,
+          "lon": 2.096,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 325013384
           }
         }
       ]
@@ -14418,7 +14461,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14884,7 +14927,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -14987,7 +15030,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15089,7 +15132,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15191,7 +15234,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15292,7 +15335,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15395,7 +15438,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15479,7 +15522,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15571,7 +15614,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15653,8 +15696,8 @@
         "en": "Malawi"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15705,10 +15748,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "antelope",
-          "lat": -12.488,
-          "lon": 33.971,
+          "lat": -14.83,
+          "lon": 35.232,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 169702983
           }
         },
         {
@@ -15756,7 +15800,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15859,7 +15903,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -15980,7 +16024,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16098,7 +16142,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16200,7 +16244,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16300,7 +16344,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16403,7 +16447,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16505,7 +16549,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16606,7 +16650,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16727,7 +16771,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16828,7 +16872,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -16931,7 +16975,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17023,8 +17067,8 @@
         "en": "New Zealand"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17109,10 +17153,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "seagull",
-          "lat": -41.04,
-          "lon": 173.822,
+          "lat": -33.948,
+          "lon": 18.485,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 43407853
           }
         },
         {
@@ -17160,7 +17205,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17245,7 +17290,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17329,8 +17374,8 @@
         "en": "Panama"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17345,10 +17390,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "sloth",
-          "lat": 8.722,
-          "lon": -80.352,
+          "lat": 9.076,
+          "lon": -79.654,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 374472244
           }
         },
         {
@@ -17432,7 +17478,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17532,7 +17578,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17632,8 +17678,8 @@
         "en": "Philippines"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17702,10 +17748,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "clownfish",
-          "lat": 11.476,
-          "lon": 123.176,
+          "lat": 9.981,
+          "lon": 123.369,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 379709200
           }
         },
         {
@@ -17735,7 +17782,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17836,7 +17883,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -17939,7 +17986,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18042,7 +18089,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18144,7 +18191,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18227,7 +18274,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18330,7 +18377,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18432,7 +18479,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18515,10 +18562,11 @@
           "status": "wild",
           "importance": 7,
           "mediaId": "scorpion",
-          "lat": 32.209,
-          "lon": 35.313,
+          "lat": 32.189,
+          "lon": 35.268,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 390050274
           }
         }
       ]
@@ -18530,7 +18578,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18631,7 +18679,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18715,7 +18763,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18818,7 +18866,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -18930,7 +18978,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19033,7 +19081,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19114,7 +19162,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19129,10 +19177,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "caracal",
-          "lat": 23.807,
-          "lon": 44.7,
+          "lat": 30.585,
+          "lon": 34.857,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 348063082
           }
         },
         {
@@ -19197,7 +19246,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19279,7 +19328,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19294,10 +19343,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "african-elephant",
-          "lat": 7.23,
-          "lon": 30.39,
+          "lat": 3.688,
+          "lon": 33.661,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 143497865
           }
         },
         {
@@ -19377,7 +19427,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19479,7 +19529,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19617,7 +19667,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19702,7 +19752,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19803,7 +19853,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19886,7 +19936,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -19987,8 +20037,8 @@
         "en": "El Salvador"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20003,10 +20053,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "jaguar",
-          "lat": 13.685,
-          "lon": -88.89,
+          "lat": 14.259,
+          "lon": -89.462,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 149373593
           }
         },
         {
@@ -20090,7 +20141,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20188,7 +20239,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20203,10 +20254,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "striped-hyena",
-          "lat": 9.444,
-          "lon": 46.732,
+          "lat": 11.074,
+          "lon": 42.852,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 340435338
           }
         },
         {
@@ -20237,10 +20289,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "ostrich",
-          "lat": 9.877,
-          "lon": 46.715,
+          "lat": 11.32,
+          "lon": 42.783,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 265682250
           }
         },
         {
@@ -20254,10 +20307,11 @@
           "status": "wild",
           "importance": 7,
           "mediaId": "scorpion",
-          "lat": 9.696,
-          "lon": 46.374,
+          "lat": 9.64,
+          "lon": 43.809,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 190891892
           }
         }
       ]
@@ -20269,7 +20323,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20351,7 +20405,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20451,7 +20505,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20554,7 +20608,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20655,7 +20709,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20757,7 +20811,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20860,7 +20914,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -20963,7 +21017,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21047,8 +21101,8 @@
         "en": "Eswatini"
       },
       "review": {
-        "state": "draft",
-        "by": "openai-geography-location-pass",
+        "state": "reviewed",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21099,10 +21153,11 @@
           "status": "wild",
           "importance": 4,
           "mediaId": "antelope",
-          "lat": -26.376,
-          "lon": 31.595,
+          "lat": -26.146,
+          "lon": 31.139,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 157190307
           }
         },
         {
@@ -21150,7 +21205,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21251,7 +21306,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21352,7 +21407,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21453,7 +21508,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21554,7 +21609,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21639,7 +21694,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21671,10 +21726,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "baboon",
-          "lat": 9.43,
-          "lon": 1.08,
+          "lat": 11.02,
+          "lon": 1.548,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 100996711
           }
         },
         {
@@ -21740,7 +21796,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21843,7 +21899,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21944,7 +22000,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -21959,10 +22015,11 @@
           "status": "wild",
           "importance": 2,
           "mediaId": "caracal",
-          "lat": 39.855,
-          "lon": 58.677,
+          "lat": 35.308,
+          "lon": 57.574,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 241481547
           }
         },
         {
@@ -22027,7 +22084,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22128,7 +22185,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22229,7 +22286,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22349,7 +22406,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22451,7 +22508,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22554,7 +22611,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22655,7 +22712,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22775,7 +22832,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22896,7 +22953,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -22999,7 +23056,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23102,7 +23159,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23203,7 +23260,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23272,10 +23329,11 @@
           "status": "wild",
           "importance": 5,
           "mediaId": "coyote",
-          "lat": 39.993,
-          "lon": -98.261,
+          "lat": 37.411,
+          "lon": -118.466,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 394045511
           }
         },
         {
@@ -23322,7 +23380,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23404,7 +23462,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23460,7 +23518,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23546,10 +23604,11 @@
           "status": "wild",
           "importance": 6,
           "mediaId": "hermit-crab",
-          "lat": 13.088,
-          "lon": -61.336,
+          "lat": 13.124,
+          "lon": -61.194,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 234164412
           }
         }
       ]
@@ -23561,7 +23620,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23663,7 +23722,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23765,7 +23824,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23866,7 +23925,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -23950,7 +24009,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24033,7 +24092,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24066,10 +24125,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "clownfish",
-          "lat": -14.251,
-          "lon": -178.077,
+          "lat": -14.314,
+          "lon": -178.067,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 327781255
           }
         },
         {
@@ -24134,7 +24194,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24235,7 +24295,7 @@
       },
       "review": {
         "state": "draft",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24250,10 +24310,11 @@
           "status": "wild",
           "importance": 3,
           "mediaId": "caracal",
-          "lat": 15.328,
-          "lon": 45.874,
+          "lat": 17.102,
+          "lon": 54.45,
           "locationSource": {
-            "source": "legacy-authored-needs-review"
+            "source": "inaturalist",
+            "observationId": 340676432
           }
         },
         {
@@ -24318,7 +24379,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24439,7 +24500,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24542,7 +24603,7 @@
       },
       "review": {
         "state": "reviewed",
-        "by": "openai-geography-location-pass",
+        "by": "openai-geography-inat-pass",
         "at": "2026-08-24"
       },
       "animals": [
@@ -24643,6 +24704,8 @@
     "at": "2026-08-24",
     "rule": "Every visible country animal has an explicit authored or real-observation coordinate; unresolved animals move to alsoWanted rather than receiving a fake marker.",
     "improvedOccurrences": 31,
-    "hiddenUntilLocated": 21
+    "hiddenUntilLocated": 21,
+    "inaturalistImprovedOccurrences": 61,
+    "legacyLocationsRemaining": 233
   }
 }
