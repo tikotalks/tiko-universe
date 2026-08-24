@@ -29,6 +29,7 @@ const flagDir = join(CONTENT_DIR, 'flags')
 const byCountry = await read('country-animals.json')
 const ranges = await read('animal-districts.json')
 const landmarkSource = await read('country-landmarks.json')
+const peopleSource = await read('people.json')
 const countries = (await read('countries.json', GENERATED_DIR)).countries
 const countryName = new Map(countries.map((country) => [country.id, country.name]))
 
@@ -72,6 +73,21 @@ const totalLandmarks = Object.values(landmarkSource.countries)
 const band = (low, high) => landmarks.filter((item) => item.importance >= low && item.importance <= high)
 const named = (id) => countryName.get(id) ?? id
 
+// People: a person with no picture is not shown at all, exactly like an animal —
+// a generic figure standing in for the Sámi would teach a child something false.
+const peopleGaps = (peopleSource.items ?? [])
+  .filter((person) => !hasArtwork(person.mediaId))
+  .map((person) => ({
+    id: person.id,
+    name: person.name,
+    era: person.era,
+    importance: person.importance,
+    countries: person.countries ?? [],
+    note: person.note ?? null,
+  }))
+  .sort((a, b) => a.importance - b.importance || a.name.localeCompare(b.name))
+
+
 const lines = [
   '# Tiko Globe — what the media library is missing',
   '',
@@ -84,8 +100,9 @@ const lines = [
   'A **landmark** with no picture is still on the globe, drawn with its glyph. The',
   'place is real either way; only the artwork is missing.',
   '',
-  `At the time of writing: **${missingAnimals.length} animals** and`,
-  `**${landmarks.length} of ${totalLandmarks} landmarks** have no picture.`,
+  `At the time of writing: **${missingAnimals.length} animals**,`,
+  `**${landmarks.length} of ${totalLandmarks} landmarks** and`,
+  `**${peopleGaps.length} people** have no picture.`,
   '',
   '## Animals',
   '',
@@ -142,6 +159,7 @@ await writeFile(GAPS_FILE, `${JSON.stringify({
     animals: { missing: missingAnimals.length },
     landmarks: { missing: landmarks.length, of: totalLandmarks },
     cities: { missing: cityGaps.length, of: cities.filter((city) => city.isCapital || city.importance <= 4).length },
+    people: { missing: peopleGaps.length, of: peopleSource.items?.length ?? 0 },
     flags: { missing: flagGaps.length, of: countries.length },
   },
   animals: missingAnimals.map((animal) => ({
@@ -157,13 +175,33 @@ await writeFile(GAPS_FILE, `${JSON.stringify({
     importance: landmark.importance,
   })),
   cities: cityGaps,
+  people: peopleGaps.map((person) => ({
+    ...person,
+    countryNames: person.countries.map(named),
+  })),
   flags: flagGaps,
 }, null, 2)}\n`)
+
+lines.push(
+  '',
+  '## People',
+  '',
+  'Like an animal, a person with no picture is not shown at all: a generic figure',
+  'standing in for the Sámi would teach a child something false.',
+  '',
+  '| Person | Era | Importance | Where |',
+  '| --- | --- | --- | --- |',
+)
+for (const person of peopleGaps) {
+  const where = person.countries.length === 0 ? '—' : person.countries.map(named).join(', ')
+  lines.push(`| ${person.name} | ${person.era} | ${person.importance} | ${where} |`)
+}
 
 lines.push('')
 await writeFile(DOC, `${lines.join('\n')}\n`)
 
 process.stdout.write(
   `media gaps: ${missingAnimals.length} animals, ${landmarks.length} of ${totalLandmarks} landmarks, ` +
-  `${cityGaps.length} cities worth a picture, ${flagGaps.length} of ${countries.length} flags\n`
+  `${cityGaps.length} cities worth a picture, ${peopleGaps.length} of ${peopleSource.items?.length ?? 0} people, ` +
+  `${flagGaps.length} of ${countries.length} flags\n`
 )

@@ -9,8 +9,9 @@ in for a sea turtle tells a child something false, and they have no way to know.
 A **landmark** with no picture is still on the globe, drawn with its glyph. The
 place is real either way; only the artwork is missing.
 
-At the time of writing: **332 animals** and
-**1412 of 1432 landmarks** have no picture.
+At the time of writing: **332 animals**,
+**1412 of 1432 landmarks** and
+**11 people** have no picture.
 
 ## Animals
 
@@ -1784,4 +1785,23 @@ Often the only landmark that country has.
 | Ziggurat of Ur | Iraq |
 | Zona Colonial | Dominican Republic |
 | Zuma Rock | Nigeria |
+
+## People
+
+Like an animal, a person with no picture is not shown at all: a generic figure
+standing in for the Sámi would teach a child something false.
+
+| Person | Era | Importance | Where |
+| --- | --- | --- | --- |
+| Ancient Greek | historical | 2 | Greece |
+| Mongol horseman | historical | 2 | Mongolia |
+| Quechua | living | 2 | Peru |
+| Roman legionary | historical | 2 | Italy |
+| Aymara | living | 3 | Bolivia |
+| Bedouin | living | 3 | Saudi Arabia |
+| Flamenco dancer | living | 3 | Spain |
+| Gaucho | living | 3 | Argentina |
+| Terracotta warrior | historical | 3 | People's Republic of China |
+| Mahout | living | 4 | India |
+| Gondolier | living | 5 | Italy |
 

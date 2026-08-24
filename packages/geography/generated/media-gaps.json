@@ -13,6 +13,10 @@
       "missing": 223,
       "of": 241
     },
+    "people": {
+      "missing": 11,
+      "of": 24
+    },
     "flags": {
       "missing": 28,
       "of": 242
@@ -13216,6 +13220,151 @@
       "countryName": "Philippines",
       "importance": 7,
       "isCapital": true
+    }
+  ],
+  "people": [
+    {
+      "id": "person.ancient-greek",
+      "name": "Ancient Greek",
+      "era": "historical",
+      "importance": 2,
+      "countries": [
+        "GRC"
+      ],
+      "note": "Philosophers, playwrights and the first Olympians.",
+      "countryNames": [
+        "Greece"
+      ]
+    },
+    {
+      "id": "person.mongol-horseman",
+      "name": "Mongol horseman",
+      "era": "historical",
+      "importance": 2,
+      "countries": [
+        "MNG"
+      ],
+      "note": "Riders of the steppe, who once crossed a continent on horseback.",
+      "countryNames": [
+        "Mongolia"
+      ]
+    },
+    {
+      "id": "person.quechua",
+      "name": "Quechua",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PER"
+      ],
+      "note": "Speakers of the language of the Inca, farming the high Andes.",
+      "countryNames": [
+        "Peru"
+      ]
+    },
+    {
+      "id": "person.roman-legionary",
+      "name": "Roman legionary",
+      "era": "historical",
+      "importance": 2,
+      "countries": [
+        "ITA"
+      ],
+      "note": "The soldiers of an empire that reached from Britain to Egypt.",
+      "countryNames": [
+        "Italy"
+      ]
+    },
+    {
+      "id": "person.aymara",
+      "name": "Aymara",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BOL"
+      ],
+      "note": "People of the high plateau around Lake Titicaca.",
+      "countryNames": [
+        "Bolivia"
+      ]
+    },
+    {
+      "id": "person.bedouin",
+      "name": "Bedouin",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SAU"
+      ],
+      "note": "Desert people who move with their herds.",
+      "countryNames": [
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "id": "person.flamenco-dancer",
+      "name": "Flamenco dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ESP"
+      ],
+      "note": "Dance, song and guitar from Andalusia.",
+      "countryNames": [
+        "Spain"
+      ]
+    },
+    {
+      "id": "person.gaucho",
+      "name": "Gaucho",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ARG"
+      ],
+      "note": "Horsemen of the pampas.",
+      "countryNames": [
+        "Argentina"
+      ]
+    },
+    {
+      "id": "person.terracotta-warrior",
+      "name": "Terracotta warrior",
+      "era": "historical",
+      "importance": 3,
+      "countries": [
+        "CHN"
+      ],
+      "note": "An army of clay, buried to guard an emperor.",
+      "countryNames": [
+        "People's Republic of China"
+      ]
+    },
+    {
+      "id": "person.mahout",
+      "name": "Mahout",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "IND"
+      ],
+      "note": "Keepers who live and work alongside elephants.",
+      "countryNames": [
+        "India"
+      ]
+    },
+    {
+      "id": "person.gondolier",
+      "name": "Gondolier",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "ITA"
+      ],
+      "note": "Rowers who steer Venice's boats standing up.",
+      "countryNames": [
+        "Italy"
+      ]
     }
   ],
   "flags": [
