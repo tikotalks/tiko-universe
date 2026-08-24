@@ -19,14 +19,46 @@ struct GlobeCamera: Equatable, Sendable {
     /// a street map.
     static let minDistance: Double = 1.0035
     /// Furthest: the complete planet, comfortably inside the frame.
+    /// The furthest the camera goes on a screen shaped like a page. A narrow
+    /// screen needs it further back — see `distanceFitting(aspect:)`.
     static let maxDistance: Double = 4.0
     /// The "show me the whole Earth" home distance.
+    /// The whole Earth on a screen shaped like a page. On anything narrower it
+    /// has to sit further back, which `earthDistance` on the instance knows.
     static let earthDistance: Double = 3.2
+
+    /// Where "the whole Earth" is for this screen: far enough back that the
+    /// sides do not run off, and never closer than the standing default.
+    var earthDistance: Double { max(Self.earthDistance, fittingDistance) }
+
+    /// How far back this screen needs the camera for the globe to fit on it.
+    var fittingDistance: Double = GlobeCamera.earthDistance
     /// Where focusing on a country lands: the country fills the view without
     /// losing the sense that this is a ball.
     static let countryDistance: Double = 1.35
 
     private static let halfFieldOfViewRadians = fieldOfViewDegrees / 2 * .pi / 180
+
+    /// How far back the camera has to sit for the Earth to fit between the
+    /// chrome, top and bottom. Fitting the *width* of a phone held upright
+    /// leaves the globe a small ball in a large empty page; fitting the height
+    /// keeps it as big as the screen allows and lets the sides run off, which
+    /// is what a globe on a narrow screen looks like anyway.
+    static func distanceFitting(viewSize: CGSize, coveredHeight: Double) -> Double {
+        guard viewSize.height > 1 else { return earthDistance }
+        let usable = max(0.35, (viewSize.height - coveredHeight) / viewSize.height)
+        let half = atan(tan(halfFieldOfViewRadians) * usable)
+        // A little room, so the Earth is not touching what sits over it.
+        return max(minDistance, 1 / sin(half) * 1.02)
+    }
+
+    /// The furthest this camera may go, which is exactly as far as the whole
+    /// Earth needs: once all of it is on screen there is nothing further out to
+    /// see, and headroom past that only makes the globe smaller.
+    var maxDistance: Double { earthDistance }
+
+    /// The whole Earth, as far as this screen can show it.
+    var widestVisibleRadius: Double { acos(min(0.999, 1 / maxDistance)) * 180 / .pi }
 
     /// The geographic point in the middle of the screen.
     var centre: GeoPoint {
@@ -44,7 +76,7 @@ struct GlobeCamera: Equatable, Sendable {
     }
 
     var isShowingWholeEarth: Bool {
-        distance >= Self.maxDistance - 0.001 || visibleRadiusDegrees >= 70
+        distance >= maxDistance - 0.001 || visibleRadiusDegrees >= 70
     }
 
     /// How much the globe turns per point dragged. One screen height is roughly
@@ -76,8 +108,8 @@ struct GlobeCamera: Equatable, Sendable {
 
     /// Puts `degrees` of arc on screen, as close as the limits allow.
     mutating func setVisibleRadius(_ degrees: Double) {
-        let radius = min(Self.widestVisibleRadius, max(Self.narrowestVisibleRadius, degrees))
-        distance = min(Self.maxDistance, max(Self.minDistance, Self.distance(forVisibleRadius: radius)))
+        let radius = min(widestVisibleRadius, max(Self.narrowestVisibleRadius, degrees))
+        distance = min(maxDistance, max(Self.minDistance, Self.distance(forVisibleRadius: radius)))
     }
 
     /// The inverse of `visibleRadiusDegrees`, in both of its regimes: inside 70°
@@ -92,7 +124,6 @@ struct GlobeCamera: Equatable, Sendable {
 
     /// The two ends of the ladder, derived from the distance limits so the two
     /// cannot drift apart.
-    static var widestVisibleRadius: Double { acos(1 / maxDistance) * 180 / .pi }
     static var narrowestVisibleRadius: Double {
         (asin(minDistance * sin(halfFieldOfViewRadians)) - halfFieldOfViewRadians) * 180 / .pi
     }
@@ -115,7 +146,7 @@ struct GlobeCamera: Equatable, Sendable {
     mutating func focus(on point: GeoPoint, distance: Double = GlobeCamera.countryDistance) {
         pitch = min(90, max(-90, point.lat))
         yaw = -point.lon
-        self.distance = min(Self.maxDistance, max(Self.minDistance, distance))
+        self.distance = min(maxDistance, max(Self.minDistance, distance))
     }
 
     /// The direction of the camera as seen from the centre of the globe, in

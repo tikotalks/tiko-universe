@@ -65,7 +65,8 @@ struct GlobeView: View {
                 i18n: i18n,
                 onSelect: { country in controller.select(country: country, focus: true) },
                 onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) },
-                appColor: appColor
+                appColor: appColor,
+                onClose: { showingCountryList = false }
             )
         }
     }
@@ -131,22 +132,10 @@ struct GlobeView: View {
 
             VStack(spacing: 12) {
                 Spacer(minLength: 0)
-                if !controller.isShowingWholeEarth {
-                    Button {
-                        controller.showWholeEarth()
-                    } label: {
-                        Label(i18n.t("globe.action.wholeEarth"), systemImage: "globe")
-                            .font(.headline)
-                            .padding(.horizontal, 18)
-                            .frame(minHeight: 44)
-                            .background(.thinMaterial, in: Capsule())
-                    }
-                    .accessibilityIdentifier("globe-whole-earth")
-                    .transition(.opacity)
-                }
                 modeSelector
             }
-            .padding(16)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 16)
             .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: controller.selection)
             .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: controller.isShowingWholeEarth)
         }
@@ -155,7 +144,7 @@ struct GlobeView: View {
     /// The mode switch. One row, large targets, a modelled icon *and* a word
     /// each — changing it leaves the globe exactly where it is.
     private var modeSelector: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 2) {
             ForEach(GlobeMode.allCases) { mode in
                 let isActive = controller.mode == mode
                 Button {
@@ -172,8 +161,8 @@ struct GlobeView: View {
                             .lineLimit(1)
                             .foregroundStyle(isActive ? Color.white : Color.white.opacity(0.8))
                     }
-                    .frame(minWidth: 84, minHeight: 80)
-                    .padding(.horizontal, 6)
+                    .frame(maxWidth: .infinity, minHeight: 74)
+                    .padding(.horizontal, 2)
                     .background {
                         if isActive {
                             RoundedRectangle(cornerRadius: 16, style: .continuous)
@@ -187,7 +176,11 @@ struct GlobeView: View {
                 .accessibilityIdentifier("globe-mode-\(mode.rawValue)")
             }
         }
-        .padding(6)
+        .padding(5)
+        // Wide enough for four, never wider than the screen: on a phone the bar
+        // was pushing the whole overlay out past both edges, which is what took
+        // the zoom buttons off the side with it.
+        .frame(maxWidth: 460)
         // Solid, in the app's own colour: this is Globe's main control and it
         // should look like a thing rather than like frosted glass.
         .background(appColor.palette.primary, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
@@ -438,6 +431,19 @@ struct GlobeView: View {
                 Rectangle().fill(.white.opacity(0.28)).frame(width: 34, height: 1)
                 zoomButton(systemImage: "minus", label: i18n.t("globe.action.zoomOut"), identifier: "globe-zoom-out", enabled: controller.canZoomOut) {
                     controller.zoomStep(by: 1 / GlobeController.zoomStepFactor)
+                }
+                // The way back belongs with the way in and out, not floating in
+                // the middle of the map with a sentence on it.
+                if !controller.isShowingWholeEarth {
+                    Rectangle().fill(.white.opacity(0.28)).frame(width: 34, height: 1)
+                    zoomButton(
+                        systemImage: "globe",
+                        label: i18n.t("globe.action.wholeEarth"),
+                        identifier: "globe-whole-earth",
+                        enabled: true
+                    ) {
+                        controller.showWholeEarth()
+                    }
                 }
             }
             .background(appColor.palette.primary, in: RoundedRectangle(cornerRadius: 18, style: .continuous))

@@ -38,7 +38,10 @@ final class GlobeCameraTests: XCTestCase {
         XCTAssertEqual(camera.distance, GlobeCamera.minDistance, accuracy: 0.0001)
         XCTAssertLessThan(camera.visibleRadiusDegrees, 3, "the deepest zoom is a region, never a street")
         for _ in 0..<40 { camera.zoom(by: 0.5) }
-        XCTAssertEqual(camera.distance, GlobeCamera.maxDistance, accuracy: 0.0001)
+        // As far out as it goes *is* the whole Earth: once all of it is on
+        // screen there is nothing further out to see.
+        XCTAssertEqual(camera.distance, camera.maxDistance, accuracy: 0.0001)
+        XCTAssertEqual(camera.distance, camera.earthDistance, accuracy: 0.0001)
         XCTAssertTrue(camera.isShowingWholeEarth)
         XCTAssertGreaterThan(camera.visibleRadiusDegrees, 70, "zoomed out, the planet is a whole ball again")
     }
@@ -127,11 +130,34 @@ final class GlobeCameraTests: XCTestCase {
     }
 
     func testVisibleRadiusRoundTripsThroughDistance() {
-        for degrees in [75.0, 60.0, 40.0, 20.0, 10.0, 5.0, 1.0, 0.3] {
+        for degrees in [70.0, 60.0, 40.0, 20.0, 10.0, 5.0, 1.0, 0.3] {
             var camera = GlobeCamera()
             camera.setVisibleRadius(degrees)
             XCTAssertEqual(camera.visibleRadiusDegrees, degrees, accuracy: 0.01, "\(degrees)°")
         }
+
+        // Asking for more than the screen can hold gives what it can hold.
+        var camera = GlobeCamera()
+        camera.setVisibleRadius(180)
+        XCTAssertEqual(camera.visibleRadiusDegrees, camera.widestVisibleRadius, accuracy: 0.01)
+    }
+
+    func testTheWholeEarthMeansTheWholeEarthOnTheScreenItIsDrawnInto() {
+        // A phone held upright has far less room above and below the globe than
+        // a tablet does, and the camera has to sit further back for all of it
+        // to fit between the toolbar and the mode bar.
+        let phone = GlobeCamera.distanceFitting(viewSize: CGSize(width: 393, height: 852), coveredHeight: 210)
+        let tablet = GlobeCamera.distanceFitting(viewSize: CGSize(width: 1032, height: 1376), coveredHeight: 210)
+        XCTAssertGreaterThan(phone, tablet, "the narrower the screen, the further back the Earth sits")
+        XCTAssertGreaterThanOrEqual(tablet, GlobeCamera.earthDistance - 0.0001)
+
+        var camera = GlobeCamera()
+        camera.fittingDistance = phone
+        XCTAssertEqual(camera.earthDistance, phone, accuracy: 0.0001)
+        // And the globe really does fit: its silhouette inside the usable half.
+        let usable = (852.0 - 210) / 852
+        let halfUsable = atan(tan(GlobeCamera.fieldOfViewDegrees / 2 * .pi / 180) * usable)
+        XCTAssertLessThanOrEqual(asin(1 / camera.earthDistance), halfUsable)
     }
 
     func testHitToleranceGrowsWithTheVisibleArea() {

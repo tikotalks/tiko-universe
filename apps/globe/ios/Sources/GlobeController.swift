@@ -32,6 +32,9 @@ struct GlobePlacedMarker: Identifiable, Equatable {
 /// authored 1…10; this table says how deep to go, and is a presentation choice
 /// that can be retuned without touching the data.
 extension GlobeController {
+    /// Roughly what the controls cover, top and bottom, in points.
+    static let chromeHeight: Double = 210
+
     /// Below this much of the world on screen, a country's states are what a
     /// child is looking at, and their names are worth more than its own.
     static let subdivisionLabelRadius: Double = 26
@@ -114,7 +117,31 @@ final class GlobeController: ObservableObject {
     @Published private(set) var subdivisions: GlobeSubdivisionGeometry?
 
     /// Set by the surface view; labels cannot be placed without it.
-    var viewSize: CGSize = .zero
+    private var hasFittedCamera = false
+    var viewSize: CGSize = .zero {
+        didSet {
+            guard viewSize != oldValue, viewSize.height > 0 else { return }
+            // How far back the whole Earth has to sit to fit on this screen. A
+            // phone held upright is much narrower than the field of view is
+            // tall, and the globe was losing its sides off both edges.
+            let wasWide = camera.distance >= camera.earthDistance - 0.001
+            let first = !hasFittedCamera
+            hasFittedCamera = true
+            // The mode bar and the toolbar sit over the globe; the Earth should
+            // fit in what is left rather than behind them.
+            camera.fittingDistance = GlobeCamera.distanceFitting(
+                viewSize: viewSize,
+                coveredHeight: Self.chromeHeight
+            )
+            // The app opens on the whole Earth, and a globe already showing it
+            // keeps showing it when the screen changes shape — otherwise the
+            // distance still means "everything" on a screen it no longer draws
+            // into, and the sides run off the edges.
+            if first || wasWide { camera.distance = camera.earthDistance }
+            if camera.distance > camera.maxDistance { camera.distance = camera.maxDistance }
+            refreshCameraFlags()
+        }
+    }
 
     private(set) var geography: GlobeGeography?
     private(set) var content = GlobeContentLibrary()
@@ -444,7 +471,7 @@ final class GlobeController: ObservableObject {
 
     func showWholeEarth() {
         var target = camera
-        target.distance = GlobeCamera.earthDistance
+        target.distance = camera.earthDistance
         move(to: target)
     }
 
@@ -459,7 +486,7 @@ final class GlobeController: ObservableObject {
         // Invert `visibleRadiusDegrees`: the distance whose visible cap is `radius`.
         let halfFov = GlobeCamera.fieldOfViewDegrees / 2 * .pi / 180
         let distance = sin(radius * .pi / 180 + halfFov) / sin(halfFov)
-        return min(GlobeCamera.maxDistance, max(GlobeCamera.minDistance, distance))
+        return min(camera.maxDistance, max(GlobeCamera.minDistance, distance))
     }
 
     private func move(to target: GlobeCamera) {
@@ -827,11 +854,11 @@ final class GlobeController: ObservableObject {
         if showing != isShowingWholeEarth { isShowingWholeEarth = showing }
         let zoomIn = camera.distance > GlobeCamera.minDistance + 0.0001
         if zoomIn != canZoomIn { canZoomIn = zoomIn }
-        let zoomOut = camera.distance < GlobeCamera.maxDistance - 0.0001
+        let zoomOut = camera.distance < camera.maxDistance - 0.0001
         if zoomOut != canZoomOut { canZoomOut = zoomOut }
 
         // Between 1 and 2, on the same ladder the zoom itself uses.
-        let widest = log(GlobeCamera.widestVisibleRadius)
+        let widest = log(camera.widestVisibleRadius)
         let narrowest = log(max(GlobeCamera.narrowestVisibleRadius, 0.01))
         let here = log(max(camera.visibleRadiusDegrees, 0.01))
         let closeness = min(1, max(0, (widest - here) / (widest - narrowest)))

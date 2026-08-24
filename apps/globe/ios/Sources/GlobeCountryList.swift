@@ -16,7 +16,10 @@ struct GlobeCountryList: View {
     let onSelectEntity: (GlobeEntity) -> Void
     let appColor: TikoAppColor
 
-    @Environment(\.dismiss) private var dismiss
+    /// Closing is the caller's to do: inside a Tiko popup there is no
+    /// presentation for the environment's dismiss to act on, so it did nothing
+    /// at all — neither the close button nor picking a country shut the sheet.
+    let onClose: () -> Void
     @State private var search = ""
 
     private var sorted: [GlobeCountry] {
@@ -39,7 +42,8 @@ struct GlobeCountryList: View {
             title: i18n.t("globe.list.title"),
             icon: "list.bullet",
             appColor: appColor,
-            onClose: { dismiss() }
+            opaque: true,
+            onClose: onClose
         ) {
             VStack(spacing: 0) {
                 searchField
@@ -78,7 +82,7 @@ struct GlobeCountryList: View {
                     ForEach(sortedEntities, id: \.entity.id) { row in
                         Button {
                             onSelectEntity(row.entity)
-                            dismiss()
+                            onClose()
                         } label: {
                             HStack(spacing: 12) {
                                 GlobeMarkerImage(entity: row.entity, size: 32)
@@ -96,7 +100,7 @@ struct GlobeCountryList: View {
                 ForEach(sorted) { country in
                     Button {
                         onSelect(country)
-                        dismiss()
+                        onClose()
                     } label: {
                         HStack(spacing: 12) {
                             GlobeFlagImage(country: country, size: 28)
@@ -111,7 +115,7 @@ struct GlobeCountryList: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .overlay {
             if sorted.isEmpty && sortedEntities.isEmpty {

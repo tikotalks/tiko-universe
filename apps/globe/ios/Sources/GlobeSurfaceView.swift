@@ -75,6 +75,11 @@ struct GlobeSurfaceView: UIViewRepresentable {
         /// in progress — a pinch owns the globe outright, so one finger landing
         /// a moment before the other cannot also spin it.
         private var pinchAnchor: GeoPoint?
+        /// True from the moment a pinch starts until the drag that overlapped it
+        /// finishes. Two fingers drive the pan recogniser as well, and when they
+        /// lift one at a time it reports a velocity nobody asked for — which is
+        /// the globe sliding somewhere else the instant a child stops zooming.
+        private var pinchedDuringDrag = false
         private var isPinching = false
 
         init(controller: GlobeController) {
@@ -92,6 +97,7 @@ struct GlobeSurfaceView: UIViewRepresentable {
             switch recognizer.state {
             case .began:
                 lastTranslation = .zero
+                pinchedDuringDrag = isPinching
                 controller.beginInteraction()
             case .changed:
                 guard !isPinching else { return }
@@ -103,7 +109,12 @@ struct GlobeSurfaceView: UIViewRepresentable {
                 )
                 lastTranslation = translation
             case .ended, .cancelled:
-                guard !isPinching else { return }
+                guard !isPinching, !pinchedDuringDrag else {
+                    pinchedDuringDrag = false
+                    // Stop dead where the fingers left it, rather than drifting.
+                    controller.endDrag(velocityX: 0, velocityY: 0, viewSize: view.bounds.size)
+                    return
+                }
                 let velocity = recognizer.velocity(in: view)
                 controller.endDrag(
                     velocityX: Double(velocity.x),
@@ -120,6 +131,7 @@ struct GlobeSurfaceView: UIViewRepresentable {
             switch recognizer.state {
             case .began:
                 isPinching = true
+                pinchedDuringDrag = true
                 controller.beginInteraction()
                 // The midpoint between the fingers, in geography.
                 pinchAnchor = controller.camera.geoPoint(

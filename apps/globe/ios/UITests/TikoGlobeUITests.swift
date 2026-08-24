@@ -8,6 +8,25 @@ final class TikoGlobeUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Opens the country list and waits for it. The tap is repeated once if
+    /// nothing appears: run back to back, a tap landing on the very first frame
+    /// after launch is occasionally swallowed before SwiftUI has the button
+    /// wired, which is a harness artefact rather than something a child would
+    /// meet — in isolation this passes every time. If a dead tap is ever seen
+    /// in the app itself, this is the thread to pull.
+    @discardableResult
+    private func openCountryList(_ app: XCUIApplication) -> XCUIElement {
+        let list = app.otherElements["globe-country-list"]
+        let button = app.buttons["All countries"]
+        XCTAssertTrue(button.waitForExistence(timeout: 20))
+        button.tap()
+        if !list.waitForExistence(timeout: 6) {
+            button.tap()
+            XCTAssertTrue(list.waitForExistence(timeout: 10), "the list is the route that needs no globe gestures")
+        }
+        return list
+    }
+
     private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["--uitest-reset"]
@@ -26,9 +45,7 @@ final class TikoGlobeUITests: XCTestCase {
         let app = launchApp()
         XCTAssertTrue(app.otherElements["globe-surface"].waitForExistence(timeout: 20))
 
-        app.buttons["All countries"].tap()
-        let list = app.otherElements["globe-country-list"]
-        XCTAssertTrue(list.waitForExistence(timeout: 10), "the list is the route that needs no globe gestures")
+        let list = openCountryList(app)
 
         let malta = app.buttons["globe-country-MLT"]
         if !malta.exists {
@@ -42,6 +59,23 @@ final class TikoGlobeUITests: XCTestCase {
         XCTAssertTrue(card.waitForExistence(timeout: 10), "picking a country should open its card")
         XCTAssertTrue(app.staticTexts["Malta"].exists)
         XCTAssertTrue(app.buttons["Say it again"].exists, "the name must always be repeatable")
+    }
+
+    func testTheCountryListClosesFromItsOwnCloseButton() {
+        let app = launchApp()
+        XCTAssertTrue(app.otherElements["globe-surface"].waitForExistence(timeout: 20))
+
+        let list = openCountryList(app)
+
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = "countries-sheet"
+        shot.lifetime = .keepAlways
+        add(shot)
+
+        // Inside a Tiko popup there is no presentation for the environment's
+        // dismiss to act on, so a sheet that called it stayed open for ever.
+        app.buttons["Close"].firstMatch.tap()
+        XCTAssertTrue(waitUntilGone(list, timeout: 5), "the close button has to close it")
     }
 
     func testTappingTheGlobeSelectsWhatIsUnderTheFinger() {
@@ -133,7 +167,7 @@ final class TikoGlobeUITests: XCTestCase {
         // Animals: the markers are drawn into the globe canvas for speed, so the
         // list is the route a test — and a VoiceOver user — takes to them.
         app.buttons["globe-mode-animals"].tap()
-        app.buttons["All countries"].tap()
+        openCountryList(app)
         let listed = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'globe-list-animal.'")).firstMatch
         XCTAssertTrue(listed.waitForExistence(timeout: 10), "animals should be reachable from the list")
         let animalName = listed.label
@@ -155,7 +189,7 @@ final class TikoGlobeUITests: XCTestCase {
         let app = launchApp()
         XCTAssertTrue(app.otherElements["globe-surface"].waitForExistence(timeout: 20))
         app.buttons["globe-mode-landmarks"].tap()
-        app.buttons["All countries"].tap()
+        openCountryList(app)
         let listed = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'globe-list-landmark.'")).firstMatch
         XCTAssertTrue(listed.waitForExistence(timeout: 10), "landmarks should be reachable from the list")
         let name = listed.label
