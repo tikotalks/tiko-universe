@@ -57,7 +57,7 @@ Animals a country genuinely has that Globe cannot list at all yet.
 
 ## Landmarks — the famous ones
 
-Visible from the whole-Earth view. These are the ones a child goes looking for.
+Importance 1–3: visible from the whole-Earth view. These are the ones a child goes looking for.
 
 | Landmark | Country |
 | --- | --- |
@@ -94,7 +94,7 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 
 ## Landmarks — well known
 
-Visible once a child is looking at a region.
+Importance 4–6: visible once a child is looking at a region.
 
 | Landmark | Country |
 | --- | --- |
@@ -196,7 +196,7 @@ Visible once a child is looking at a region.
 
 ## Landmarks — one per country
 
-Visible at country zoom. Often the only landmark that country has.
+Importance 7–10: visible at country zoom. Often the only landmark that country has.
 
 | Landmark | Country |
 | --- | --- |

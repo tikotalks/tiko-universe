@@ -94,8 +94,10 @@ Each country carries a review state:
   "review": { "state": "verified", "by": "sil", "at": "2026-08-24" },
   "animals": [
     {
+      "id": "chameleon",                        // identity — never the name
       "name": "Chameleon",
       "at": { "lat": 35.893, "lon": 14.433 },   // where it stands in this country
+      "importance": 3,                          // optional: this country's own
       "note": "Naturalised; common on Malta and Gozo"
     }
   ],
@@ -104,6 +106,18 @@ Each country carries a review state:
   ]
 }
 ```
+
+### Identity is the id
+
+Every animal and landmark carries an `id` — a lowercase slug, `chameleon`,
+`grand-harbour`. That id is what the app looks the subject up by, what its
+picture is filed under, and what its translations hang off
+(`geography.animals.chameleon`). The `name` beside it is English, and is only
+what shows when a translation is missing.
+
+So: rename a `name` freely — it is a label. Change an `id` and it becomes a
+different subject, losing its picture and its translations with it. A new entry
+may leave `id` out; the build fills it in from the name and writes it back.
 
 ### Positions and importance
 
@@ -114,7 +128,9 @@ Every marker has real coordinates, and every subject has an importance from
 - `at` in `animal-districts.json` is where the animal appears across the region
   it lives in, one entry per district point.
 - `importance` lives on the subject: in `animal-districts.json` for an animal,
-  on each landmark in `country-landmarks.json`.
+  on each landmark in `country-landmarks.json`. A country's own entry may set
+  its own `importance`, for an animal that matters more there than elsewhere —
+  the ibex is worth showing sooner in Switzerland than in the Alps at large.
 
 Both are ordinary data. Set them by hand and the build keeps them; leave them
 out and the build works them out and writes them back, so the file always shows
@@ -126,7 +142,7 @@ everything at the closest zoom.
   241 of the 242 countries are today.
 - `state: "verified"` — a person has been through the list; `by` and `at` say who
   and when. The checker rejects `verified` without them.
-- `animals[].name` must be a title in the Tiko media library. A name with no
+- `animals[].id` must match a title in the Tiko media library (as its slug). A name with no
   picture is not shown on the globe and appears in
   [`docs/apps/globe-media-gaps.md`](../../docs/apps/globe-media-gaps.md).
 - `alsoWanted` records animals the country genuinely has that Globe cannot show

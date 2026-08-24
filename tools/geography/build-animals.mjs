@@ -33,7 +33,7 @@ const slug = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(
 /**
  * What shows first as a child zooms out. Big, famous mammals carry the whole
  * Earth; the insects and the reef life are there for someone who has zoomed
- * into a reef. Tier decides both priority and the zoom a marker appears at.
+ * into a reef. Importance decides the zoom a marker appears at.
  */
 const ICONIC = new Set(['african elephant', 'elephant', 'asian elephant', 'lion', 'tiger', 'giraffe',
   'zebra', 'giant panda', 'polar bear', 'brown bear', 'grizzly bear', 'gorilla', 'kangaroo', 'koala',
@@ -70,13 +70,6 @@ function tierFor(key) {
     if (group.test.test(key)) return group.tier
   }
   return 2
-}
-
-/** Order within one importance band, stable per animal. */
-function priorityFor(key, importance) {
-  let hash = 0
-  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) & 0xffff
-  return (11 - importance) * 9 + (hash % 9)
 }
 
 async function library() {
@@ -178,19 +171,42 @@ const ANIMAL_DISTRICTS = Object.fromEntries(
 const NEAREST_AVAILABLE = districtSource.renames ?? {}
 const countryAnimals = JSON.parse(await readFile(join(CONTENT_DIR, 'country-animals.json'), 'utf8'))
 
+/**
+ * An authored entry is identified by its id. Entries written before ids existed
+ * carry only a name, so one is derived from it — the same slug the pack is
+ * built with, which is what makes the two sides meet.
+ */
+const keyOf = (entry) => entry.id ?? slug(entry.name)
+
+/** The same id, taken off a built pack item. */
+const packKey = (item) => item.id.replace(/^animal\./, '')
+
+/** The authored entry for one animal in one country, found by id. */
+function countryEntry(countryId, id) {
+  return countryAnimals.countries[countryId]?.animals.find((animal) => keyOf(animal) === id)
+}
+
 /** Where an animal stands in a country, if somebody has said so. */
-function authoredCountryPoint(countryId, name) {
-  const entry = countryAnimals.countries[countryId]?.animals.find((animal) => animal.name === name)
+function authoredCountryPoint(countryId, id) {
+  const entry = countryEntry(countryId, id)
   return entry?.at ? { lat: entry.at.lat, lon: entry.at.lon } : null
 }
 
-function rememberCountryPoint(countryId, name, point) {
-  const entry = countryAnimals.countries[countryId]?.animals.find((animal) => animal.name === name)
+function rememberCountryPoint(countryId, id, point) {
+  const entry = countryEntry(countryId, id)
   if (!entry) return
+  entry.id = id
   entry.at = { lat: point.lat, lon: point.lon }
 }
+
+/** An importance authored for this animal in this country beats the general one. */
+function authoredCountryImportance(countryId, id) {
+  const value = countryEntry(countryId, id)?.importance
+  return value >= 1 && value <= 10 ? value : null
+}
+
 const COUNTRY_ANIMALS = Object.fromEntries(
-  Object.entries(countryAnimals.countries).map(([id, entry]) => [id, entry.animals.map((animal) => animal.name)])
+  Object.entries(countryAnimals.countries).map(([id, entry]) => [id, entry.animals])
 )
 
 const districts = JSON.parse(await readFile(join(CONTENT_DIR, 'districts.json'), 'utf8'))
@@ -268,7 +284,6 @@ for (const item of media) {
     name: title,
     glyph: '🐾',
     importance,
-    priority: priorityFor(key, importance),
     districts: placement,
     region: regions.join(' · '),
     countries,
@@ -311,7 +326,6 @@ for (const [key, placement] of Object.entries(ANIMAL_DISTRICTS)) {
     name: title,
     glyph: '🐾',
     importance,
-    priority: priorityFor(key, importance),
     districts: placement,
     region: regions.join(' · '),
     countries,
@@ -330,6 +344,7 @@ const generated = JSON.parse(await readFile(join(OUT_DIR_COUNTRIES, 'countries.j
 // country-animals.mjs, standing inside its outline. A region cannot tell the
 // Netherlands from Romania, so the list is authored rather than derived.
 const byName = new Map(items.map((item) => [item.name.toLowerCase(), item]))
+const byId = new Map(items.map((item) => [packKey(item), item]))
 const substitutions = new Map()
 const unavailable = new Set()
 
@@ -367,18 +382,25 @@ function landCountriesOf(item) {
   return new Set(districtsOfItem.flatMap((id) => districtCountries.get(id) ?? []))
 }
 
-function resolveAnimal(name) {
-  const direct = byName.get(name.toLowerCase())
+/**
+ * The id decides which animal an authored entry means. The name is only a
+ * fallback for entries written before ids, and for reading the file.
+ */
+function resolveAnimal(entry) {
+  const id = keyOf(entry)
+  const direct = byId.get(id) ?? (entry.name ? byName.get(entry.name.toLowerCase()) : null)
   if (direct) return direct
-  const nearest = NEAREST_AVAILABLE[name]
+  // A rename is the same animal under another title — the library filed the
+  // Maltese wall lizard as a wall lizard. It is never a different species.
+  const nearest = NEAREST_AVAILABLE[entry.name] ?? NEAREST_AVAILABLE[id]
   if (nearest) {
-    const stand = byName.get(nearest.toLowerCase())
+    const stand = byId.get(slug(nearest)) ?? byName.get(nearest.toLowerCase())
     if (stand) {
-      substitutions.set(name, nearest)
+      substitutions.set(entry.name ?? id, nearest)
       return stand
     }
   }
-  unavailable.add(name)
+  unavailable.add(entry.name ?? id)
   return null
 }
 
@@ -386,7 +408,12 @@ let countryPlacements = 0
 const thin = []
 for (const country of generated) {
   const wanted = COUNTRY_ANIMALS[country.id] ?? []
-  let residents = [...new Set(wanted.map(resolveAnimal).filter(Boolean))].slice(0, PER_COUNTRY)
+  const authoredFor = new Map()
+  for (const entry of wanted) {
+    const resolved = resolveAnimal(entry)
+    if (resolved && !authoredFor.has(resolved)) authoredFor.set(resolved, entry)
+  }
+  let residents = [...authoredFor.keys()].slice(0, PER_COUNTRY)
 
   // No automatic top-up. Filling a country from its region put a fox, a hare, a
   // wild boar and a tortoise in Malta, none of which live there — the region is
@@ -399,7 +426,7 @@ for (const country of generated) {
     .filter((item) => !residents.includes(item)
       && livesInWaterOnly(item)
       && item.districts.some((id) => marineDistrictIds.has(id) && (districtCountries.get(id) ?? []).includes(country.id)))
-    .sort((a, b) => a.importance - b.importance || b.priority - a.priority)
+    .sort((a, b) => a.importance - b.importance || a.id.localeCompare(b.id))
     .slice(0, SEA_PER_COUNTRY)
   residents = [...residents, ...seaExtras]
 
@@ -413,24 +440,52 @@ for (const country of generated) {
     : []
 
   onLand.forEach((resident, index) => {
-    const point = authoredCountryPoint(country.id, resident.name) ?? inside[index]
+    const authored = authoredFor.get(resident)
+    const id = authored ? keyOf(authored) : packKey(resident)
+    const point = authoredCountryPoint(country.id, id) ?? inside[index]
     if (!point) return
-    rememberCountryPoint(country.id, resident.name, point)
+    rememberCountryPoint(country.id, id, point)
     // Only visible once the child is inside the country: these exist to fill a
     // zoomed-in country, not to crowd the continent.
-    resident.markers.push({ lat: point.lat, lon: point.lon, country: country.id, closeUp: true })
+    const importance = authoredCountryImportance(country.id, id)
+    resident.markers.push({
+      lat: point.lat,
+      lon: point.lon,
+      country: country.id,
+      closeUp: true,
+      ...(importance ? { importance } : {})
+    })
     countryPlacements += 1
   })
   atSea.forEach((resident, index) => {
-    const point = authoredCountryPoint(country.id, resident.name) ?? offshore[index]
+    const authored = authoredFor.get(resident)
+    const id = authored ? keyOf(authored) : packKey(resident)
+    const point = authoredCountryPoint(country.id, id) ?? offshore[index]
     if (!point) return
-    rememberCountryPoint(country.id, resident.name, point)
-    resident.markers.push({ lat: point.lat, lon: point.lon, country: country.id, closeUp: true, atSea: true })
+    rememberCountryPoint(country.id, id, point)
+    const importance = authoredCountryImportance(country.id, id)
+    resident.markers.push({
+      lat: point.lat,
+      lon: point.lon,
+      country: country.id,
+      closeUp: true,
+      atSea: true,
+      ...(importance ? { importance } : {})
+    })
     countryPlacements += 1
   })
 }
 
 items.sort((a, b) => a.name.localeCompare(b.name))
+
+// The authored file carries the ids from now on, so renaming an English title
+// cannot quietly turn one animal into another. The id leads each entry.
+for (const entry of Object.values(countryAnimals.countries)) {
+  entry.animals = entry.animals.map((animal) => {
+    const { id, name, ...rest } = animal
+    return { id: id ?? slug(name), name, ...rest }
+  })
+}
 
 if (WRITE) {
   // The authored files carry the positions from now on.

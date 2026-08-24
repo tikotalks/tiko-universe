@@ -15,6 +15,7 @@
       },
       "landmarks": [
         {
+          "id": "eiffel-tower",
           "name": "Eiffel Tower",
           "lat": 48.858,
           "lon": 2.294,
@@ -23,6 +24,7 @@
           "importance": 2
         },
         {
+          "id": "louvre",
           "name": "Louvre",
           "lat": 48.861,
           "lon": 2.336,
@@ -31,6 +33,7 @@
           "importance": 2
         },
         {
+          "id": "notre-dame-de-paris",
           "name": "Notre-Dame de Paris",
           "lat": 48.853,
           "lon": 2.35,
@@ -39,6 +42,7 @@
           "importance": 2
         },
         {
+          "id": "arc-de-triomphe",
           "name": "Arc de Triomphe",
           "lat": 48.874,
           "lon": 2.295,
@@ -47,6 +51,7 @@
           "importance": 5
         },
         {
+          "id": "sacr-c-ur",
           "name": "Sacré-Cœur",
           "lat": 48.887,
           "lon": 2.343,
@@ -55,6 +60,7 @@
           "importance": 5
         },
         {
+          "id": "palace-of-versailles",
           "name": "Palace of Versailles",
           "lat": 48.805,
           "lon": 2.12,
@@ -63,6 +69,7 @@
           "importance": 5
         },
         {
+          "id": "mont-saint-michel",
           "name": "Mont Saint-Michel",
           "lat": 48.636,
           "lon": -1.511,
@@ -71,6 +78,7 @@
           "importance": 5
         },
         {
+          "id": "pont-du-gard",
           "name": "Pont du Gard",
           "lat": 43.947,
           "lon": 4.535,
@@ -89,6 +97,7 @@
       },
       "landmarks": [
         {
+          "id": "big-ben",
           "name": "Big Ben",
           "lat": 51.501,
           "lon": -0.125,
@@ -97,6 +106,7 @@
           "importance": 2
         },
         {
+          "id": "tower-bridge",
           "name": "Tower Bridge",
           "lat": 51.506,
           "lon": -0.075,
@@ -105,6 +115,7 @@
           "importance": 2
         },
         {
+          "id": "stonehenge",
           "name": "Stonehenge",
           "lat": 51.179,
           "lon": -1.826,
@@ -113,6 +124,7 @@
           "importance": 2
         },
         {
+          "id": "buckingham-palace",
           "name": "Buckingham Palace",
           "lat": 51.501,
           "lon": -0.142,
@@ -121,6 +133,7 @@
           "importance": 5
         },
         {
+          "id": "edinburgh-castle",
           "name": "Edinburgh Castle",
           "lat": 55.949,
           "lon": -3.2,
@@ -129,6 +142,7 @@
           "importance": 5
         },
         {
+          "id": "giant-s-causeway",
           "name": "Giant's Causeway",
           "lat": 55.241,
           "lon": -6.512,
@@ -147,6 +161,7 @@
       },
       "landmarks": [
         {
+          "id": "colosseum",
           "name": "Colosseum",
           "lat": 41.89,
           "lon": 12.492,
@@ -155,6 +170,7 @@
           "importance": 2
         },
         {
+          "id": "leaning-tower-of-pisa",
           "name": "Leaning Tower of Pisa",
           "lat": 43.723,
           "lon": 10.397,
@@ -163,6 +179,7 @@
           "importance": 2
         },
         {
+          "id": "st-mark-s-square",
           "name": "St Mark's Square",
           "lat": 45.434,
           "lon": 12.339,
@@ -171,6 +188,7 @@
           "importance": 5
         },
         {
+          "id": "trevi-fountain",
           "name": "Trevi Fountain",
           "lat": 41.901,
           "lon": 12.483,
@@ -179,6 +197,7 @@
           "importance": 5
         },
         {
+          "id": "mount-vesuvius",
           "name": "Mount Vesuvius",
           "lat": 40.822,
           "lon": 14.426,
@@ -187,6 +206,7 @@
           "importance": 5
         },
         {
+          "id": "duomo-of-florence",
           "name": "Duomo of Florence",
           "lat": 43.773,
           "lon": 11.256,
@@ -205,6 +225,7 @@
       },
       "landmarks": [
         {
+          "id": "st-peter-s-basilica",
           "name": "St Peter's Basilica",
           "lat": 41.902,
           "lon": 12.454,
@@ -223,6 +244,7 @@
       },
       "landmarks": [
         {
+          "id": "sagrada-fam-lia",
           "name": "Sagrada Família",
           "lat": 41.404,
           "lon": 2.174,
@@ -231,6 +253,7 @@
           "importance": 2
         },
         {
+          "id": "alhambra",
           "name": "Alhambra",
           "lat": 37.176,
           "lon": -3.588,
@@ -239,6 +262,7 @@
           "importance": 5
         },
         {
+          "id": "park-g-ell",
           "name": "Park Güell",
           "lat": 41.414,
           "lon": 2.153,
@@ -247,6 +271,7 @@
           "importance": 8
         },
         {
+          "id": "seville-cathedral",
           "name": "Seville Cathedral",
           "lat": 37.386,
           "lon": -5.993,
@@ -265,6 +290,7 @@
       },
       "landmarks": [
         {
+          "id": "bel-m-tower",
           "name": "Belém Tower",
           "lat": 38.692,
           "lon": -9.216,
@@ -273,6 +299,7 @@
           "importance": 5
         },
         {
+          "id": "pena-palace",
           "name": "Pena Palace",
           "lat": 38.788,
           "lon": -9.391,
@@ -291,6 +318,7 @@
       },
       "landmarks": [
         {
+          "id": "brandenburg-gate",
           "name": "Brandenburg Gate",
           "lat": 52.516,
           "lon": 13.378,
@@ -299,6 +327,7 @@
           "importance": 2
         },
         {
+          "id": "neuschwanstein-castle",
           "name": "Neuschwanstein Castle",
           "lat": 47.558,
           "lon": 10.75,
@@ -307,6 +336,7 @@
           "importance": 2
         },
         {
+          "id": "cologne-cathedral",
           "name": "Cologne Cathedral",
           "lat": 50.941,
           "lon": 6.958,
@@ -325,6 +355,7 @@
       },
       "landmarks": [
         {
+          "id": "windmills-of-kinderdijk",
           "name": "Windmills of Kinderdijk",
           "lat": 51.884,
           "lon": 4.64,
@@ -333,6 +364,7 @@
           "importance": 5
         },
         {
+          "id": "rijksmuseum",
           "name": "Rijksmuseum",
           "lat": 52.36,
           "lon": 4.885,
@@ -341,6 +373,7 @@
           "importance": 5
         },
         {
+          "id": "anne-frank-house",
           "name": "Anne Frank House",
           "lat": 52.375,
           "lon": 4.884,
@@ -349,6 +382,7 @@
           "importance": 8
         },
         {
+          "id": "delta-works",
           "name": "Delta Works",
           "lat": 51.622,
           "lon": 3.842,
@@ -367,6 +401,7 @@
       },
       "landmarks": [
         {
+          "id": "grand-place-of-brussels",
           "name": "Grand-Place of Brussels",
           "lat": 50.847,
           "lon": 4.352,
@@ -375,6 +410,7 @@
           "importance": 5
         },
         {
+          "id": "atomium",
           "name": "Atomium",
           "lat": 50.895,
           "lon": 4.341,
@@ -393,6 +429,7 @@
       },
       "landmarks": [
         {
+          "id": "luxembourg-old-town",
           "name": "Luxembourg Old Town",
           "lat": 49.611,
           "lon": 6.131,
@@ -411,6 +448,7 @@
       },
       "landmarks": [
         {
+          "id": "matterhorn",
           "name": "Matterhorn",
           "lat": 45.977,
           "lon": 7.658,
@@ -419,6 +457,7 @@
           "importance": 2
         },
         {
+          "id": "chapel-bridge",
           "name": "Chapel Bridge",
           "lat": 47.052,
           "lon": 8.308,
@@ -437,6 +476,7 @@
       },
       "landmarks": [
         {
+          "id": "sch-nbrunn-palace",
           "name": "Schönbrunn Palace",
           "lat": 48.185,
           "lon": 16.312,
@@ -445,6 +485,7 @@
           "importance": 5
         },
         {
+          "id": "hallstatt",
           "name": "Hallstatt",
           "lat": 47.562,
           "lon": 13.649,
@@ -463,6 +504,7 @@
       },
       "landmarks": [
         {
+          "id": "cliffs-of-moher",
           "name": "Cliffs of Moher",
           "lat": 52.972,
           "lon": -9.427,
@@ -471,6 +513,7 @@
           "importance": 5
         },
         {
+          "id": "rock-of-cashel",
           "name": "Rock of Cashel",
           "lat": 52.52,
           "lon": -7.891,
@@ -489,6 +532,7 @@
       },
       "landmarks": [
         {
+          "id": "geysir",
           "name": "Geysir",
           "lat": 64.313,
           "lon": -20.302,
@@ -497,6 +541,7 @@
           "importance": 5
         },
         {
+          "id": "gullfoss",
           "name": "Gullfoss",
           "lat": 64.327,
           "lon": -20.121,
@@ -515,6 +560,7 @@
       },
       "landmarks": [
         {
+          "id": "geirangerfjord",
           "name": "Geirangerfjord",
           "lat": 62.101,
           "lon": 7.006,
@@ -523,6 +569,7 @@
           "importance": 5
         },
         {
+          "id": "bryggen",
           "name": "Bryggen",
           "lat": 60.397,
           "lon": 5.324,
@@ -541,6 +588,7 @@
       },
       "landmarks": [
         {
+          "id": "vasa-museum",
           "name": "Vasa Museum",
           "lat": 59.328,
           "lon": 18.091,
@@ -549,6 +597,7 @@
           "importance": 8
         },
         {
+          "id": "icehotel",
           "name": "Icehotel",
           "lat": 67.849,
           "lon": 20.591,
@@ -567,6 +616,7 @@
       },
       "landmarks": [
         {
+          "id": "suomenlinna",
           "name": "Suomenlinna",
           "lat": 60.145,
           "lon": 24.988,
@@ -585,6 +635,7 @@
       },
       "landmarks": [
         {
+          "id": "the-little-mermaid",
           "name": "The Little Mermaid",
           "lat": 55.693,
           "lon": 12.599,
@@ -593,6 +644,7 @@
           "importance": 5
         },
         {
+          "id": "kronborg-castle",
           "name": "Kronborg Castle",
           "lat": 56.039,
           "lon": 12.622,
@@ -611,6 +663,7 @@
       },
       "landmarks": [
         {
+          "id": "acropolis-of-athens",
           "name": "Acropolis of Athens",
           "lat": 37.971,
           "lon": 23.726,
@@ -619,6 +672,7 @@
           "importance": 2
         },
         {
+          "id": "meteora",
           "name": "Meteora",
           "lat": 39.721,
           "lon": 21.63,
@@ -627,6 +681,7 @@
           "importance": 5
         },
         {
+          "id": "santorini",
           "name": "Santorini",
           "lat": 36.393,
           "lon": 25.462,
@@ -645,6 +700,7 @@
       },
       "landmarks": [
         {
+          "id": "wawel-castle",
           "name": "Wawel Castle",
           "lat": 50.054,
           "lon": 19.935,
@@ -653,6 +709,7 @@
           "importance": 8
         },
         {
+          "id": "malbork-castle",
           "name": "Malbork Castle",
           "lat": 54.04,
           "lon": 19.028,
@@ -671,6 +728,7 @@
       },
       "landmarks": [
         {
+          "id": "charles-bridge",
           "name": "Charles Bridge",
           "lat": 50.086,
           "lon": 14.411,
@@ -679,6 +737,7 @@
           "importance": 5
         },
         {
+          "id": "prague-castle",
           "name": "Prague Castle",
           "lat": 50.091,
           "lon": 14.401,
@@ -697,6 +756,7 @@
       },
       "landmarks": [
         {
+          "id": "bratislava-castle",
           "name": "Bratislava Castle",
           "lat": 48.142,
           "lon": 17.1,
@@ -715,6 +775,7 @@
       },
       "landmarks": [
         {
+          "id": "hungarian-parliament",
           "name": "Hungarian Parliament",
           "lat": 47.507,
           "lon": 19.046,
@@ -723,6 +784,7 @@
           "importance": 5
         },
         {
+          "id": "fisherman-s-bastion",
           "name": "Fisherman's Bastion",
           "lat": 47.502,
           "lon": 19.035,
@@ -741,6 +803,7 @@
       },
       "landmarks": [
         {
+          "id": "bran-castle",
           "name": "Bran Castle",
           "lat": 45.515,
           "lon": 25.367,
@@ -749,6 +812,7 @@
           "importance": 5
         },
         {
+          "id": "palace-of-the-parliament",
           "name": "Palace of the Parliament",
           "lat": 44.428,
           "lon": 26.088,
@@ -767,6 +831,7 @@
       },
       "landmarks": [
         {
+          "id": "rila-monastery",
           "name": "Rila Monastery",
           "lat": 42.133,
           "lon": 23.34,
@@ -785,6 +850,7 @@
       },
       "landmarks": [
         {
+          "id": "dubrovnik-old-town",
           "name": "Dubrovnik Old Town",
           "lat": 42.641,
           "lon": 18.108,
@@ -793,6 +859,7 @@
           "importance": 5
         },
         {
+          "id": "plitvice-lakes",
           "name": "Plitvice Lakes",
           "lat": 44.881,
           "lon": 15.616,
@@ -811,6 +878,7 @@
       },
       "landmarks": [
         {
+          "id": "lake-bled",
           "name": "Lake Bled",
           "lat": 46.363,
           "lon": 14.094,
@@ -829,6 +897,7 @@
       },
       "landmarks": [
         {
+          "id": "belgrade-fortress",
           "name": "Belgrade Fortress",
           "lat": 44.823,
           "lon": 20.45,
@@ -847,6 +916,7 @@
       },
       "landmarks": [
         {
+          "id": "stari-most",
           "name": "Stari Most",
           "lat": 43.337,
           "lon": 17.815,
@@ -865,6 +935,7 @@
       },
       "landmarks": [
         {
+          "id": "bay-of-kotor",
           "name": "Bay of Kotor",
           "lat": 42.424,
           "lon": 18.771,
@@ -883,6 +954,7 @@
       },
       "landmarks": [
         {
+          "id": "ohrid",
           "name": "Ohrid",
           "lat": 41.113,
           "lon": 20.802,
@@ -901,6 +973,7 @@
       },
       "landmarks": [
         {
+          "id": "butrint",
           "name": "Butrint",
           "lat": 39.746,
           "lon": 20.021,
@@ -919,6 +992,7 @@
       },
       "landmarks": [
         {
+          "id": "gracanica-monastery",
           "name": "Gracanica Monastery",
           "lat": 42.6,
           "lon": 21.194,
@@ -937,6 +1011,7 @@
       },
       "landmarks": [
         {
+          "id": "saint-sophia-cathedral",
           "name": "Saint Sophia Cathedral",
           "lat": 50.453,
           "lon": 30.514,
@@ -955,6 +1030,7 @@
       },
       "landmarks": [
         {
+          "id": "mir-castle",
           "name": "Mir Castle",
           "lat": 53.451,
           "lon": 26.473,
@@ -973,6 +1049,7 @@
       },
       "landmarks": [
         {
+          "id": "orheiul-vechi",
           "name": "Orheiul Vechi",
           "lat": 47.336,
           "lon": 28.978,
@@ -991,6 +1068,7 @@
       },
       "landmarks": [
         {
+          "id": "trakai-island-castle",
           "name": "Trakai Island Castle",
           "lat": 54.652,
           "lon": 24.933,
@@ -1009,6 +1087,7 @@
       },
       "landmarks": [
         {
+          "id": "riga-old-town",
           "name": "Riga Old Town",
           "lat": 56.949,
           "lon": 24.106,
@@ -1027,6 +1106,7 @@
       },
       "landmarks": [
         {
+          "id": "tallinn-old-town",
           "name": "Tallinn Old Town",
           "lat": 59.437,
           "lon": 24.745,
@@ -1045,6 +1125,7 @@
       },
       "landmarks": [
         {
+          "id": "saint-basil-s-cathedral",
           "name": "Saint Basil's Cathedral",
           "lat": 55.753,
           "lon": 37.623,
@@ -1053,6 +1134,7 @@
           "importance": 2
         },
         {
+          "id": "the-kremlin",
           "name": "The Kremlin",
           "lat": 55.752,
           "lon": 37.617,
@@ -1061,6 +1143,7 @@
           "importance": 2
         },
         {
+          "id": "hermitage-museum",
           "name": "Hermitage Museum",
           "lat": 59.94,
           "lon": 30.315,
@@ -1069,6 +1152,7 @@
           "importance": 5
         },
         {
+          "id": "lake-baikal",
           "name": "Lake Baikal",
           "lat": 53.5,
           "lon": 108,
@@ -1087,6 +1171,7 @@
       },
       "landmarks": [
         {
+          "id": "grand-harbour",
           "name": "Grand Harbour",
           "lat": 35.893,
           "lon": 14.518,
@@ -1095,6 +1180,7 @@
           "importance": 5
         },
         {
+          "id": "st-john-s-co-cathedral",
           "name": "St John's Co-Cathedral",
           "lat": 35.898,
           "lon": 14.512,
@@ -1103,6 +1189,7 @@
           "importance": 5
         },
         {
+          "id": "a-ar-qim",
           "name": "Ħaġar Qim",
           "lat": 35.827,
           "lon": 14.442,
@@ -1111,6 +1198,7 @@
           "importance": 8
         },
         {
+          "id": "mdina",
           "name": "Mdina",
           "lat": 35.886,
           "lon": 14.403,
@@ -1119,6 +1207,7 @@
           "importance": 8
         },
         {
+          "id": "blue-grotto",
           "name": "Blue Grotto",
           "lat": 35.82,
           "lon": 14.454,
@@ -1127,6 +1216,7 @@
           "importance": 8
         },
         {
+          "id": "fort-st-angelo",
           "name": "Fort St Angelo",
           "lat": 35.892,
           "lon": 14.518,
@@ -1135,6 +1225,7 @@
           "importance": 8
         },
         {
+          "id": "mosta-rotunda",
           "name": "Mosta Rotunda",
           "lat": 35.911,
           "lon": 14.426,
@@ -1143,6 +1234,7 @@
           "importance": 8
         },
         {
+          "id": "marsaxlokk",
           "name": "Marsaxlokk",
           "lat": 35.842,
           "lon": 14.545,
@@ -1151,6 +1243,7 @@
           "importance": 8
         },
         {
+          "id": "dingli-cliffs",
           "name": "Dingli Cliffs",
           "lat": 35.851,
           "lon": 14.377,
@@ -1159,6 +1252,7 @@
           "importance": 8
         },
         {
+          "id": "popeye-village",
           "name": "Popeye Village",
           "lat": 35.928,
           "lon": 14.336,
@@ -1167,6 +1261,7 @@
           "importance": 8
         },
         {
+          "id": "cittadella-of-gozo",
           "name": "Cittadella of Gozo",
           "lat": 36.046,
           "lon": 14.239,
@@ -1175,6 +1270,7 @@
           "importance": 8
         },
         {
+          "id": "blue-lagoon-of-comino",
           "name": "Blue Lagoon of Comino",
           "lat": 36.014,
           "lon": 14.322,
@@ -1183,6 +1279,7 @@
           "importance": 8
         },
         {
+          "id": "gantija-temples",
           "name": "Ġgantija Temples",
           "lat": 36.047,
           "lon": 14.269,
@@ -1191,6 +1288,7 @@
           "importance": 8
         },
         {
+          "id": "tarxien-temples",
           "name": "Tarxien Temples",
           "lat": 35.869,
           "lon": 14.511,
@@ -1209,6 +1307,7 @@
       },
       "landmarks": [
         {
+          "id": "tombs-of-the-kings",
           "name": "Tombs of the Kings",
           "lat": 34.771,
           "lon": 32.406,
@@ -1227,6 +1326,7 @@
       },
       "landmarks": [
         {
+          "id": "kyrenia-castle",
           "name": "Kyrenia Castle",
           "lat": 35.341,
           "lon": 33.32,
@@ -1245,6 +1345,7 @@
       },
       "landmarks": [
         {
+          "id": "casa-de-la-vall",
           "name": "Casa de la Vall",
           "lat": 42.507,
           "lon": 1.522,
@@ -1263,6 +1364,7 @@
       },
       "landmarks": [
         {
+          "id": "monte-carlo-casino",
           "name": "Monte Carlo Casino",
           "lat": 43.74,
           "lon": 7.428,
@@ -1281,6 +1383,7 @@
       },
       "landmarks": [
         {
+          "id": "guaita-tower",
           "name": "Guaita Tower",
           "lat": 43.937,
           "lon": 12.446,
@@ -1299,6 +1402,7 @@
       },
       "landmarks": [
         {
+          "id": "vaduz-castle",
           "name": "Vaduz Castle",
           "lat": 47.14,
           "lon": 9.525,
@@ -1317,6 +1421,7 @@
       },
       "landmarks": [
         {
+          "id": "saksun",
           "name": "Saksun",
           "lat": 62.248,
           "lon": -7.183,
@@ -1335,6 +1440,7 @@
       },
       "landmarks": [
         {
+          "id": "kastelholm-castle",
           "name": "Kastelholm Castle",
           "lat": 60.24,
           "lon": 20.078,
@@ -1353,6 +1459,7 @@
       },
       "landmarks": [
         {
+          "id": "castle-cornet",
           "name": "Castle Cornet",
           "lat": 49.454,
           "lon": -2.531,
@@ -1371,6 +1478,7 @@
       },
       "landmarks": [
         {
+          "id": "mont-orgueil",
           "name": "Mont Orgueil",
           "lat": 49.198,
           "lon": -2.023,
@@ -1389,6 +1497,7 @@
       },
       "landmarks": [
         {
+          "id": "peel-castle",
           "name": "Peel Castle",
           "lat": 54.226,
           "lon": -4.699,
@@ -1407,6 +1516,7 @@
       },
       "landmarks": [
         {
+          "id": "great-wall-of-china",
           "name": "Great Wall of China",
           "lat": 40.432,
           "lon": 116.57,
@@ -1415,6 +1525,7 @@
           "importance": 2
         },
         {
+          "id": "forbidden-city",
           "name": "Forbidden City",
           "lat": 39.916,
           "lon": 116.397,
@@ -1423,6 +1534,7 @@
           "importance": 2
         },
         {
+          "id": "terracotta-army",
           "name": "Terracotta Army",
           "lat": 34.385,
           "lon": 109.278,
@@ -1431,6 +1543,7 @@
           "importance": 5
         },
         {
+          "id": "potala-palace",
           "name": "Potala Palace",
           "lat": 29.658,
           "lon": 91.117,
@@ -1439,6 +1552,7 @@
           "importance": 5
         },
         {
+          "id": "the-bund",
           "name": "The Bund",
           "lat": 31.24,
           "lon": 121.49,
@@ -1457,6 +1571,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-fuji",
           "name": "Mount Fuji",
           "lat": 35.361,
           "lon": 138.727,
@@ -1465,6 +1580,7 @@
           "importance": 2
         },
         {
+          "id": "fushimi-inari-shrine",
           "name": "Fushimi Inari Shrine",
           "lat": 34.967,
           "lon": 135.773,
@@ -1473,6 +1589,7 @@
           "importance": 2
         },
         {
+          "id": "tokyo-tower",
           "name": "Tokyo Tower",
           "lat": 35.659,
           "lon": 139.746,
@@ -1481,6 +1598,7 @@
           "importance": 5
         },
         {
+          "id": "itsukushima-shrine",
           "name": "Itsukushima Shrine",
           "lat": 34.296,
           "lon": 132.32,
@@ -1489,6 +1607,7 @@
           "importance": 5
         },
         {
+          "id": "himeji-castle",
           "name": "Himeji Castle",
           "lat": 34.839,
           "lon": 134.694,
@@ -1507,6 +1626,7 @@
       },
       "landmarks": [
         {
+          "id": "taj-mahal",
           "name": "Taj Mahal",
           "lat": 27.175,
           "lon": 78.042,
@@ -1515,6 +1635,7 @@
           "importance": 2
         },
         {
+          "id": "golden-temple",
           "name": "Golden Temple",
           "lat": 31.62,
           "lon": 74.877,
@@ -1523,6 +1644,7 @@
           "importance": 5
         },
         {
+          "id": "gateway-of-india",
           "name": "Gateway of India",
           "lat": 18.922,
           "lon": 72.835,
@@ -1531,6 +1653,7 @@
           "importance": 5
         },
         {
+          "id": "hawa-mahal",
           "name": "Hawa Mahal",
           "lat": 26.924,
           "lon": 75.827,
@@ -1549,6 +1672,7 @@
       },
       "landmarks": [
         {
+          "id": "angkor-wat",
           "name": "Angkor Wat",
           "lat": 13.413,
           "lon": 103.867,
@@ -1567,6 +1691,7 @@
       },
       "landmarks": [
         {
+          "id": "grand-palace",
           "name": "Grand Palace",
           "lat": 13.75,
           "lon": 100.492,
@@ -1575,6 +1700,7 @@
           "importance": 5
         },
         {
+          "id": "wat-arun",
           "name": "Wat Arun",
           "lat": 13.744,
           "lon": 100.489,
@@ -1593,6 +1719,7 @@
       },
       "landmarks": [
         {
+          "id": "ha-long-bay",
           "name": "Ha Long Bay",
           "lat": 20.91,
           "lon": 107.184,
@@ -1601,6 +1728,7 @@
           "importance": 5
         },
         {
+          "id": "hoi-an-old-town",
           "name": "Hoi An Old Town",
           "lat": 15.877,
           "lon": 108.327,
@@ -1619,6 +1747,7 @@
       },
       "landmarks": [
         {
+          "id": "pha-that-luang",
           "name": "Pha That Luang",
           "lat": 17.976,
           "lon": 102.617,
@@ -1637,6 +1766,7 @@
       },
       "landmarks": [
         {
+          "id": "shwedagon-pagoda",
           "name": "Shwedagon Pagoda",
           "lat": 16.798,
           "lon": 96.15,
@@ -1655,6 +1785,7 @@
       },
       "landmarks": [
         {
+          "id": "petronas-towers",
           "name": "Petronas Towers",
           "lat": 3.158,
           "lon": 101.712,
@@ -1673,6 +1804,7 @@
       },
       "landmarks": [
         {
+          "id": "marina-bay-sands",
           "name": "Marina Bay Sands",
           "lat": 1.283,
           "lon": 103.86,
@@ -1691,6 +1823,7 @@
       },
       "landmarks": [
         {
+          "id": "borobudur",
           "name": "Borobudur",
           "lat": -7.608,
           "lon": 110.204,
@@ -1699,6 +1832,7 @@
           "importance": 5
         },
         {
+          "id": "mount-bromo",
           "name": "Mount Bromo",
           "lat": -7.942,
           "lon": 112.953,
@@ -1717,6 +1851,7 @@
       },
       "landmarks": [
         {
+          "id": "banaue-rice-terraces",
           "name": "Banaue Rice Terraces",
           "lat": 16.934,
           "lon": 121.058,
@@ -1725,6 +1860,7 @@
           "importance": 8
         },
         {
+          "id": "chocolate-hills",
           "name": "Chocolate Hills",
           "lat": 9.828,
           "lon": 124.171,
@@ -1743,6 +1879,7 @@
       },
       "landmarks": [
         {
+          "id": "omar-ali-saifuddien-mosque",
           "name": "Omar Ali Saifuddien Mosque",
           "lat": 4.889,
           "lon": 114.941,
@@ -1761,6 +1898,7 @@
       },
       "landmarks": [
         {
+          "id": "cristo-rei-of-dili",
           "name": "Cristo Rei of Dili",
           "lat": -8.52,
           "lon": 125.617,
@@ -1779,6 +1917,7 @@
       },
       "landmarks": [
         {
+          "id": "gyeongbokgung-palace",
           "name": "Gyeongbokgung Palace",
           "lat": 37.579,
           "lon": 126.977,
@@ -1787,6 +1926,7 @@
           "importance": 5
         },
         {
+          "id": "bulguksa-temple",
           "name": "Bulguksa Temple",
           "lat": 35.79,
           "lon": 129.332,
@@ -1805,6 +1945,7 @@
       },
       "landmarks": [
         {
+          "id": "juche-tower",
           "name": "Juche Tower",
           "lat": 39.018,
           "lon": 125.762,
@@ -1823,6 +1964,7 @@
       },
       "landmarks": [
         {
+          "id": "taipei-101",
           "name": "Taipei 101",
           "lat": 25.034,
           "lon": 121.565,
@@ -1841,6 +1983,7 @@
       },
       "landmarks": [
         {
+          "id": "victoria-peak",
           "name": "Victoria Peak",
           "lat": 22.276,
           "lon": 114.145,
@@ -1859,6 +2002,7 @@
       },
       "landmarks": [
         {
+          "id": "ruins-of-st-paul-s",
           "name": "Ruins of St Paul's",
           "lat": 22.198,
           "lon": 113.541,
@@ -1877,6 +2021,7 @@
       },
       "landmarks": [
         {
+          "id": "genghis-khan-statue",
           "name": "Genghis Khan Statue",
           "lat": 47.808,
           "lon": 107.53,
@@ -1885,6 +2030,7 @@
           "importance": 8
         },
         {
+          "id": "erdene-zuu-monastery",
           "name": "Erdene Zuu Monastery",
           "lat": 47.201,
           "lon": 102.842,
@@ -1903,6 +2049,7 @@
       },
       "landmarks": [
         {
+          "id": "baiterek-tower",
           "name": "Baiterek Tower",
           "lat": 51.128,
           "lon": 71.43,
@@ -1921,6 +2068,7 @@
       },
       "landmarks": [
         {
+          "id": "registan",
           "name": "Registan",
           "lat": 39.655,
           "lon": 66.975,
@@ -1939,6 +2087,7 @@
       },
       "landmarks": [
         {
+          "id": "darvaza-gas-crater",
           "name": "Darvaza Gas Crater",
           "lat": 40.253,
           "lon": 58.439,
@@ -1957,6 +2106,7 @@
       },
       "landmarks": [
         {
+          "id": "burana-tower",
           "name": "Burana Tower",
           "lat": 42.746,
           "lon": 75.25,
@@ -1975,6 +2125,7 @@
       },
       "landmarks": [
         {
+          "id": "iskanderkul",
           "name": "Iskanderkul",
           "lat": 39.075,
           "lon": 68.371,
@@ -1993,6 +2144,7 @@
       },
       "landmarks": [
         {
+          "id": "band-e-amir",
           "name": "Band-e Amir",
           "lat": 34.842,
           "lon": 67.23,
@@ -2011,6 +2163,7 @@
       },
       "landmarks": [
         {
+          "id": "badshahi-mosque",
           "name": "Badshahi Mosque",
           "lat": 31.588,
           "lon": 74.31,
@@ -2019,6 +2172,7 @@
           "importance": 5
         },
         {
+          "id": "k2",
           "name": "K2",
           "lat": 35.881,
           "lon": 76.513,
@@ -2037,6 +2191,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-everest",
           "name": "Mount Everest",
           "lat": 27.988,
           "lon": 86.925,
@@ -2045,6 +2200,7 @@
           "importance": 2
         },
         {
+          "id": "boudhanath-stupa",
           "name": "Boudhanath Stupa",
           "lat": 27.721,
           "lon": 85.362,
@@ -2063,6 +2219,7 @@
       },
       "landmarks": [
         {
+          "id": "tiger-s-nest",
           "name": "Tiger's Nest",
           "lat": 27.492,
           "lon": 89.363,
@@ -2081,6 +2238,7 @@
       },
       "landmarks": [
         {
+          "id": "sixty-dome-mosque",
           "name": "Sixty Dome Mosque",
           "lat": 22.674,
           "lon": 89.742,
@@ -2099,6 +2257,7 @@
       },
       "landmarks": [
         {
+          "id": "sigiriya",
           "name": "Sigiriya",
           "lat": 7.957,
           "lon": 80.76,
@@ -2117,6 +2276,7 @@
       },
       "landmarks": [
         {
+          "id": "mal-friday-mosque",
           "name": "Malé Friday Mosque",
           "lat": 4.176,
           "lon": 73.51,
@@ -2125,6 +2285,7 @@
           "importance": 8
         },
         {
+          "id": "mal-fish-market",
           "name": "Malé Fish Market",
           "lat": 4.178,
           "lon": 73.51,
@@ -2143,6 +2304,7 @@
       },
       "landmarks": [
         {
+          "id": "persepolis",
           "name": "Persepolis",
           "lat": 29.936,
           "lon": 52.89,
@@ -2151,6 +2313,7 @@
           "importance": 5
         },
         {
+          "id": "naqsh-e-jahan-square",
           "name": "Naqsh-e Jahan Square",
           "lat": 32.658,
           "lon": 51.678,
@@ -2169,6 +2332,7 @@
       },
       "landmarks": [
         {
+          "id": "ziggurat-of-ur",
           "name": "Ziggurat of Ur",
           "lat": 30.963,
           "lon": 46.103,
@@ -2187,6 +2351,7 @@
       },
       "landmarks": [
         {
+          "id": "kaaba",
           "name": "Kaaba",
           "lat": 21.423,
           "lon": 39.826,
@@ -2195,6 +2360,7 @@
           "importance": 2
         },
         {
+          "id": "al-ula",
           "name": "Al-Ula",
           "lat": 26.609,
           "lon": 37.917,
@@ -2213,6 +2379,7 @@
       },
       "landmarks": [
         {
+          "id": "burj-khalifa",
           "name": "Burj Khalifa",
           "lat": 25.197,
           "lon": 55.274,
@@ -2221,6 +2388,7 @@
           "importance": 2
         },
         {
+          "id": "sheikh-zayed-mosque",
           "name": "Sheikh Zayed Mosque",
           "lat": 24.412,
           "lon": 54.475,
@@ -2239,6 +2407,7 @@
       },
       "landmarks": [
         {
+          "id": "museum-of-islamic-art",
           "name": "Museum of Islamic Art",
           "lat": 25.295,
           "lon": 51.539,
@@ -2257,6 +2426,7 @@
       },
       "landmarks": [
         {
+          "id": "kuwait-towers",
           "name": "Kuwait Towers",
           "lat": 29.39,
           "lon": 48,
@@ -2275,6 +2445,7 @@
       },
       "landmarks": [
         {
+          "id": "bahrain-fort",
           "name": "Bahrain Fort",
           "lat": 26.233,
           "lon": 50.521,
@@ -2293,6 +2464,7 @@
       },
       "landmarks": [
         {
+          "id": "sultan-qaboos-mosque",
           "name": "Sultan Qaboos Mosque",
           "lat": 23.583,
           "lon": 58.388,
@@ -2311,6 +2483,7 @@
       },
       "landmarks": [
         {
+          "id": "old-city-of-sana-a",
           "name": "Old City of Sana'a",
           "lat": 15.353,
           "lon": 44.214,
@@ -2329,6 +2502,7 @@
       },
       "landmarks": [
         {
+          "id": "petra",
           "name": "Petra",
           "lat": 30.329,
           "lon": 35.444,
@@ -2337,6 +2511,7 @@
           "importance": 2
         },
         {
+          "id": "wadi-rum",
           "name": "Wadi Rum",
           "lat": 29.583,
           "lon": 35.42,
@@ -2355,6 +2530,7 @@
       },
       "landmarks": [
         {
+          "id": "western-wall",
           "name": "Western Wall",
           "lat": 31.777,
           "lon": 35.234,
@@ -2363,6 +2539,7 @@
           "importance": 2
         },
         {
+          "id": "masada",
           "name": "Masada",
           "lat": 31.315,
           "lon": 35.354,
@@ -2381,6 +2558,7 @@
       },
       "landmarks": [
         {
+          "id": "church-of-the-nativity",
           "name": "Church of the Nativity",
           "lat": 31.704,
           "lon": 35.207,
@@ -2399,6 +2577,7 @@
       },
       "landmarks": [
         {
+          "id": "baalbek",
           "name": "Baalbek",
           "lat": 34.007,
           "lon": 36.204,
@@ -2417,6 +2596,7 @@
       },
       "landmarks": [
         {
+          "id": "krak-des-chevaliers",
           "name": "Krak des Chevaliers",
           "lat": 34.757,
           "lon": 36.295,
@@ -2435,6 +2615,7 @@
       },
       "landmarks": [
         {
+          "id": "hagia-sophia",
           "name": "Hagia Sophia",
           "lat": 41.008,
           "lon": 28.98,
@@ -2443,6 +2624,7 @@
           "importance": 2
         },
         {
+          "id": "cappadocia",
           "name": "Cappadocia",
           "lat": 38.643,
           "lon": 34.829,
@@ -2451,6 +2633,7 @@
           "importance": 5
         },
         {
+          "id": "pamukkale",
           "name": "Pamukkale",
           "lat": 37.92,
           "lon": 29.121,
@@ -2469,6 +2652,7 @@
       },
       "landmarks": [
         {
+          "id": "gergeti-trinity-church",
           "name": "Gergeti Trinity Church",
           "lat": 42.663,
           "lon": 44.621,
@@ -2487,6 +2671,7 @@
       },
       "landmarks": [
         {
+          "id": "khor-virap",
           "name": "Khor Virap",
           "lat": 39.878,
           "lon": 44.577,
@@ -2505,6 +2690,7 @@
       },
       "landmarks": [
         {
+          "id": "flame-towers",
           "name": "Flame Towers",
           "lat": 40.36,
           "lon": 49.833,
@@ -2523,6 +2709,7 @@
       },
       "landmarks": [
         {
+          "id": "siachen-glacier",
           "name": "Siachen Glacier",
           "lat": 35.421,
           "lon": 77.109,
@@ -2541,6 +2728,7 @@
       },
       "landmarks": [
         {
+          "id": "pyramids-of-giza",
           "name": "Pyramids of Giza",
           "lat": 29.979,
           "lon": 31.134,
@@ -2549,6 +2737,7 @@
           "importance": 2
         },
         {
+          "id": "great-sphinx",
           "name": "Great Sphinx",
           "lat": 29.975,
           "lon": 31.138,
@@ -2557,6 +2746,7 @@
           "importance": 2
         },
         {
+          "id": "karnak-temple",
           "name": "Karnak Temple",
           "lat": 25.719,
           "lon": 32.657,
@@ -2565,6 +2755,7 @@
           "importance": 5
         },
         {
+          "id": "abu-simbel",
           "name": "Abu Simbel",
           "lat": 22.337,
           "lon": 31.626,
@@ -2583,6 +2774,7 @@
       },
       "landmarks": [
         {
+          "id": "jemaa-el-fnaa",
           "name": "Jemaa el-Fnaa",
           "lat": 31.626,
           "lon": -7.989,
@@ -2591,6 +2783,7 @@
           "importance": 5
         },
         {
+          "id": "hassan-ii-mosque",
           "name": "Hassan II Mosque",
           "lat": 33.608,
           "lon": -7.633,
@@ -2599,6 +2792,7 @@
           "importance": 5
         },
         {
+          "id": "a-t-benhaddou",
           "name": "Aït Benhaddou",
           "lat": 31.047,
           "lon": -7.129,
@@ -2617,6 +2811,7 @@
       },
       "landmarks": [
         {
+          "id": "casbah-of-algiers",
           "name": "Casbah of Algiers",
           "lat": 36.784,
           "lon": 3.06,
@@ -2635,6 +2830,7 @@
       },
       "landmarks": [
         {
+          "id": "carthage",
           "name": "Carthage",
           "lat": 36.853,
           "lon": 10.323,
@@ -2643,6 +2839,7 @@
           "importance": 8
         },
         {
+          "id": "el-djem-amphitheatre",
           "name": "El Djem Amphitheatre",
           "lat": 35.296,
           "lon": 10.707,
@@ -2661,6 +2858,7 @@
       },
       "landmarks": [
         {
+          "id": "leptis-magna",
           "name": "Leptis Magna",
           "lat": 32.638,
           "lon": 14.293,
@@ -2679,6 +2877,7 @@
       },
       "landmarks": [
         {
+          "id": "pyramids-of-mero",
           "name": "Pyramids of Meroë",
           "lat": 16.938,
           "lon": 33.749,
@@ -2697,6 +2896,7 @@
       },
       "landmarks": [
         {
+          "id": "boma-national-park",
           "name": "Boma National Park",
           "lat": 6.5,
           "lon": 34,
@@ -2715,6 +2915,7 @@
       },
       "landmarks": [
         {
+          "id": "rock-hewn-churches-of-lalibela",
           "name": "Rock-Hewn Churches of Lalibela",
           "lat": 12.031,
           "lon": 39.041,
@@ -2733,6 +2934,7 @@
       },
       "landmarks": [
         {
+          "id": "asmara-old-town",
           "name": "Asmara Old Town",
           "lat": 15.339,
           "lon": 38.932,
@@ -2751,6 +2953,7 @@
       },
       "landmarks": [
         {
+          "id": "lake-assal",
           "name": "Lake Assal",
           "lat": 11.657,
           "lon": 42.4,
@@ -2769,6 +2972,7 @@
       },
       "landmarks": [
         {
+          "id": "mogadishu-lighthouse",
           "name": "Mogadishu Lighthouse",
           "lat": 2.031,
           "lon": 45.354,
@@ -2787,6 +2991,7 @@
       },
       "landmarks": [
         {
+          "id": "laas-geel-caves",
           "name": "Laas Geel Caves",
           "lat": 9.735,
           "lon": 44.311,
@@ -2805,6 +3010,7 @@
       },
       "landmarks": [
         {
+          "id": "maasai-mara",
           "name": "Maasai Mara",
           "lat": -1.5,
           "lon": 35.143,
@@ -2813,6 +3019,7 @@
           "importance": 5
         },
         {
+          "id": "mount-kenya",
           "name": "Mount Kenya",
           "lat": -0.152,
           "lon": 37.308,
@@ -2831,6 +3038,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-kilimanjaro",
           "name": "Mount Kilimanjaro",
           "lat": -3.067,
           "lon": 37.355,
@@ -2839,6 +3047,7 @@
           "importance": 2
         },
         {
+          "id": "serengeti",
           "name": "Serengeti",
           "lat": -2.333,
           "lon": 34.833,
@@ -2847,6 +3056,7 @@
           "importance": 5
         },
         {
+          "id": "stone-town",
           "name": "Stone Town",
           "lat": -6.163,
           "lon": 39.189,
@@ -2865,6 +3075,7 @@
       },
       "landmarks": [
         {
+          "id": "bwindi-forest",
           "name": "Bwindi Forest",
           "lat": -1.055,
           "lon": 29.674,
@@ -2883,6 +3094,7 @@
       },
       "landmarks": [
         {
+          "id": "volcanoes-national-park",
           "name": "Volcanoes National Park",
           "lat": -1.474,
           "lon": 29.529,
@@ -2901,6 +3113,7 @@
       },
       "landmarks": [
         {
+          "id": "karera-falls",
           "name": "Karera Falls",
           "lat": -4.033,
           "lon": 30.4,
@@ -2919,6 +3132,7 @@
       },
       "landmarks": [
         {
+          "id": "table-mountain",
           "name": "Table Mountain",
           "lat": -33.963,
           "lon": 18.41,
@@ -2927,6 +3141,7 @@
           "importance": 2
         },
         {
+          "id": "cape-of-good-hope",
           "name": "Cape of Good Hope",
           "lat": -34.357,
           "lon": 18.472,
@@ -2935,6 +3150,7 @@
           "importance": 5
         },
         {
+          "id": "kruger-national-park",
           "name": "Kruger National Park",
           "lat": -24.01,
           "lon": 31.486,
@@ -2953,6 +3169,7 @@
       },
       "landmarks": [
         {
+          "id": "victoria-falls",
           "name": "Victoria Falls",
           "lat": -17.925,
           "lon": 25.858,
@@ -2961,6 +3178,7 @@
           "importance": 2
         },
         {
+          "id": "great-zimbabwe",
           "name": "Great Zimbabwe",
           "lat": -20.268,
           "lon": 30.934,
@@ -2979,6 +3197,7 @@
       },
       "landmarks": [
         {
+          "id": "mosi-oa-tunya",
           "name": "Mosi-oa-Tunya",
           "lat": -17.921,
           "lon": 25.856,
@@ -2997,6 +3216,7 @@
       },
       "landmarks": [
         {
+          "id": "okavango-delta",
           "name": "Okavango Delta",
           "lat": -19.283,
           "lon": 22.8,
@@ -3015,6 +3235,7 @@
       },
       "landmarks": [
         {
+          "id": "sossusvlei",
           "name": "Sossusvlei",
           "lat": -24.727,
           "lon": 15.343,
@@ -3023,6 +3244,7 @@
           "importance": 5
         },
         {
+          "id": "fish-river-canyon",
           "name": "Fish River Canyon",
           "lat": -27.596,
           "lon": 17.615,
@@ -3041,6 +3263,7 @@
       },
       "landmarks": [
         {
+          "id": "kalandula-falls",
           "name": "Kalandula Falls",
           "lat": -9.075,
           "lon": 16.006,
@@ -3059,6 +3282,7 @@
       },
       "landmarks": [
         {
+          "id": "island-of-mozambique",
           "name": "Island of Mozambique",
           "lat": -15.035,
           "lon": 40.735,
@@ -3077,6 +3301,7 @@
       },
       "landmarks": [
         {
+          "id": "lake-malawi",
           "name": "Lake Malawi",
           "lat": -12,
           "lon": 34.583,
@@ -3095,6 +3320,7 @@
       },
       "landmarks": [
         {
+          "id": "avenue-of-the-baobabs",
           "name": "Avenue of the Baobabs",
           "lat": -20.251,
           "lon": 44.418,
@@ -3113,6 +3339,7 @@
       },
       "landmarks": [
         {
+          "id": "le-morne-brabant",
           "name": "Le Morne Brabant",
           "lat": -20.457,
           "lon": 57.322,
@@ -3131,6 +3358,7 @@
       },
       "landmarks": [
         {
+          "id": "vall-e-de-mai",
           "name": "Vallée de Mai",
           "lat": -4.331,
           "lon": 55.74,
@@ -3149,6 +3377,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-karthala",
           "name": "Mount Karthala",
           "lat": -11.75,
           "lon": 43.38,
@@ -3167,6 +3396,7 @@
       },
       "landmarks": [
         {
+          "id": "mlilwane-sanctuary",
           "name": "Mlilwane Sanctuary",
           "lat": -26.484,
           "lon": 31.19,
@@ -3185,6 +3415,7 @@
       },
       "landmarks": [
         {
+          "id": "maletsunyane-falls",
           "name": "Maletsunyane Falls",
           "lat": -29.842,
           "lon": 28.061,
@@ -3203,6 +3434,7 @@
       },
       "landmarks": [
         {
+          "id": "virunga-national-park",
           "name": "Virunga National Park",
           "lat": -0.928,
           "lon": 29.18,
@@ -3221,6 +3453,7 @@
       },
       "landmarks": [
         {
+          "id": "basilique-sainte-anne",
           "name": "Basilique Sainte-Anne",
           "lat": -4.279,
           "lon": 15.283,
@@ -3239,6 +3472,7 @@
       },
       "landmarks": [
         {
+          "id": "boali-falls",
           "name": "Boali Falls",
           "lat": 4.796,
           "lon": 18.121,
@@ -3257,6 +3491,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-cameroon",
           "name": "Mount Cameroon",
           "lat": 4.203,
           "lon": 9.17,
@@ -3275,6 +3510,7 @@
       },
       "landmarks": [
         {
+          "id": "ennedi-massif",
           "name": "Ennedi Massif",
           "lat": 17,
           "lon": 22,
@@ -3293,6 +3529,7 @@
       },
       "landmarks": [
         {
+          "id": "grand-mosque-of-agadez",
           "name": "Grand Mosque of Agadez",
           "lat": 16.973,
           "lon": 7.991,
@@ -3311,6 +3548,7 @@
       },
       "landmarks": [
         {
+          "id": "great-mosque-of-djenn",
           "name": "Great Mosque of Djenné",
           "lat": 13.905,
           "lon": -4.555,
@@ -3319,6 +3557,7 @@
           "importance": 5
         },
         {
+          "id": "timbuktu",
           "name": "Timbuktu",
           "lat": 16.775,
           "lon": -3.009,
@@ -3337,6 +3576,7 @@
       },
       "landmarks": [
         {
+          "id": "ruins-of-lorop-ni",
           "name": "Ruins of Loropéni",
           "lat": 10.278,
           "lon": -3.583,
@@ -3355,6 +3595,7 @@
       },
       "landmarks": [
         {
+          "id": "gor-e-island",
           "name": "Gorée Island",
           "lat": 14.667,
           "lon": -17.398,
@@ -3373,6 +3614,7 @@
       },
       "landmarks": [
         {
+          "id": "kunta-kinteh-island",
           "name": "Kunta Kinteh Island",
           "lat": 13.322,
           "lon": -16.363,
@@ -3391,6 +3633,7 @@
       },
       "landmarks": [
         {
+          "id": "bijag-s-islands",
           "name": "Bijagós Islands",
           "lat": 11.3,
           "lon": -15.9,
@@ -3409,6 +3652,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-nimba",
           "name": "Mount Nimba",
           "lat": 7.616,
           "lon": -8.412,
@@ -3427,6 +3671,7 @@
       },
       "landmarks": [
         {
+          "id": "cotton-tree",
           "name": "Cotton Tree",
           "lat": 8.487,
           "lon": -13.234,
@@ -3445,6 +3690,7 @@
       },
       "landmarks": [
         {
+          "id": "providence-island",
           "name": "Providence Island",
           "lat": 6.313,
           "lon": -10.803,
@@ -3463,6 +3709,7 @@
       },
       "landmarks": [
         {
+          "id": "basilica-of-our-lady-of-peace",
           "name": "Basilica of Our Lady of Peace",
           "lat": 6.812,
           "lon": -5.288,
@@ -3481,6 +3728,7 @@
       },
       "landmarks": [
         {
+          "id": "cape-coast-castle",
           "name": "Cape Coast Castle",
           "lat": 5.104,
           "lon": -1.242,
@@ -3499,6 +3747,7 @@
       },
       "landmarks": [
         {
+          "id": "koutammakou",
           "name": "Koutammakou",
           "lat": 10.063,
           "lon": 1.108,
@@ -3517,6 +3766,7 @@
       },
       "landmarks": [
         {
+          "id": "ganvie",
           "name": "Ganvie",
           "lat": 6.466,
           "lon": 2.412,
@@ -3535,6 +3785,7 @@
       },
       "landmarks": [
         {
+          "id": "zuma-rock",
           "name": "Zuma Rock",
           "lat": 9.128,
           "lon": 7.234,
@@ -3543,6 +3794,7 @@
           "importance": 8
         },
         {
+          "id": "olumo-rock",
           "name": "Olumo Rock",
           "lat": 7.152,
           "lon": 3.348,
@@ -3561,6 +3813,7 @@
       },
       "landmarks": [
         {
+          "id": "loango-national-park",
           "name": "Loango National Park",
           "lat": -2.3,
           "lon": 9.6,
@@ -3579,6 +3832,7 @@
       },
       "landmarks": [
         {
+          "id": "bas-lica-de-mongomo",
           "name": "Basílica de Mongomo",
           "lat": 1.626,
           "lon": 11.316,
@@ -3597,6 +3851,7 @@
       },
       "landmarks": [
         {
+          "id": "pico-c-o-grande",
           "name": "Pico Cão Grande",
           "lat": 0.146,
           "lon": 6.582,
@@ -3615,6 +3870,7 @@
       },
       "landmarks": [
         {
+          "id": "cidade-velha",
           "name": "Cidade Velha",
           "lat": 14.916,
           "lon": -23.605,
@@ -3633,6 +3889,7 @@
       },
       "landmarks": [
         {
+          "id": "richat-structure",
           "name": "Richat Structure",
           "lat": 21.124,
           "lon": -11.401,
@@ -3651,6 +3908,7 @@
       },
       "landmarks": [
         {
+          "id": "laayoune",
           "name": "Laayoune",
           "lat": 27.15,
           "lon": -13.199,
@@ -3669,6 +3927,7 @@
       },
       "landmarks": [
         {
+          "id": "jacob-s-ladder",
           "name": "Jacob's Ladder",
           "lat": -15.925,
           "lon": -5.717,
@@ -3687,6 +3946,7 @@
       },
       "landmarks": [
         {
+          "id": "statue-of-liberty",
           "name": "Statue of Liberty",
           "lat": 40.689,
           "lon": -74.045,
@@ -3695,6 +3955,7 @@
           "importance": 2
         },
         {
+          "id": "golden-gate-bridge",
           "name": "Golden Gate Bridge",
           "lat": 37.82,
           "lon": -122.478,
@@ -3703,6 +3964,7 @@
           "importance": 2
         },
         {
+          "id": "grand-canyon",
           "name": "Grand Canyon",
           "lat": 36.099,
           "lon": -112.113,
@@ -3711,6 +3973,7 @@
           "importance": 2
         },
         {
+          "id": "mount-rushmore",
           "name": "Mount Rushmore",
           "lat": 43.879,
           "lon": -103.459,
@@ -3719,6 +3982,7 @@
           "importance": 5
         },
         {
+          "id": "white-house",
           "name": "White House",
           "lat": 38.898,
           "lon": -77.036,
@@ -3727,6 +3991,7 @@
           "importance": 5
         },
         {
+          "id": "empire-state-building",
           "name": "Empire State Building",
           "lat": 40.749,
           "lon": -73.986,
@@ -3735,6 +4000,7 @@
           "importance": 5
         },
         {
+          "id": "yellowstone",
           "name": "Yellowstone",
           "lat": 44.428,
           "lon": -110.588,
@@ -3743,6 +4009,7 @@
           "importance": 5
         },
         {
+          "id": "space-needle",
           "name": "Space Needle",
           "lat": 47.62,
           "lon": -122.349,
@@ -3761,6 +4028,7 @@
       },
       "landmarks": [
         {
+          "id": "niagara-falls",
           "name": "Niagara Falls",
           "lat": 43.078,
           "lon": -79.075,
@@ -3769,6 +4037,7 @@
           "importance": 2
         },
         {
+          "id": "cn-tower",
           "name": "CN Tower",
           "lat": 43.643,
           "lon": -79.387,
@@ -3777,6 +4046,7 @@
           "importance": 5
         },
         {
+          "id": "banff-national-park",
           "name": "Banff National Park",
           "lat": 51.178,
           "lon": -115.571,
@@ -3785,6 +4055,7 @@
           "importance": 5
         },
         {
+          "id": "ch-teau-frontenac",
           "name": "Château Frontenac",
           "lat": 46.812,
           "lon": -71.205,
@@ -3803,6 +4074,7 @@
       },
       "landmarks": [
         {
+          "id": "chich-n-itz",
           "name": "Chichén Itzá",
           "lat": 20.683,
           "lon": -88.569,
@@ -3811,6 +4083,7 @@
           "importance": 2
         },
         {
+          "id": "teotihuacan",
           "name": "Teotihuacan",
           "lat": 19.692,
           "lon": -98.844,
@@ -3819,6 +4092,7 @@
           "importance": 5
         },
         {
+          "id": "palenque",
           "name": "Palenque",
           "lat": 17.484,
           "lon": -92.046,
@@ -3837,6 +4111,7 @@
       },
       "landmarks": [
         {
+          "id": "tikal",
           "name": "Tikal",
           "lat": 17.222,
           "lon": -89.623,
@@ -3855,6 +4130,7 @@
       },
       "landmarks": [
         {
+          "id": "great-blue-hole",
           "name": "Great Blue Hole",
           "lat": 17.316,
           "lon": -87.535,
@@ -3873,6 +4149,7 @@
       },
       "landmarks": [
         {
+          "id": "cop-n",
           "name": "Copán",
           "lat": 14.837,
           "lon": -89.142,
@@ -3891,6 +4168,7 @@
       },
       "landmarks": [
         {
+          "id": "joya-de-cer-n",
           "name": "Joya de Cerén",
           "lat": 13.828,
           "lon": -89.361,
@@ -3909,6 +4187,7 @@
       },
       "landmarks": [
         {
+          "id": "masaya-volcano",
           "name": "Masaya Volcano",
           "lat": 11.984,
           "lon": -86.161,
@@ -3927,6 +4206,7 @@
       },
       "landmarks": [
         {
+          "id": "arenal-volcano",
           "name": "Arenal Volcano",
           "lat": 10.463,
           "lon": -84.703,
@@ -3945,6 +4225,7 @@
       },
       "landmarks": [
         {
+          "id": "panama-canal",
           "name": "Panama Canal",
           "lat": 9.08,
           "lon": -79.68,
@@ -3963,6 +4244,7 @@
       },
       "landmarks": [
         {
+          "id": "old-havana",
           "name": "Old Havana",
           "lat": 23.14,
           "lon": -82.353,
@@ -3981,6 +4263,7 @@
       },
       "landmarks": [
         {
+          "id": "dunn-s-river-falls",
           "name": "Dunn's River Falls",
           "lat": 18.415,
           "lon": -77.137,
@@ -3999,6 +4282,7 @@
       },
       "landmarks": [
         {
+          "id": "citadelle-laferri-re",
           "name": "Citadelle Laferrière",
           "lat": 19.574,
           "lon": -72.244,
@@ -4017,6 +4301,7 @@
       },
       "landmarks": [
         {
+          "id": "zona-colonial",
           "name": "Zona Colonial",
           "lat": 18.473,
           "lon": -69.884,
@@ -4035,6 +4320,7 @@
       },
       "landmarks": [
         {
+          "id": "blue-holes-of-andros",
           "name": "Blue Holes of Andros",
           "lat": 24.7,
           "lon": -77.8,
@@ -4053,6 +4339,7 @@
       },
       "landmarks": [
         {
+          "id": "el-morro",
           "name": "El Morro",
           "lat": 18.471,
           "lon": -66.124,
@@ -4071,6 +4358,7 @@
       },
       "landmarks": [
         {
+          "id": "pitch-lake",
           "name": "Pitch Lake",
           "lat": 10.234,
           "lon": -61.628,
@@ -4089,6 +4377,7 @@
       },
       "landmarks": [
         {
+          "id": "harrison-s-cave",
           "name": "Harrison's Cave",
           "lat": 13.187,
           "lon": -59.573,
@@ -4107,6 +4396,7 @@
       },
       "landmarks": [
         {
+          "id": "the-pitons",
           "name": "The Pitons",
           "lat": 13.808,
           "lon": -61.064,
@@ -4125,6 +4415,7 @@
       },
       "landmarks": [
         {
+          "id": "grand-anse-beach",
           "name": "Grand Anse Beach",
           "lat": 12.006,
           "lon": -61.767,
@@ -4143,6 +4434,7 @@
       },
       "landmarks": [
         {
+          "id": "la-soufri-re",
           "name": "La Soufrière",
           "lat": 13.331,
           "lon": -61.177,
@@ -4161,6 +4453,7 @@
       },
       "landmarks": [
         {
+          "id": "boiling-lake",
           "name": "Boiling Lake",
           "lat": 15.318,
           "lon": -61.294,
@@ -4179,6 +4472,7 @@
       },
       "landmarks": [
         {
+          "id": "nelson-s-dockyard",
           "name": "Nelson's Dockyard",
           "lat": 17.006,
           "lon": -61.765,
@@ -4197,6 +4491,7 @@
       },
       "landmarks": [
         {
+          "id": "brimstone-hill-fortress",
           "name": "Brimstone Hill Fortress",
           "lat": 17.368,
           "lon": -62.836,
@@ -4215,6 +4510,7 @@
       },
       "landmarks": [
         {
+          "id": "california-lighthouse",
           "name": "California Lighthouse",
           "lat": 12.615,
           "lon": -70.052,
@@ -4233,6 +4529,7 @@
       },
       "landmarks": [
         {
+          "id": "queen-emma-bridge",
           "name": "Queen Emma Bridge",
           "lat": 12.106,
           "lon": -68.933,
@@ -4251,6 +4548,7 @@
       },
       "landmarks": [
         {
+          "id": "fort-amsterdam",
           "name": "Fort Amsterdam",
           "lat": 18.019,
           "lon": -63.056,
@@ -4269,6 +4567,7 @@
       },
       "landmarks": [
         {
+          "id": "fort-louis",
           "name": "Fort Louis",
           "lat": 18.069,
           "lon": -63.084,
@@ -4287,6 +4586,7 @@
       },
       "landmarks": [
         {
+          "id": "gustavia-harbour",
           "name": "Gustavia Harbour",
           "lat": 17.897,
           "lon": -62.851,
@@ -4305,6 +4605,7 @@
       },
       "landmarks": [
         {
+          "id": "the-baths",
           "name": "The Baths",
           "lat": 18.43,
           "lon": -64.443,
@@ -4323,6 +4624,7 @@
       },
       "landmarks": [
         {
+          "id": "trunk-bay",
           "name": "Trunk Bay",
           "lat": 18.353,
           "lon": -64.77,
@@ -4341,6 +4643,7 @@
       },
       "landmarks": [
         {
+          "id": "shoal-bay",
           "name": "Shoal Bay",
           "lat": 18.245,
           "lon": -63.019,
@@ -4359,6 +4662,7 @@
       },
       "landmarks": [
         {
+          "id": "soufri-re-hills",
           "name": "Soufrière Hills",
           "lat": 16.712,
           "lon": -62.181,
@@ -4377,6 +4681,7 @@
       },
       "landmarks": [
         {
+          "id": "stingray-city",
           "name": "Stingray City",
           "lat": 19.371,
           "lon": -81.288,
@@ -4395,6 +4700,7 @@
       },
       "landmarks": [
         {
+          "id": "grace-bay",
           "name": "Grace Bay",
           "lat": 21.796,
           "lon": -72.196,
@@ -4413,6 +4719,7 @@
       },
       "landmarks": [
         {
+          "id": "royal-naval-dockyard",
           "name": "Royal Naval Dockyard",
           "lat": 32.327,
           "lon": -64.836,
@@ -4431,6 +4738,7 @@
       },
       "landmarks": [
         {
+          "id": "christ-the-redeemer",
           "name": "Christ the Redeemer",
           "lat": -22.952,
           "lon": -43.211,
@@ -4439,6 +4747,7 @@
           "importance": 2
         },
         {
+          "id": "igua-u-falls",
           "name": "Iguaçu Falls",
           "lat": -25.687,
           "lon": -54.445,
@@ -4447,6 +4756,7 @@
           "importance": 2
         },
         {
+          "id": "sugarloaf-mountain",
           "name": "Sugarloaf Mountain",
           "lat": -22.949,
           "lon": -43.157,
@@ -4455,6 +4765,7 @@
           "importance": 5
         },
         {
+          "id": "amazon-rainforest",
           "name": "Amazon Rainforest",
           "lat": -3.465,
           "lon": -62.216,
@@ -4473,6 +4784,7 @@
       },
       "landmarks": [
         {
+          "id": "perito-moreno-glacier",
           "name": "Perito Moreno Glacier",
           "lat": -50.496,
           "lon": -73.14,
@@ -4481,6 +4793,7 @@
           "importance": 5
         },
         {
+          "id": "iguaz-falls",
           "name": "Iguazú Falls",
           "lat": -25.695,
           "lon": -54.437,
@@ -4489,6 +4802,7 @@
           "importance": 5
         },
         {
+          "id": "obelisco",
           "name": "Obelisco",
           "lat": -34.604,
           "lon": -58.382,
@@ -4507,6 +4821,7 @@
       },
       "landmarks": [
         {
+          "id": "moai-of-rapa-nui",
           "name": "Moai of Rapa Nui",
           "lat": -27.113,
           "lon": -109.35,
@@ -4515,6 +4830,7 @@
           "importance": 2
         },
         {
+          "id": "torres-del-paine",
           "name": "Torres del Paine",
           "lat": -50.943,
           "lon": -73.407,
@@ -4523,6 +4839,7 @@
           "importance": 5
         },
         {
+          "id": "atacama-desert",
           "name": "Atacama Desert",
           "lat": -23.865,
           "lon": -69.13,
@@ -4541,6 +4858,7 @@
       },
       "landmarks": [
         {
+          "id": "machu-picchu",
           "name": "Machu Picchu",
           "lat": -13.163,
           "lon": -72.545,
@@ -4549,6 +4867,7 @@
           "importance": 2
         },
         {
+          "id": "nazca-lines",
           "name": "Nazca Lines",
           "lat": -14.739,
           "lon": -75.13,
@@ -4567,6 +4886,7 @@
       },
       "landmarks": [
         {
+          "id": "salar-de-uyuni",
           "name": "Salar de Uyuni",
           "lat": -20.133,
           "lon": -67.489,
@@ -4585,6 +4905,7 @@
       },
       "landmarks": [
         {
+          "id": "gal-pagos-islands",
           "name": "Galápagos Islands",
           "lat": -0.777,
           "lon": -91.142,
@@ -4593,6 +4914,7 @@
           "importance": 5
         },
         {
+          "id": "mitad-del-mundo",
           "name": "Mitad del Mundo",
           "lat": -0.002,
           "lon": -78.456,
@@ -4611,6 +4933,7 @@
       },
       "landmarks": [
         {
+          "id": "lost-city",
           "name": "Lost City",
           "lat": 11.038,
           "lon": -73.925,
@@ -4619,6 +4942,7 @@
           "importance": 8
         },
         {
+          "id": "cartagena-old-town",
           "name": "Cartagena Old Town",
           "lat": 10.423,
           "lon": -75.551,
@@ -4637,6 +4961,7 @@
       },
       "landmarks": [
         {
+          "id": "angel-falls",
           "name": "Angel Falls",
           "lat": 5.969,
           "lon": -62.536,
@@ -4655,6 +4980,7 @@
       },
       "landmarks": [
         {
+          "id": "kaieteur-falls",
           "name": "Kaieteur Falls",
           "lat": 5.175,
           "lon": -59.483,
@@ -4673,6 +4999,7 @@
       },
       "landmarks": [
         {
+          "id": "central-suriname-reserve",
           "name": "Central Suriname Reserve",
           "lat": 4.2,
           "lon": -56.4,
@@ -4691,6 +5018,7 @@
       },
       "landmarks": [
         {
+          "id": "jesuit-ruins-of-trinidad",
           "name": "Jesuit Ruins of Trinidad",
           "lat": -27.132,
           "lon": -55.7,
@@ -4709,6 +5037,7 @@
       },
       "landmarks": [
         {
+          "id": "colonia-del-sacramento",
           "name": "Colonia del Sacramento",
           "lat": -34.471,
           "lon": -57.844,
@@ -4727,6 +5056,7 @@
       },
       "landmarks": [
         {
+          "id": "volunteer-point",
           "name": "Volunteer Point",
           "lat": -51.47,
           "lon": -57.842,
@@ -4745,6 +5075,7 @@
       },
       "landmarks": [
         {
+          "id": "ilulissat-icefjord",
           "name": "Ilulissat Icefjord",
           "lat": 69.167,
           "lon": -51.1,
@@ -4763,6 +5094,7 @@
       },
       "landmarks": [
         {
+          "id": "le-aux-marins",
           "name": "Île aux Marins",
           "lat": 46.771,
           "lon": -56.157,
@@ -4781,6 +5113,7 @@
       },
       "landmarks": [
         {
+          "id": "sydney-opera-house",
           "name": "Sydney Opera House",
           "lat": -33.857,
           "lon": 151.215,
@@ -4789,6 +5122,7 @@
           "importance": 2
         },
         {
+          "id": "uluru",
           "name": "Uluru",
           "lat": -25.345,
           "lon": 131.036,
@@ -4797,6 +5131,7 @@
           "importance": 2
         },
         {
+          "id": "great-barrier-reef",
           "name": "Great Barrier Reef",
           "lat": -18.286,
           "lon": 147.7,
@@ -4805,6 +5140,7 @@
           "importance": 2
         },
         {
+          "id": "sydney-harbour-bridge",
           "name": "Sydney Harbour Bridge",
           "lat": -33.852,
           "lon": 151.211,
@@ -4813,6 +5149,7 @@
           "importance": 5
         },
         {
+          "id": "twelve-apostles",
           "name": "Twelve Apostles",
           "lat": -38.665,
           "lon": 143.104,
@@ -4831,6 +5168,7 @@
       },
       "landmarks": [
         {
+          "id": "milford-sound",
           "name": "Milford Sound",
           "lat": -44.641,
           "lon": 167.897,
@@ -4839,6 +5177,7 @@
           "importance": 5
         },
         {
+          "id": "hobbiton",
           "name": "Hobbiton",
           "lat": -37.872,
           "lon": 175.683,
@@ -4847,6 +5186,7 @@
           "importance": 5
         },
         {
+          "id": "sky-tower",
           "name": "Sky Tower",
           "lat": -36.848,
           "lon": 174.762,
@@ -4865,6 +5205,7 @@
       },
       "landmarks": [
         {
+          "id": "kokoda-track",
           "name": "Kokoda Track",
           "lat": -9.07,
           "lon": 147.73,
@@ -4883,6 +5224,7 @@
       },
       "landmarks": [
         {
+          "id": "sri-siva-subramaniya-temple",
           "name": "Sri Siva Subramaniya Temple",
           "lat": -17.622,
           "lon": 177.463,
@@ -4901,6 +5243,7 @@
       },
       "landmarks": [
         {
+          "id": "marovo-lagoon",
           "name": "Marovo Lagoon",
           "lat": -8.7,
           "lon": 158.1,
@@ -4919,6 +5262,7 @@
       },
       "landmarks": [
         {
+          "id": "mount-yasur",
           "name": "Mount Yasur",
           "lat": -19.532,
           "lon": 169.442,
@@ -4937,6 +5281,7 @@
       },
       "landmarks": [
         {
+          "id": "heart-of-voh",
           "name": "Heart of Voh",
           "lat": -20.945,
           "lon": 164.652,
@@ -4955,6 +5300,7 @@
       },
       "landmarks": [
         {
+          "id": "bora-bora",
           "name": "Bora Bora",
           "lat": -16.5,
           "lon": -151.741,
@@ -4973,6 +5319,7 @@
       },
       "landmarks": [
         {
+          "id": "to-sua-ocean-trench",
           "name": "To Sua Ocean Trench",
           "lat": -14.023,
           "lon": -171.494,
@@ -4991,6 +5338,7 @@
       },
       "landmarks": [
         {
+          "id": "ha-amonga-a-maui",
           "name": "Haʻamonga ʻa Maui",
           "lat": -21.135,
           "lon": -175.055,
@@ -5009,6 +5357,7 @@
       },
       "landmarks": [
         {
+          "id": "funafuti-lagoon",
           "name": "Funafuti Lagoon",
           "lat": -8.52,
           "lon": 179.196,
@@ -5027,6 +5376,7 @@
       },
       "landmarks": [
         {
+          "id": "christmas-island",
           "name": "Christmas Island",
           "lat": 1.983,
           "lon": -157.476,
@@ -5045,6 +5395,7 @@
       },
       "landmarks": [
         {
+          "id": "buada-lagoon",
           "name": "Buada Lagoon",
           "lat": -0.535,
           "lon": 166.926,
@@ -5063,6 +5414,7 @@
       },
       "landmarks": [
         {
+          "id": "rock-islands",
           "name": "Rock Islands",
           "lat": 7.15,
           "lon": 134.376,
@@ -5081,6 +5433,7 @@
       },
       "landmarks": [
         {
+          "id": "nan-madol",
           "name": "Nan Madol",
           "lat": 6.844,
           "lon": 158.334,
@@ -5099,6 +5452,7 @@
       },
       "landmarks": [
         {
+          "id": "bikini-atoll",
           "name": "Bikini Atoll",
           "lat": 11.6,
           "lon": 165.383,
@@ -5117,6 +5471,7 @@
       },
       "landmarks": [
         {
+          "id": "two-lovers-point",
           "name": "Two Lovers Point",
           "lat": 13.52,
           "lon": 144.803,
@@ -5135,6 +5490,7 @@
       },
       "landmarks": [
         {
+          "id": "managaha-island",
           "name": "Managaha Island",
           "lat": 15.235,
           "lon": 145.716,
@@ -5153,6 +5509,7 @@
       },
       "landmarks": [
         {
+          "id": "pola-island",
           "name": "Pola Island",
           "lat": -14.246,
           "lon": -170.578,
@@ -5171,6 +5528,7 @@
       },
       "landmarks": [
         {
+          "id": "muri-lagoon",
           "name": "Muri Lagoon",
           "lat": -21.253,
           "lon": -159.735,
@@ -5189,6 +5547,7 @@
       },
       "landmarks": [
         {
+          "id": "talava-arches",
           "name": "Talava Arches",
           "lat": -18.955,
           "lon": -169.87,
@@ -5207,6 +5566,7 @@
       },
       "landmarks": [
         {
+          "id": "lake-lalolalo",
           "name": "Lake Lalolalo",
           "lat": -13.294,
           "lon": -176.204,
@@ -5225,6 +5585,7 @@
       },
       "landmarks": [
         {
+          "id": "bounty-bay",
           "name": "Bounty Bay",
           "lat": -25.063,
           "lon": -130.096,
@@ -5243,6 +5604,7 @@
       },
       "landmarks": [
         {
+          "id": "kingston",
           "name": "Kingston",
           "lat": -29.055,
           "lon": 167.96,
@@ -5261,6 +5623,7 @@
       },
       "landmarks": [
         {
+          "id": "christmas-island-crabs",
           "name": "Christmas Island Crabs",
           "lat": -10.492,
           "lon": 105.633,
@@ -5279,6 +5642,7 @@
       },
       "landmarks": [
         {
+          "id": "ashmore-reef",
           "name": "Ashmore Reef",
           "lat": -12.256,
           "lon": 123.045,
@@ -5297,6 +5661,7 @@
       },
       "landmarks": [
         {
+          "id": "south-pole",
           "name": "South Pole",
           "lat": -90,
           "lon": 0,
@@ -5315,6 +5680,7 @@
       },
       "landmarks": [
         {
+          "id": "port-aux-fran-ais",
           "name": "Port-aux-Français",
           "lat": -49.351,
           "lon": 70.219,
@@ -5333,6 +5699,7 @@
       },
       "landmarks": [
         {
+          "id": "grytviken",
           "name": "Grytviken",
           "lat": -54.281,
           "lon": -36.508,
@@ -5351,6 +5718,7 @@
       },
       "landmarks": [
         {
+          "id": "mawson-peak",
           "name": "Mawson Peak",
           "lat": -53.106,
           "lon": 73.514,
@@ -5369,6 +5737,7 @@
       },
       "landmarks": [
         {
+          "id": "diego-garcia",
           "name": "Diego Garcia",
           "lat": -7.313,
           "lon": 72.411,

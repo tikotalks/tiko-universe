@@ -44,9 +44,13 @@ async function download(item, id) {
 }
 
 const source = JSON.parse(await readFile(join(CONTENT_DIR, 'country-landmarks.json'), 'utf8'))
-/** [country, name, lat, lon, glyph, tier], from the authored JSON. */
+/**
+ * The authored landmarks, each identified by its id. An entry written before
+ * ids existed takes the slug of its name, which is the id the pack has always
+ * been built with — so the two sides meet either way.
+ */
 const LANDMARKS = Object.entries(source.countries).flatMap(([country, entry]) =>
-  entry.landmarks.map((landmark) => [country, landmark.name, landmark.lat, landmark.lon, landmark.glyph, landmark.importance])
+  entry.landmarks.map((landmark) => ({ ...landmark, id: landmark.id ?? slug(landmark.name), country }))
 )
 
 const items = []
@@ -55,8 +59,10 @@ const withoutPicture = []
 const misplaced = []
 const seen = new Set()
 
-for (const [country, name, lat, lon, glyph, importance] of LANDMARKS) {
-  const id = `landmark.${slug(name)}`
+for (const landmark of LANDMARKS) {
+  const { country, name, lat, lon, glyph, importance } = landmark
+  const key = landmark.id
+  const id = `landmark.${key}`
   if (seen.has(id)) {
     misplaced.push(`${name}: duplicate id`)
     continue
@@ -82,17 +88,26 @@ for (const [country, name, lat, lon, glyph, importance] of LANDMARKS) {
     glyph,
     // 1 shows from space, 10 only at the closest zoom.
     importance,
-    priority: (11 - importance) * 9,
     country,
     marker: { lat, lon },
-    ...(picture ? { mediaId: picture.id, image: WRITE ? await download(picture, slug(name)) : `images/${slug(name)}.png` } : {}),
+    ...(picture ? { mediaId: picture.id, image: WRITE ? await download(picture, key) : `images/${key}.png` } : {}),
     review: { state: 'draft', source: null }
   })
 }
 
 items.sort((a, b) => a.name.localeCompare(b.name))
 
+// The authored file carries the ids from now on, so a later rename of the
+// English title cannot quietly become a different landmark.
+for (const entry of Object.values(source.countries)) {
+  entry.landmarks = entry.landmarks.map((landmark) => {
+    const { id, name, ...rest } = landmark
+    return { id: id ?? slug(name), name, ...rest }
+  })
+}
+
 if (WRITE) {
+  await writeFile(join(CONTENT_DIR, 'country-landmarks.json'), `${JSON.stringify(source, null, 2)}\n`)
   await writeFile(join(CONTENT_DIR, 'landmarks.json'), `${JSON.stringify({
     schemaVersion: SCHEMA_VERSION,
     note: 'Built by tools/geography/build-landmarks.mjs from landmark-list.mjs. Every country has at least one. Coordinates are the landmark itself and every entry is draft until an editor has checked the name, the country and the position.',

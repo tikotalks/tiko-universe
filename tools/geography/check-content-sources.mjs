@@ -28,6 +28,18 @@ const districtSource = await read('animal-districts.json')
 
 const problems = []
 const REVIEW_STATES = ['draft', 'verified']
+const slug = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+/** Identity is the id; the name is only the English label beside it. */
+const keyOf = (entry) => entry?.id ?? (entry?.name ? slug(entry.name) : null)
+
+/** An id has to be a slug, or it cannot be a translation key either. */
+function checkId(where, entry) {
+  const id = keyOf(entry)
+  if (!id) return null
+  if (!/^[a-z0-9-]+$/.test(id)) problems.push(`${where} has id "${id}", which is not a lowercase slug`)
+  return id
+}
 const marineDistricts = new Set(districts.items.filter((district) => district.isMarine).map((district) => district.id))
 
 // The district file is keyed by the library's own lower-case titles.
@@ -68,8 +80,13 @@ for (const [id, entry] of Object.entries(animalSource.countries)) {
   const seen = new Set()
   for (const animal of entry.animals ?? []) {
     if (!animal?.name) problems.push(`country-animals.json ${id} has an animal with no name`)
-    else if (seen.has(animal.name)) problems.push(`country-animals.json ${id} lists ${animal.name} twice`)
-    seen.add(animal?.name)
+    const key = checkId(`country-animals.json ${id} ${animal?.name ?? '(unnamed)'}`, animal)
+    if (key && seen.has(key)) problems.push(`country-animals.json ${id} lists ${key} twice`)
+    if (key) seen.add(key)
+    if (animal?.importance !== undefined
+      && !(animal.importance >= 1 && animal.importance <= 10)) {
+      problems.push(`country-animals.json ${id} ${animal.name} has importance ${animal.importance}, expected 1 to 10`)
+    }
 
     // Positions are authored data now, so they are checked like any other.
     if (animal?.at) {
@@ -101,9 +118,13 @@ for (const [id, entry] of Object.entries(landmarkSource.countries)) {
   if (!Array.isArray(entry.landmarks) || entry.landmarks.length === 0) {
     problems.push(`country-landmarks.json ${id} lists no landmarks — every country needs at least one`)
   }
+  const seenLandmarks = new Set()
   for (const landmark of entry.landmarks ?? []) {
     const where = `country-landmarks.json ${id} ${landmark?.name ?? '(unnamed)'}`
     if (!landmark?.name) problems.push(`${where} has no name`)
+    const key = checkId(where, landmark)
+    if (key && seenLandmarks.has(key)) problems.push(`${where} is listed twice`)
+    if (key) seenLandmarks.add(key)
     if (!landmark?.glyph) problems.push(`${where} has no glyph`)
     if (!(landmark?.importance >= 1 && landmark?.importance <= 10)) {
       problems.push(`${where} has importance ${landmark?.importance}, expected 1 (shows from space) to 10 (closest zoom)`)

@@ -78,8 +78,9 @@ final class GlobeController: ObservableObject {
     @Published private(set) var markerScale: Double = 1
 
     /// How big the artwork is drawn, in points. Big enough to read as a picture
-    /// of an animal rather than a pin, at every zoom.
-    var markerSize: Double { 54 * markerScale }
+    /// of an animal rather than a pin, at every zoom — a child should be able to
+    /// tell a lion from a leopard without going anywhere near it.
+    var markerSize: Double { 108 * markerScale }
     /// Drives the "back to the whole Earth" action's visibility.
     @Published private(set) var isShowingWholeEarth = true
     /// Whether the zoom controls have anywhere left to go. Published rather than
@@ -88,6 +89,10 @@ final class GlobeController: ObservableObject {
     @Published private(set) var canZoomOut = false
     /// The country names currently worth drawing, projected to view coordinates.
     @Published private(set) var labels: [GlobeLabel] = []
+    /// And the names of the water they sit in, which are geography in every
+    /// mode rather than a mode of their own.
+    @Published private(set) var seaLabels: [GlobeLabel] = []
+    private var seas: [GlobeSea] = []
 
     /// Set by the surface view; labels cannot be placed without it.
     var viewSize: CGSize = .zero
@@ -165,6 +170,7 @@ final class GlobeController: ObservableObject {
             self.geography = geography
             meshes = loaded.1
             content = GlobeContentLibrary.load(countries: geography.countries)
+            seas = GlobeSeas.load()
             // Most important first, then by id — a stable order that owes
             // nothing to how the data was generated.
             rankedByMode = content.occurrences.mapValues { occurrences in
@@ -233,7 +239,7 @@ final class GlobeController: ObservableObject {
         // a child aiming at the elephant means the elephant. This runs here
         // rather than relying on the marker's own button, so a tap that lands
         // beside the artwork still counts.
-        let reach = 24 + 16 * markerScale
+        let reach = 44 + 30 * markerScale
         if let nearest = markers
             .map({ ($0.occurrence, hypot($0.point.x - point.x, $0.point.y - point.y)) })
             .filter({ $0.1 <= reach })
@@ -268,6 +274,28 @@ final class GlobeController: ObservableObject {
 
     /// The occurrence of an entity a child should be taken to: the one they can
     /// see, else the most important.
+    /// Everything of one kind that the geography puts inside a country, best
+    /// first. A country's card is a way in to its animals and its landmarks.
+    func entities(in country: GlobeCountry, kind: GlobeEntity.Kind) -> [GlobeEntity] {
+        let mode: GlobeMode = switch kind {
+        case .animal: .animals
+        case .landmark: .landmarks
+        case .capital: .capitals
+        }
+        var seen = Set<String>()
+        var found: [(entity: GlobeEntity, importance: Int)] = []
+        for occurrence in content.occurrences[mode] ?? [] {
+            guard occurrence.countryID == country.id || occurrence.countryIDs.contains(country.id) else { continue }
+            guard !seen.contains(occurrence.entityID) else { continue }
+            guard let entity = content.entity(for: occurrence) else { continue }
+            seen.insert(occurrence.entityID)
+            found.append((entity, occurrence.importance))
+        }
+        return found
+            .sorted { ($0.importance, $0.entity.id) < ($1.importance, $1.entity.id) }
+            .map(\.entity)
+    }
+
     func bestOccurrence(of entityID: String) -> GlobeOccurrence? {
         let candidates = (rankedByMode[mode] ?? []).filter { $0.entityID == entityID }
         let cameraDirection = camera.globeSpaceCameraDirection
@@ -432,6 +460,7 @@ final class GlobeController: ObservableObject {
         }
         advanceMarkerPresence(by: seconds)
         placeLabels()
+        placeSeaLabels()
         placeMarkers()
 
         if var animation = focusAnimation {
@@ -553,6 +582,44 @@ final class GlobeController: ObservableObject {
             ))
         }
         if next != labels { labels = next }
+    }
+
+    /// The names of the water. Cheap enough to redo every frame — there are a
+    /// hundred of them and only a handful ever pass — so they need no separate
+    /// choose pass. A name shows when the zoom has reached its importance and
+    /// when its water is wide enough on screen to carry it.
+    private func placeSeaLabels() {
+        guard viewSize.width > 0, !seas.isEmpty else {
+            if !seaLabels.isEmpty { seaLabels = [] }
+            return
+        }
+        let cameraDirection = camera.globeSpaceCameraDirection
+        let horizon = Float(camera.insetHorizonCosine)
+        let visibleRadius = max(camera.visibleRadiusDegrees, 0.001)
+        let deepest = GlobeImportanceBands.deepest(forVisibleRadius: visibleRadius)
+
+        var next: [GlobeLabel] = []
+        var placed: [CGRect] = []
+        for sea in seas where sea.importance <= deepest {
+            // Room for the name in the water it names, not just on the screen.
+            let span = sea.reachDegrees / visibleRadius
+            guard span > 0.07 else { continue }
+            let normal = GlobeMath.unitVector(sea.point)
+            guard simd_dot(normal, cameraDirection) > horizon else { continue }
+            guard let point = camera.viewPoint(for: sea.point, viewSize: viewSize) else { continue }
+            guard point.x > 4, point.y > 4, point.x < viewSize.width - 4, point.y < viewSize.height - 4 else { continue }
+            let label = GlobeLabel(
+                id: sea.id,
+                text: sea.name(languageCode: languageCode),
+                point: point,
+                prominence: min(span, 1.4)
+            )
+            let box = Self.chipBox(for: label)
+            guard !placed.contains(where: { $0.intersects(box) }) else { continue }
+            placed.append(box)
+            next.append(label)
+        }
+        if next != seaLabels { seaLabels = next }
     }
 
     /// Roughly the chip a name will be drawn in — enough to keep two of them

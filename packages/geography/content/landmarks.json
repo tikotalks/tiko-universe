@@ -7,7 +7,6 @@
       "name": "Abu Simbel",
       "glyph": "🗿",
       "importance": 5,
-      "priority": 54,
       "country": "EGY",
       "marker": {
         "lat": 22.337,
@@ -23,7 +22,6 @@
       "name": "Acropolis of Athens",
       "glyph": "🏛️",
       "importance": 2,
-      "priority": 81,
       "country": "GRC",
       "marker": {
         "lat": 37.971,
@@ -39,7 +37,6 @@
       "name": "Aït Benhaddou",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "MAR",
       "marker": {
         "lat": 31.047,
@@ -55,7 +52,6 @@
       "name": "Al-Ula",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "SAU",
       "marker": {
         "lat": 26.609,
@@ -71,7 +67,6 @@
       "name": "Alhambra",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "ESP",
       "marker": {
         "lat": 37.176,
@@ -87,7 +82,6 @@
       "name": "Amazon Rainforest",
       "glyph": "🌳",
       "importance": 5,
-      "priority": 54,
       "country": "BRA",
       "marker": {
         "lat": -3.465,
@@ -103,7 +97,6 @@
       "name": "Angel Falls",
       "glyph": "💦",
       "importance": 5,
-      "priority": 54,
       "country": "VEN",
       "marker": {
         "lat": 5.969,
@@ -119,7 +112,6 @@
       "name": "Angkor Wat",
       "glyph": "🛕",
       "importance": 2,
-      "priority": 81,
       "country": "KHM",
       "marker": {
         "lat": 13.413,
@@ -137,7 +129,6 @@
       "name": "Anne Frank House",
       "glyph": "🏠",
       "importance": 8,
-      "priority": 27,
       "country": "NLD",
       "marker": {
         "lat": 52.375,
@@ -153,7 +144,6 @@
       "name": "Arc de Triomphe",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "FRA",
       "marker": {
         "lat": 48.874,
@@ -169,7 +159,6 @@
       "name": "Arenal Volcano",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "CRI",
       "marker": {
         "lat": 10.463,
@@ -185,7 +174,6 @@
       "name": "Ashmore Reef",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "ATC",
       "marker": {
         "lat": -12.256,
@@ -201,7 +189,6 @@
       "name": "Asmara Old Town",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "ERI",
       "marker": {
         "lat": 15.339,
@@ -217,7 +204,6 @@
       "name": "Atacama Desert",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "CHL",
       "marker": {
         "lat": -23.865,
@@ -233,7 +219,6 @@
       "name": "Atomium",
       "glyph": "⚛️",
       "importance": 5,
-      "priority": 54,
       "country": "BEL",
       "marker": {
         "lat": 50.895,
@@ -249,7 +234,6 @@
       "name": "Avenue of the Baobabs",
       "glyph": "🌳",
       "importance": 5,
-      "priority": 54,
       "country": "MDG",
       "marker": {
         "lat": -20.251,
@@ -265,7 +249,6 @@
       "name": "Baalbek",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "LBN",
       "marker": {
         "lat": 34.007,
@@ -281,7 +264,6 @@
       "name": "Badshahi Mosque",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "PAK",
       "marker": {
         "lat": 31.588,
@@ -297,7 +279,6 @@
       "name": "Bahrain Fort",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "BHR",
       "marker": {
         "lat": 26.233,
@@ -313,7 +294,6 @@
       "name": "Baiterek Tower",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "KAZ",
       "marker": {
         "lat": 51.128,
@@ -329,7 +309,6 @@
       "name": "Banaue Rice Terraces",
       "glyph": "🌾",
       "importance": 8,
-      "priority": 27,
       "country": "PHL",
       "marker": {
         "lat": 16.934,
@@ -345,7 +324,6 @@
       "name": "Band-e Amir",
       "glyph": "🏞️",
       "importance": 8,
-      "priority": 27,
       "country": "AFG",
       "marker": {
         "lat": 34.842,
@@ -361,7 +339,6 @@
       "name": "Banff National Park",
       "glyph": "🏔️",
       "importance": 5,
-      "priority": 54,
       "country": "CAN",
       "marker": {
         "lat": 51.178,
@@ -377,7 +354,6 @@
       "name": "Basílica de Mongomo",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "GNQ",
       "marker": {
         "lat": 1.626,
@@ -393,7 +369,6 @@
       "name": "Basilica of Our Lady of Peace",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "CIV",
       "marker": {
         "lat": 6.812,
@@ -409,7 +384,6 @@
       "name": "Basilique Sainte-Anne",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "COG",
       "marker": {
         "lat": -4.279,
@@ -425,7 +399,6 @@
       "name": "Bay of Kotor",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "MNE",
       "marker": {
         "lat": 42.424,
@@ -441,7 +414,6 @@
       "name": "Belém Tower",
       "glyph": "🗼",
       "importance": 5,
-      "priority": 54,
       "country": "PRT",
       "marker": {
         "lat": 38.692,
@@ -457,7 +429,6 @@
       "name": "Belgrade Fortress",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SRB",
       "marker": {
         "lat": 44.823,
@@ -473,7 +444,6 @@
       "name": "Big Ben",
       "glyph": "🕰️",
       "importance": 2,
-      "priority": 81,
       "country": "GBR",
       "marker": {
         "lat": 51.501,
@@ -491,7 +461,6 @@
       "name": "Bijagós Islands",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "GNB",
       "marker": {
         "lat": 11.3,
@@ -507,7 +476,6 @@
       "name": "Bikini Atoll",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "MHL",
       "marker": {
         "lat": 11.6,
@@ -523,7 +491,6 @@
       "name": "Blue Grotto",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.82,
@@ -539,7 +506,6 @@
       "name": "Blue Holes of Andros",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "BHS",
       "marker": {
         "lat": 24.7,
@@ -555,7 +521,6 @@
       "name": "Blue Lagoon of Comino",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 36.014,
@@ -571,7 +536,6 @@
       "name": "Boali Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "CAF",
       "marker": {
         "lat": 4.796,
@@ -587,7 +551,6 @@
       "name": "Boiling Lake",
       "glyph": "♨️",
       "importance": 8,
-      "priority": 27,
       "country": "DMA",
       "marker": {
         "lat": 15.318,
@@ -603,7 +566,6 @@
       "name": "Boma National Park",
       "glyph": "🦌",
       "importance": 8,
-      "priority": 27,
       "country": "SDS",
       "marker": {
         "lat": 6.5,
@@ -619,7 +581,6 @@
       "name": "Bora Bora",
       "glyph": "🏝️",
       "importance": 5,
-      "priority": 54,
       "country": "PYF",
       "marker": {
         "lat": -16.5,
@@ -635,7 +596,6 @@
       "name": "Borobudur",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "IDN",
       "marker": {
         "lat": -7.608,
@@ -651,7 +611,6 @@
       "name": "Boudhanath Stupa",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "NPL",
       "marker": {
         "lat": 27.721,
@@ -667,7 +626,6 @@
       "name": "Bounty Bay",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "PCN",
       "marker": {
         "lat": -25.063,
@@ -683,7 +641,6 @@
       "name": "Bran Castle",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "ROU",
       "marker": {
         "lat": 45.515,
@@ -699,7 +656,6 @@
       "name": "Brandenburg Gate",
       "glyph": "🏛️",
       "importance": 2,
-      "priority": 81,
       "country": "DEU",
       "marker": {
         "lat": 52.516,
@@ -715,7 +671,6 @@
       "name": "Bratislava Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SVK",
       "marker": {
         "lat": 48.142,
@@ -731,7 +686,6 @@
       "name": "Brimstone Hill Fortress",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "KNA",
       "marker": {
         "lat": 17.368,
@@ -747,7 +701,6 @@
       "name": "Bryggen",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "NOR",
       "marker": {
         "lat": 60.397,
@@ -763,7 +716,6 @@
       "name": "Buada Lagoon",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "NRU",
       "marker": {
         "lat": -0.535,
@@ -779,7 +731,6 @@
       "name": "Buckingham Palace",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "GBR",
       "marker": {
         "lat": 51.501,
@@ -795,7 +746,6 @@
       "name": "Bulguksa Temple",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "KOR",
       "marker": {
         "lat": 35.79,
@@ -811,7 +761,6 @@
       "name": "Burana Tower",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "KGZ",
       "marker": {
         "lat": 42.746,
@@ -827,7 +776,6 @@
       "name": "Burj Khalifa",
       "glyph": "🏙️",
       "importance": 2,
-      "priority": 81,
       "country": "ARE",
       "marker": {
         "lat": 25.197,
@@ -845,7 +793,6 @@
       "name": "Butrint",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "ALB",
       "marker": {
         "lat": 39.746,
@@ -861,7 +808,6 @@
       "name": "Bwindi Forest",
       "glyph": "🦍",
       "importance": 8,
-      "priority": 27,
       "country": "UGA",
       "marker": {
         "lat": -1.055,
@@ -877,7 +823,6 @@
       "name": "California Lighthouse",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "ABW",
       "marker": {
         "lat": 12.615,
@@ -893,7 +838,6 @@
       "name": "Cape Coast Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "GHA",
       "marker": {
         "lat": 5.104,
@@ -909,7 +853,6 @@
       "name": "Cape of Good Hope",
       "glyph": "🌊",
       "importance": 5,
-      "priority": 54,
       "country": "ZAF",
       "marker": {
         "lat": -34.357,
@@ -925,7 +868,6 @@
       "name": "Cappadocia",
       "glyph": "🎈",
       "importance": 5,
-      "priority": 54,
       "country": "TUR",
       "marker": {
         "lat": 38.643,
@@ -941,7 +883,6 @@
       "name": "Cartagena Old Town",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "COL",
       "marker": {
         "lat": 10.423,
@@ -957,7 +898,6 @@
       "name": "Carthage",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "TUN",
       "marker": {
         "lat": 36.853,
@@ -973,7 +913,6 @@
       "name": "Casa de la Vall",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "AND",
       "marker": {
         "lat": 42.507,
@@ -989,7 +928,6 @@
       "name": "Casbah of Algiers",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "DZA",
       "marker": {
         "lat": 36.784,
@@ -1005,7 +943,6 @@
       "name": "Castle Cornet",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "GGY",
       "marker": {
         "lat": 49.454,
@@ -1021,7 +958,6 @@
       "name": "Central Suriname Reserve",
       "glyph": "🌳",
       "importance": 8,
-      "priority": 27,
       "country": "SUR",
       "marker": {
         "lat": 4.2,
@@ -1037,7 +973,6 @@
       "name": "Chapel Bridge",
       "glyph": "🌉",
       "importance": 8,
-      "priority": 27,
       "country": "CHE",
       "marker": {
         "lat": 47.052,
@@ -1053,7 +988,6 @@
       "name": "Charles Bridge",
       "glyph": "🌉",
       "importance": 5,
-      "priority": 54,
       "country": "CZE",
       "marker": {
         "lat": 50.086,
@@ -1069,7 +1003,6 @@
       "name": "Château Frontenac",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "CAN",
       "marker": {
         "lat": 46.812,
@@ -1085,7 +1018,6 @@
       "name": "Chichén Itzá",
       "glyph": "🔺",
       "importance": 2,
-      "priority": 81,
       "country": "MEX",
       "marker": {
         "lat": 20.683,
@@ -1101,7 +1033,6 @@
       "name": "Chocolate Hills",
       "glyph": "⛰️",
       "importance": 8,
-      "priority": 27,
       "country": "PHL",
       "marker": {
         "lat": 9.828,
@@ -1117,7 +1048,6 @@
       "name": "Christ the Redeemer",
       "glyph": "⛰️",
       "importance": 2,
-      "priority": 81,
       "country": "BRA",
       "marker": {
         "lat": -22.952,
@@ -1133,7 +1063,6 @@
       "name": "Christmas Island",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "KIR",
       "marker": {
         "lat": 1.983,
@@ -1149,7 +1078,6 @@
       "name": "Christmas Island Crabs",
       "glyph": "🦀",
       "importance": 8,
-      "priority": 27,
       "country": "IOA",
       "marker": {
         "lat": -10.492,
@@ -1165,7 +1093,6 @@
       "name": "Church of the Nativity",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "PSX",
       "marker": {
         "lat": 31.704,
@@ -1181,7 +1108,6 @@
       "name": "Cidade Velha",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "CPV",
       "marker": {
         "lat": 14.916,
@@ -1197,7 +1123,6 @@
       "name": "Citadelle Laferrière",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "HTI",
       "marker": {
         "lat": 19.574,
@@ -1213,7 +1138,6 @@
       "name": "Cittadella of Gozo",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 36.046,
@@ -1229,7 +1153,6 @@
       "name": "Cliffs of Moher",
       "glyph": "🌊",
       "importance": 5,
-      "priority": 54,
       "country": "IRL",
       "marker": {
         "lat": 52.972,
@@ -1245,7 +1168,6 @@
       "name": "CN Tower",
       "glyph": "🗼",
       "importance": 5,
-      "priority": 54,
       "country": "CAN",
       "marker": {
         "lat": 43.643,
@@ -1263,7 +1185,6 @@
       "name": "Cologne Cathedral",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "DEU",
       "marker": {
         "lat": 50.941,
@@ -1279,7 +1200,6 @@
       "name": "Colonia del Sacramento",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "URY",
       "marker": {
         "lat": -34.471,
@@ -1295,7 +1215,6 @@
       "name": "Colosseum",
       "glyph": "🏛️",
       "importance": 2,
-      "priority": 81,
       "country": "ITA",
       "marker": {
         "lat": 41.89,
@@ -1313,7 +1232,6 @@
       "name": "Copán",
       "glyph": "🗿",
       "importance": 8,
-      "priority": 27,
       "country": "HND",
       "marker": {
         "lat": 14.837,
@@ -1329,7 +1247,6 @@
       "name": "Cotton Tree",
       "glyph": "🌳",
       "importance": 8,
-      "priority": 27,
       "country": "SLE",
       "marker": {
         "lat": 8.487,
@@ -1345,7 +1262,6 @@
       "name": "Cristo Rei of Dili",
       "glyph": "⛰️",
       "importance": 8,
-      "priority": 27,
       "country": "TLS",
       "marker": {
         "lat": -8.52,
@@ -1361,7 +1277,6 @@
       "name": "Darvaza Gas Crater",
       "glyph": "🔥",
       "importance": 8,
-      "priority": 27,
       "country": "TKM",
       "marker": {
         "lat": 40.253,
@@ -1377,7 +1292,6 @@
       "name": "Delta Works",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "NLD",
       "marker": {
         "lat": 51.622,
@@ -1393,7 +1307,6 @@
       "name": "Diego Garcia",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "IOT",
       "marker": {
         "lat": -7.313,
@@ -1409,7 +1322,6 @@
       "name": "Dingli Cliffs",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.851,
@@ -1425,7 +1337,6 @@
       "name": "Dubrovnik Old Town",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "HRV",
       "marker": {
         "lat": 42.641,
@@ -1441,7 +1352,6 @@
       "name": "Dunn's River Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "JAM",
       "marker": {
         "lat": 18.415,
@@ -1457,7 +1367,6 @@
       "name": "Duomo of Florence",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "ITA",
       "marker": {
         "lat": 43.773,
@@ -1473,7 +1382,6 @@
       "name": "Edinburgh Castle",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "GBR",
       "marker": {
         "lat": 55.949,
@@ -1489,7 +1397,6 @@
       "name": "Eiffel Tower",
       "glyph": "🗼",
       "importance": 2,
-      "priority": 81,
       "country": "FRA",
       "marker": {
         "lat": 48.858,
@@ -1507,7 +1414,6 @@
       "name": "El Djem Amphitheatre",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "TUN",
       "marker": {
         "lat": 35.296,
@@ -1523,7 +1429,6 @@
       "name": "El Morro",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "PRI",
       "marker": {
         "lat": 18.471,
@@ -1539,7 +1444,6 @@
       "name": "Empire State Building",
       "glyph": "🏙️",
       "importance": 5,
-      "priority": 54,
       "country": "USA",
       "marker": {
         "lat": 40.749,
@@ -1557,7 +1461,6 @@
       "name": "Ennedi Massif",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "TCD",
       "marker": {
         "lat": 17,
@@ -1573,7 +1476,6 @@
       "name": "Erdene Zuu Monastery",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "MNG",
       "marker": {
         "lat": 47.201,
@@ -1589,7 +1491,6 @@
       "name": "Fish River Canyon",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "NAM",
       "marker": {
         "lat": -27.596,
@@ -1605,7 +1506,6 @@
       "name": "Fisherman's Bastion",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "HUN",
       "marker": {
         "lat": 47.502,
@@ -1621,7 +1521,6 @@
       "name": "Flame Towers",
       "glyph": "🏙️",
       "importance": 8,
-      "priority": 27,
       "country": "AZE",
       "marker": {
         "lat": 40.36,
@@ -1637,7 +1536,6 @@
       "name": "Forbidden City",
       "glyph": "🏯",
       "importance": 2,
-      "priority": 81,
       "country": "CHN",
       "marker": {
         "lat": 39.916,
@@ -1653,7 +1551,6 @@
       "name": "Fort Amsterdam",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SXM",
       "marker": {
         "lat": 18.019,
@@ -1669,7 +1566,6 @@
       "name": "Fort Louis",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "MAF",
       "marker": {
         "lat": 18.069,
@@ -1685,7 +1581,6 @@
       "name": "Fort St Angelo",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.892,
@@ -1701,7 +1596,6 @@
       "name": "Funafuti Lagoon",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "TUV",
       "marker": {
         "lat": -8.52,
@@ -1717,7 +1611,6 @@
       "name": "Fushimi Inari Shrine",
       "glyph": "⛩️",
       "importance": 2,
-      "priority": 81,
       "country": "JPN",
       "marker": {
         "lat": 34.967,
@@ -1733,7 +1626,6 @@
       "name": "Galápagos Islands",
       "glyph": "🐢",
       "importance": 5,
-      "priority": 54,
       "country": "ECU",
       "marker": {
         "lat": -0.777,
@@ -1749,7 +1641,6 @@
       "name": "Ganvie",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "BEN",
       "marker": {
         "lat": 6.466,
@@ -1765,7 +1656,6 @@
       "name": "Gateway of India",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "IND",
       "marker": {
         "lat": 18.922,
@@ -1781,7 +1671,6 @@
       "name": "Geirangerfjord",
       "glyph": "🏔️",
       "importance": 5,
-      "priority": 54,
       "country": "NOR",
       "marker": {
         "lat": 62.101,
@@ -1797,7 +1686,6 @@
       "name": "Genghis Khan Statue",
       "glyph": "🗿",
       "importance": 8,
-      "priority": 27,
       "country": "MNG",
       "marker": {
         "lat": 47.808,
@@ -1813,7 +1701,6 @@
       "name": "Gergeti Trinity Church",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "GEO",
       "marker": {
         "lat": 42.663,
@@ -1829,7 +1716,6 @@
       "name": "Geysir",
       "glyph": "♨️",
       "importance": 5,
-      "priority": 54,
       "country": "ISL",
       "marker": {
         "lat": 64.313,
@@ -1845,7 +1731,6 @@
       "name": "Ġgantija Temples",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 36.047,
@@ -1861,7 +1746,6 @@
       "name": "Giant's Causeway",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "GBR",
       "marker": {
         "lat": 55.241,
@@ -1877,7 +1761,6 @@
       "name": "Golden Gate Bridge",
       "glyph": "🌉",
       "importance": 2,
-      "priority": 81,
       "country": "USA",
       "marker": {
         "lat": 37.82,
@@ -1895,7 +1778,6 @@
       "name": "Golden Temple",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "IND",
       "marker": {
         "lat": 31.62,
@@ -1911,7 +1793,6 @@
       "name": "Gorée Island",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "SEN",
       "marker": {
         "lat": 14.667,
@@ -1927,7 +1808,6 @@
       "name": "Gracanica Monastery",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "KOS",
       "marker": {
         "lat": 42.6,
@@ -1943,7 +1823,6 @@
       "name": "Grace Bay",
       "glyph": "🏖️",
       "importance": 8,
-      "priority": 27,
       "country": "TCA",
       "marker": {
         "lat": 21.796,
@@ -1959,7 +1838,6 @@
       "name": "Grand Anse Beach",
       "glyph": "🏖️",
       "importance": 8,
-      "priority": 27,
       "country": "GRD",
       "marker": {
         "lat": 12.006,
@@ -1975,7 +1853,6 @@
       "name": "Grand Canyon",
       "glyph": "🏜️",
       "importance": 2,
-      "priority": 81,
       "country": "USA",
       "marker": {
         "lat": 36.099,
@@ -1991,7 +1868,6 @@
       "name": "Grand Harbour",
       "glyph": "⛵",
       "importance": 5,
-      "priority": 54,
       "country": "MLT",
       "marker": {
         "lat": 35.893,
@@ -2007,7 +1883,6 @@
       "name": "Grand Mosque of Agadez",
       "glyph": "🕌",
       "importance": 8,
-      "priority": 27,
       "country": "NER",
       "marker": {
         "lat": 16.973,
@@ -2023,7 +1898,6 @@
       "name": "Grand Palace",
       "glyph": "🏯",
       "importance": 5,
-      "priority": 54,
       "country": "THA",
       "marker": {
         "lat": 13.75,
@@ -2039,7 +1913,6 @@
       "name": "Grand-Place of Brussels",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "BEL",
       "marker": {
         "lat": 50.847,
@@ -2055,7 +1928,6 @@
       "name": "Great Barrier Reef",
       "glyph": "🐠",
       "importance": 2,
-      "priority": 81,
       "country": "AUS",
       "marker": {
         "lat": -18.286,
@@ -2071,7 +1943,6 @@
       "name": "Great Blue Hole",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "BLZ",
       "marker": {
         "lat": 17.316,
@@ -2087,7 +1958,6 @@
       "name": "Great Mosque of Djenné",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "MLI",
       "marker": {
         "lat": 13.905,
@@ -2103,7 +1973,6 @@
       "name": "Great Sphinx",
       "glyph": "🗿",
       "importance": 2,
-      "priority": 81,
       "country": "EGY",
       "marker": {
         "lat": 29.975,
@@ -2119,7 +1988,6 @@
       "name": "Great Wall of China",
       "glyph": "🧱",
       "importance": 2,
-      "priority": 81,
       "country": "CHN",
       "marker": {
         "lat": 40.432,
@@ -2135,7 +2003,6 @@
       "name": "Great Zimbabwe",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "ZWE",
       "marker": {
         "lat": -20.268,
@@ -2151,7 +2018,6 @@
       "name": "Grytviken",
       "glyph": "🐧",
       "importance": 8,
-      "priority": 27,
       "country": "SGS",
       "marker": {
         "lat": -54.281,
@@ -2167,7 +2033,6 @@
       "name": "Guaita Tower",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SMR",
       "marker": {
         "lat": 43.937,
@@ -2183,7 +2048,6 @@
       "name": "Gullfoss",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "ISL",
       "marker": {
         "lat": 64.327,
@@ -2199,7 +2063,6 @@
       "name": "Gustavia Harbour",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "BLM",
       "marker": {
         "lat": 17.897,
@@ -2215,7 +2078,6 @@
       "name": "Gyeongbokgung Palace",
       "glyph": "🏯",
       "importance": 5,
-      "priority": 54,
       "country": "KOR",
       "marker": {
         "lat": 37.579,
@@ -2231,7 +2093,6 @@
       "name": "Ha Long Bay",
       "glyph": "⛵",
       "importance": 5,
-      "priority": 54,
       "country": "VNM",
       "marker": {
         "lat": 20.91,
@@ -2247,7 +2108,6 @@
       "name": "Ħaġar Qim",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.827,
@@ -2263,7 +2123,6 @@
       "name": "Hagia Sophia",
       "glyph": "🕌",
       "importance": 2,
-      "priority": 81,
       "country": "TUR",
       "marker": {
         "lat": 41.008,
@@ -2281,7 +2140,6 @@
       "name": "Haʻamonga ʻa Maui",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "TON",
       "marker": {
         "lat": -21.135,
@@ -2297,7 +2155,6 @@
       "name": "Hallstatt",
       "glyph": "🏔️",
       "importance": 8,
-      "priority": 27,
       "country": "AUT",
       "marker": {
         "lat": 47.562,
@@ -2313,7 +2170,6 @@
       "name": "Harrison's Cave",
       "glyph": "🕳️",
       "importance": 8,
-      "priority": 27,
       "country": "BRB",
       "marker": {
         "lat": 13.187,
@@ -2329,7 +2185,6 @@
       "name": "Hassan II Mosque",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "MAR",
       "marker": {
         "lat": 33.608,
@@ -2345,7 +2200,6 @@
       "name": "Hawa Mahal",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "IND",
       "marker": {
         "lat": 26.924,
@@ -2361,7 +2215,6 @@
       "name": "Heart of Voh",
       "glyph": "💚",
       "importance": 8,
-      "priority": 27,
       "country": "NCL",
       "marker": {
         "lat": -20.945,
@@ -2377,7 +2230,6 @@
       "name": "Hermitage Museum",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "RUS",
       "marker": {
         "lat": 59.94,
@@ -2393,7 +2245,6 @@
       "name": "Himeji Castle",
       "glyph": "🏯",
       "importance": 5,
-      "priority": 54,
       "country": "JPN",
       "marker": {
         "lat": 34.839,
@@ -2409,7 +2260,6 @@
       "name": "Hobbiton",
       "glyph": "🏘️",
       "importance": 5,
-      "priority": 54,
       "country": "NZL",
       "marker": {
         "lat": -37.872,
@@ -2425,7 +2275,6 @@
       "name": "Hoi An Old Town",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "VNM",
       "marker": {
         "lat": 15.877,
@@ -2441,7 +2290,6 @@
       "name": "Hungarian Parliament",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "HUN",
       "marker": {
         "lat": 47.507,
@@ -2457,7 +2305,6 @@
       "name": "Icehotel",
       "glyph": "🧊",
       "importance": 8,
-      "priority": 27,
       "country": "SWE",
       "marker": {
         "lat": 67.849,
@@ -2473,7 +2320,6 @@
       "name": "Iguaçu Falls",
       "glyph": "💦",
       "importance": 2,
-      "priority": 81,
       "country": "BRA",
       "marker": {
         "lat": -25.687,
@@ -2489,7 +2335,6 @@
       "name": "Iguazú Falls",
       "glyph": "💦",
       "importance": 5,
-      "priority": 54,
       "country": "ARG",
       "marker": {
         "lat": -25.695,
@@ -2505,7 +2350,6 @@
       "name": "Île aux Marins",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "SPM",
       "marker": {
         "lat": 46.771,
@@ -2521,7 +2365,6 @@
       "name": "Ilulissat Icefjord",
       "glyph": "🧊",
       "importance": 5,
-      "priority": 54,
       "country": "GRL",
       "marker": {
         "lat": 69.167,
@@ -2537,7 +2380,6 @@
       "name": "Iskanderkul",
       "glyph": "🏞️",
       "importance": 8,
-      "priority": 27,
       "country": "TJK",
       "marker": {
         "lat": 39.075,
@@ -2553,7 +2395,6 @@
       "name": "Island of Mozambique",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "MOZ",
       "marker": {
         "lat": -15.035,
@@ -2569,7 +2410,6 @@
       "name": "Itsukushima Shrine",
       "glyph": "⛩️",
       "importance": 5,
-      "priority": 54,
       "country": "JPN",
       "marker": {
         "lat": 34.296,
@@ -2585,7 +2425,6 @@
       "name": "Jacob's Ladder",
       "glyph": "🪜",
       "importance": 8,
-      "priority": 27,
       "country": "SHN",
       "marker": {
         "lat": -15.925,
@@ -2601,7 +2440,6 @@
       "name": "Jemaa el-Fnaa",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "MAR",
       "marker": {
         "lat": 31.626,
@@ -2617,7 +2455,6 @@
       "name": "Jesuit Ruins of Trinidad",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "PRY",
       "marker": {
         "lat": -27.132,
@@ -2633,7 +2470,6 @@
       "name": "Joya de Cerén",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "SLV",
       "marker": {
         "lat": 13.828,
@@ -2649,7 +2485,6 @@
       "name": "Juche Tower",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "PRK",
       "marker": {
         "lat": 39.018,
@@ -2665,7 +2500,6 @@
       "name": "K2",
       "glyph": "🏔️",
       "importance": 5,
-      "priority": 54,
       "country": "PAK",
       "marker": {
         "lat": 35.881,
@@ -2681,7 +2515,6 @@
       "name": "Kaaba",
       "glyph": "🕋",
       "importance": 2,
-      "priority": 81,
       "country": "SAU",
       "marker": {
         "lat": 21.423,
@@ -2699,7 +2532,6 @@
       "name": "Kaieteur Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "GUY",
       "marker": {
         "lat": 5.175,
@@ -2715,7 +2547,6 @@
       "name": "Kalandula Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "AGO",
       "marker": {
         "lat": -9.075,
@@ -2731,7 +2562,6 @@
       "name": "Karera Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "BDI",
       "marker": {
         "lat": -4.033,
@@ -2747,7 +2577,6 @@
       "name": "Karnak Temple",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "EGY",
       "marker": {
         "lat": 25.719,
@@ -2763,7 +2592,6 @@
       "name": "Kastelholm Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "ALD",
       "marker": {
         "lat": 60.24,
@@ -2779,7 +2607,6 @@
       "name": "Khor Virap",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "ARM",
       "marker": {
         "lat": 39.878,
@@ -2795,7 +2622,6 @@
       "name": "Kingston",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "NFK",
       "marker": {
         "lat": -29.055,
@@ -2811,7 +2637,6 @@
       "name": "Kokoda Track",
       "glyph": "🥾",
       "importance": 8,
-      "priority": 27,
       "country": "PNG",
       "marker": {
         "lat": -9.07,
@@ -2827,7 +2652,6 @@
       "name": "Koutammakou",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "TGO",
       "marker": {
         "lat": 10.063,
@@ -2843,7 +2667,6 @@
       "name": "Krak des Chevaliers",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SYR",
       "marker": {
         "lat": 34.757,
@@ -2859,7 +2682,6 @@
       "name": "Kronborg Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "DNK",
       "marker": {
         "lat": 56.039,
@@ -2875,7 +2697,6 @@
       "name": "Kruger National Park",
       "glyph": "🐘",
       "importance": 5,
-      "priority": 54,
       "country": "ZAF",
       "marker": {
         "lat": -24.01,
@@ -2891,7 +2712,6 @@
       "name": "Kunta Kinteh Island",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "GMB",
       "marker": {
         "lat": 13.322,
@@ -2907,7 +2727,6 @@
       "name": "Kuwait Towers",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "KWT",
       "marker": {
         "lat": 29.39,
@@ -2923,7 +2742,6 @@
       "name": "Kyrenia Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "CYN",
       "marker": {
         "lat": 35.341,
@@ -2939,7 +2757,6 @@
       "name": "La Soufrière",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "VCT",
       "marker": {
         "lat": 13.331,
@@ -2955,7 +2772,6 @@
       "name": "Laas Geel Caves",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "SOL",
       "marker": {
         "lat": 9.735,
@@ -2971,7 +2787,6 @@
       "name": "Laayoune",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "SAH",
       "marker": {
         "lat": 27.15,
@@ -2987,7 +2802,6 @@
       "name": "Lake Assal",
       "glyph": "🏞️",
       "importance": 8,
-      "priority": 27,
       "country": "DJI",
       "marker": {
         "lat": 11.657,
@@ -3003,7 +2817,6 @@
       "name": "Lake Baikal",
       "glyph": "🏞️",
       "importance": 5,
-      "priority": 54,
       "country": "RUS",
       "marker": {
         "lat": 53.5,
@@ -3019,7 +2832,6 @@
       "name": "Lake Bled",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "SVN",
       "marker": {
         "lat": 46.363,
@@ -3035,7 +2847,6 @@
       "name": "Lake Lalolalo",
       "glyph": "🏞️",
       "importance": 8,
-      "priority": 27,
       "country": "WLF",
       "marker": {
         "lat": -13.294,
@@ -3051,7 +2862,6 @@
       "name": "Lake Malawi",
       "glyph": "🏞️",
       "importance": 8,
-      "priority": 27,
       "country": "MWI",
       "marker": {
         "lat": -12,
@@ -3067,7 +2877,6 @@
       "name": "Le Morne Brabant",
       "glyph": "🏔️",
       "importance": 8,
-      "priority": 27,
       "country": "MUS",
       "marker": {
         "lat": -20.457,
@@ -3083,7 +2892,6 @@
       "name": "Leaning Tower of Pisa",
       "glyph": "🗼",
       "importance": 2,
-      "priority": 81,
       "country": "ITA",
       "marker": {
         "lat": 43.723,
@@ -3101,7 +2909,6 @@
       "name": "Leptis Magna",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "LBY",
       "marker": {
         "lat": 32.638,
@@ -3117,7 +2924,6 @@
       "name": "Loango National Park",
       "glyph": "🐘",
       "importance": 8,
-      "priority": 27,
       "country": "GAB",
       "marker": {
         "lat": -2.3,
@@ -3133,7 +2939,6 @@
       "name": "Lost City",
       "glyph": "🗿",
       "importance": 8,
-      "priority": 27,
       "country": "COL",
       "marker": {
         "lat": 11.038,
@@ -3149,7 +2954,6 @@
       "name": "Louvre",
       "glyph": "🏛️",
       "importance": 2,
-      "priority": 81,
       "country": "FRA",
       "marker": {
         "lat": 48.861,
@@ -3165,7 +2969,6 @@
       "name": "Luxembourg Old Town",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "LUX",
       "marker": {
         "lat": 49.611,
@@ -3181,7 +2984,6 @@
       "name": "Maasai Mara",
       "glyph": "🦁",
       "importance": 5,
-      "priority": 54,
       "country": "KEN",
       "marker": {
         "lat": -1.5,
@@ -3197,7 +2999,6 @@
       "name": "Machu Picchu",
       "glyph": "🏔️",
       "importance": 2,
-      "priority": 81,
       "country": "PER",
       "marker": {
         "lat": -13.163,
@@ -3215,7 +3016,6 @@
       "name": "Malbork Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "POL",
       "marker": {
         "lat": 54.04,
@@ -3231,7 +3031,6 @@
       "name": "Malé Fish Market",
       "glyph": "🐟",
       "importance": 8,
-      "priority": 27,
       "country": "MDV",
       "marker": {
         "lat": 4.178,
@@ -3247,7 +3046,6 @@
       "name": "Malé Friday Mosque",
       "glyph": "🕌",
       "importance": 8,
-      "priority": 27,
       "country": "MDV",
       "marker": {
         "lat": 4.176,
@@ -3263,7 +3061,6 @@
       "name": "Maletsunyane Falls",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "LSO",
       "marker": {
         "lat": -29.842,
@@ -3279,7 +3076,6 @@
       "name": "Managaha Island",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "MNP",
       "marker": {
         "lat": 15.235,
@@ -3295,7 +3091,6 @@
       "name": "Marina Bay Sands",
       "glyph": "🏙️",
       "importance": 5,
-      "priority": 54,
       "country": "SGP",
       "marker": {
         "lat": 1.283,
@@ -3311,7 +3106,6 @@
       "name": "Marovo Lagoon",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "SLB",
       "marker": {
         "lat": -8.7,
@@ -3327,7 +3121,6 @@
       "name": "Marsaxlokk",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.842,
@@ -3343,7 +3136,6 @@
       "name": "Masada",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "ISR",
       "marker": {
         "lat": 31.315,
@@ -3359,7 +3151,6 @@
       "name": "Masaya Volcano",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "NIC",
       "marker": {
         "lat": 11.984,
@@ -3375,7 +3166,6 @@
       "name": "Matterhorn",
       "glyph": "🏔️",
       "importance": 2,
-      "priority": 81,
       "country": "CHE",
       "marker": {
         "lat": 45.977,
@@ -3391,7 +3181,6 @@
       "name": "Mawson Peak",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "HMD",
       "marker": {
         "lat": -53.106,
@@ -3407,7 +3196,6 @@
       "name": "Mdina",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.886,
@@ -3423,7 +3211,6 @@
       "name": "Meteora",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "GRC",
       "marker": {
         "lat": 39.721,
@@ -3439,7 +3226,6 @@
       "name": "Milford Sound",
       "glyph": "🏔️",
       "importance": 5,
-      "priority": 54,
       "country": "NZL",
       "marker": {
         "lat": -44.641,
@@ -3455,7 +3241,6 @@
       "name": "Mir Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "BLR",
       "marker": {
         "lat": 53.451,
@@ -3471,7 +3256,6 @@
       "name": "Mitad del Mundo",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "ECU",
       "marker": {
         "lat": -0.002,
@@ -3487,7 +3271,6 @@
       "name": "Mlilwane Sanctuary",
       "glyph": "🦓",
       "importance": 8,
-      "priority": 27,
       "country": "SWZ",
       "marker": {
         "lat": -26.484,
@@ -3503,7 +3286,6 @@
       "name": "Moai of Rapa Nui",
       "glyph": "🗿",
       "importance": 2,
-      "priority": 81,
       "country": "CHL",
       "marker": {
         "lat": -27.113,
@@ -3519,7 +3301,6 @@
       "name": "Mogadishu Lighthouse",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "SOM",
       "marker": {
         "lat": 2.031,
@@ -3535,7 +3316,6 @@
       "name": "Mont Orgueil",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "JEY",
       "marker": {
         "lat": 49.198,
@@ -3551,7 +3331,6 @@
       "name": "Mont Saint-Michel",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "FRA",
       "marker": {
         "lat": 48.636,
@@ -3567,7 +3346,6 @@
       "name": "Monte Carlo Casino",
       "glyph": "🎰",
       "importance": 8,
-      "priority": 27,
       "country": "MCO",
       "marker": {
         "lat": 43.74,
@@ -3583,7 +3361,6 @@
       "name": "Mosi-oa-Tunya",
       "glyph": "💦",
       "importance": 5,
-      "priority": 54,
       "country": "ZMB",
       "marker": {
         "lat": -17.921,
@@ -3599,7 +3376,6 @@
       "name": "Mosta Rotunda",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.911,
@@ -3615,7 +3391,6 @@
       "name": "Mount Bromo",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "IDN",
       "marker": {
         "lat": -7.942,
@@ -3631,7 +3406,6 @@
       "name": "Mount Cameroon",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "CMR",
       "marker": {
         "lat": 4.203,
@@ -3647,7 +3421,6 @@
       "name": "Mount Everest",
       "glyph": "🏔️",
       "importance": 2,
-      "priority": 81,
       "country": "NPL",
       "marker": {
         "lat": 27.988,
@@ -3663,7 +3436,6 @@
       "name": "Mount Fuji",
       "glyph": "🗻",
       "importance": 2,
-      "priority": 81,
       "country": "JPN",
       "marker": {
         "lat": 35.361,
@@ -3679,7 +3451,6 @@
       "name": "Mount Karthala",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "COM",
       "marker": {
         "lat": -11.75,
@@ -3695,7 +3466,6 @@
       "name": "Mount Kenya",
       "glyph": "🏔️",
       "importance": 8,
-      "priority": 27,
       "country": "KEN",
       "marker": {
         "lat": -0.152,
@@ -3711,7 +3481,6 @@
       "name": "Mount Kilimanjaro",
       "glyph": "🏔️",
       "importance": 2,
-      "priority": 81,
       "country": "TZA",
       "marker": {
         "lat": -3.067,
@@ -3727,7 +3496,6 @@
       "name": "Mount Nimba",
       "glyph": "🏔️",
       "importance": 8,
-      "priority": 27,
       "country": "GIN",
       "marker": {
         "lat": 7.616,
@@ -3743,7 +3511,6 @@
       "name": "Mount Rushmore",
       "glyph": "🗿",
       "importance": 5,
-      "priority": 54,
       "country": "USA",
       "marker": {
         "lat": 43.879,
@@ -3759,7 +3526,6 @@
       "name": "Mount Vesuvius",
       "glyph": "🌋",
       "importance": 5,
-      "priority": 54,
       "country": "ITA",
       "marker": {
         "lat": 40.822,
@@ -3775,7 +3541,6 @@
       "name": "Mount Yasur",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "VUT",
       "marker": {
         "lat": -19.532,
@@ -3791,7 +3556,6 @@
       "name": "Muri Lagoon",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "COK",
       "marker": {
         "lat": -21.253,
@@ -3807,7 +3571,6 @@
       "name": "Museum of Islamic Art",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "QAT",
       "marker": {
         "lat": 25.295,
@@ -3823,7 +3586,6 @@
       "name": "Nan Madol",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "FSM",
       "marker": {
         "lat": 6.844,
@@ -3839,7 +3601,6 @@
       "name": "Naqsh-e Jahan Square",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "IRN",
       "marker": {
         "lat": 32.658,
@@ -3855,7 +3616,6 @@
       "name": "Nazca Lines",
       "glyph": "🗿",
       "importance": 5,
-      "priority": 54,
       "country": "PER",
       "marker": {
         "lat": -14.739,
@@ -3871,7 +3631,6 @@
       "name": "Nelson's Dockyard",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "ATG",
       "marker": {
         "lat": 17.006,
@@ -3887,7 +3646,6 @@
       "name": "Neuschwanstein Castle",
       "glyph": "🏰",
       "importance": 2,
-      "priority": 81,
       "country": "DEU",
       "marker": {
         "lat": 47.558,
@@ -3903,7 +3661,6 @@
       "name": "Niagara Falls",
       "glyph": "💦",
       "importance": 2,
-      "priority": 81,
       "country": "CAN",
       "marker": {
         "lat": 43.078,
@@ -3919,7 +3676,6 @@
       "name": "Notre-Dame de Paris",
       "glyph": "⛪",
       "importance": 2,
-      "priority": 81,
       "country": "FRA",
       "marker": {
         "lat": 48.853,
@@ -3935,7 +3691,6 @@
       "name": "Obelisco",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "ARG",
       "marker": {
         "lat": -34.604,
@@ -3951,7 +3706,6 @@
       "name": "Ohrid",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "MKD",
       "marker": {
         "lat": 41.113,
@@ -3967,7 +3721,6 @@
       "name": "Okavango Delta",
       "glyph": "🏞️",
       "importance": 5,
-      "priority": 54,
       "country": "BWA",
       "marker": {
         "lat": -19.283,
@@ -3983,7 +3736,6 @@
       "name": "Old City of Sana'a",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "YEM",
       "marker": {
         "lat": 15.353,
@@ -3999,7 +3751,6 @@
       "name": "Old Havana",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "CUB",
       "marker": {
         "lat": 23.14,
@@ -4015,7 +3766,6 @@
       "name": "Olumo Rock",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "NGA",
       "marker": {
         "lat": 7.152,
@@ -4031,7 +3781,6 @@
       "name": "Omar Ali Saifuddien Mosque",
       "glyph": "🕌",
       "importance": 8,
-      "priority": 27,
       "country": "BRN",
       "marker": {
         "lat": 4.889,
@@ -4047,7 +3796,6 @@
       "name": "Orheiul Vechi",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "MDA",
       "marker": {
         "lat": 47.336,
@@ -4063,7 +3811,6 @@
       "name": "Palace of the Parliament",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "ROU",
       "marker": {
         "lat": 44.428,
@@ -4079,7 +3826,6 @@
       "name": "Palace of Versailles",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "FRA",
       "marker": {
         "lat": 48.805,
@@ -4095,7 +3841,6 @@
       "name": "Palenque",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "MEX",
       "marker": {
         "lat": 17.484,
@@ -4111,7 +3856,6 @@
       "name": "Pamukkale",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "TUR",
       "marker": {
         "lat": 37.92,
@@ -4127,7 +3871,6 @@
       "name": "Panama Canal",
       "glyph": "🚢",
       "importance": 5,
-      "priority": 54,
       "country": "PAN",
       "marker": {
         "lat": 9.08,
@@ -4143,7 +3886,6 @@
       "name": "Park Güell",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "ESP",
       "marker": {
         "lat": 41.414,
@@ -4159,7 +3901,6 @@
       "name": "Peel Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "IMN",
       "marker": {
         "lat": 54.226,
@@ -4175,7 +3916,6 @@
       "name": "Pena Palace",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "PRT",
       "marker": {
         "lat": 38.788,
@@ -4191,7 +3931,6 @@
       "name": "Perito Moreno Glacier",
       "glyph": "🧊",
       "importance": 5,
-      "priority": 54,
       "country": "ARG",
       "marker": {
         "lat": -50.496,
@@ -4207,7 +3946,6 @@
       "name": "Persepolis",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "IRN",
       "marker": {
         "lat": 29.936,
@@ -4223,7 +3961,6 @@
       "name": "Petra",
       "glyph": "🏜️",
       "importance": 2,
-      "priority": 81,
       "country": "JOR",
       "marker": {
         "lat": 30.329,
@@ -4241,7 +3978,6 @@
       "name": "Petronas Towers",
       "glyph": "🏙️",
       "importance": 5,
-      "priority": 54,
       "country": "MYS",
       "marker": {
         "lat": 3.158,
@@ -4259,7 +3995,6 @@
       "name": "Pha That Luang",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "LAO",
       "marker": {
         "lat": 17.976,
@@ -4275,7 +4010,6 @@
       "name": "Pico Cão Grande",
       "glyph": "⛰️",
       "importance": 8,
-      "priority": 27,
       "country": "STP",
       "marker": {
         "lat": 0.146,
@@ -4291,7 +4025,6 @@
       "name": "Pitch Lake",
       "glyph": "🛢️",
       "importance": 8,
-      "priority": 27,
       "country": "TTO",
       "marker": {
         "lat": 10.234,
@@ -4307,7 +4040,6 @@
       "name": "Plitvice Lakes",
       "glyph": "💦",
       "importance": 8,
-      "priority": 27,
       "country": "HRV",
       "marker": {
         "lat": 44.881,
@@ -4323,7 +4055,6 @@
       "name": "Pola Island",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "ASM",
       "marker": {
         "lat": -14.246,
@@ -4339,7 +4070,6 @@
       "name": "Pont du Gard",
       "glyph": "🌉",
       "importance": 8,
-      "priority": 27,
       "country": "FRA",
       "marker": {
         "lat": 43.947,
@@ -4355,7 +4085,6 @@
       "name": "Popeye Village",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.928,
@@ -4371,7 +4100,6 @@
       "name": "Port-aux-Français",
       "glyph": "🐧",
       "importance": 8,
-      "priority": 27,
       "country": "ATF",
       "marker": {
         "lat": -49.351,
@@ -4387,7 +4115,6 @@
       "name": "Potala Palace",
       "glyph": "🏯",
       "importance": 5,
-      "priority": 54,
       "country": "CHN",
       "marker": {
         "lat": 29.658,
@@ -4403,7 +4130,6 @@
       "name": "Prague Castle",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "CZE",
       "marker": {
         "lat": 50.091,
@@ -4419,7 +4145,6 @@
       "name": "Providence Island",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "LBR",
       "marker": {
         "lat": 6.313,
@@ -4435,7 +4160,6 @@
       "name": "Pyramids of Giza",
       "glyph": "🔺",
       "importance": 2,
-      "priority": 81,
       "country": "EGY",
       "marker": {
         "lat": 29.979,
@@ -4451,7 +4175,6 @@
       "name": "Pyramids of Meroë",
       "glyph": "🔺",
       "importance": 8,
-      "priority": 27,
       "country": "SDN",
       "marker": {
         "lat": 16.938,
@@ -4467,7 +4190,6 @@
       "name": "Queen Emma Bridge",
       "glyph": "🌉",
       "importance": 8,
-      "priority": 27,
       "country": "CUW",
       "marker": {
         "lat": 12.106,
@@ -4483,7 +4205,6 @@
       "name": "Registan",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "UZB",
       "marker": {
         "lat": 39.655,
@@ -4499,7 +4220,6 @@
       "name": "Richat Structure",
       "glyph": "🎯",
       "importance": 8,
-      "priority": 27,
       "country": "MRT",
       "marker": {
         "lat": 21.124,
@@ -4515,7 +4235,6 @@
       "name": "Riga Old Town",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "LVA",
       "marker": {
         "lat": 56.949,
@@ -4531,7 +4250,6 @@
       "name": "Rijksmuseum",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "NLD",
       "marker": {
         "lat": 52.36,
@@ -4547,7 +4265,6 @@
       "name": "Rila Monastery",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "BGR",
       "marker": {
         "lat": 42.133,
@@ -4563,7 +4280,6 @@
       "name": "Rock Islands",
       "glyph": "🏝️",
       "importance": 8,
-      "priority": 27,
       "country": "PLW",
       "marker": {
         "lat": 7.15,
@@ -4579,7 +4295,6 @@
       "name": "Rock of Cashel",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "IRL",
       "marker": {
         "lat": 52.52,
@@ -4595,7 +4310,6 @@
       "name": "Rock-Hewn Churches of Lalibela",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "ETH",
       "marker": {
         "lat": 12.031,
@@ -4611,7 +4325,6 @@
       "name": "Royal Naval Dockyard",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "BMU",
       "marker": {
         "lat": 32.327,
@@ -4627,7 +4340,6 @@
       "name": "Ruins of Loropéni",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "BFA",
       "marker": {
         "lat": 10.278,
@@ -4643,7 +4355,6 @@
       "name": "Ruins of St Paul's",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "MAC",
       "marker": {
         "lat": 22.198,
@@ -4659,7 +4370,6 @@
       "name": "Sacré-Cœur",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "FRA",
       "marker": {
         "lat": 48.887,
@@ -4675,7 +4385,6 @@
       "name": "Sagrada Família",
       "glyph": "⛪",
       "importance": 2,
-      "priority": 81,
       "country": "ESP",
       "marker": {
         "lat": 41.404,
@@ -4693,7 +4402,6 @@
       "name": "Saint Basil's Cathedral",
       "glyph": "⛪",
       "importance": 2,
-      "priority": 81,
       "country": "RUS",
       "marker": {
         "lat": 55.753,
@@ -4709,7 +4417,6 @@
       "name": "Saint Sophia Cathedral",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "UKR",
       "marker": {
         "lat": 50.453,
@@ -4725,7 +4432,6 @@
       "name": "Saksun",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "FRO",
       "marker": {
         "lat": 62.248,
@@ -4741,7 +4447,6 @@
       "name": "Salar de Uyuni",
       "glyph": "🧂",
       "importance": 5,
-      "priority": 54,
       "country": "BOL",
       "marker": {
         "lat": -20.133,
@@ -4757,7 +4462,6 @@
       "name": "Santorini",
       "glyph": "🏘️",
       "importance": 5,
-      "priority": 54,
       "country": "GRC",
       "marker": {
         "lat": 36.393,
@@ -4773,7 +4477,6 @@
       "name": "Schönbrunn Palace",
       "glyph": "🏰",
       "importance": 5,
-      "priority": 54,
       "country": "AUT",
       "marker": {
         "lat": 48.185,
@@ -4789,7 +4492,6 @@
       "name": "Serengeti",
       "glyph": "🦓",
       "importance": 5,
-      "priority": 54,
       "country": "TZA",
       "marker": {
         "lat": -2.333,
@@ -4805,7 +4507,6 @@
       "name": "Seville Cathedral",
       "glyph": "⛪",
       "importance": 8,
-      "priority": 27,
       "country": "ESP",
       "marker": {
         "lat": 37.386,
@@ -4821,7 +4522,6 @@
       "name": "Sheikh Zayed Mosque",
       "glyph": "🕌",
       "importance": 5,
-      "priority": 54,
       "country": "ARE",
       "marker": {
         "lat": 24.412,
@@ -4837,7 +4537,6 @@
       "name": "Shoal Bay",
       "glyph": "🏖️",
       "importance": 8,
-      "priority": 27,
       "country": "AIA",
       "marker": {
         "lat": 18.245,
@@ -4853,7 +4552,6 @@
       "name": "Shwedagon Pagoda",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "MMR",
       "marker": {
         "lat": 16.798,
@@ -4869,7 +4567,6 @@
       "name": "Siachen Glacier",
       "glyph": "🏔️",
       "importance": 8,
-      "priority": 27,
       "country": "KAS",
       "marker": {
         "lat": 35.421,
@@ -4885,7 +4582,6 @@
       "name": "Sigiriya",
       "glyph": "🪨",
       "importance": 5,
-      "priority": 54,
       "country": "LKA",
       "marker": {
         "lat": 7.957,
@@ -4901,7 +4597,6 @@
       "name": "Sixty Dome Mosque",
       "glyph": "🕌",
       "importance": 8,
-      "priority": 27,
       "country": "BGD",
       "marker": {
         "lat": 22.674,
@@ -4917,7 +4612,6 @@
       "name": "Sky Tower",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "NZL",
       "marker": {
         "lat": -36.848,
@@ -4933,7 +4627,6 @@
       "name": "Sossusvlei",
       "glyph": "🏜️",
       "importance": 5,
-      "priority": 54,
       "country": "NAM",
       "marker": {
         "lat": -24.727,
@@ -4949,7 +4642,6 @@
       "name": "Soufrière Hills",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "MSR",
       "marker": {
         "lat": 16.712,
@@ -4965,7 +4657,6 @@
       "name": "South Pole",
       "glyph": "❄️",
       "importance": 2,
-      "priority": 81,
       "country": "ATA",
       "marker": {
         "lat": -90,
@@ -4981,7 +4672,6 @@
       "name": "Space Needle",
       "glyph": "🗼",
       "importance": 8,
-      "priority": 27,
       "country": "USA",
       "marker": {
         "lat": 47.62,
@@ -4999,7 +4689,6 @@
       "name": "Sri Siva Subramaniya Temple",
       "glyph": "🛕",
       "importance": 8,
-      "priority": 27,
       "country": "FJI",
       "marker": {
         "lat": -17.622,
@@ -5015,7 +4704,6 @@
       "name": "St John's Co-Cathedral",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "MLT",
       "marker": {
         "lat": 35.898,
@@ -5031,7 +4719,6 @@
       "name": "St Mark's Square",
       "glyph": "⛪",
       "importance": 5,
-      "priority": 54,
       "country": "ITA",
       "marker": {
         "lat": 45.434,
@@ -5047,7 +4734,6 @@
       "name": "St Peter's Basilica",
       "glyph": "⛪",
       "importance": 2,
-      "priority": 81,
       "country": "VAT",
       "marker": {
         "lat": 41.902,
@@ -5063,7 +4749,6 @@
       "name": "Stari Most",
       "glyph": "🌉",
       "importance": 8,
-      "priority": 27,
       "country": "BIH",
       "marker": {
         "lat": 43.337,
@@ -5079,7 +4764,6 @@
       "name": "Statue of Liberty",
       "glyph": "🗽",
       "importance": 2,
-      "priority": 81,
       "country": "USA",
       "marker": {
         "lat": 40.689,
@@ -5097,7 +4781,6 @@
       "name": "Stingray City",
       "glyph": "🐠",
       "importance": 8,
-      "priority": 27,
       "country": "CYM",
       "marker": {
         "lat": 19.371,
@@ -5113,7 +4796,6 @@
       "name": "Stone Town",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "TZA",
       "marker": {
         "lat": -6.163,
@@ -5129,7 +4811,6 @@
       "name": "Stonehenge",
       "glyph": "🪨",
       "importance": 2,
-      "priority": 81,
       "country": "GBR",
       "marker": {
         "lat": 51.179,
@@ -5145,7 +4826,6 @@
       "name": "Sugarloaf Mountain",
       "glyph": "🚡",
       "importance": 5,
-      "priority": 54,
       "country": "BRA",
       "marker": {
         "lat": -22.949,
@@ -5161,7 +4841,6 @@
       "name": "Sultan Qaboos Mosque",
       "glyph": "🕌",
       "importance": 8,
-      "priority": 27,
       "country": "OMN",
       "marker": {
         "lat": 23.583,
@@ -5177,7 +4856,6 @@
       "name": "Suomenlinna",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "FIN",
       "marker": {
         "lat": 60.145,
@@ -5193,7 +4871,6 @@
       "name": "Sydney Harbour Bridge",
       "glyph": "🌉",
       "importance": 5,
-      "priority": 54,
       "country": "AUS",
       "marker": {
         "lat": -33.852,
@@ -5209,7 +4886,6 @@
       "name": "Sydney Opera House",
       "glyph": "🎭",
       "importance": 2,
-      "priority": 81,
       "country": "AUS",
       "marker": {
         "lat": -33.857,
@@ -5227,7 +4903,6 @@
       "name": "Table Mountain",
       "glyph": "🏔️",
       "importance": 2,
-      "priority": 81,
       "country": "ZAF",
       "marker": {
         "lat": -33.963,
@@ -5243,7 +4918,6 @@
       "name": "Taipei 101",
       "glyph": "🏙️",
       "importance": 5,
-      "priority": 54,
       "country": "TWN",
       "marker": {
         "lat": 25.034,
@@ -5259,7 +4933,6 @@
       "name": "Taj Mahal",
       "glyph": "🕌",
       "importance": 2,
-      "priority": 81,
       "country": "IND",
       "marker": {
         "lat": 27.175,
@@ -5277,7 +4950,6 @@
       "name": "Talava Arches",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "NIU",
       "marker": {
         "lat": -18.955,
@@ -5293,7 +4965,6 @@
       "name": "Tallinn Old Town",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "EST",
       "marker": {
         "lat": 59.437,
@@ -5309,7 +4980,6 @@
       "name": "Tarxien Temples",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "MLT",
       "marker": {
         "lat": 35.869,
@@ -5325,7 +4995,6 @@
       "name": "Teotihuacan",
       "glyph": "🔺",
       "importance": 5,
-      "priority": 54,
       "country": "MEX",
       "marker": {
         "lat": 19.692,
@@ -5341,7 +5010,6 @@
       "name": "Terracotta Army",
       "glyph": "🗿",
       "importance": 5,
-      "priority": 54,
       "country": "CHN",
       "marker": {
         "lat": 34.385,
@@ -5357,7 +5025,6 @@
       "name": "The Baths",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "VGB",
       "marker": {
         "lat": 18.43,
@@ -5373,7 +5040,6 @@
       "name": "The Bund",
       "glyph": "🏙️",
       "importance": 8,
-      "priority": 27,
       "country": "CHN",
       "marker": {
         "lat": 31.24,
@@ -5389,7 +5055,6 @@
       "name": "The Kremlin",
       "glyph": "🏰",
       "importance": 2,
-      "priority": 81,
       "country": "RUS",
       "marker": {
         "lat": 55.752,
@@ -5405,7 +5070,6 @@
       "name": "The Little Mermaid",
       "glyph": "🧜",
       "importance": 5,
-      "priority": 54,
       "country": "DNK",
       "marker": {
         "lat": 55.693,
@@ -5421,7 +5085,6 @@
       "name": "The Pitons",
       "glyph": "⛰️",
       "importance": 8,
-      "priority": 27,
       "country": "LCA",
       "marker": {
         "lat": 13.808,
@@ -5437,7 +5100,6 @@
       "name": "Tiger's Nest",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "BTN",
       "marker": {
         "lat": 27.492,
@@ -5453,7 +5115,6 @@
       "name": "Tikal",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "GTM",
       "marker": {
         "lat": 17.222,
@@ -5469,7 +5130,6 @@
       "name": "Timbuktu",
       "glyph": "🏜️",
       "importance": 8,
-      "priority": 27,
       "country": "MLI",
       "marker": {
         "lat": 16.775,
@@ -5485,7 +5145,6 @@
       "name": "To Sua Ocean Trench",
       "glyph": "🌊",
       "importance": 8,
-      "priority": 27,
       "country": "WSM",
       "marker": {
         "lat": -14.023,
@@ -5501,7 +5160,6 @@
       "name": "Tokyo Tower",
       "glyph": "🗼",
       "importance": 5,
-      "priority": 54,
       "country": "JPN",
       "marker": {
         "lat": 35.659,
@@ -5517,7 +5175,6 @@
       "name": "Tombs of the Kings",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "CYP",
       "marker": {
         "lat": 34.771,
@@ -5533,7 +5190,6 @@
       "name": "Torres del Paine",
       "glyph": "🏔️",
       "importance": 5,
-      "priority": 54,
       "country": "CHL",
       "marker": {
         "lat": -50.943,
@@ -5549,7 +5205,6 @@
       "name": "Tower Bridge",
       "glyph": "🌉",
       "importance": 2,
-      "priority": 81,
       "country": "GBR",
       "marker": {
         "lat": 51.506,
@@ -5567,7 +5222,6 @@
       "name": "Trakai Island Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "LTU",
       "marker": {
         "lat": 54.652,
@@ -5583,7 +5237,6 @@
       "name": "Trevi Fountain",
       "glyph": "⛲",
       "importance": 5,
-      "priority": 54,
       "country": "ITA",
       "marker": {
         "lat": 41.901,
@@ -5599,7 +5252,6 @@
       "name": "Trunk Bay",
       "glyph": "🏖️",
       "importance": 8,
-      "priority": 27,
       "country": "VIR",
       "marker": {
         "lat": 18.353,
@@ -5615,7 +5267,6 @@
       "name": "Twelve Apostles",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "AUS",
       "marker": {
         "lat": -38.665,
@@ -5631,7 +5282,6 @@
       "name": "Two Lovers Point",
       "glyph": "⛰️",
       "importance": 8,
-      "priority": 27,
       "country": "GUM",
       "marker": {
         "lat": 13.52,
@@ -5647,7 +5297,6 @@
       "name": "Uluru",
       "glyph": "🪨",
       "importance": 2,
-      "priority": 81,
       "country": "AUS",
       "marker": {
         "lat": -25.345,
@@ -5663,7 +5312,6 @@
       "name": "Vaduz Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "LIE",
       "marker": {
         "lat": 47.14,
@@ -5679,7 +5327,6 @@
       "name": "Vallée de Mai",
       "glyph": "🌴",
       "importance": 8,
-      "priority": 27,
       "country": "SYC",
       "marker": {
         "lat": -4.331,
@@ -5695,7 +5342,6 @@
       "name": "Vasa Museum",
       "glyph": "⛵",
       "importance": 8,
-      "priority": 27,
       "country": "SWE",
       "marker": {
         "lat": 59.328,
@@ -5711,7 +5357,6 @@
       "name": "Victoria Falls",
       "glyph": "💦",
       "importance": 2,
-      "priority": 81,
       "country": "ZWE",
       "marker": {
         "lat": -17.925,
@@ -5727,7 +5372,6 @@
       "name": "Victoria Peak",
       "glyph": "🏙️",
       "importance": 5,
-      "priority": 54,
       "country": "HKG",
       "marker": {
         "lat": 22.276,
@@ -5743,7 +5387,6 @@
       "name": "Virunga National Park",
       "glyph": "🌋",
       "importance": 8,
-      "priority": 27,
       "country": "COD",
       "marker": {
         "lat": -0.928,
@@ -5759,7 +5402,6 @@
       "name": "Volcanoes National Park",
       "glyph": "🦍",
       "importance": 8,
-      "priority": 27,
       "country": "RWA",
       "marker": {
         "lat": -1.474,
@@ -5775,7 +5417,6 @@
       "name": "Volunteer Point",
       "glyph": "🐧",
       "importance": 8,
-      "priority": 27,
       "country": "FLK",
       "marker": {
         "lat": -51.47,
@@ -5791,7 +5432,6 @@
       "name": "Wadi Rum",
       "glyph": "🏜️",
       "importance": 5,
-      "priority": 54,
       "country": "JOR",
       "marker": {
         "lat": 29.583,
@@ -5807,7 +5447,6 @@
       "name": "Wat Arun",
       "glyph": "🛕",
       "importance": 5,
-      "priority": 54,
       "country": "THA",
       "marker": {
         "lat": 13.744,
@@ -5823,7 +5462,6 @@
       "name": "Wawel Castle",
       "glyph": "🏰",
       "importance": 8,
-      "priority": 27,
       "country": "POL",
       "marker": {
         "lat": 50.054,
@@ -5839,7 +5477,6 @@
       "name": "Western Wall",
       "glyph": "🕍",
       "importance": 2,
-      "priority": 81,
       "country": "ISR",
       "marker": {
         "lat": 31.777,
@@ -5855,7 +5492,6 @@
       "name": "White House",
       "glyph": "🏛️",
       "importance": 5,
-      "priority": 54,
       "country": "USA",
       "marker": {
         "lat": 38.898,
@@ -5871,7 +5507,6 @@
       "name": "Windmills of Kinderdijk",
       "glyph": "🌬️",
       "importance": 5,
-      "priority": 54,
       "country": "NLD",
       "marker": {
         "lat": 51.884,
@@ -5887,7 +5522,6 @@
       "name": "Yellowstone",
       "glyph": "♨️",
       "importance": 5,
-      "priority": 54,
       "country": "USA",
       "marker": {
         "lat": 44.428,
@@ -5903,7 +5537,6 @@
       "name": "Ziggurat of Ur",
       "glyph": "🏛️",
       "importance": 8,
-      "priority": 27,
       "country": "IRQ",
       "marker": {
         "lat": 30.963,
@@ -5919,7 +5552,6 @@
       "name": "Zona Colonial",
       "glyph": "🏘️",
       "importance": 8,
-      "priority": 27,
       "country": "DOM",
       "marker": {
         "lat": 18.473,
@@ -5935,7 +5567,6 @@
       "name": "Zuma Rock",
       "glyph": "🪨",
       "importance": 8,
-      "priority": 27,
       "country": "NGA",
       "marker": {
         "lat": 9.128,

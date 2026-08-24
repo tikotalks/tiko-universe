@@ -64,9 +64,18 @@ struct GlobeView: View {
                 languageCode: languageCode,
                 i18n: i18n,
                 onSelect: { country in controller.select(country: country, focus: true) },
-                onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) }
+                onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) },
+                appColor: appColor
             )
+            .presentationCornerRadius(34)
         }
+    }
+
+    /// The animals and landmarks a country holds — empty for anything that is
+    /// not a country, because an animal's card is about the animal.
+    private func countryEntities(in selection: GlobeSelection, kind: GlobeEntity.Kind) -> [GlobeEntity] {
+        guard case .country(let country) = selection else { return [] }
+        return controller.entities(in: country, kind: kind)
     }
 
     @ViewBuilder
@@ -106,7 +115,10 @@ struct GlobeView: View {
                     appColor: appColor,
                     onSpeak: { controller.speakSelection() },
                     onClose: { controller.clearSelection() },
-                    onSelectCountry: { country in controller.select(country: country, focus: true) }
+                    onSelectCountry: { country in controller.select(country: country, focus: true) },
+                    inhabitants: countryEntities(in: selection, kind: .animal),
+                    landmarks: countryEntities(in: selection, kind: .landmark),
+                    onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) }
                 )
                 .frame(width: panelWidth)
                 .padding(.vertical, 12)
@@ -212,7 +224,7 @@ struct GlobeView: View {
                 draw(
                     GlobeNaming.displayName(for: placed.entity, i18n: i18n),
                     at: CGPoint(x: placed.point.x, y: placed.point.y + size * 0.45),
-                    size: 11 * min(controller.markerScale, 1.4),
+                    size: 13 * min(controller.markerScale, 1.4),
                     in: &context,
                     isPlace: false
                 )
@@ -226,6 +238,9 @@ struct GlobeView: View {
     /// rendering for free. VoiceOver ignores them — it has the country list.
     private var labels: some View {
         Canvas { context, _ in
+            for label in controller.seaLabels {
+                drawWaterName(label, in: &context)
+            }
             for label in controller.labels {
                 draw(label.text, at: label.point, size: labelSize(for: label), in: &context, isPlace: false)
             }
@@ -245,6 +260,24 @@ struct GlobeView: View {
 
     /// A name on a chip: rounded, tinted, and readable over whatever colour the
     /// country underneath happens to be.
+    /// The name of a sea, written the way a chart writes it: spaced out, italic,
+    /// and in the water's own colour rather than in a chip. A name in a chip
+    /// reads as a place you could stand on.
+    private func drawWaterName(_ label: GlobeLabel, in context: inout GraphicsContext) {
+        let size = min(19.0, max(10.0, 10 + label.prominence * 7))
+        let spaced = label.text.uppercased().map(String.init).joined(separator: "\u{2009}")
+        var text = context.resolve(
+            Text(spaced)
+                .font(.system(size: size, weight: .semibold, design: .rounded).italic())
+        )
+        text.shading = .color(waterNameColor.opacity(0.85))
+        context.draw(text, at: label.point, anchor: .center)
+    }
+
+    private var waterNameColor: Color {
+        colorScheme == .dark ? Color(white: 0.86) : Color(red: 0.06, green: 0.24, blue: 0.44)
+    }
+
     private func draw(_ text: String, at point: CGPoint, size: CGFloat, in context: inout GraphicsContext, isPlace: Bool) {
         let resolved = context.resolve(
             Text(text)

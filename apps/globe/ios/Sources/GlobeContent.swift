@@ -102,7 +102,9 @@ struct GlobeContentLibrary: Sendable {
         var found: [GlobeOccurrence] = []
         for country in countries {
             guard let capital = country.capital else { continue }
-            let id = "capital.\(country.id.lowercased())"
+            // The country code is the capital's identity, so a capital renamed
+            // — and they are, Astana twice — keeps its picture and its key.
+            let id = country.id.lowercased()
             entities[id] = GlobeEntity(
                 id: id,
                 kind: .capital,

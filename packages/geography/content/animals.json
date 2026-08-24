@@ -7,7 +7,6 @@
       "name": "Aardvark",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "africa-savanna"
       ],
@@ -55,7 +54,6 @@
       "name": "African Crocodile",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "africa-savanna"
       ],
@@ -103,7 +101,6 @@
       "name": "African Elephant",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 88,
       "districts": [
         "africa-savanna"
       ],
@@ -337,7 +334,6 @@
       "name": "African Grey Parrot",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 47,
       "districts": [
         "africa-rainforest"
       ],
@@ -376,7 +372,6 @@
       "name": "Alligator",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "north-america-forest"
       ],
@@ -414,7 +409,6 @@
       "name": "Amazon Parrot",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 46,
       "districts": [
         "amazon"
       ],
@@ -468,7 +462,6 @@
       "name": "Amazon River Dolphin",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "amazon"
       ],
@@ -510,7 +503,6 @@
       "name": "American Black Bear",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "north-america-forest"
       ],
@@ -542,7 +534,6 @@
       "name": "Ant",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "worldwide"
       ],
@@ -579,7 +570,6 @@
       "name": "Antelope",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "africa-savanna"
       ],
@@ -657,7 +647,6 @@
       "name": "Anthias",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "coral-reef"
       ],
@@ -688,85 +677,85 @@
           "district": "coral-reef"
         },
         {
-          "lat": -12.387,
-          "lon": 123.564,
+          "lat": -12.457,
+          "lon": 123.581,
           "country": "ATC",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": -17.293,
-          "lon": 140.18,
+          "lat": -32.091,
+          "lon": 131.496,
           "country": "AUS",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 17.797,
-          "lon": -89.287,
+          "lat": 16.811,
+          "lon": -88.176,
           "country": "BLZ",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 22.032,
-          "lon": -77.488,
+          "lat": 21.79,
+          "lon": -77.227,
           "country": "CUB",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 19.263,
-          "lon": -81.215,
+          "lat": 19.264,
+          "lon": -81.268,
           "country": "CYM",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 13.549,
-          "lon": -89.976,
+          "lat": 13.715,
+          "lon": -90.488,
           "country": "GTM",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 16.119,
-          "lon": -86.856,
+          "lat": 15.888,
+          "lon": -87.045,
           "country": "HND",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": -3.02,
-          "lon": 100.999,
+          "lat": 1.145,
+          "lon": 102.703,
           "country": "IDN",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 25.671,
-          "lon": -96.798,
+          "lat": 21.882,
+          "lon": -106.613,
           "country": "MEX",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 11.115,
-          "lon": -86.121,
+          "lat": 12.173,
+          "lon": -86.91,
           "country": "NIC",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": 13.348,
-          "lon": -89.336,
+          "lat": 13.439,
+          "lon": -89.303,
           "country": "SLV",
           "closeUp": true,
           "atSea": true
         },
         {
-          "lat": -8.411,
-          "lon": 125.706,
+          "lat": -9.058,
+          "lon": 126.077,
           "country": "TLS",
           "closeUp": true,
           "atSea": true
@@ -784,7 +773,6 @@
       "name": "Arctic Animal",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "arctic"
       ],
@@ -816,7 +804,6 @@
       "name": "Arctic Fox",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 81,
       "districts": [
         "arctic"
       ],
@@ -860,7 +847,6 @@
       "name": "Arctic Hare",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "arctic"
       ],
@@ -892,7 +878,6 @@
       "name": "Armadillo",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "north-america-desert",
         "south-america-grassland"
@@ -962,7 +947,6 @@
       "name": "Armenian Mouflon",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "middle-east"
       ],
@@ -1006,7 +990,6 @@
       "name": "Asian Elephant",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "india",
         "southeast-asia"
@@ -1126,7 +1109,6 @@
       "name": "Atlantic Puffin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "europe-north",
         "ocean-atlantic"
@@ -1215,7 +1197,6 @@
       "name": "Baboon",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "africa-savanna"
       ],
@@ -1359,7 +1340,6 @@
       "name": "Badger",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "europe-west",
         "europe-east"
@@ -1440,7 +1420,6 @@
       "name": "Ball Python",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "africa-savanna"
       ],
@@ -1530,7 +1509,6 @@
       "name": "Barn Owl",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "europe-west",
         "worldwide"
@@ -1616,7 +1594,6 @@
       "name": "Barracuda",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "mediterranean-sea",
         "coral-reef"
@@ -1680,9 +1657,44 @@
           "atSea": true
         },
         {
+          "lat": -12.392,
+          "lon": 123.616,
+          "country": "ATC",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -32.327,
+          "lon": 132.952,
+          "country": "AUS",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": 43.103,
           "lon": 16.502,
           "country": "BIH",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 17.809,
+          "lon": -88.153,
+          "country": "BLZ",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 22.032,
+          "lon": -77.488,
+          "country": "CUB",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 19.263,
+          "lon": -81.215,
+          "country": "CYM",
           "closeUp": true,
           "atSea": true
         },
@@ -1715,9 +1727,30 @@
           "atSea": true
         },
         {
+          "lat": 13.791,
+          "lon": -91.47,
+          "country": "GTM",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 15.918,
+          "lon": -86.158,
+          "country": "HND",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": 45.427,
           "lon": 13.523,
           "country": "HRV",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -0.49,
+          "lon": 99.691,
+          "country": "IDN",
           "closeUp": true,
           "atSea": true
         },
@@ -1743,6 +1776,13 @@
           "atSea": true
         },
         {
+          "lat": 23.191,
+          "lon": -97.459,
+          "country": "MEX",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": 41.741,
           "lon": 19.444,
           "country": "MKD",
@@ -1764,9 +1804,30 @@
           "atSea": true
         },
         {
+          "lat": 11.302,
+          "lon": -86.364,
+          "country": "NIC",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 13.221,
+          "lon": -88.806,
+          "country": "SLV",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": 42.269,
           "lon": 18.243,
           "country": "SRB",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -8.456,
+          "lon": 126.093,
+          "country": "TLS",
           "closeUp": true,
           "atSea": true
         },
@@ -1790,7 +1851,6 @@
       "name": "Basilisk",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "central-america"
       ],
@@ -1828,7 +1888,6 @@
       "name": "Basking Shark",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "ocean-atlantic"
       ],
@@ -1858,7 +1917,6 @@
       "name": "Bear",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "north-america-forest"
       ],
@@ -1890,7 +1948,6 @@
       "name": "Bearded Dragon",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "australia-outback"
       ],
@@ -1923,7 +1980,6 @@
       "name": "Bearded Vulture",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 49,
       "districts": [
         "himalaya",
         "europe-mountains"
@@ -2020,7 +2076,6 @@
       "name": "Beaver",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "north-america-forest"
       ],
@@ -2082,7 +2137,6 @@
       "name": "Bee",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -2119,7 +2173,6 @@
       "name": "Beetle",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "worldwide"
       ],
@@ -2156,7 +2209,6 @@
       "name": "Beluga",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "arctic"
       ],
@@ -2188,7 +2240,6 @@
       "name": "Betta Fish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "southeast-asia"
       ],
@@ -2233,7 +2284,6 @@
       "name": "Bezoar Ibex",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "middle-east"
       ],
@@ -2325,7 +2375,6 @@
       "name": "Bighorn Sheep",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "north-america-west"
       ],
@@ -2355,7 +2404,6 @@
       "name": "Bison",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 81,
       "districts": [
         "north-america-plains"
       ],
@@ -2393,7 +2441,6 @@
       "name": "Black Swan",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "australia-forest"
       ],
@@ -2423,7 +2470,6 @@
       "name": "Black Vulture",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "africa-savanna"
       ],
@@ -2471,7 +2517,6 @@
       "name": "Blacktip Shark",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "coral-reef"
       ],
@@ -2502,9 +2547,37 @@
           "district": "coral-reef"
         },
         {
+          "lat": -12.387,
+          "lon": 123.564,
+          "country": "ATC",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -17.293,
+          "lon": 140.18,
+          "country": "AUS",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": 26.762,
           "lon": -77.262,
           "country": "BHS",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 17.797,
+          "lon": -89.287,
+          "country": "BLZ",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 21.247,
+          "lon": -78.863,
+          "country": "CUB",
           "closeUp": true,
           "atSea": true
         },
@@ -2523,6 +2596,27 @@
           "atSea": true
         },
         {
+          "lat": 13.549,
+          "lon": -89.976,
+          "country": "GTM",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 16.119,
+          "lon": -86.856,
+          "country": "HND",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -3.02,
+          "lon": 100.999,
+          "country": "IDN",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
           "lat": -6.144,
           "lon": 71.366,
           "country": "IOT",
@@ -2533,6 +2627,20 @@
           "lat": 4.223,
           "lon": 73.466,
           "country": "MDV",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 25.671,
+          "lon": -96.798,
+          "country": "MEX",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 11.115,
+          "lon": -86.121,
+          "country": "NIC",
           "closeUp": true,
           "atSea": true
         },
@@ -2549,6 +2657,20 @@
           "country": "PYF",
           "closeUp": true,
           "atSea": true
+        },
+        {
+          "lat": 13.348,
+          "lon": -89.336,
+          "country": "SLV",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -8.411,
+          "lon": 125.706,
+          "country": "TLS",
+          "closeUp": true,
+          "atSea": true
         }
       ],
       "mediaId": "ff6b8d59-e3bd-44b9-bbd0-6ccb4b70ec77",
@@ -2563,7 +2685,6 @@
       "name": "Blenny",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "coral-reef"
       ],
@@ -2592,6 +2713,13 @@
           "lat": 20.158,
           "lon": -84.873,
           "district": "coral-reef"
+        },
+        {
+          "lat": 19.405,
+          "lon": -81.204,
+          "country": "CYM",
+          "closeUp": true,
+          "atSea": true
         }
       ],
       "mediaId": "c682fbe0-41a2-40ad-a878-452287da0abc",
@@ -2606,7 +2734,6 @@
       "name": "Blue and Yellow Macaw",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "amazon"
       ],
@@ -2642,7 +2769,6 @@
       "name": "Blue Swallowtail Butterfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "worldwide"
       ],
@@ -2679,7 +2805,6 @@
       "name": "Blue Tang",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 33,
       "districts": [
         "coral-reef"
       ],
@@ -2722,7 +2847,6 @@
       "name": "Blue Whale",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 88,
       "districts": [
         "open-ocean"
       ],
@@ -2783,7 +2907,6 @@
       "name": "Blue-footed Booby",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 50,
       "districts": [
         "galapagos"
       ],
@@ -2820,7 +2943,6 @@
       "name": "Blue-tongue Skink",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 34,
       "districts": [
         "australia-outback"
       ],
@@ -2853,7 +2975,6 @@
       "name": "Bluefin Tuna",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "mediterranean-sea",
         "open-ocean"
@@ -2900,9 +3021,121 @@
           "district": "open-ocean"
         },
         {
-          "lat": 35.892,
-          "lon": 14.34,
+          "lat": 40.858,
+          "lon": 19.164,
+          "country": "ALB",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 42.696,
+          "lon": 17.276,
+          "country": "BIH",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 37.104,
+          "lon": 1.653,
+          "country": "DZA",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 30.984,
+          "lon": 28.971,
+          "country": "EGY",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 43.821,
+          "lon": -2.932,
+          "country": "ESP",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 38.226,
+          "lon": 21.539,
+          "country": "GRC",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 44.318,
+          "lon": 14.432,
+          "country": "HRV",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 45.549,
+          "lon": 13.6,
+          "country": "ITA",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 41.482,
+          "lon": 19.399,
+          "country": "KOS",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 31.889,
+          "lon": 18.09,
+          "country": "LBY",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 41.436,
+          "lon": 19.446,
+          "country": "MKD",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 35.927,
+          "lon": 14.351,
           "country": "MLT",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 42.412,
+          "lon": 18.322,
+          "country": "MNE",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 39.305,
+          "lon": -9.753,
+          "country": "PRT",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 41.191,
+          "lon": 19.387,
+          "country": "SRB",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": 34.841,
+          "lon": 11.301,
+          "country": "TUN",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -34.843,
+          "lon": 24.999,
+          "country": "ZAF",
           "closeUp": true,
           "atSea": true
         }
@@ -2919,7 +3152,6 @@
       "name": "Bobcat",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "north-america-forest"
       ],
@@ -2957,7 +3189,6 @@
       "name": "Bottlenose Dolphin",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 87,
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic",
@@ -3138,7 +3369,6 @@
       "name": "Box Turtle",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "north-america-forest"
       ],
@@ -3170,7 +3400,6 @@
       "name": "Brain Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "coral-reef"
       ],
@@ -3213,7 +3442,6 @@
       "name": "Brine Shrimp",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "north-america-desert"
       ],
@@ -3238,7 +3466,6 @@
       "name": "Brittle Sea Star",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "coral-reef"
       ],
@@ -3281,7 +3508,6 @@
       "name": "Brown Bear",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 87,
       "districts": [
         "europe-east",
         "europe-north",
@@ -3559,7 +3785,6 @@
       "name": "Bubble Tip Sea Anemone",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "coral-reef"
       ],
@@ -3602,7 +3827,6 @@
       "name": "Budgerigar Parakeet",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "australia-outback"
       ],
@@ -3635,7 +3859,6 @@
       "name": "Butterfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -3672,7 +3895,6 @@
       "name": "Canada Goose",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "north-america-forest"
       ],
@@ -3710,7 +3932,6 @@
       "name": "Canary",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "mediterranean"
       ],
@@ -3754,7 +3975,6 @@
       "name": "Caracal",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "africa-desert",
         "middle-east"
@@ -3939,7 +4159,6 @@
       "name": "Cardinalfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "coral-reef"
       ],
@@ -3982,7 +4201,6 @@
       "name": "Caspian Snowcock",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 46,
       "districts": [
         "central-asia"
       ],
@@ -4024,7 +4242,6 @@
       "name": "Cassowary",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "papua",
         "australia-forest"
@@ -4086,7 +4303,6 @@
       "name": "Caterpillar",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -4123,7 +4339,6 @@
       "name": "Catterpillar",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "worldwide"
       ],
@@ -4160,7 +4375,6 @@
       "name": "Chameleon",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "mediterranean",
         "madagascar",
@@ -4287,7 +4501,6 @@
       "name": "Cheetah",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 87,
       "districts": [
         "africa-savanna"
       ],
@@ -4353,7 +4566,6 @@
       "name": "Chimpansee",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "africa-rainforest"
       ],
@@ -4392,7 +4604,6 @@
       "name": "Chimpanzee",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "africa-rainforest"
       ],
@@ -4527,7 +4738,6 @@
       "name": "Chinstrap Penguin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "antarctic"
       ],
@@ -4566,7 +4776,6 @@
       "name": "Cleaner Shrimp",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "coral-reef"
       ],
@@ -4609,7 +4818,6 @@
       "name": "Clownfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "coral-reef"
       ],
@@ -5072,7 +5280,6 @@
       "name": "Cockatiel",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "australia-outback"
       ],
@@ -5105,7 +5312,6 @@
       "name": "Cockatoo",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "australia-forest"
       ],
@@ -5135,7 +5341,6 @@
       "name": "Cockroach",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "worldwide"
       ],
@@ -5172,7 +5377,6 @@
       "name": "Common Frog",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 33,
       "districts": [
         "europe-west",
         "europe-east"
@@ -5253,7 +5457,6 @@
       "name": "Common Hedgehog",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "mediterranean",
         "europe-west",
@@ -5427,7 +5630,6 @@
       "name": "Copperband Butterflyfish",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "coral-reef"
       ],
@@ -5470,7 +5672,6 @@
       "name": "Corn Snake",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "north-america-forest"
       ],
@@ -5502,7 +5703,6 @@
       "name": "Cougar",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "north-america-west",
         "andes"
@@ -5560,7 +5760,6 @@
       "name": "Coyote",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "north-america-plains"
       ],
@@ -5604,7 +5803,6 @@
       "name": "Crab",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "mediterranean",
         "ocean-atlantic",
@@ -5874,7 +6072,6 @@
       "name": "Cricket",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "worldwide"
       ],
@@ -5911,7 +6108,6 @@
       "name": "Damselfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "coral-reef"
       ],
@@ -5954,7 +6150,6 @@
       "name": "Damselfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "rivers-lakes"
       ],
@@ -6014,7 +6209,6 @@
       "name": "Deer",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "europe-west",
         "europe-east",
@@ -6107,7 +6301,6 @@
       "name": "Dingo",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "australia-outback"
       ],
@@ -6140,7 +6333,6 @@
       "name": "Dodo",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "madagascar"
       ],
@@ -6167,7 +6359,6 @@
       "name": "Dragonfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "rivers-lakes"
       ],
@@ -6227,7 +6418,6 @@
       "name": "Earless Seal",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "arctic",
         "antarctic"
@@ -6374,7 +6564,6 @@
       "name": "Eastern Chipmunk",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "north-america-forest"
       ],
@@ -6406,7 +6595,6 @@
       "name": "Echidna",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "australia-outback"
       ],
@@ -6439,7 +6627,6 @@
       "name": "Elephant",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 86,
       "districts": [
         "africa-savanna"
       ],
@@ -6487,7 +6674,6 @@
       "name": "Elk",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "north-america-west"
       ],
@@ -6517,7 +6703,6 @@
       "name": "Emperor Penguin",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 87,
       "districts": [
         "antarctic"
       ],
@@ -6556,7 +6741,6 @@
       "name": "Emu",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 47,
       "districts": [
         "australia-outback"
       ],
@@ -6595,7 +6779,6 @@
       "name": "Eurasian Lynx",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "europe-east",
         "europe-north",
@@ -6772,7 +6955,6 @@
       "name": "Eurasian Otter",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "europe-west",
         "europe-north"
@@ -6843,7 +7025,6 @@
       "name": "European Badger",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "europe-west",
         "europe-east"
@@ -6996,7 +7177,6 @@
       "name": "European Hare",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "mediterranean",
         "europe-west",
@@ -7176,7 +7356,6 @@
       "name": "European Robin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "europe-west",
         "europe-north"
@@ -7247,7 +7426,6 @@
       "name": "Feather Sea Star",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -7290,7 +7468,6 @@
       "name": "Fennec Fox",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "africa-desert"
       ],
@@ -7385,7 +7562,6 @@
       "name": "Ferret",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "europe-west",
         "europe-east"
@@ -7466,7 +7642,6 @@
       "name": "Fire Salamander",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "europe-west",
         "europe-east"
@@ -7547,7 +7722,6 @@
       "name": "Firefish Goby",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "coral-reef"
       ],
@@ -7590,7 +7764,6 @@
       "name": "Firefly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "worldwide"
       ],
@@ -7627,7 +7800,6 @@
       "name": "Flamingo",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 85,
       "districts": [
         "africa-savanna",
         "mediterranean"
@@ -7939,7 +8111,6 @@
       "name": "Flemish Giant Rabbit",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "europe-west"
       ],
@@ -7990,7 +8161,6 @@
       "name": "Fly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "worldwide"
       ],
@@ -8027,7 +8197,6 @@
       "name": "Flying Vulture",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "africa-savanna"
       ],
@@ -8075,7 +8244,6 @@
       "name": "Fox",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "europe-west",
         "europe-east"
@@ -8252,7 +8420,6 @@
       "name": "Foxface Rabbitfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "coral-reef"
       ],
@@ -8281,90 +8448,6 @@
           "lat": 15.727,
           "lon": -82.831,
           "district": "coral-reef"
-        },
-        {
-          "lat": -12.392,
-          "lon": 123.616,
-          "country": "ATC",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -32.327,
-          "lon": 132.952,
-          "country": "AUS",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 17.809,
-          "lon": -88.153,
-          "country": "BLZ",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 21.79,
-          "lon": -77.227,
-          "country": "CUB",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 19.264,
-          "lon": -81.268,
-          "country": "CYM",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 13.791,
-          "lon": -91.47,
-          "country": "GTM",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 15.918,
-          "lon": -86.158,
-          "country": "HND",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -0.49,
-          "lon": 99.691,
-          "country": "IDN",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 23.191,
-          "lon": -97.459,
-          "country": "MEX",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 11.302,
-          "lon": -86.364,
-          "country": "NIC",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 13.221,
-          "lon": -88.806,
-          "country": "SLV",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -8.456,
-          "lon": 126.093,
-          "country": "TLS",
-          "closeUp": true,
-          "atSea": true
         }
       ],
       "mediaId": "005e105a-ecb0-4b55-aad7-17c0061eff2e",
@@ -8379,7 +8462,6 @@
       "name": "Freshwater Crocodile",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "australia-outback"
       ],
@@ -8412,7 +8494,6 @@
       "name": "Frill-Necked Lizard",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "australia-outback"
       ],
@@ -8445,7 +8526,6 @@
       "name": "Frog",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "mediterranean",
         "rivers-lakes"
@@ -8531,7 +8611,6 @@
       "name": "Froglet",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 34,
       "districts": [
         "rivers-lakes"
       ],
@@ -8591,7 +8670,6 @@
       "name": "Frogspawn Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -8634,7 +8712,6 @@
       "name": "Gazelle",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "africa-savanna"
       ],
@@ -8682,7 +8759,6 @@
       "name": "Gentoo Penguin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "antarctic"
       ],
@@ -8715,7 +8791,6 @@
       "name": "Giant Clam",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "coral-reef"
       ],
@@ -8786,7 +8861,6 @@
       "name": "Giraffe",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "africa-savanna"
       ],
@@ -8888,7 +8962,6 @@
       "name": "Gnat",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "worldwide"
       ],
@@ -8925,7 +8998,6 @@
       "name": "Golden Eagle",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "europe-mountains",
         "north-america-west"
@@ -9193,7 +9265,6 @@
       "name": "Goldfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "china-forest"
       ],
@@ -9220,7 +9291,6 @@
       "name": "Goose",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "europe-west",
         "europe-north"
@@ -9291,7 +9361,6 @@
       "name": "Gorilla",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "africa-rainforest"
       ],
@@ -9378,7 +9447,6 @@
       "name": "Grasshopper",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "worldwide"
       ],
@@ -9415,7 +9483,6 @@
       "name": "Gray Wolf",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "north-america-forest",
         "siberia"
@@ -9464,7 +9531,6 @@
       "name": "Great Auk",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "ocean-atlantic"
       ],
@@ -9494,7 +9560,6 @@
       "name": "Great White Shark",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 86,
       "districts": [
         "ocean-atlantic",
         "ocean-pacific"
@@ -9544,7 +9609,6 @@
       "name": "Greater Kudu",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "africa-south"
       ],
@@ -9580,7 +9644,6 @@
       "name": "Grizzly Bear",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "north-america-west"
       ],
@@ -9622,7 +9685,6 @@
       "name": "Guinea Fowl",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "africa-savanna"
       ],
@@ -9712,7 +9774,6 @@
       "name": "Guinea Pig",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "andes"
       ],
@@ -9777,7 +9838,6 @@
       "name": "Guppy",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 34,
       "districts": [
         "central-america"
       ],
@@ -9815,7 +9875,6 @@
       "name": "Halibut",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "ocean-atlantic"
       ],
@@ -9845,7 +9904,6 @@
       "name": "Hammer Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "coral-reef"
       ],
@@ -9888,7 +9946,6 @@
       "name": "Hammerhead Shark",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "coral-reef"
       ],
@@ -9931,7 +9988,6 @@
       "name": "Hamster",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "central-asia"
       ],
@@ -9979,7 +10035,6 @@
       "name": "Hard Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "coral-reef"
       ],
@@ -10022,7 +10077,6 @@
       "name": "Harpy Eagle",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 46,
       "districts": [
         "amazon"
       ],
@@ -10058,7 +10112,6 @@
       "name": "Hawkfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "coral-reef"
       ],
@@ -10101,7 +10154,6 @@
       "name": "Hedgehog",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "europe-west",
         "europe-east"
@@ -10182,7 +10234,6 @@
       "name": "Hermit Crab",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 35,
       "districts": [
         "coral-reef"
       ],
@@ -10234,23 +10285,9 @@
           "atSea": true
         },
         {
-          "lat": -12.457,
-          "lon": 123.581,
-          "country": "ATC",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 17.352249,
           "lon": -61.790612,
           "country": "ATG",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -32.091,
-          "lon": 131.496,
-          "country": "AUS",
           "closeUp": true,
           "atSea": true
         },
@@ -10265,13 +10302,6 @@
           "lat": 17.914,
           "lon": -62.81,
           "country": "BLM",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 16.811,
-          "lon": -88.176,
-          "country": "BLZ",
           "closeUp": true,
           "atSea": true
         },
@@ -10353,13 +10383,6 @@
           "atSea": true
         },
         {
-          "lat": 13.715,
-          "lon": -90.488,
-          "country": "GTM",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 13.383,
           "lon": 144.632,
           "country": "GUM",
@@ -10367,23 +10390,9 @@
           "atSea": true
         },
         {
-          "lat": 15.888,
-          "lon": -87.045,
-          "country": "HND",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 19.759,
           "lon": -72.088,
           "country": "HTI",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 1.145,
-          "lon": 102.703,
-          "country": "IDN",
           "closeUp": true,
           "atSea": true
         },
@@ -10437,13 +10446,6 @@
           "atSea": true
         },
         {
-          "lat": 21.882,
-          "lon": -106.613,
-          "country": "MEX",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 7.417,
           "lon": 171.171,
           "country": "MHL",
@@ -10475,13 +10477,6 @@
           "lat": -20.626,
           "lon": 165.035,
           "country": "NCL",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 12.173,
-          "lon": -86.91,
-          "country": "NIC",
           "closeUp": true,
           "atSea": true
         },
@@ -10528,13 +10523,6 @@
           "atSea": true
         },
         {
-          "lat": 13.439,
-          "lon": -89.303,
-          "country": "SLV",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 18.032,
           "lon": -63.095,
           "country": "SXM",
@@ -10552,13 +10540,6 @@
           "lat": 21.841,
           "lon": -71.706,
           "country": "TCA",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -9.058,
-          "lon": 126.077,
-          "country": "TLS",
           "closeUp": true,
           "atSea": true
         },
@@ -10638,7 +10619,6 @@
       "name": "Herring",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "ocean-atlantic"
       ],
@@ -10668,7 +10648,6 @@
       "name": "Hippopotamus",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "africa-savanna"
       ],
@@ -10842,7 +10821,6 @@
       "name": "Hornbill",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 47,
       "districts": [
         "africa-rainforest",
         "southeast-asia"
@@ -10996,7 +10974,6 @@
       "name": "Hornet",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -11033,7 +11010,6 @@
       "name": "Hyena",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "africa-savanna"
       ],
@@ -11081,7 +11057,6 @@
       "name": "Indigo Bird",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "africa-savanna"
       ],
@@ -11129,7 +11104,6 @@
       "name": "Jaguar",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 85,
       "districts": [
         "amazon"
       ],
@@ -11267,7 +11241,6 @@
       "name": "Kangaroo",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 85,
       "districts": [
         "australia-outback"
       ],
@@ -11306,7 +11279,6 @@
       "name": "King Penguin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 46,
       "districts": [
         "antarctic"
       ],
@@ -11369,7 +11341,6 @@
       "name": "Koala",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 86,
       "districts": [
         "australia-forest"
       ],
@@ -11405,7 +11376,6 @@
       "name": "Koi Fish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "japan-korea"
       ],
@@ -11474,7 +11444,6 @@
       "name": "Kookaburra",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "australia-forest"
       ],
@@ -11510,7 +11479,6 @@
       "name": "Ladybug",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -11547,7 +11515,6 @@
       "name": "Leather Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -11590,7 +11557,6 @@
       "name": "Lemur",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "madagascar"
       ],
@@ -11629,7 +11595,6 @@
       "name": "Leopard",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "africa-savanna",
         "india"
@@ -11704,7 +11669,6 @@
       "name": "Leopard Gecko",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 29,
       "districts": [
         "mediterranean",
         "middle-east"
@@ -11772,7 +11736,6 @@
       "name": "Lion",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "africa-savanna"
       ],
@@ -11892,7 +11855,6 @@
       "name": "Lobster",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 29,
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic"
@@ -11937,20 +11899,6 @@
           "district": "ocean-atlantic"
         },
         {
-          "lat": 40.858,
-          "lon": 19.164,
-          "country": "ALB",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 42.696,
-          "lon": 17.276,
-          "country": "BIH",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 32.321,
           "lon": -64.769,
           "country": "BMU",
@@ -11965,62 +11913,6 @@
           "atSea": true
         },
         {
-          "lat": 37.104,
-          "lon": 1.653,
-          "country": "DZA",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 30.984,
-          "lon": 28.971,
-          "country": "EGY",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 43.821,
-          "lon": -2.932,
-          "country": "ESP",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 38.226,
-          "lon": 21.539,
-          "country": "GRC",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 44.318,
-          "lon": 14.432,
-          "country": "HRV",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 45.549,
-          "lon": 13.6,
-          "country": "ITA",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 41.482,
-          "lon": 19.399,
-          "country": "KOS",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 31.889,
-          "lon": 18.09,
-          "country": "LBY",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
           "lat": 43.73,
           "lon": 7.366,
           "country": "MCO",
@@ -12028,23 +11920,9 @@
           "atSea": true
         },
         {
-          "lat": 41.436,
-          "lon": 19.446,
-          "country": "MKD",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 35.927,
-          "lon": 14.351,
+          "lat": 35.892,
+          "lon": 14.34,
           "country": "MLT",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 42.412,
-          "lon": 18.322,
-          "country": "MNE",
           "closeUp": true,
           "atSea": true
         },
@@ -12061,20 +11939,6 @@
           "country": "SPM",
           "closeUp": true,
           "atSea": true
-        },
-        {
-          "lat": 41.191,
-          "lon": 19.387,
-          "country": "SRB",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 34.841,
-          "lon": 11.301,
-          "country": "TUN",
-          "closeUp": true,
-          "atSea": true
         }
       ],
       "mediaId": "888b4026-f64d-4eca-a826-4b130135816d",
@@ -12089,7 +11953,6 @@
       "name": "Lovebird",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "africa-savanna"
       ],
@@ -12137,7 +12000,6 @@
       "name": "Lynx",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "europe-east",
         "europe-north",
@@ -12224,7 +12086,6 @@
       "name": "Macaroni Penguin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "antarctic"
       ],
@@ -12263,7 +12124,6 @@
       "name": "Macaw",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "amazon"
       ],
@@ -12299,7 +12159,6 @@
       "name": "Magpie",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 46,
       "districts": [
         "europe-west",
         "europe-east"
@@ -12380,7 +12239,6 @@
       "name": "Mahi-Mahi",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "open-ocean"
       ],
@@ -12399,6 +12257,20 @@
           "lat": 46.839,
           "lon": -23.634,
           "district": "open-ocean"
+        },
+        {
+          "lat": 38.689,
+          "lon": -9.233,
+          "country": "PRT",
+          "closeUp": true,
+          "atSea": true
+        },
+        {
+          "lat": -29.377,
+          "lon": 16.791,
+          "country": "ZAF",
+          "closeUp": true,
+          "atSea": true
         }
       ],
       "mediaId": "93da3c42-f7bd-4fec-b7e9-a65b5b543c15",
@@ -12413,7 +12285,6 @@
       "name": "Mallard",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 49,
       "districts": [
         "rivers-lakes"
       ],
@@ -12485,7 +12356,6 @@
       "name": "Manatee",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "ocean-atlantic",
         "central-america"
@@ -12534,7 +12404,6 @@
       "name": "Mandarinfish",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 33,
       "districts": [
         "coral-reef"
       ],
@@ -12577,7 +12446,6 @@
       "name": "Mandrill",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "africa-rainforest"
       ],
@@ -12640,7 +12508,6 @@
       "name": "Marbled-polecat",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "central-asia"
       ],
@@ -12718,7 +12585,6 @@
       "name": "Marine Bristle Worm",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "coral-reef"
       ],
@@ -12761,7 +12627,6 @@
       "name": "Marine Feather Duster Worm",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "coral-reef"
       ],
@@ -12804,7 +12669,6 @@
       "name": "Marine Oyster",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "mediterranean-sea",
         "ocean-atlantic"
@@ -12861,7 +12725,6 @@
       "name": "Marine Scallop",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "ocean-atlantic"
       ],
@@ -12891,7 +12754,6 @@
       "name": "Marine Tube Worm",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -12934,7 +12796,6 @@
       "name": "Marlin",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "open-ocean"
       ],
@@ -12967,7 +12828,6 @@
       "name": "Mastodon",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "north-america-forest"
       ],
@@ -12999,7 +12859,6 @@
       "name": "Meerkat",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "africa-south"
       ],
@@ -13053,7 +12912,6 @@
       "name": "Monkey",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "amazon",
         "africa-rainforest"
@@ -13114,7 +12972,6 @@
       "name": "Moorish Idol",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "coral-reef"
       ],
@@ -13241,7 +13098,6 @@
       "name": "Moose",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "north-america-forest",
         "siberia"
@@ -13296,7 +13152,6 @@
       "name": "Mosquito",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "worldwide"
       ],
@@ -13333,7 +13188,6 @@
       "name": "Moth",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "worldwide"
       ],
@@ -13370,7 +13224,6 @@
       "name": "Mouse",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "worldwide"
       ],
@@ -13407,7 +13260,6 @@
       "name": "Mule Deer",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "north-america-west"
       ],
@@ -13437,7 +13289,6 @@
       "name": "Mushroom-Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "coral-reef"
       ],
@@ -13480,7 +13331,6 @@
       "name": "Musk Ox",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "arctic"
       ],
@@ -13512,7 +13362,6 @@
       "name": "Muskrat",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "north-america-forest"
       ],
@@ -13544,7 +13393,6 @@
       "name": "Narwhal",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "arctic"
       ],
@@ -13582,7 +13430,6 @@
       "name": "Nassarius Sea Snail",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "coral-reef"
       ],
@@ -13625,7 +13472,6 @@
       "name": "Okapi",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "africa-rainforest"
       ],
@@ -13670,7 +13516,6 @@
       "name": "Orca",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "open-ocean",
         "arctic"
@@ -13751,7 +13596,6 @@
       "name": "Ostrich",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "africa-savanna"
       ],
@@ -13865,7 +13709,6 @@
       "name": "Pacific White-Sided Dolphin",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "ocean-pacific"
       ],
@@ -13904,7 +13747,6 @@
       "name": "Pangolin",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "africa-savanna",
         "southeast-asia"
@@ -13971,7 +13813,6 @@
       "name": "Parakeet",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "australia-outback"
       ],
@@ -14004,7 +13845,6 @@
       "name": "Parrot",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "amazon"
       ],
@@ -14040,7 +13880,6 @@
       "name": "Peafowl",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "india"
       ],
@@ -14135,7 +13974,6 @@
       "name": "Penguin",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "antarctic"
       ],
@@ -14198,7 +14036,6 @@
       "name": "Peppermint Shrimp",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 10,
       "districts": [
         "coral-reef"
       ],
@@ -14241,7 +14078,6 @@
       "name": "Persian Leopard",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "middle-east"
       ],
@@ -14297,7 +14133,6 @@
       "name": "Philippine Eagle",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "southeast-asia"
       ],
@@ -14342,7 +14177,6 @@
       "name": "Pigeon",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "worldwide"
       ],
@@ -14385,7 +14219,6 @@
       "name": "Pistol Shrimp",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "coral-reef"
       ],
@@ -14428,7 +14261,6 @@
       "name": "Platy",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 27,
       "districts": [
         "central-america"
       ],
@@ -14466,7 +14298,6 @@
       "name": "Platypus",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "australia-forest"
       ],
@@ -14496,7 +14327,6 @@
       "name": "Polar Bear",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "arctic"
       ],
@@ -14540,7 +14370,6 @@
       "name": "Polar Fox",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "arctic"
       ],
@@ -14572,7 +14401,6 @@
       "name": "Possum",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "north-america-forest"
       ],
@@ -14604,7 +14432,6 @@
       "name": "Praying Mantis",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "mediterranean",
         "worldwide"
@@ -14707,7 +14534,6 @@
       "name": "Quokka",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "australia-outback"
       ],
@@ -14740,7 +14566,6 @@
       "name": "Rabbit",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "europe-west",
         "europe-east"
@@ -14827,7 +14652,6 @@
       "name": "Rat",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "worldwide"
       ],
@@ -14864,7 +14688,6 @@
       "name": "Red Deer",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "europe-west",
         "europe-east",
@@ -15081,7 +14904,6 @@
       "name": "Red Fox",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "mediterranean",
         "europe-west",
@@ -15259,7 +15081,6 @@
       "name": "Red Panda",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "himalaya"
       ],
@@ -15311,7 +15132,6 @@
       "name": "Red Velvet Mite",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 16,
       "districts": [
         "worldwide"
       ],
@@ -15348,7 +15168,6 @@
       "name": "Red-Eared Slider",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 29,
       "districts": [
         "north-america-forest"
       ],
@@ -15380,7 +15199,6 @@
       "name": "Redback Spider",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "australia-outback"
       ],
@@ -15413,7 +15231,6 @@
       "name": "Reindeer",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "arctic",
         "siberia"
@@ -15486,7 +15303,6 @@
       "name": "Rhino",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "africa-savanna"
       ],
@@ -15534,7 +15350,6 @@
       "name": "Rhinoceros",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 84,
       "districts": [
         "africa-savanna"
       ],
@@ -15600,7 +15415,6 @@
       "name": "Ring-necked Parakeet",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "india"
       ],
@@ -15659,7 +15473,6 @@
       "name": "Rock Flower Sea Anemone",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 16,
       "districts": [
         "coral-reef"
       ],
@@ -15702,7 +15515,6 @@
       "name": "Rockhopper Penguin",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 47,
       "districts": [
         "antarctic"
       ],
@@ -15741,7 +15553,6 @@
       "name": "Royal Gramma",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 29,
       "districts": [
         "coral-reef"
       ],
@@ -15784,7 +15595,6 @@
       "name": "Saber-Toothed Tiger",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "north-america-plains"
       ],
@@ -15816,7 +15626,6 @@
       "name": "Saiga Antelope",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "central-asia"
       ],
@@ -15870,7 +15679,6 @@
       "name": "Saltwater Crocodile",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "southeast-asia",
         "australia-outback"
@@ -15976,7 +15784,6 @@
       "name": "Sand Lizard",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "mediterranean",
         "europe-west",
@@ -16072,7 +15879,6 @@
       "name": "Sawshark",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "ocean-pacific"
       ],
@@ -16111,7 +15917,6 @@
       "name": "Scarlet Macaw",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "amazon"
       ],
@@ -16183,7 +15988,6 @@
       "name": "Scorpion",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "africa-desert",
         "north-america-desert"
@@ -16422,7 +16226,6 @@
       "name": "Sea Anemone",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "mediterranean-sea",
         "coral-reef"
@@ -16491,7 +16294,6 @@
       "name": "Sea Conch",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "coral-reef"
       ],
@@ -16534,7 +16336,6 @@
       "name": "Sea Cucumber",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "coral-reef"
       ],
@@ -16577,7 +16378,6 @@
       "name": "Sea Hare",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -16620,7 +16420,6 @@
       "name": "Sea Snail",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "coral-reef"
       ],
@@ -16663,7 +16462,6 @@
       "name": "Sea Sponge",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 15,
       "districts": [
         "coral-reef"
       ],
@@ -16706,7 +16504,6 @@
       "name": "Sea Star",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "mediterranean-sea",
         "coral-reef"
@@ -16950,7 +16747,6 @@
       "name": "Sea Urchin",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "mediterranean-sea",
         "coral-reef"
@@ -17019,7 +16815,6 @@
       "name": "Seagull",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 48,
       "districts": [
         "mediterranean",
         "mediterranean-sea",
@@ -17360,7 +17155,6 @@
       "name": "Seal",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 65,
       "districts": [
         "arctic",
         "antarctic"
@@ -17405,7 +17199,6 @@
       "name": "Serval",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "africa-savanna"
       ],
@@ -17453,7 +17246,6 @@
       "name": "Sitting Vulture",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "africa-savanna"
       ],
@@ -17501,7 +17293,6 @@
       "name": "Six-Line Wrasse",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "coral-reef"
       ],
@@ -17544,7 +17335,6 @@
       "name": "Sloth",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "amazon",
         "central-america"
@@ -17676,7 +17466,6 @@
       "name": "Snail",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "worldwide"
       ],
@@ -17713,7 +17502,6 @@
       "name": "Snake",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "mediterranean",
         "worldwide"
@@ -17780,7 +17568,6 @@
       "name": "Snow Leopard",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "himalaya"
       ],
@@ -17880,7 +17667,6 @@
       "name": "Snow Owl",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 45,
       "districts": [
         "arctic"
       ],
@@ -17936,7 +17722,6 @@
       "name": "Snowy Owl",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "arctic"
       ],
@@ -17980,7 +17765,6 @@
       "name": "Soft Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "coral-reef"
       ],
@@ -18023,7 +17807,6 @@
       "name": "Sperm Whale",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "mediterranean-sea",
         "open-ocean"
@@ -18222,7 +18005,6 @@
       "name": "Spider",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "worldwide"
       ],
@@ -18259,7 +18041,6 @@
       "name": "Squirrel",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "europe-west",
         "europe-east",
@@ -18352,7 +18133,6 @@
       "name": "Star-nosed Mole",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 66,
       "districts": [
         "north-america-forest"
       ],
@@ -18384,7 +18164,6 @@
       "name": "Steppe Eagle",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 49,
       "districts": [
         "central-asia"
       ],
@@ -18456,7 +18235,6 @@
       "name": "Stork",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 53,
       "districts": [
         "europe-west",
         "europe-east",
@@ -18619,7 +18397,6 @@
       "name": "Striped Hyena",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 71,
       "districts": [
         "africa-desert",
         "middle-east"
@@ -18768,7 +18545,6 @@
       "name": "Sturgeon",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "central-asia",
         "europe-east"
@@ -18873,7 +18649,6 @@
       "name": "Sugar Glider",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 68,
       "districts": [
         "australia-forest",
         "papua"
@@ -18917,7 +18692,6 @@
       "name": "Sugarglider",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 69,
       "districts": [
         "australia-forest",
         "papua"
@@ -18955,7 +18729,6 @@
       "name": "Swallowtail Butterfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 16,
       "districts": [
         "worldwide"
       ],
@@ -18992,7 +18765,6 @@
       "name": "Swan",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 51,
       "districts": [
         "europe-west",
         "europe-north"
@@ -19081,7 +18853,6 @@
       "name": "Sydney Funnel-Web Spider",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "australia-forest"
       ],
@@ -19111,7 +18882,6 @@
       "name": "Tadpole",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 14,
       "districts": [
         "rivers-lakes"
       ],
@@ -19171,7 +18941,6 @@
       "name": "Tapir",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "amazon",
         "southeast-asia"
@@ -19262,7 +19031,6 @@
       "name": "Tarantula",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 12,
       "districts": [
         "amazon"
       ],
@@ -19304,7 +19072,6 @@
       "name": "Tarpon",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 28,
       "districts": [
         "ocean-atlantic"
       ],
@@ -19334,7 +19101,6 @@
       "name": "Tarsier",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "southeast-asia"
       ],
@@ -19421,7 +19187,6 @@
       "name": "Tasmanian Devil",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "tasmania"
       ],
@@ -19446,7 +19211,6 @@
       "name": "Tasmanian Tiger",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "tasmania"
       ],
@@ -19471,7 +19235,6 @@
       "name": "Termite",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "africa-savanna"
       ],
@@ -19573,7 +19336,6 @@
       "name": "Thomson's Gazelle",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "africa-savanna"
       ],
@@ -19621,7 +19383,6 @@
       "name": "Tiger",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 89,
       "districts": [
         "india",
         "southeast-asia"
@@ -19741,7 +19502,6 @@
       "name": "Tiger Shark",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "coral-reef"
       ],
@@ -19784,7 +19544,6 @@
       "name": "Toad",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "rivers-lakes"
       ],
@@ -19844,7 +19603,6 @@
       "name": "Torch Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "coral-reef"
       ],
@@ -19887,7 +19645,6 @@
       "name": "Tortoise",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "mediterranean",
         "africa-savanna",
@@ -19983,7 +19740,6 @@
       "name": "Toucan",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 86,
       "districts": [
         "amazon"
       ],
@@ -20109,7 +19865,6 @@
       "name": "Tree Frog",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 31,
       "districts": [
         "amazon",
         "central-america"
@@ -20217,7 +19972,6 @@
       "name": "Trochus Sea Snail",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],
@@ -20260,7 +20014,6 @@
       "name": "Tuna",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 32,
       "districts": [
         "open-ocean"
       ],
@@ -20279,20 +20032,6 @@
           "lat": 48.534,
           "lon": -10.886,
           "district": "open-ocean"
-        },
-        {
-          "lat": 39.305,
-          "lon": -9.753,
-          "country": "PRT",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -34.843,
-          "lon": 24.999,
-          "country": "ZAF",
-          "closeUp": true,
-          "atSea": true
         }
       ],
       "mediaId": "49d69270-10db-45f6-8c7a-3bd4d40c7dc1",
@@ -20307,7 +20046,6 @@
       "name": "Turbo Sea Snail",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 11,
       "districts": [
         "coral-reef"
       ],
@@ -20350,7 +20088,6 @@
       "name": "Turquoise Butterfly",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 9,
       "districts": [
         "worldwide"
       ],
@@ -20387,7 +20124,6 @@
       "name": "Vancouver Island Marmot",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "north-america-west"
       ],
@@ -20417,7 +20153,6 @@
       "name": "Vervet Monkey",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "africa-savanna"
       ],
@@ -20495,7 +20230,6 @@
       "name": "Vulture",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 49,
       "districts": [
         "africa-savanna"
       ],
@@ -20549,7 +20283,6 @@
       "name": "Wallaby",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 70,
       "districts": [
         "australia-forest"
       ],
@@ -20579,7 +20312,6 @@
       "name": "Walrus",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 83,
       "districts": [
         "arctic"
       ],
@@ -20623,7 +20355,6 @@
       "name": "Warthog",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "africa-savanna"
       ],
@@ -20677,7 +20408,6 @@
       "name": "Wasp",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "worldwide"
       ],
@@ -20714,7 +20444,6 @@
       "name": "White-tailed Eagle",
       "glyph": "🐾",
       "importance": 6,
-      "priority": 52,
       "districts": [
         "europe-north",
         "europe-east"
@@ -20796,7 +20525,6 @@
       "name": "Wild Boar",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 63,
       "districts": [
         "mediterranean",
         "europe-west",
@@ -21060,7 +20788,6 @@
       "name": "Wildebeest",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 87,
       "districts": [
         "africa-savanna"
       ],
@@ -21114,7 +20841,6 @@
       "name": "Wildebeests",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "africa-savanna"
       ],
@@ -21162,7 +20888,6 @@
       "name": "Wolf",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 82,
       "districts": [
         "europe-east",
         "europe-north",
@@ -21315,7 +21040,6 @@
       "name": "Wolverine",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 67,
       "districts": [
         "siberia",
         "europe-north",
@@ -21404,7 +21128,6 @@
       "name": "Wombat",
       "glyph": "🐾",
       "importance": 4,
-      "priority": 64,
       "districts": [
         "australia-forest"
       ],
@@ -21440,7 +21163,6 @@
       "name": "Woolly Mammoth",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 13,
       "districts": [
         "siberia"
       ],
@@ -21470,7 +21192,6 @@
       "name": "Yellow Tang",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 33,
       "districts": [
         "coral-reef"
       ],
@@ -21499,20 +21220,6 @@
           "lat": 18.165,
           "lon": -81.385,
           "district": "coral-reef"
-        },
-        {
-          "lat": 21.247,
-          "lon": -78.863,
-          "country": "CUB",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": 19.405,
-          "lon": -81.204,
-          "country": "CYM",
-          "closeUp": true,
-          "atSea": true
         }
       ],
       "mediaId": "a4668962-96d4-43fe-923e-1fdc9eafbe3b",
@@ -21527,7 +21234,6 @@
       "name": "Yellowfin Tuna",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 30,
       "districts": [
         "open-ocean"
       ],
@@ -21546,20 +21252,6 @@
           "lat": 48.956,
           "lon": -14.057,
           "district": "open-ocean"
-        },
-        {
-          "lat": 38.689,
-          "lon": -9.233,
-          "country": "PRT",
-          "closeUp": true,
-          "atSea": true
-        },
-        {
-          "lat": -29.377,
-          "lon": 16.791,
-          "country": "ZAF",
-          "closeUp": true,
-          "atSea": true
         }
       ],
       "mediaId": "23ee90fd-bda2-49f9-bd1b-d57a61f807d9",
@@ -21574,7 +21266,6 @@
       "name": "Zebra",
       "glyph": "🐾",
       "importance": 2,
-      "priority": 86,
       "districts": [
         "africa-savanna"
       ],
@@ -21676,7 +21367,6 @@
       "name": "Zebra Danio",
       "glyph": "🐾",
       "importance": 8,
-      "priority": 34,
       "districts": [
         "india"
       ],
@@ -21717,7 +21407,6 @@
       "name": "Zoanthid Coral",
       "glyph": "🐾",
       "importance": 10,
-      "priority": 17,
       "districts": [
         "coral-reef"
       ],

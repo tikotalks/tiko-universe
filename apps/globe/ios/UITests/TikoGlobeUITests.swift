@@ -32,8 +32,8 @@ final class TikoGlobeUITests: XCTestCase {
 
         let malta = app.buttons["globe-country-MLT"]
         if !malta.exists {
-            app.searchFields.firstMatch.tap()
-            app.searchFields.firstMatch.typeText("Malta")
+            app.textFields["globe-list-search"].tap()
+            app.textFields["globe-list-search"].typeText("Malta")
         }
         XCTAssertTrue(malta.waitForExistence(timeout: 10))
         malta.tap()

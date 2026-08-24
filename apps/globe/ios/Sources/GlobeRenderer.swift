@@ -17,6 +17,12 @@ struct GlobeLandVertex {
     var color: Float
     /// 1 for the face a child looks down on, less for the cut edge around it.
     var shade: Float
+    /// Which way this bit of surface faces. The top of a country faces straight
+    /// out of the globe; the cut edge around it faces sideways, out to sea,
+    /// which is what makes a country read as a slab of clay rather than a decal.
+    var nx: Float
+    var ny: Float
+    var nz: Float
 }
 
 struct GlobePositionVertex {
@@ -53,6 +59,14 @@ struct GlobeUniforms {
     var borderColor: SIMD4<Float>
     var highlightColor: SIMD4<Float>
     var selectedBorderColor: SIMD4<Float>
+    /// The mark a lifted country leaves behind, and the radius it sits at —
+    /// above the water, below the slabs still lying flat around it.
+    var shadowColor: SIMD4<Float>
+    var shadowRadius: Float
+    /// The sea over the deepest trench, and whether there is a depth image to
+    /// read at all.
+    var deepOceanColor: SIMD4<Float>
+    var hasBathymetry: Int32
 }
 
 /// The colours of the Earth, handed in by SwiftUI so light and dark mode stay a
@@ -71,6 +85,12 @@ struct GlobeAppearance: Equatable {
     var border: SIMD4<Float>
     var selectedBorder: SIMD4<Float>
     var highlight: SIMD4<Float>
+    /// What a country leaves on the sea floor while it is lifted. The alpha is
+    /// how dark it goes once the lift has finished.
+    var shadow: SIMD4<Float>
+    /// The colour over the deepest water. `ocean` is the shallow end of the
+    /// same scale, so a shelf is pale and a trench is nearly navy.
+    var deepOcean: SIMD4<Float>
     /// Whether this is the dark appearance — the land table is built from it.
     var isDark: Bool
 }
@@ -84,11 +104,17 @@ enum GlobeMeshBuilder {
     static let landRadius: Float = 1.0
     static let borderRadius: Float = 1.0
     /// Countries are slabs, not decals: the cut edge between this and the top
-    /// face is what gives them thickness when the globe turns.
-    static let landBaseRadius: Float = 0.991
-    static let oceanRadius: Float = 0.988
-    /// How much darker the cut edge is than the face above it.
-    static let edgeShade: Float = 0.78
+    /// face is what gives them thickness when the globe turns. Thick enough to
+    /// catch the light down its side — a thinner slab reads as a printed line.
+    static let landBaseRadius: Float = 0.9845
+    static let oceanRadius: Float = 0.9838
+    /// The shadow lies on the water, just clear of it.
+    static let shadowRadius: Float = 0.9841
+    /// The shadow a country casts into its own coastline. The side of the slab
+    /// is lit properly now, so this is contact shading and nothing more.
+    static let edgeShade: Float = 0.66
+    /// And the light the coastline itself catches, the way a bevelled edge does.
+    static let coastShade: Float = 1.06
 
     /// The top faces, in the order the geometry file stores them, so the fill
     /// indices still address them.
@@ -101,9 +127,11 @@ enum GlobeMeshBuilder {
             for offset in 0..<country.meshVertexCount {
                 let point = geometry.meshVertices[country.meshVertexOffset + offset]
                 let position = GlobeMath.unitVector(lat: Double(point.y), lon: Double(point.x)) * landRadius
+                let normal = simd_normalize(position)
                 vertices.append(GlobeLandVertex(
                     x: position.x, y: position.y, z: position.z,
-                    country: Float(index), color: colorIndex, shade: 1
+                    country: Float(index), color: colorIndex, shade: 1,
+                    nx: normal.x, ny: normal.y, nz: normal.z
                 ))
             }
         }
@@ -123,6 +151,18 @@ enum GlobeMeshBuilder {
         return indices
     }
 
+    /// Where each country's own triangles sit in that list, so one country can
+    /// be drawn on its own — which is what casting its shadow needs.
+    static func landIndexRanges(for geography: GlobeGeography) -> [Range<Int>] {
+        var ranges: [Range<Int>] = []
+        var start = 0
+        for country in geography.geometry.countries {
+            ranges.append(start..<(start + country.meshIndexCount))
+            start += country.meshIndexCount
+        }
+        return ranges
+    }
+
     /// The cut edge around every country: one quad per outline segment, dropped
     /// from the top face to the base. Appended to the same buffer as the faces,
     /// with its own indices, so the whole planet is still one draw.
@@ -138,18 +178,31 @@ enum GlobeMeshBuilder {
             for ringIndex in country.ringOffset..<(country.ringOffset + country.ringCount) {
                 let ring = geometry.rings[ringIndex]
                 guard ring.pointCount >= 2 else { continue }
+                let points = (0..<ring.pointCount).map { offset -> SIMD3<Float> in
+                    let point = geometry.outlinePoints[ring.pointOffset + offset]
+                    return GlobeMath.unitVector(lat: Double(point.y), lon: Double(point.x))
+                }
+                let outward = outwardSign(of: points)
                 for offset in 0..<ring.pointCount {
-                    let start = geometry.outlinePoints[ring.pointOffset + offset]
-                    let end = geometry.outlinePoints[ring.pointOffset + (offset + 1) % ring.pointCount]
-                    let a = GlobeMath.unitVector(lat: Double(start.y), lon: Double(start.x))
-                    let b = GlobeMath.unitVector(lat: Double(end.y), lon: Double(end.x))
+                    let a = points[offset]
+                    let b = points[(offset + 1) % ring.pointCount]
+                    let side = sideNormal(from: a, to: b, sign: outward)
                     let base = UInt32(faceCount + vertices.count)
                     for (point, radius) in [(a, landRadius), (a, landBaseRadius), (b, landRadius), (b, landBaseRadius)] {
                         let position = point * radius
+                        let top = radius == landRadius
+                        // The normal turns from up-and-out at the coastline to
+                        // straight out at the waterline. Interpolated across the
+                        // quad that is a rounded edge, for four vertices rather
+                        // than the twelve a real bevel would cost.
+                        let normal = top
+                            ? simd_normalize(point * 0.62 + side * 0.78)
+                            : simd_normalize(side - point * 0.18)
                         vertices.append(GlobeLandVertex(
                             x: position.x, y: position.y, z: position.z,
                             country: Float(index), color: colorIndex,
-                            shade: radius == landRadius ? 1 : edgeShade
+                            shade: top ? coastShade : edgeShade,
+                            nx: normal.x, ny: normal.y, nz: normal.z
                         ))
                     }
                     indices.append(contentsOf: [base, base + 1, base + 2])
@@ -158,6 +211,39 @@ enum GlobeMeshBuilder {
             }
         }
         return (vertices, indices)
+    }
+
+    /// Which way the cut edge faces: along the surface, at right angles to the
+    /// coastline, pointing out to sea.
+    static func sideNormal(from a: SIMD3<Float>, to b: SIMD3<Float>, sign: Float) -> SIMD3<Float> {
+        let along = b - a
+        guard simd_length(along) > 1e-7 else { return a }
+        let side = simd_cross(simd_normalize(along), a)
+        guard simd_length(side) > 1e-7 else { return a }
+        return simd_normalize(side) * sign
+    }
+
+    /// The source rings do not agree on which way round they are wound, so
+    /// which side is "out" is measured rather than assumed: flatten the ring
+    /// onto the surface under its own middle and take the sign of its area.
+    /// Positive is anticlockwise seen from space, and there the sea is to the
+    /// right of the way the coastline runs.
+    static func outwardSign(of points: [SIMD3<Float>]) -> Float {
+        var centre = SIMD3<Float>.zero
+        for point in points { centre += point }
+        guard simd_length(centre) > 1e-6 else { return 1 }
+        let up = simd_normalize(centre)
+        var east = simd_cross(SIMD3<Float>(0, 0, 1), up)
+        if simd_length(east) < 1e-6 { east = simd_cross(SIMD3<Float>(1, 0, 0), up) }
+        east = simd_normalize(east)
+        let north = simd_cross(up, east)
+        var area: Float = 0
+        for offset in 0..<points.count {
+            let a = points[offset]
+            let b = points[(offset + 1) % points.count]
+            area += simd_dot(a, east) * simd_dot(b, north) - simd_dot(b, east) * simd_dot(a, north)
+        }
+        return area >= 0 ? 1 : -1
     }
 
     /// Rivers: the same mitred strip, but open — a river has two ends.
@@ -333,6 +419,8 @@ struct GlobeMeshes: Sendable {
     var riverIndices: [UInt32]
     var lake: [GlobePositionVertex]
     var lakeIndices: [UInt32]
+    /// Where each country's triangles sit in `landIndices`.
+    var countryIndexRanges: [Range<Int>]
 
     static func build(for geography: GlobeGeography, water: GlobeWater?) -> GlobeMeshes {
         let faces = GlobeMeshBuilder.landVertices(for: geography)
@@ -352,7 +440,8 @@ struct GlobeMeshes: Sendable {
             river: rivers.vertices,
             riverIndices: rivers.indices,
             lake: water.map(GlobeMeshBuilder.lakeVertices) ?? [],
-            lakeIndices: water?.lakeIndices ?? []
+            lakeIndices: water?.lakeIndices ?? [],
+            countryIndexRanges: GlobeMeshBuilder.landIndexRanges(for: geography)
         )
     }
 }
@@ -366,6 +455,12 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
     private let oceanPipeline: MTLRenderPipelineState
     private let landPipeline: MTLRenderPipelineState
     private let borderPipeline: MTLRenderPipelineState
+    private let shadowPipeline: MTLRenderPipelineState
+    /// The sea floor: one greyscale channel, deepest white. Optional because a
+    /// globe with a plain blue ocean is still a globe.
+    private let bathymetry: MTLTexture?
+    private let shadowDepthState: MTLDepthStencilState
+    private let countryIndexRanges: [Range<Int>]
     private let depthState: MTLDepthStencilState
 
     private let oceanVertices: MTLBuffer
@@ -409,28 +504,48 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
         commandQueue = queue
         self.appearance = appearance
 
-        func pipeline(vertex: String, fragment: String) -> MTLRenderPipelineState? {
+        func pipeline(vertex: String, fragment: String, blended: Bool = false) -> MTLRenderPipelineState? {
             let descriptor = MTLRenderPipelineDescriptor()
             descriptor.vertexFunction = library.makeFunction(name: vertex)
             descriptor.fragmentFunction = library.makeFunction(name: fragment)
             descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+            if blended {
+                descriptor.colorAttachments[0].isBlendingEnabled = true
+                descriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+                descriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+                descriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+                descriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            }
             descriptor.depthAttachmentPixelFormat = .depth32Float
             descriptor.rasterSampleCount = GlobeRenderer.sampleCount
             return try? device.makeRenderPipelineState(descriptor: descriptor)
         }
         guard let ocean = pipeline(vertex: "ocean_vertex", fragment: "ocean_fragment"),
               let land = pipeline(vertex: "land_vertex", fragment: "land_fragment"),
-              let border = pipeline(vertex: "border_vertex", fragment: "border_fragment")
+              let border = pipeline(vertex: "border_vertex", fragment: "border_fragment"),
+              let shadow = pipeline(vertex: "shadow_vertex", fragment: "shadow_fragment", blended: true)
         else { return nil }
         oceanPipeline = ocean
         landPipeline = land
         borderPipeline = border
+        shadowPipeline = shadow
+        countryIndexRanges = meshes.countryIndexRanges
+
+        bathymetry = GlobeRenderer.loadBathymetry(device: device)
 
         let depthDescriptor = MTLDepthStencilDescriptor()
         depthDescriptor.depthCompareFunction = .less
         depthDescriptor.isDepthWriteEnabled = true
         guard let depth = device.makeDepthStencilState(descriptor: depthDescriptor) else { return nil }
         depthState = depth
+
+        // The shadow reads the depth buffer but does not write to it: it is a
+        // mark on the sea floor, not something else can hide behind.
+        let shadowDepthDescriptor = MTLDepthStencilDescriptor()
+        shadowDepthDescriptor.depthCompareFunction = .less
+        shadowDepthDescriptor.isDepthWriteEnabled = false
+        guard let shadowDepth = device.makeDepthStencilState(descriptor: shadowDepthDescriptor) else { return nil }
+        shadowDepthState = shadowDepth
 
         func buffer<T>(_ values: [T]) -> MTLBuffer? {
             guard !values.isEmpty else { return nil }
@@ -501,6 +616,22 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
         }
     }
 
+    /// The depth image ships beside the geometry it belongs to. Loaded without
+    /// mipmaps: the sea floor is a smooth field and a blurred one at distance
+    /// loses exactly the ridges this is for.
+    private static func loadBathymetry(device: MTLDevice) -> MTLTexture? {
+        let bundle = Bundle(for: GlobeRenderer.self)
+        guard let url = bundle.url(forResource: "bathymetry", withExtension: "png", subdirectory: "generated")
+            ?? bundle.url(forResource: "bathymetry", withExtension: "png")
+            ?? Bundle.main.url(forResource: "bathymetry", withExtension: "png", subdirectory: "generated")
+        else { return nil }
+        return try? MTKTextureLoader(device: device).newTexture(URL: url, options: [
+            .SRGB: false,
+            .textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+            .textureStorageMode: NSNumber(value: MTLStorageMode.private.rawValue)
+        ])
+    }
+
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {}
 
     func draw(in view: MTKView) {
@@ -529,7 +660,11 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
             atmosphereColor: appearance.atmosphere,
             borderColor: appearance.border,
             highlightColor: appearance.highlight,
-            selectedBorderColor: appearance.selectedBorder
+            selectedBorderColor: appearance.selectedBorder,
+            shadowColor: appearance.shadow,
+            shadowRadius: GlobeMeshBuilder.shadowRadius,
+            deepOceanColor: appearance.deepOcean,
+            hasBathymetry: bathymetry == nil ? 0 : 1
         )
 
         encoder.setDepthStencilState(depthState)
@@ -538,10 +673,30 @@ final class GlobeRenderer: NSObject, MTKViewDelegate {
         encoder.setVertexBuffer(oceanVertices, offset: 0, index: 0)
         encoder.setVertexBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
         encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
+        encoder.setFragmentTexture(bathymetry, index: 0)
         encoder.drawIndexedPrimitives(
             type: .triangle, indexCount: oceanIndexCount, indexType: .uint32,
             indexBuffer: oceanIndices, indexBufferOffset: 0
         )
+
+        // The hole a lifted country leaves behind, filled with its own shape.
+        if let selected = selectedCountryIndex, selectionLift > 0.01,
+           countryIndexRanges.indices.contains(selected) {
+            let range = countryIndexRanges[selected]
+            if !range.isEmpty {
+                encoder.setCullMode(.none)
+                encoder.setDepthStencilState(shadowDepthState)
+                encoder.setRenderPipelineState(shadowPipeline)
+                encoder.setVertexBuffer(landVertices, offset: 0, index: 0)
+                encoder.setVertexBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
+                encoder.setFragmentBytes(&uniforms, length: MemoryLayout<GlobeUniforms>.stride, index: 1)
+                encoder.drawIndexedPrimitives(
+                    type: .triangle, indexCount: range.count, indexType: .uint32,
+                    indexBuffer: landIndices, indexBufferOffset: range.lowerBound * MemoryLayout<UInt32>.stride
+                )
+                encoder.setDepthStencilState(depthState)
+            }
+        }
 
         // Land keeps both faces: the depth buffer already hides whatever is
         // behind the ocean sphere, and winding varies across the source polygons.

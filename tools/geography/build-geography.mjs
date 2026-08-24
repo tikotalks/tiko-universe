@@ -622,7 +622,8 @@ async function checkContent(countryIds) {
       seen.add(item.id)
       if (!item.name) problems.push(`${where} has no name`)
       if (!item.glyph) problems.push(`${where} has no glyph`)
-      if (!(item.priority >= 1 && item.priority <= 100)) problems.push(`${where} has priority ${item.priority} outside 1–100`)
+      if (!(item.importance >= 1 && item.importance <= 10)) problems.push(`${where} has importance ${item.importance} outside 1–10`)
+      if (!/^[a-z0-9-]+$/.test(item.id.split('.').slice(1).join('.'))) problems.push(`${where} has an id that is not a slug`)
       if (!item.review || !['draft', 'reviewed'].includes(item.review.state)) {
         problems.push(`${where} has no review state`)
       }
@@ -641,6 +642,9 @@ async function checkContent(countryIds) {
       for (const marker of markers) {
         if (!marker || !(marker.lat >= -90 && marker.lat <= 90) || !(marker.lon >= -180 && marker.lon <= 180)) {
           problems.push(`${where} has a marker outside the world`)
+        }
+        if (marker?.importance !== undefined && !(marker.importance >= 1 && marker.importance <= 10)) {
+          problems.push(`${where} has a marker with importance ${marker.importance} outside 1–10`)
         }
       }
     }

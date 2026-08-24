@@ -1,4 +1,5 @@
 import XCTest
+import simd
 @testable import TikoGlobe
 
 /// The bundled world: these run against the real generated assets, because a
@@ -104,6 +105,70 @@ final class GlobeGeographyTests: XCTestCase {
             XCTAssertEqual(left.y, right.y, accuracy: 0.0001)
             XCTAssertEqual(left.side, -right.side)
         }
+    }
+
+    func testEveryFaceLooksStraightOutOfTheGlobe() throws {
+        let vertices = GlobeMeshBuilder.landVertices(for: try geography)
+        for vertex in stride(from: 0, to: vertices.count, by: 997).map({ vertices[$0] }) {
+            let position = simd_normalize(SIMD3<Float>(vertex.x, vertex.y, vertex.z))
+            let normal = SIMD3<Float>(vertex.nx, vertex.ny, vertex.nz)
+            XCTAssertEqual(simd_length(normal), 1, accuracy: 0.001)
+            XCTAssertEqual(simd_dot(normal, position), 1, accuracy: 0.001, "a country's face looks upwards")
+        }
+    }
+
+    /// The light on a country's side is only right if the side knows which way
+    /// the sea is — and the source rings disagree about which way they are
+    /// wound, so that has to be worked out rather than assumed. Out is the
+    /// direction that makes a country bigger: push every point of a coastline
+    /// along its own cut edge and the land it encloses has to grow.
+    func testEveryCutEdgeFacesOutToSea() throws {
+        let geometry = try geography.geometry
+        let biggest = geometry.countries
+            .compactMap { country -> GlobeGeometry.Ring? in
+                (country.ringOffset..<(country.ringOffset + country.ringCount))
+                    .map { geometry.rings[$0] }
+                    .max { $0.pointCount < $1.pointCount }
+            }
+            .filter { $0.pointCount >= 32 }
+            .sorted { $0.pointCount > $1.pointCount }
+            .prefix(24)
+        XCTAssertGreaterThan(biggest.count, 10)
+
+        for ring in biggest {
+            let points = (0..<ring.pointCount).map { offset -> SIMD3<Float> in
+                let point = geometry.outlinePoints[ring.pointOffset + offset]
+                return GlobeMath.unitVector(lat: Double(point.y), lon: Double(point.x))
+            }
+            let sign = GlobeMeshBuilder.outwardSign(of: points)
+            let pushedOut = points.enumerated().map { offset, point -> SIMD3<Float> in
+                let normal = GlobeMeshBuilder.sideNormal(from: point, to: points[(offset + 1) % points.count], sign: sign)
+                return simd_normalize(point + normal * 0.002)
+            }
+            XCTAssertGreaterThan(
+                Self.area(of: pushedOut), Self.area(of: points),
+                "a \(points.count)-point outline should grow when its cut edges push outwards"
+            )
+        }
+    }
+
+    /// How much of the sphere a ring encloses, flattened onto the surface under
+    /// its own middle. Sign is winding; only the size is compared here.
+    private static func area(of points: [SIMD3<Float>]) -> Float {
+        var centre = SIMD3<Float>.zero
+        for point in points { centre += point }
+        let up = simd_normalize(centre)
+        var east = simd_cross(SIMD3<Float>(0, 0, 1), up)
+        if simd_length(east) < 1e-6 { east = simd_cross(SIMD3<Float>(1, 0, 0), up) }
+        east = simd_normalize(east)
+        let north = simd_cross(up, east)
+        var total: Float = 0
+        for offset in 0..<points.count {
+            let a = points[offset]
+            let b = points[(offset + 1) % points.count]
+            total += simd_dot(a, east) * simd_dot(b, north) - simd_dot(b, east) * simd_dot(a, north)
+        }
+        return abs(total)
     }
 
     func testEveryCountryHasACutEdgeUnderneathIt() throws {

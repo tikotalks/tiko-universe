@@ -13,6 +13,11 @@ struct GlobeDetailPanel: View {
     let onSpeak: () -> Void
     let onClose: () -> Void
     let onSelectCountry: (GlobeCountry) -> Void
+    /// What lives in, or stands in, the country on screen — so a country is a
+    /// way in to its animals and its landmarks rather than a dead end.
+    let inhabitants: [GlobeEntity]
+    let landmarks: [GlobeEntity]
+    let onSelectEntity: (GlobeEntity) -> Void
 
     @Environment(\.colorScheme) private var colorScheme
     @ScaledMetric(relativeTo: .largeTitle) private var artworkSize: CGFloat = 132
@@ -26,16 +31,22 @@ struct GlobeDetailPanel: View {
                     map
                     facts
                     if !countries.isEmpty { countryChips }
+                    if !inhabitants.isEmpty {
+                        gallery(i18n.t("globe.card.animalsHere"), entities: inhabitants, prefix: "animal")
+                    }
+                    if !landmarks.isEmpty {
+                        gallery(i18n.t("globe.card.landmarksHere"), entities: landmarks, prefix: "landmark")
+                    }
                     if let footnote { Text(footnote).font(.footnote).foregroundStyle(.secondary) }
                 }
                 .padding(20)
             }
         }
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(colorScheme == .dark ? Color(white: 0.13) : Color.white)
-                .shadow(color: .black.opacity(0.16), radius: 20, x: -4, y: 4)
-        )
+        // The same card every other Tiko sheet is: material, deeply rounded,
+        // and lifted off what it covers.
+        .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
+        .shadow(color: .black.opacity(0.14), radius: 28, x: -6, y: 14)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("globe-selection-card")
     }
@@ -44,18 +55,31 @@ struct GlobeDetailPanel: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .top) {
-                Text(kindLabel)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(appColor.palette.primary)
-                Spacer()
+            HStack(alignment: .center, spacing: 12) {
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.footnote.weight(.bold))
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(.primary.opacity(0.75))
                         .frame(width: 44, height: 44)
+                        .background(Color.primary.opacity(0.055))
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel(i18n.t("common.close"))
                 .accessibilityIdentifier("globe-close-card")
+
+                Text(kindLabel)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(appColor.palette.primary)
+
+                Spacer(minLength: 0)
+
+                Image(systemName: kindIcon)
+                    .font(.system(size: 19, weight: .bold))
+                    .foregroundStyle(appColor.palette.primary)
+                    .frame(width: 44, height: 44)
+                    .background(appColor.palette.primary.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
 
             artwork
@@ -157,6 +181,37 @@ struct GlobeDetailPanel: View {
         }
     }
 
+    /// A country's animals or landmarks, each big enough to recognise from the
+    /// picture alone — this is the shelf a child browses.
+    private func gallery(_ title: String, entities: [GlobeEntity], prefix: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            FlowLayout(spacing: 10) {
+                ForEach(entities) { entity in
+                    Button {
+                        onSelectEntity(entity)
+                    } label: {
+                        VStack(spacing: 4) {
+                            GlobeMarkerImage(entity: entity, size: 54)
+                            Text(GlobeNaming.displayName(for: entity, i18n: i18n))
+                                .font(.caption2.weight(.semibold))
+                                .lineLimit(2)
+                                .multilineTextAlignment(.center)
+                                .foregroundStyle(.primary)
+                        }
+                        .frame(width: 78)
+                        .padding(.vertical, 8)
+                        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("globe-panel-\(prefix)-\(entity.id)")
+                }
+            }
+        }
+    }
+
     // MARK: - Content
 
     private struct Detail {
@@ -184,6 +239,18 @@ struct GlobeDetailPanel: View {
             case .capital: i18n.t("globe.card.capitalCity")
             case .animal: i18n.t("globe.card.animal")
             case .landmark: i18n.t("globe.card.landmark")
+            }
+        }
+    }
+
+    private var kindIcon: String {
+        switch selection {
+        case .country: GlobeMode.countries.systemImage
+        case .entity(let entity, _):
+            switch entity.kind {
+            case .capital: GlobeMode.capitals.systemImage
+            case .animal: GlobeMode.animals.systemImage
+            case .landmark: GlobeMode.landmarks.systemImage
             }
         }
     }
