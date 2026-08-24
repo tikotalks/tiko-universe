@@ -18,9 +18,9 @@
         "en": "France"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -127,9 +127,9 @@
         "en": "United Kingdom"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -212,9 +212,9 @@
         "en": "Italy"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -297,9 +297,9 @@
         "en": "Vatican City"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -313,6 +313,40 @@
           "importance": 2,
           "glyph": "⛪",
           "mediaId": null
+        },
+        {
+          "id": "apostolic-palace",
+          "names": {
+            "en": "Apostolic Palace"
+          },
+          "i18nKey": "geography.landmarks.apostolic-palace",
+          "lat": 41.903611,
+          "lon": 12.456389,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null,
+          "source": {
+            "source": "wikidata",
+            "qid": "Q145093",
+            "sitelinks": 59
+          }
+        },
+        {
+          "id": "sistine-chapel",
+          "names": {
+            "en": "Sistine Chapel"
+          },
+          "i18nKey": "geography.landmarks.sistine-chapel",
+          "lat": 41.902956,
+          "lon": 12.454433,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null,
+          "source": {
+            "source": "wikidata",
+            "qid": "Q2943",
+            "sitelinks": 90
+          }
         }
       ]
     },
@@ -323,8 +357,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -384,8 +418,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -421,8 +455,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -470,8 +504,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -531,8 +565,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -568,8 +602,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -593,8 +627,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -630,8 +664,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -667,8 +701,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -704,8 +738,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -741,8 +775,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -778,8 +812,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -815,8 +849,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -840,8 +874,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -877,8 +911,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -926,8 +960,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -963,8 +997,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1000,8 +1034,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1025,8 +1059,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1062,8 +1096,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1099,8 +1133,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1124,8 +1158,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1161,8 +1195,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1186,8 +1220,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1211,8 +1245,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1236,8 +1270,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1261,8 +1295,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1286,8 +1320,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1311,8 +1345,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1336,8 +1370,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1361,8 +1395,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1386,8 +1420,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1411,8 +1445,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1436,8 +1470,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1461,8 +1495,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1486,8 +1520,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1546,9 +1580,9 @@
         "en": "Malta"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1728,8 +1762,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1753,8 +1787,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1778,8 +1812,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1803,8 +1837,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1828,8 +1862,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1853,8 +1887,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1878,8 +1912,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1903,8 +1937,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1928,8 +1962,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1953,8 +1987,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -1978,8 +2012,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2003,8 +2037,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2076,8 +2110,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2149,8 +2183,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2210,8 +2244,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2235,8 +2269,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2272,8 +2306,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2309,8 +2343,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2334,8 +2368,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2359,8 +2393,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2384,8 +2418,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2409,8 +2443,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2446,8 +2480,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2483,8 +2517,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2508,8 +2542,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2533,8 +2567,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2570,8 +2604,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2595,8 +2629,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2620,8 +2654,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2645,8 +2679,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2670,8 +2704,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2707,8 +2741,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2732,8 +2766,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2757,8 +2791,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2782,8 +2816,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2807,8 +2841,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2832,8 +2866,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2857,8 +2891,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2894,8 +2928,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2931,8 +2965,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2956,8 +2990,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -2981,8 +3015,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3006,8 +3040,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3043,8 +3077,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3080,8 +3114,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3105,8 +3139,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3142,8 +3176,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3179,8 +3213,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3204,8 +3238,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3229,8 +3263,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3254,8 +3288,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3279,8 +3313,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3304,8 +3338,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3341,8 +3375,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3378,8 +3412,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3403,8 +3437,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3428,8 +3462,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3453,8 +3487,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3502,8 +3536,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3527,8 +3561,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3552,8 +3586,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3577,8 +3611,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3602,8 +3636,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3663,8 +3697,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3712,8 +3746,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3737,8 +3771,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3774,8 +3808,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3799,8 +3833,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3824,8 +3858,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3849,8 +3883,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3874,8 +3908,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3899,8 +3933,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3924,8 +3958,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3949,8 +3983,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -3974,8 +4008,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4011,8 +4045,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4060,8 +4094,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4085,8 +4119,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4110,8 +4144,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4135,8 +4169,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4184,8 +4218,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4221,8 +4255,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4246,8 +4280,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4271,8 +4305,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4308,8 +4342,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4333,8 +4367,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4358,8 +4392,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4383,8 +4417,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4408,8 +4442,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4433,8 +4467,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4458,8 +4492,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4483,8 +4517,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4508,8 +4542,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4533,8 +4567,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4558,8 +4592,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4583,8 +4617,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4608,8 +4642,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4633,8 +4667,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4658,8 +4692,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4683,8 +4717,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4720,8 +4754,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4745,8 +4779,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4770,8 +4804,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4795,8 +4829,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4820,8 +4854,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4845,8 +4879,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4870,8 +4904,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4895,8 +4929,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4920,8 +4954,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4945,8 +4979,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4970,8 +5004,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -4995,8 +5029,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5032,8 +5066,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5057,8 +5091,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5082,8 +5116,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5107,8 +5141,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5132,8 +5166,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5157,8 +5191,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5182,8 +5216,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5206,9 +5240,9 @@
         "en": "United States of America"
       },
       "review": {
-        "state": "draft",
-        "by": null,
-        "at": null
+        "state": "reviewed",
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5316,8 +5350,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5377,8 +5411,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5426,8 +5460,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5451,8 +5485,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5476,8 +5510,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5501,8 +5535,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5526,8 +5560,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5551,8 +5585,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5576,8 +5610,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5601,8 +5635,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5626,8 +5660,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5651,8 +5685,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5676,8 +5710,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5701,8 +5735,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5726,8 +5760,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5751,8 +5785,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5776,8 +5810,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5801,8 +5835,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5826,8 +5860,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5851,8 +5885,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5876,8 +5910,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5901,8 +5935,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5926,8 +5960,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5951,8 +5985,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -5976,8 +6010,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6001,8 +6035,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6026,8 +6060,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6051,8 +6085,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6076,8 +6110,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6101,8 +6135,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6126,8 +6160,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6151,8 +6185,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6176,8 +6210,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6201,8 +6235,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6226,8 +6260,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6251,8 +6285,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6312,8 +6346,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6361,8 +6395,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6410,8 +6444,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6447,8 +6481,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6472,8 +6506,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6509,8 +6543,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6546,8 +6580,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6571,8 +6605,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6596,8 +6630,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6621,8 +6655,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6646,8 +6680,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6671,8 +6705,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6696,8 +6730,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6721,8 +6755,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6746,8 +6780,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6819,8 +6853,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6868,8 +6902,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6893,8 +6927,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6918,8 +6952,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6943,8 +6977,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6968,8 +7002,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -6993,8 +7027,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7018,8 +7052,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7043,8 +7077,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7068,8 +7102,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7093,8 +7127,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7118,8 +7152,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7143,8 +7177,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7168,8 +7202,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7193,8 +7227,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7218,8 +7252,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7243,8 +7277,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7268,8 +7302,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7293,8 +7327,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7318,8 +7352,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7343,8 +7377,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7368,8 +7402,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7393,8 +7427,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7418,8 +7452,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7443,8 +7477,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7468,8 +7502,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7493,8 +7527,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7518,8 +7552,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7543,8 +7577,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7568,8 +7602,8 @@
       },
       "review": {
         "state": "draft",
-        "by": null,
-        "at": null
+        "by": "openai-geography-landmark-pass",
+        "at": "2026-08-24"
       },
       "landmarks": [
         {
@@ -7586,5 +7620,1194 @@
         }
       ]
     }
+  },
+  "landmarkAudit": {
+    "at": "2026-08-24",
+    "source": "Wikidata prominence-ranked landmark/natural-site enrichment",
+    "countriesConsidered": 237,
+    "countriesEnriched": 1,
+    "landmarksAdded": 2,
+    "countriesBelowTarget": [
+      {
+        "countryId": "PRT",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "ESP",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "DEU",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "NLD",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "CHE",
+        "target": 5,
+        "count": 2
+      },
+      {
+        "countryId": "BEL",
+        "target": 5,
+        "count": 2
+      },
+      {
+        "countryId": "LUX",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "AUT",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "IRL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "ISL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "NOR",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "SWE",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "FIN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "GRC",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "DNK",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "POL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "CZE",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "SVK",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HUN",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "ROU",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "BGR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HRV",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "SVN",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "SRB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "BIH",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MNE",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "MKD",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "ALB",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "UKR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "KOS",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "BLR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MDA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "LVA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "LTU",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "EST",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "RUS",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "CYN",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "CYP",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "AND",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MCO",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "LIE",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "SMR",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "FRO",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "ALD",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "JEY",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "GGY",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "IMN",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "CHN",
+        "target": 6,
+        "count": 5
+      },
+      {
+        "countryId": "JPN",
+        "target": 6,
+        "count": 5
+      },
+      {
+        "countryId": "IND",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "KHM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "THA",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "VNM",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "LAO",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MMR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MYS",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SGP",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "IDN",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "PHL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "BRN",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "KOR",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "TLS",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "PRK",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TWN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HKG",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MAC",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MNG",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "KAZ",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "UZB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TKM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "KGZ",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TJK",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "AFG",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "PAK",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "NPL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "BTN",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "BGD",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "LKA",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "MDV",
+        "target": 3,
+        "count": 2
+      },
+      {
+        "countryId": "IRN",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "IRQ",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SAU",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "ARE",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "QAT",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "KWT",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "BHR",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "OMN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "YEM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "JOR",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "PSX",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "ISR",
+        "target": 5,
+        "count": 2
+      },
+      {
+        "countryId": "LBN",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "SYR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TUR",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "GEO",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ARM",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "AZE",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "KAS",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "EGY",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "MAR",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "DZA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TUN",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "LBY",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SDN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SDS",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ETH",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ERI",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "DJI",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "SOL",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SOM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "KEN",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "TZA",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "UGA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "BDI",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "RWA",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "ZAF",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "ZWE",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "ZMB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "BWA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "NAM",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "MOZ",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "AGO",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MWI",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MDG",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MUS",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "SYC",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "COM",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "SWZ",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "COD",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "LSO",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "COG",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CAF",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TCD",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CMR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "NER",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MLI",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "SEN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "BFA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "GMB",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "GNB",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "SLE",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "GIN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "LBR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CIV",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "GHA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TGO",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "BEN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "NGA",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "GAB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "STP",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "GNQ",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "CPV",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "MRT",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SAH",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SHN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CAN",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "MEX",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "BLZ",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "GTM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HND",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SLV",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "NIC",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CRI",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "PAN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "CUB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HTI",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "JAM",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "DOM",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "PRI",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "TTO",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "BHS",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "BRB",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "LCA",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "VCT",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "GRD",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "DMA",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "ATG",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "ABW",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "KNA",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "CUW",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "SXM",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "BLM",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MAF",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "VGB",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "VIR",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "AIA",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MSR",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "CYM",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "TCA",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "BMU",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "BRA",
+        "target": 6,
+        "count": 4
+      },
+      {
+        "countryId": "ARG",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "CHL",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "PER",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "BOL",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ECU",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "COL",
+        "target": 6,
+        "count": 2
+      },
+      {
+        "countryId": "VEN",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "GUY",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SUR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "PRY",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "URY",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "FLK",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "GRL",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "AUS",
+        "target": 6,
+        "count": 5
+      },
+      {
+        "countryId": "SPM",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "NZL",
+        "target": 6,
+        "count": 3
+      },
+      {
+        "countryId": "PNG",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "FJI",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "SLB",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "VUT",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "NCL",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "WSM",
+        "target": 4,
+        "count": 1
+      },
+      {
+        "countryId": "PYF",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "TON",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "TUV",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "NRU",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "KIR",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "PLW",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "FSM",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "MHL",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "GUM",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "MNP",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "ASM",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "COK",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "NIU",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "WLF",
+        "target": 5,
+        "count": 1
+      },
+      {
+        "countryId": "PCN",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "NFK",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "IOA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ATC",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "ATA",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "ATF",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "HMD",
+        "target": 3,
+        "count": 1
+      },
+      {
+        "countryId": "SGS",
+        "target": 6,
+        "count": 1
+      },
+      {
+        "countryId": "IOT",
+        "target": 3,
+        "count": 1
+      }
+    ]
   }
 }
