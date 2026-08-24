@@ -8,12 +8,10 @@ final class TikoGlobeUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    /// Opens the country list and waits for it. The tap is repeated once if
-    /// nothing appears: run back to back, a tap landing on the very first frame
-    /// after launch is occasionally swallowed before SwiftUI has the button
-    /// wired, which is a harness artefact rather than something a child would
-    /// meet — in isolation this passes every time. If a dead tap is ever seen
-    /// in the app itself, this is the thread to pull.
+    /// Opens the country list and waits for it. The retry is kept as a belt:
+    /// the list used to fail to open about one run in ten, which turned out to
+    /// be a second Tiko popup on a hierarchy that only takes one, not a slow
+    /// tap. It presents through a sheet now and has not missed since.
     @discardableResult
     private func openCountryList(_ app: XCUIApplication) -> XCUIElement {
         let list = app.otherElements["globe-country-list"]

@@ -61,7 +61,12 @@ struct GlobeView: View {
         }
         .onChange(of: saysNames) { _, value in controller.speaksNames = value }
         .onChange(of: reduceMotion) { _, value in controller.reduceMotion = value }
-        .tikoPopup(isPresented: $showingCountryList) {
+        // A sheet rather than a second Tiko popup: the shell already owns four
+        // of those, and TikoKit's own note says PopupView will not present one
+        // card while another is in play — which showed up as the country list
+        // simply not opening, about one run in ten. The card inside is the
+        // shared one, so it still looks like every other Tiko sheet.
+        .sheet(isPresented: $showingCountryList) {
             GlobeCountryList(
                 countries: controller.countries,
                 entities: controller.entitiesForCurrentMode,
@@ -72,6 +77,7 @@ struct GlobeView: View {
                 appColor: appColor,
                 onClose: { showingCountryList = false }
             )
+            .presentationBackground(.clear)
         }
     }
 

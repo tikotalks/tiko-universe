@@ -9,7 +9,7 @@ in for a sea turtle tells a child something false, and they have no way to know.
 A **landmark** with no picture is still on the globe, drawn with its glyph. The
 place is real either way; only the artwork is missing.
 
-At the time of writing: **44 animals** and
+At the time of writing: **334 animals** and
 **1250 of 1270 landmarks** have no picture.
 
 ## Animals
@@ -19,39 +19,328 @@ zoom — then by how many countries are waiting on it.
 
 | Animal | Species | Importance | Wanted by |
 | --- | --- | --- | --- |
+| Bengal tiger | Panthera tigris tigris | 1 | Bangladesh, India, Nepal |
 | Cyprus mouflon | Ovis gmelini ophion | 1 | Turkish Republic of Northern Cyprus, Cyprus |
 | Giant panda | Ailuropoda melanoleuca | 1 | People's Republic of China |
 | Kagu | Rhynochetos jubatus | 1 | New Caledonia |
 | Kiwi | Apteryx | 1 | New Zealand |
+| Komodo dragon | Varanus komodoensis | 1 | Indonesia |
 | Maltese wall lizard | Podarcis filfolensis | 1 | Malta |
 | Sea turtle | Cheloniidae | 2 | Aruba, Anguilla, United Arab Emirates, American Samoa, Antigua and Barbuda, Bahrain +78 more |
+| African forest elephant | Loxodonta cyclotis | 2 | Central African Republic, Ivory Coast, Cameroon, Democratic Republic of the Congo, Republic of the Congo, Gabon +2 more |
+| Dromedary camel | Camelus dromedarius | 2 | Algeria, Egypt, Libya, Morocco, Mauritania, Oman +2 more |
+| Indian elephant | Elephas maximus indicus | 2 | India, Cambodia, Laos, Myanmar, Thailand |
+| Alpine ibex | Capra ibex | 2 | Austria, Switzerland, France, Italy |
+| Andean condor | Vultur gryphus | 2 | Argentina, Chile, Colombia, Peru |
+| Black rhinoceros | Diceros bicornis | 2 | Cameroon, Kenya, Namibia, Tanzania |
+| European bison | Bison bonasus | 2 | Germany, Poland, Romania |
+| Red-crowned crane | Grus japonensis | 2 | Japan, South Korea, North Korea |
+| Reindeer | Rangifer tarandus | 2 | Finland, Norway, Sweden |
+| Vicuña | Vicugna vicugna | 2 | Bolivia, Chile, Peru |
+| Western lowland gorilla | Gorilla gorilla gorilla | 2 | Central African Republic, Republic of the Congo, Gabon |
+| White rhinoceros | Ceratotherium simum | 2 | Eswatini, South Africa, Zimbabwe |
+| African savanna elephant | Loxodonta africana | 2 | Ethiopia, Sudan |
+| Arabian oryx | Oryx leucoryx | 2 | Oman, Saudi Arabia |
+| Bird-of-paradise | Paradisaeidae | 2 | Indonesia, Papua New Guinea |
+| Bornean orangutan | Pongo pygmaeus | 2 | Indonesia, Malaysia |
+| Capybara | Hydrochoerus hydrochaeris | 2 | Argentina, Brazil |
+| Guanaco | Lama guanicoe | 2 | Argentina, Chile |
+| Indian rhinoceros | Rhinoceros unicornis | 2 | India, Nepal |
+| Indochinese tiger | Panthera tigris corbetti | 2 | Thailand, Vietnam |
+| Markhor | Capra falconeri | 2 | Afghanistan, Pakistan |
+| Masai giraffe | Giraffa camelopardalis tippelskirchi | 2 | Kenya, Tanzania |
+| Mountain gorilla | Gorilla beringei beringei | 2 | Rwanda, Uganda |
 | Orangutan | Pongo | 2 | Indonesia, Malaysia |
-| Vicuña | Vicugna vicugna | 2 | Bolivia, Peru |
-| Guanaco | Lama guanicoe | 2 | Chile |
-| Saola | Pseudoryx nghetinhensis | 2 | Vietnam |
+| Przewalski's horse | Equus ferus przewalskii | 2 | Kazakhstan, Mongolia |
+| Saola | Pseudoryx nghetinhensis | 2 | Laos, Vietnam |
+| Wildebeest | Connochaetes taurinus | 2 | Kenya, Tanzania |
+| Alpaca | Vicugna pacos | 2 | Peru |
+| American alligator | Alligator mississippiensis | 2 | United States of America |
+| Asiatic cheetah | Acinonyx jubatus venaticus | 2 | Iran |
+| Axolotl | Ambystoma mexicanum | 2 | Mexico |
+| Bactrian camel | Camelus bactrianus | 2 | Mongolia |
+| Beaver | Castor canadensis | 2 | Canada |
+| Blue whale | Balaenoptera musculus | 2 | Sri Lanka |
+| Bonobo | Pan paniscus | 2 | Democratic Republic of the Congo |
+| Eastern lowland gorilla | Gorilla beringei graueri | 2 | Democratic Republic of the Congo |
+| Echidna | Tachyglossus aculeatus | 2 | Australia |
+| Giant anteater | Myrmecophaga tridactyla | 2 | Brazil |
+| Giant sable antelope | Hippotragus niger variani | 2 | Angola |
+| Giraffe | Giraffa camelopardalis | 2 | South Sudan |
+| Hyacinth macaw | Anodorhynchus hyacinthinus | 2 | Brazil |
+| Iberian lynx | Lynx pardinus | 2 | Spain |
+| Icelandic horse | Equus ferus caballus | 2 | Iceland |
+| Kākāpō | Strigops habroptilus | 2 | New Zealand |
+| Kea | Nestor notabilis | 2 | New Zealand |
+| Lion | Panthera leo | 2 | South Sudan |
+| Malayan tapir | Tapirus indicus | 2 | Malaysia |
+| Malayan tiger | Panthera tigris jacksoni | 2 | Malaysia |
+| Mediterranean monk seal | Monachus monachus | 2 | Greece |
+| Monarch butterfly | Danaus plexippus | 2 | Mexico |
+| Philippine tarsier | Carlito syrichta | 2 | Philippines |
+| Ring-tailed lemur | Lemur catta | 2 | Madagascar |
 | Smooth-coated otter | Lutrogale perspicillata | 2 | Singapore |
+| Sri Lankan elephant | Elephas maximus maximus | 2 | Sri Lanka |
+| Sri Lankan leopard | Panthera pardus kotiya | 2 | Sri Lanka |
+| Sumatran tiger | Panthera tigris sumatrae | 2 | Indonesia |
+| Takin | Budorcas taxicolor | 2 | Bhutan |
+| Tasmanian devil | Sarcophilus harrisii | 2 | Australia |
 | Tuatara | Sphenodon punctatus | 2 | New Zealand |
+| West African giraffe | Giraffa camelopardalis peralta | 2 | Niger |
 | Wild Bactrian camel | Camelus ferus | 2 | Mongolia |
+| Nile crocodile | Crocodylus niloticus | 3 | Angola, Burundi, Ivory Coast, Egypt, Ghana, Mali +10 more |
+| Hippopotamus | Hippopotamus amphibius | 3 | Angola, Botswana, Republic of the Congo, Gabon, Ghana, Sudan +3 more |
+| Addax | Addax nasomaculatus | 3 | Algeria, Libya, Mali, Niger, Chad |
+| African buffalo | Syncerus caffer | 3 | Kenya, Rwanda, South Sudan, Senegal, Tanzania |
+| Chamois | Rupicapra rupicapra | 3 | Austria, Switzerland, France, Italy, Romania |
+| Loggerhead sea turtle | Caretta caretta | 3 | Greece, Italy, Malta, Tunisia, Turkey |
+| Sun bear | Helarctos malayanus | 3 | Cambodia, Laos, Myanmar, Malaysia, Vietnam |
+| Eastern chimpanzee | Pan troglodytes schweinfurthii | 3 | Burundi, Rwanda, Tanzania, Uganda |
+| Grey seal | Halichoerus grypus | 3 | Belgium, United Kingdom, Ireland, Netherlands |
+| Grey wolf | Canis lupus | 3 | Germany, Kazakhstan, Poland, Romania |
+| African wild dog | Lycaon pictus | 3 | Botswana, Zambia, Zimbabwe |
+| Arabian leopard | Panthera pardus nimr | 3 | Oman, Saudi Arabia, Yemen |
+| Dugong | Dugong dugon | 3 | Egypt, Mozambique, Philippines |
+| Humpback whale | Megaptera novaeangliae | 3 | Bermuda, Iceland, Oman |
+| Irrawaddy dolphin | Orcaella brevirostris | 3 | Cambodia, Laos, Myanmar |
+| Springbok | Antidorcas marsupialis | 3 | Botswana, Namibia, South Africa |
+| Whale shark | Rhincodon typus | 3 | Mozambique, Philippines, Thailand |
+| Alpine marmot | Marmota marmota | 3 | Austria, Switzerland |
+| Cape fur seal | Arctocephalus pusillus | 3 | Angola, Namibia |
+| Cheetah | Acinonyx jubatus | 3 | Sudan, Somalia |
+| Eurasian otter | Lutra lutra | 3 | Ireland, Netherlands |
+| Gemsbok | Oryx gazella | 3 | Botswana, Namibia |
+| Giant otter | Pteronura brasiliensis | 3 | Brazil, Peru |
+| Golden eagle | Aquila chrysaetos | 3 | Mongolia, North Korea |
+| King cobra | Ophiophagus hannah | 3 | India, Thailand |
+| Moose | Alces alces | 3 | Norway, United States of America |
+| Ostrich | Struthio camelus | 3 | Niger, Chad |
+| Puma | Puma concolor | 3 | Argentina, Chile |
+| Shoebill | Balaeniceps rex | 3 | South Sudan, Uganda |
+| Southern right whale | Eubalaena australis | 3 | Argentina, South Africa |
+| Spectacled bear | Tremarctos ornatus | 3 | Colombia, Peru |
+| Western chimpanzee | Pan troglodytes verus | 3 | Ivory Coast, Ghana |
+| Yak | Bos grunniens | 3 | People's Republic of China, Nepal |
+| Anatolian leopard | Panthera pardus tulliana | 3 | Turkey |
+| Arctic fox | Vulpes lagopus | 3 | Norway |
+| Asiatic black bear | Ursus thibetanus | 3 | North Korea |
+| Asiatic lion | Panthera leo persica | 3 | India |
+| Aye-aye | Daubentonia madagascariensis | 3 | Madagascar |
+| Barbary macaque | Macaca sylvanus | 3 | Morocco |
+| Basking shark | Cetorhinus maximus | 3 | Ireland |
+| Black-necked crane | Grus nigricollis | 3 | Bhutan |
 | Blue rock-thrush | Monticola solitarius | 3 | Malta |
+| Camargue horse | Equus ferus caballus | 3 | France |
+| Canada lynx | Lynx canadensis | 3 | Canada |
+| Cape buffalo | Syncerus caffer caffer | 3 | South Africa |
+| Caribou | Rangifer tarandus caribou | 3 | Canada |
+| Chinese alligator | Alligator sinensis | 3 | People's Republic of China |
+| Cock-of-the-rock | Rupicola peruvianus | 3 | Peru |
+| Cotton-top tamarin | Saguinus oedipus | 3 | Colombia |
+| Cross River gorilla | Gorilla gorilla diehli | 3 | Cameroon |
+| Dalmatian pelican | Pelecanus crispus | 3 | Romania |
+| Ethiopian wolf | Canis simensis | 3 | Ethiopia |
+| Ezo brown bear | Ursus arctos yesoensis | 3 | Japan |
+| Fennec fox | Vulpes zerda | 3 | Libya |
+| Fossa | Cryptoprocta ferox | 3 | Madagascar |
+| Ganges river dolphin | Platanista gangetica | 3 | Bangladesh |
+| Gelada | Theropithecus gelada | 3 | Ethiopia |
+| Gerenuk | Litocranius walleri | 3 | Somalia |
+| Giant ibis | Thaumatibis gigantea | 3 | Cambodia |
+| Golden lion tamarin | Leontopithecus rosalia | 3 | Brazil |
+| Golden snub-nosed monkey | Rhinopithecus roxellana | 3 | People's Republic of China |
+| Green sea turtle | Chelonia mydas | 3 | Oman |
+| Grevy's zebra | Equus grevyi | 3 | Kenya |
+| Grey whale | Eschrichtius robustus | 3 | Mexico |
+| Hector's dolphin | Cephalorhynchus hectori | 3 | New Zealand |
+| Himalayan monal | Lophophorus impejanus | 3 | Nepal |
+| Humboldt penguin | Spheniscus humboldti | 3 | Chile |
+| Iberian wolf | Canis lupus signatus | 3 | Spain |
+| Indri | Indri indri | 3 | Madagascar |
+| Indus river dolphin | Platanista minor | 3 | Pakistan |
+| Italian wolf | Canis lupus italicus | 3 | Italy |
+| Japanese giant salamander | Andrias japonicus | 3 | Japan |
+| Javan rhinoceros | Rhinoceros sondaicus | 3 | Indonesia |
+| Killer whale | Orcinus orca | 3 | Norway |
+| Kookaburra | Dacelo novaeguineae | 3 | Australia |
+| Kordofan giraffe | Giraffa camelopardalis antiquorum | 3 | Chad |
+| Leatherback sea turtle | Dermochelys coriacea | 3 | Gabon |
+| Manatee | Trichechus manatus | 3 | United States of America |
+| Marco Polo sheep | Ovis ammon polii | 3 | Afghanistan |
+| Marsican brown bear | Ursus arctos marsicanus | 3 | Italy |
+| Monk seal | Monachus monachus | 3 | Mauritania |
+| Muskox | Ovibos moschatus | 3 | Norway |
 | New Caledonian crow | Corvus moneduloides | 3 | New Caledonia |
+| Nigeria-Cameroon chimpanzee | Pan troglodytes ellioti | 3 | Nigeria |
+| Pallas's cat | Otocolobus manul | 3 | Mongolia |
+| Panther chameleon | Furcifer pardalis | 3 | Madagascar |
+| Pink river dolphin | Inia geoffrensis | 3 | Colombia |
+| Poison dart frog | Dendrobatidae | 3 | Colombia |
+| Proboscis monkey | Nasalis larvatus | 3 | Malaysia |
+| Pronghorn | Antilocapra americana | 3 | United States of America |
+| Pudú | Pudu puda | 3 | Chile |
+| Pygmy hippopotamus | Choeropsis liberiensis | 3 | Ivory Coast |
+| Raccoon | Procyon lotor | 3 | United States of America |
+| Red squirrel | Sciurus vulgaris | 3 | United Kingdom |
+| Red-shanked douc | Pygathrix nemaeus | 3 | Vietnam |
+| Rhinoceros hornbill | Buceros rhinoceros | 3 | Malaysia |
+| Rothschild's giraffe | Giraffa camelopardalis rothschildi | 3 | Uganda |
+| Saiga antelope | Saiga tatarica | 3 | Uzbekistan |
+| Saimaa ringed seal | Pusa hispida saimensis | 3 | Finland |
+| Scimitar-horned oryx | Oryx dammah | 3 | Chad |
+| Siberian tiger | Panthera tigris altaica | 3 | North Korea |
+| Snow leopard | Panthera uncia | 3 | Bhutan |
+| Somali wild ass | Equus africanus somaliensis | 3 | Somalia |
+| Spanish imperial eagle | Aquila adalberti | 3 | Spain |
+| Sumatran elephant | Elephas maximus sumatranus | 3 | Indonesia |
+| Tamaraw | Bubalus mindorensis | 3 | Philippines |
+| Three-toed sloth | Bradypus variegatus | 3 | Brazil |
+| Tree kangaroo | Dendrolagus | 3 | Papua New Guinea |
+| Vaquita | Phocoena sinus | 3 | Mexico |
+| West African lion | Panthera leo leo | 3 | Mali |
+| White stork | Ciconia ciconia | 3 | Germany |
+| White-eared kob | Kobus kob leucotis | 3 | South Sudan |
+| Yellow-eyed penguin | Megadyptes antipodes | 3 | New Zealand |
 | White tern | Gygis alba | 4 | American Samoa, Cook Islands, Guam, Kiribati, Marshall Islands, Northern Mariana Islands +6 more |
+| African grey parrot | Psittacus erithacus | 4 | Ivory Coast, Cameroon, Republic of the Congo, Gabon, Ghana, Nigeria |
+| Dorcas gazelle | Gazella dorcas | 4 | Algeria, Libya, Mali, Mauritania, Sudan, Tunisia |
+| Warthog | Phacochoerus africanus | 4 | Mali, Niger, Nigeria, Senegal, Somalia |
+| Barbary sheep | Ammotragus lervia | 4 | Algeria, Libya, Niger, Tunisia |
+| Hamadryas baboon | Papio hamadryas | 4 | Ethiopia, Saudi Arabia, Somalia, Yemen |
+| Sable antelope | Hippotragus niger | 4 | Mozambique, Malawi, Zambia, Zimbabwe |
+| Sand cat | Felis margarita | 4 | Algeria, Libya, Mauritania, Saudi Arabia |
+| Striped hyena | Hyaena hyaena | 4 | Iraq, Sudan, Somalia, Tunisia |
+| Eurasian lynx | Lynx lynx | 4 | Switzerland, Germany, Poland |
+| European badger | Meles meles | 4 | Belgium, United Kingdom, Netherlands |
+| Goitered gazelle | Gazella subgutturosa | 4 | Iran, Iraq, Uzbekistan |
+| Spotted hyena | Crocuta crocuta | 4 | Ethiopia, Kenya, Tanzania |
+| Water buffalo | Bubalus bubalis | 4 | Iraq, Laos, Vietnam |
+| Arabian wolf | Canis lupus arabs | 4 | Saudi Arabia, Yemen |
+| Bearded vulture | Gypaetus barbatus | 4 | Austria, France |
+| Bongo | Tragelaphus eurycerus | 4 | Central African Republic, Ivory Coast |
+| Brown bear | Ursus arctos | 4 | Spain, France |
+| Drill | Mandrillus leucophaeus | 4 | Cameroon, Nigeria |
+| Gaur | Bos gaurus | 4 | Myanmar, Thailand |
+| Giant eland | Taurotragus derbianus | 4 | Central African Republic, Cameroon |
+| Grey crowned crane | Balearica regulorum | 4 | Burundi, Rwanda |
+| Himalayan brown bear | Ursus arctos isabellinus | 4 | Afghanistan, Pakistan |
+| Hoolock gibbon | Hoolock hoolock | 4 | Bangladesh, Myanmar |
+| Moorish gecko | Tarentola mauritanica | 4 | Morocco, Malta |
+| Nubian ibex | Capra nubiana | 4 | Egypt, Sudan |
+| Sloth bear | Melursus ursinus | 4 | India, Sri Lanka |
+| Water deer | Hydropotes inermis | 4 | South Korea, North Korea |
+| West African manatee | Trichechus senegalensis | 4 | Nigeria, Senegal |
+| Wild boar | Sus scrofa | 4 | Belgium, Iran |
+| Arabian tahr | Arabitragus jayakari | 4 | Oman |
 | Bald eagle | Haliaeetus leucocephalus | 4 | United States of America |
+| Blue wildebeest | Connochaetes taurinus | 4 | Eswatini |
+| Bukhara deer | Cervus hanglu bactrianus | 4 | Uzbekistan |
+| Burmese python | Python bivittatus | 4 | Myanmar |
+| Chinese pangolin | Manis pentadactyla | 4 | People's Republic of China |
+| Cichlid | Cichlidae | 4 | Malawi |
+| Common loon | Gavia immer | 4 | Canada |
+| Congo peafowl | Afropavo congensis | 4 | Democratic Republic of the Congo |
+| Cretan wild goat | Capra aegagrus cretica | 4 | Greece |
+| Dama gazelle | Nanger dama | 4 | Niger |
+| Darwin's rhea | Rhea pennata | 4 | Chile |
+| Eland | Taurotragus oryx | 4 | Lesotho |
+| Eurasian spoonbill | Platalea leucorodia | 4 | Netherlands |
+| European beaver | Castor fiber | 4 | Poland |
+| Fish eagle | Haliaeetus vocifer | 4 | Malawi |
+| Fishing cat | Prionailurus viverrinus | 4 | Bangladesh |
+| Golden langur | Trachypithecus geei | 4 | Bhutan |
+| Golden monkey | Cercopithecus kandti | 4 | Rwanda |
+| Greater flamingo | Phoenicopterus roseus | 4 | Iran |
+| Griffon vulture | Gyps fulvus | 4 | Greece |
+| Gyrfalcon | Falco rusticolus | 4 | Iceland |
+| Harbour seal | Phoca vitulina | 4 | Iceland |
 | Irish hare | Lepus timidus hibernicus | 4 | Ireland |
-| Loggerhead sea turtle | Caretta caretta | 4 | Malta |
-| Moorish gecko | Tarentola mauritanica | 4 | Malta |
+| Korean magpie | Pica serica | 4 | South Korea |
+| Lesser flamingo | Phoeniconaias minor | 4 | Kenya |
+| Mongolian gazelle | Procapra gutturosa | 4 | Mongolia |
+| Mountain nyala | Tragelaphus buxtoni | 4 | Ethiopia |
+| New Zealand fur seal | Arctocephalus forsteri | 4 | New Zealand |
+| Nile lechwe | Kobus megaceros | 4 | South Sudan |
+| Northern bald ibis | Geronticus eremita | 4 | Morocco |
+| Père David's deer | Elaphurus davidianus | 4 | People's Republic of China |
+| Persian fallow deer | Dama mesopotamica | 4 | Iran |
+| Purple-faced langur | Semnopithecus vetulus | 4 | Sri Lanka |
+| Rattlesnake | Crotalus | 4 | United States of America |
+| Roadrunner | Geococcyx californianus | 4 | United States of America |
+| Roe deer | Capreolus capreolus | 4 | Belgium |
+| Saltwater crocodile | Crocodylus porosus | 4 | Bangladesh |
+| Scottish wildcat | Felis silvestris silvestris | 4 | United Kingdom |
+| Siamese crocodile | Crocodylus siamensis | 4 | Cambodia |
+| Spanish ibex | Capra pyrenaica | 4 | Spain |
+| Thornicroft's giraffe | Giraffa camelopardalis thornicrofti | 4 | Zambia |
+| Victoria crowned pigeon | Goura victoria | 4 | Papua New Guinea |
+| Walia ibex | Capra walie | 4 | Ethiopia |
+| White-handed gibbon | Hylobates lar | 4 | Thailand |
+| Whooper swan | Cygnus cygnus | 4 | Finland |
+| Forest buffalo | Syncerus caffer nanus | 5 | Central African Republic, Democratic Republic of the Congo, Republic of the Congo |
+| Golden jackal | Canis aureus | 5 | Iraq, Morocco, Tunisia |
+| Bushbuck | Tragelaphus scriptus | 5 | Burundi, Ghana |
+| Corsac fox | Vulpes corsac | 5 | Kazakhstan, Uzbekistan |
+| Egyptian vulture | Neophron percnopterus | 5 | Egypt, Yemen |
+| Olive baboon | Papio anubis | 5 | Burundi, Sudan |
+| Patas monkey | Erythrocebus patas | 5 | Mali, Senegal |
+| Raccoon dog | Nyctereutes procyonoides | 5 | South Korea, North Korea |
+| Bactrian deer | Cervus hanglu bactrianus | 5 | Afghanistan |
+| Barbary stag | Cervus elaphus barbarus | 5 | Morocco |
+| Beira antelope | Dorcatragus megalotis | 5 | Somalia |
+| Black-backed jackal | Lupulella mesomelas | 5 | Lesotho |
+| Chacma baboon | Papio ursinus | 5 | South Africa |
+| Chinkara | Gazella bennettii | 5 | Pakistan |
+| Coati | Nasua narica | 5 | Mexico |
+| Common buzzard | Buteo buteo | 5 | Netherlands |
+| Common genet | Genetta genetta | 5 | Morocco |
+| Dibatag | Ammodorcas clarkei | 5 | Somalia |
+| Douc langur | Pygathrix | 5 | Laos |
+| Egyptian mongoose | Herpestes ichneumon | 5 | Egypt |
+| Eurasian eagle-owl | Bubo bubo | 5 | Sweden |
+| Himalayan blue sheep | Pseudois nayaur | 5 | Bhutan |
+| Impala | Aepyceros melampus | 5 | Eswatini |
+| Japanese serow | Capricornis crispus | 5 | Japan |
+| Konik horse | Equus ferus caballus | 5 | Netherlands |
+| Mona monkey | Cercopithecus mona | 5 | Ghana |
+| Mugger crocodile | Crocodylus palustris | 5 | Sri Lanka |
+| Palawan peacock-pheasant | Polyplectron napoleonis | 5 | Philippines |
+| Pileated gibbon | Hylobates pileatus | 5 | Cambodia |
+| Pine marten | Martes martes | 5 | Ireland |
+| Roan antelope | Hippotragus equinus | 5 | Senegal |
+| Rock hyrax | Procavia capensis | 5 | Lesotho |
+| Sacred ibis | Threskiornis aethiopicus | 5 | Egypt |
+| Sarus crane | Antigone antigone | 5 | Vietnam |
+| Secretarybird | Sagittarius serpentarius | 5 | Sudan |
+| Siberian flying squirrel | Pteromys volans | 5 | South Korea |
+| Southern bald ibis | Geronticus calvus | 5 | Lesotho |
+| Spotted cuscus | Spilocuscus maculatus | 5 | Papua New Guinea |
+| Spotted deer | Axis axis | 5 | Bangladesh |
+| Straw-coloured fruit bat | Eidolon helvum | 5 | Zambia |
+| Uganda kob | Kobus kob thomasi | 5 | Uganda |
+| Van cat | Felis catus | 5 | Turkey |
+| Weta | Anostostomatidae | 5 | New Zealand |
+| White pelican | Pelecanus onocrotalus | 5 | Mauritania |
+| Desert monitor | Varanus griseus | 6 | Algeria, Uzbekistan |
+| Horned viper | Cerastes cerastes | 6 | Algeria, Libya |
+| Basra reed warbler | Acrocephalus griseldis | 6 | Iraq |
+| Black woodpecker | Dryocopus martius | 6 | Belgium |
+| Euphrates softshell turtle | Rafetus euphraticus | 6 | Iraq |
+| Grey rhebok | Pelea capreolus | 6 | Lesotho |
 | Heron | Ardeidae | 6 | Malta |
-| Humpback whale | Megaptera novaeangliae | 6 | Bermuda |
 | Least weasel | Mustela nivalis | 6 | Malta |
+| Marbled polecat | Vormela peregusna | 6 | Uzbekistan |
+| Olive colobus | Procolobus verus | 6 | Ivory Coast |
+| Red-tailed monkey | Cercopithecus ascanius | 6 | Angola |
+| Socotra starling | Onychognathus frater | 6 | Yemen |
 | Buzzard | — | 6 | its world range |
 | Grass Snake | — | 6 | its world range |
-| Harbour Seal | — | 6 | its world range |
 | Hoopoe | — | 6 | its world range |
 | Llama | — | 6 | its world range |
 | Mole | — | 6 | its world range |
-| Pine Marten | — | 6 | its world range |
-| Roe Deer | — | 6 | its world range |
 | Stoat | — | 6 | its world range |
 | Weasel | — | 6 | its world range |
+| Madagascar hissing cockroach | Gromphadorhina portentosa | 7 | Madagascar |
 | Octopus | Octopoda | 7 | Malta |
 | Shrew | Soricidae | 7 | Malta |
 | Bat | Chiroptera | 8 | Malta |
@@ -59,6 +348,7 @@ zoom — then by how many countries are waiting on it.
 | Sicilian shrew | Crocidura sicula | 8 | Malta |
 | Sparrow | Passeridae | 8 | Malta |
 | Swift | Apodidae | 8 | Malta |
+| Welwitschia beetle | Ochryonota | 8 | Namibia |
 | Bee-eater | Meropidae | 9 | Malta |
 | Egret | Ardeidae | 9 | Malta |
 | Kingfisher | Alcedinidae | 9 | Malta |

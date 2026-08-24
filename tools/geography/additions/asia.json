@@ -1,0 +1,228 @@
+{
+  "UZB": [
+    { "name": "Saiga antelope", "scientificName": "Saiga tatarica", "importance": 3 },
+    { "name": "Bukhara deer", "scientificName": "Cervus hanglu bactrianus", "importance": 4 },
+    { "name": "Goitered gazelle", "scientificName": "Gazella subgutturosa", "importance": 4 },
+    { "name": "Corsac fox", "scientificName": "Vulpes corsac", "importance": 5 },
+    { "name": "Steppe eagle", "scientificName": "Aquila nipalensis", "importance": 4 },
+    { "name": "Desert monitor", "scientificName": "Varanus griseus", "importance": 6 },
+    { "name": "Marbled polecat", "scientificName": "Vormela peregusna", "importance": 6 }
+  ],
+  "KAZ": [
+    { "name": "Saiga antelope", "scientificName": "Saiga tatarica", "importance": 2 },
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 2 },
+    { "name": "Steppe eagle", "scientificName": "Aquila nipalensis", "importance": 4 },
+    { "name": "Corsac fox", "scientificName": "Vulpes corsac", "importance": 5 },
+    { "name": "Przewalski's horse", "scientificName": "Equus ferus przewalskii", "importance": 3 },
+    { "name": "Grey wolf", "scientificName": "Canis lupus", "importance": 4 }
+  ],
+  "MNG": [
+    { "name": "Bactrian camel", "scientificName": "Camelus bactrianus", "importance": 2 },
+    { "name": "Przewalski's horse", "scientificName": "Equus ferus przewalskii", "importance": 2 },
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 2 },
+    { "name": "Mongolian gazelle", "scientificName": "Procapra gutturosa", "importance": 4 },
+    { "name": "Pallas's cat", "scientificName": "Otocolobus manul", "importance": 3 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 3 }
+  ],
+  "CHN": [
+    { "name": "Red panda", "scientificName": "Ailurus fulgens", "importance": 2 },
+    { "name": "Golden snub-nosed monkey", "scientificName": "Rhinopithecus roxellana", "importance": 3 },
+    { "name": "Chinese alligator", "scientificName": "Alligator sinensis", "importance": 3 },
+    { "name": "Yak", "scientificName": "Bos grunniens", "importance": 3 },
+    { "name": "Père David's deer", "scientificName": "Elaphurus davidianus", "importance": 4 },
+    { "name": "Chinese pangolin", "scientificName": "Manis pentadactyla", "importance": 4 }
+  ],
+  "IND": [
+    { "name": "Bengal tiger", "scientificName": "Panthera tigris tigris", "importance": 1 },
+    { "name": "Indian elephant", "scientificName": "Elephas maximus indicus", "importance": 2 },
+    { "name": "Indian peafowl", "scientificName": "Pavo cristatus", "importance": 2 },
+    { "name": "Indian rhinoceros", "scientificName": "Rhinoceros unicornis", "importance": 2 },
+    { "name": "Asiatic lion", "scientificName": "Panthera leo persica", "importance": 3 },
+    { "name": "Sloth bear", "scientificName": "Melursus ursinus", "importance": 4 },
+    { "name": "King cobra", "scientificName": "Ophiophagus hannah", "importance": 3 }
+  ],
+  "NPL": [
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 2 },
+    { "name": "Red panda", "scientificName": "Ailurus fulgens", "importance": 2 },
+    { "name": "Indian rhinoceros", "scientificName": "Rhinoceros unicornis", "importance": 3 },
+    { "name": "Himalayan monal", "scientificName": "Lophophorus impejanus", "importance": 3 },
+    { "name": "Yak", "scientificName": "Bos grunniens", "importance": 3 },
+    { "name": "Bengal tiger", "scientificName": "Panthera tigris tigris", "importance": 3 }
+  ],
+  "BTN": [
+    { "name": "Takin", "scientificName": "Budorcas taxicolor", "importance": 2 },
+    { "name": "Red panda", "scientificName": "Ailurus fulgens", "importance": 2 },
+    { "name": "Black-necked crane", "scientificName": "Grus nigricollis", "importance": 3 },
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 3 },
+    { "name": "Golden langur", "scientificName": "Trachypithecus geei", "importance": 4 },
+    { "name": "Himalayan blue sheep", "scientificName": "Pseudois nayaur", "importance": 5 }
+  ],
+  "LKA": [
+    { "name": "Sri Lankan elephant", "scientificName": "Elephas maximus maximus", "importance": 2 },
+    { "name": "Sri Lankan leopard", "scientificName": "Panthera pardus kotiya", "importance": 2 },
+    { "name": "Purple-faced langur", "scientificName": "Semnopithecus vetulus", "importance": 4 },
+    { "name": "Blue whale", "scientificName": "Balaenoptera musculus", "importance": 2 },
+    { "name": "Sloth bear", "scientificName": "Melursus ursinus", "importance": 4 },
+    { "name": "Mugger crocodile", "scientificName": "Crocodylus palustris", "importance": 5 }
+  ],
+  "PAK": [
+    { "name": "Markhor", "scientificName": "Capra falconeri", "importance": 2 },
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 2 },
+    { "name": "Indus river dolphin", "scientificName": "Platanista minor", "importance": 3 },
+    { "name": "Himalayan brown bear", "scientificName": "Ursus arctos isabellinus", "importance": 4 },
+    { "name": "Chinkara", "scientificName": "Gazella bennettii", "importance": 5 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 4 }
+  ],
+  "AFG": [
+    { "name": "Marco Polo sheep", "scientificName": "Ovis ammon polii", "importance": 3 },
+    { "name": "Snow leopard", "scientificName": "Panthera uncia", "importance": 2 },
+    { "name": "Markhor", "scientificName": "Capra falconeri", "importance": 3 },
+    { "name": "Bactrian deer", "scientificName": "Cervus hanglu bactrianus", "importance": 5 },
+    { "name": "Himalayan brown bear", "scientificName": "Ursus arctos isabellinus", "importance": 4 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 4 }
+  ],
+  "IRN": [
+    { "name": "Asiatic cheetah", "scientificName": "Acinonyx jubatus venaticus", "importance": 2 },
+    { "name": "Persian leopard", "scientificName": "Panthera pardus tulliana", "importance": 2 },
+    { "name": "Persian fallow deer", "scientificName": "Dama mesopotamica", "importance": 4 },
+    { "name": "Goitered gazelle", "scientificName": "Gazella subgutturosa", "importance": 4 },
+    { "name": "Wild boar", "scientificName": "Sus scrofa", "importance": 5 },
+    { "name": "Greater flamingo", "scientificName": "Phoenicopterus roseus", "importance": 4 }
+  ],
+  "IRQ": [
+    { "name": "Water buffalo", "scientificName": "Bubalus bubalis", "importance": 4 },
+    { "name": "Goitered gazelle", "scientificName": "Gazella subgutturosa", "importance": 4 },
+    { "name": "Striped hyena", "scientificName": "Hyaena hyaena", "importance": 5 },
+    { "name": "Basra reed warbler", "scientificName": "Acrocephalus griseldis", "importance": 6 },
+    { "name": "Euphrates softshell turtle", "scientificName": "Rafetus euphraticus", "importance": 6 },
+    { "name": "Golden jackal", "scientificName": "Canis aureus", "importance": 5 }
+  ],
+  "SAU": [
+    { "name": "Arabian oryx", "scientificName": "Oryx leucoryx", "importance": 2 },
+    { "name": "Arabian leopard", "scientificName": "Panthera pardus nimr", "importance": 3 },
+    { "name": "Dromedary camel", "scientificName": "Camelus dromedarius", "importance": 2 },
+    { "name": "Sand cat", "scientificName": "Felis margarita", "importance": 4 },
+    { "name": "Arabian wolf", "scientificName": "Canis lupus arabs", "importance": 4 },
+    { "name": "Hamadryas baboon", "scientificName": "Papio hamadryas", "importance": 5 }
+  ],
+  "OMN": [
+    { "name": "Arabian oryx", "scientificName": "Oryx leucoryx", "importance": 2 },
+    { "name": "Arabian leopard", "scientificName": "Panthera pardus nimr", "importance": 3 },
+    { "name": "Green sea turtle", "scientificName": "Chelonia mydas", "importance": 3 },
+    { "name": "Arabian tahr", "scientificName": "Arabitragus jayakari", "importance": 4 },
+    { "name": "Dromedary camel", "scientificName": "Camelus dromedarius", "importance": 3 },
+    { "name": "Humpback whale", "scientificName": "Megaptera novaeangliae", "importance": 4 }
+  ],
+  "YEM": [
+    { "name": "Arabian leopard", "scientificName": "Panthera pardus nimr", "importance": 3 },
+    { "name": "Hamadryas baboon", "scientificName": "Papio hamadryas", "importance": 4 },
+    { "name": "Dromedary camel", "scientificName": "Camelus dromedarius", "importance": 3 },
+    { "name": "Socotra starling", "scientificName": "Onychognathus frater", "importance": 6 },
+    { "name": "Egyptian vulture", "scientificName": "Neophron percnopterus", "importance": 5 },
+    { "name": "Arabian wolf", "scientificName": "Canis lupus arabs", "importance": 5 }
+  ],
+  "IDN": [
+    { "name": "Komodo dragon", "scientificName": "Varanus komodoensis", "importance": 1 },
+    { "name": "Sumatran tiger", "scientificName": "Panthera tigris sumatrae", "importance": 2 },
+    { "name": "Bornean orangutan", "scientificName": "Pongo pygmaeus", "importance": 2 },
+    { "name": "Javan rhinoceros", "scientificName": "Rhinoceros sondaicus", "importance": 3 },
+    { "name": "Sumatran elephant", "scientificName": "Elephas maximus sumatranus", "importance": 3 },
+    { "name": "Bird-of-paradise", "scientificName": "Paradisaeidae", "importance": 3 }
+  ],
+  "MYS": [
+    { "name": "Malayan tapir", "scientificName": "Tapirus indicus", "importance": 2 },
+    { "name": "Bornean orangutan", "scientificName": "Pongo pygmaeus", "importance": 2 },
+    { "name": "Proboscis monkey", "scientificName": "Nasalis larvatus", "importance": 3 },
+    { "name": "Malayan tiger", "scientificName": "Panthera tigris jacksoni", "importance": 2 },
+    { "name": "Rhinoceros hornbill", "scientificName": "Buceros rhinoceros", "importance": 3 },
+    { "name": "Sun bear", "scientificName": "Helarctos malayanus", "importance": 3 }
+  ],
+  "THA": [
+    { "name": "Indian elephant", "scientificName": "Elephas maximus indicus", "importance": 2 },
+    { "name": "Indochinese tiger", "scientificName": "Panthera tigris corbetti", "importance": 2 },
+    { "name": "Gaur", "scientificName": "Bos gaurus", "importance": 4 },
+    { "name": "Whale shark", "scientificName": "Rhincodon typus", "importance": 3 },
+    { "name": "White-handed gibbon", "scientificName": "Hylobates lar", "importance": 4 },
+    { "name": "King cobra", "scientificName": "Ophiophagus hannah", "importance": 4 }
+  ],
+  "VNM": [
+    { "name": "Saola", "scientificName": "Pseudoryx nghetinhensis", "importance": 3 },
+    { "name": "Red-shanked douc", "scientificName": "Pygathrix nemaeus", "importance": 3 },
+    { "name": "Indochinese tiger", "scientificName": "Panthera tigris corbetti", "importance": 3 },
+    { "name": "Sun bear", "scientificName": "Helarctos malayanus", "importance": 4 },
+    { "name": "Water buffalo", "scientificName": "Bubalus bubalis", "importance": 4 },
+    { "name": "Sarus crane", "scientificName": "Antigone antigone", "importance": 5 }
+  ],
+  "JPN": [
+    { "name": "Japanese macaque", "scientificName": "Macaca fuscata", "importance": 2 },
+    { "name": "Red-crowned crane", "scientificName": "Grus japonensis", "importance": 2 },
+    { "name": "Sika deer", "scientificName": "Cervus nippon", "importance": 3 },
+    { "name": "Japanese giant salamander", "scientificName": "Andrias japonicus", "importance": 3 },
+    { "name": "Ezo brown bear", "scientificName": "Ursus arctos yesoensis", "importance": 3 },
+    { "name": "Japanese serow", "scientificName": "Capricornis crispus", "importance": 5 }
+  ],
+  "KOR": [
+    { "name": "Korean magpie", "scientificName": "Pica serica", "importance": 4 },
+    { "name": "Siberian flying squirrel", "scientificName": "Pteromys volans", "importance": 5 },
+    { "name": "Red-crowned crane", "scientificName": "Grus japonensis", "importance": 3 },
+    { "name": "Asiatic black bear", "scientificName": "Ursus thibetanus", "importance": 3 },
+    { "name": "Water deer", "scientificName": "Hydropotes inermis", "importance": 4 },
+    { "name": "Raccoon dog", "scientificName": "Nyctereutes procyonoides", "importance": 5 }
+  ],
+  "PRK": [
+    { "name": "Asiatic black bear", "scientificName": "Ursus thibetanus", "importance": 3 },
+    { "name": "Siberian tiger", "scientificName": "Panthera tigris altaica", "importance": 3 },
+    { "name": "Red-crowned crane", "scientificName": "Grus japonensis", "importance": 3 },
+    { "name": "Water deer", "scientificName": "Hydropotes inermis", "importance": 5 },
+    { "name": "Raccoon dog", "scientificName": "Nyctereutes procyonoides", "importance": 5 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 5 }
+  ],
+  "PHL": [
+    { "name": "Philippine eagle", "scientificName": "Pithecophaga jefferyi", "importance": 2 },
+    { "name": "Philippine tarsier", "scientificName": "Carlito syrichta", "importance": 2 },
+    { "name": "Tamaraw", "scientificName": "Bubalus mindorensis", "importance": 3 },
+    { "name": "Whale shark", "scientificName": "Rhincodon typus", "importance": 3 },
+    { "name": "Dugong", "scientificName": "Dugong dugon", "importance": 4 },
+    { "name": "Palawan peacock-pheasant", "scientificName": "Polyplectron napoleonis", "importance": 5 }
+  ],
+  "MMR": [
+    { "name": "Irrawaddy dolphin", "scientificName": "Orcaella brevirostris", "importance": 3 },
+    { "name": "Indian elephant", "scientificName": "Elephas maximus indicus", "importance": 3 },
+    { "name": "Gaur", "scientificName": "Bos gaurus", "importance": 4 },
+    { "name": "Sun bear", "scientificName": "Helarctos malayanus", "importance": 4 },
+    { "name": "Hoolock gibbon", "scientificName": "Hoolock hoolock", "importance": 4 },
+    { "name": "Burmese python", "scientificName": "Python bivittatus", "importance": 4 }
+  ],
+  "KHM": [
+    { "name": "Irrawaddy dolphin", "scientificName": "Orcaella brevirostris", "importance": 3 },
+    { "name": "Giant ibis", "scientificName": "Thaumatibis gigantea", "importance": 3 },
+    { "name": "Indian elephant", "scientificName": "Elephas maximus indicus", "importance": 3 },
+    { "name": "Siamese crocodile", "scientificName": "Crocodylus siamensis", "importance": 4 },
+    { "name": "Pileated gibbon", "scientificName": "Hylobates pileatus", "importance": 5 },
+    { "name": "Sun bear", "scientificName": "Helarctos malayanus", "importance": 4 }
+  ],
+  "LAO": [
+    { "name": "Saola", "scientificName": "Pseudoryx nghetinhensis", "importance": 3 },
+    { "name": "Irrawaddy dolphin", "scientificName": "Orcaella brevirostris", "importance": 3 },
+    { "name": "Indian elephant", "scientificName": "Elephas maximus indicus", "importance": 3 },
+    { "name": "Sun bear", "scientificName": "Helarctos malayanus", "importance": 4 },
+    { "name": "Douc langur", "scientificName": "Pygathrix", "importance": 5 },
+    { "name": "Water buffalo", "scientificName": "Bubalus bubalis", "importance": 5 }
+  ],
+  "BGD": [
+    { "name": "Bengal tiger", "scientificName": "Panthera tigris tigris", "importance": 2 },
+    { "name": "Ganges river dolphin", "scientificName": "Platanista gangetica", "importance": 3 },
+    { "name": "Fishing cat", "scientificName": "Prionailurus viverrinus", "importance": 4 },
+    { "name": "Hoolock gibbon", "scientificName": "Hoolock hoolock", "importance": 4 },
+    { "name": "Saltwater crocodile", "scientificName": "Crocodylus porosus", "importance": 4 },
+    { "name": "Spotted deer", "scientificName": "Axis axis", "importance": 5 }
+  ],
+  "TUR": [
+    { "name": "Anatolian leopard", "scientificName": "Panthera pardus tulliana", "importance": 3 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 3 },
+    { "name": "Van cat", "scientificName": "Felis catus", "importance": 5 },
+    { "name": "Greater flamingo", "scientificName": "Phoenicopterus roseus", "importance": 4 },
+    { "name": "Loggerhead sea turtle", "scientificName": "Caretta caretta", "importance": 3 },
+    { "name": "Bezoar ibex", "scientificName": "Capra aegagrus", "importance": 4 }
+  ]
+}

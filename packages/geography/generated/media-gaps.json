@@ -3,7 +3,7 @@
   "note": "Built by tools/geography/report-media-gaps.mjs. Everything Globe would show a picture of and cannot. Ordered by importance, 1 being what a child sees from space.",
   "summary": {
     "animals": {
-      "missing": 44
+      "missing": 334
     },
     "landmarks": {
       "missing": 1250,
@@ -19,6 +19,16 @@
     }
   },
   "animals": [
+    {
+      "name": "Bengal tiger",
+      "scientificName": "Panthera tigris tigris",
+      "importance": 1,
+      "wantedBy": [
+        "BGD",
+        "IND",
+        "NPL"
+      ]
+    },
     {
       "name": "Cyprus mouflon",
       "scientificName": "Ovis gmelini ophion",
@@ -50,6 +60,14 @@
       "importance": 1,
       "wantedBy": [
         "NZL"
+      ]
+    },
+    {
+      "name": "Komodo dragon",
+      "scientificName": "Varanus komodoensis",
+      "importance": 1,
+      "wantedBy": [
+        "IDN"
       ]
     },
     {
@@ -152,6 +170,240 @@
       ]
     },
     {
+      "name": "African forest elephant",
+      "scientificName": "Loxodonta cyclotis",
+      "importance": 2,
+      "wantedBy": [
+        "CAF",
+        "CIV",
+        "CMR",
+        "COD",
+        "COG",
+        "GAB",
+        "GHA",
+        "NGA"
+      ]
+    },
+    {
+      "name": "Dromedary camel",
+      "scientificName": "Camelus dromedarius",
+      "importance": 2,
+      "wantedBy": [
+        "DZA",
+        "EGY",
+        "LBY",
+        "MAR",
+        "MRT",
+        "OMN",
+        "SAU",
+        "YEM"
+      ]
+    },
+    {
+      "name": "Indian elephant",
+      "scientificName": "Elephas maximus indicus",
+      "importance": 2,
+      "wantedBy": [
+        "IND",
+        "KHM",
+        "LAO",
+        "MMR",
+        "THA"
+      ]
+    },
+    {
+      "name": "Alpine ibex",
+      "scientificName": "Capra ibex",
+      "importance": 2,
+      "wantedBy": [
+        "AUT",
+        "CHE",
+        "FRA",
+        "ITA"
+      ]
+    },
+    {
+      "name": "Andean condor",
+      "scientificName": "Vultur gryphus",
+      "importance": 2,
+      "wantedBy": [
+        "ARG",
+        "CHL",
+        "COL",
+        "PER"
+      ]
+    },
+    {
+      "name": "Black rhinoceros",
+      "scientificName": "Diceros bicornis",
+      "importance": 2,
+      "wantedBy": [
+        "CMR",
+        "KEN",
+        "NAM",
+        "TZA"
+      ]
+    },
+    {
+      "name": "European bison",
+      "scientificName": "Bison bonasus",
+      "importance": 2,
+      "wantedBy": [
+        "DEU",
+        "POL",
+        "ROU"
+      ]
+    },
+    {
+      "name": "Red-crowned crane",
+      "scientificName": "Grus japonensis",
+      "importance": 2,
+      "wantedBy": [
+        "JPN",
+        "KOR",
+        "PRK"
+      ]
+    },
+    {
+      "name": "Reindeer",
+      "scientificName": "Rangifer tarandus",
+      "importance": 2,
+      "wantedBy": [
+        "FIN",
+        "NOR",
+        "SWE"
+      ]
+    },
+    {
+      "name": "Vicuña",
+      "scientificName": "Vicugna vicugna",
+      "importance": 2,
+      "wantedBy": [
+        "BOL",
+        "CHL",
+        "PER"
+      ]
+    },
+    {
+      "name": "Western lowland gorilla",
+      "scientificName": "Gorilla gorilla gorilla",
+      "importance": 2,
+      "wantedBy": [
+        "CAF",
+        "COG",
+        "GAB"
+      ]
+    },
+    {
+      "name": "White rhinoceros",
+      "scientificName": "Ceratotherium simum",
+      "importance": 2,
+      "wantedBy": [
+        "SWZ",
+        "ZAF",
+        "ZWE"
+      ]
+    },
+    {
+      "name": "African savanna elephant",
+      "scientificName": "Loxodonta africana",
+      "importance": 2,
+      "wantedBy": [
+        "ETH",
+        "SDN"
+      ]
+    },
+    {
+      "name": "Arabian oryx",
+      "scientificName": "Oryx leucoryx",
+      "importance": 2,
+      "wantedBy": [
+        "OMN",
+        "SAU"
+      ]
+    },
+    {
+      "name": "Bird-of-paradise",
+      "scientificName": "Paradisaeidae",
+      "importance": 2,
+      "wantedBy": [
+        "IDN",
+        "PNG"
+      ]
+    },
+    {
+      "name": "Bornean orangutan",
+      "scientificName": "Pongo pygmaeus",
+      "importance": 2,
+      "wantedBy": [
+        "IDN",
+        "MYS"
+      ]
+    },
+    {
+      "name": "Capybara",
+      "scientificName": "Hydrochoerus hydrochaeris",
+      "importance": 2,
+      "wantedBy": [
+        "ARG",
+        "BRA"
+      ]
+    },
+    {
+      "name": "Guanaco",
+      "scientificName": "Lama guanicoe",
+      "importance": 2,
+      "wantedBy": [
+        "ARG",
+        "CHL"
+      ]
+    },
+    {
+      "name": "Indian rhinoceros",
+      "scientificName": "Rhinoceros unicornis",
+      "importance": 2,
+      "wantedBy": [
+        "IND",
+        "NPL"
+      ]
+    },
+    {
+      "name": "Indochinese tiger",
+      "scientificName": "Panthera tigris corbetti",
+      "importance": 2,
+      "wantedBy": [
+        "THA",
+        "VNM"
+      ]
+    },
+    {
+      "name": "Markhor",
+      "scientificName": "Capra falconeri",
+      "importance": 2,
+      "wantedBy": [
+        "AFG",
+        "PAK"
+      ]
+    },
+    {
+      "name": "Masai giraffe",
+      "scientificName": "Giraffa camelopardalis tippelskirchi",
+      "importance": 2,
+      "wantedBy": [
+        "KEN",
+        "TZA"
+      ]
+    },
+    {
+      "name": "Mountain gorilla",
+      "scientificName": "Gorilla beringei beringei",
+      "importance": 2,
+      "wantedBy": [
+        "RWA",
+        "UGA"
+      ]
+    },
+    {
       "name": "Orangutan",
       "scientificName": "Pongo",
       "importance": 2,
@@ -161,20 +413,12 @@
       ]
     },
     {
-      "name": "Vicuña",
-      "scientificName": "Vicugna vicugna",
+      "name": "Przewalski's horse",
+      "scientificName": "Equus ferus przewalskii",
       "importance": 2,
       "wantedBy": [
-        "BOL",
-        "PER"
-      ]
-    },
-    {
-      "name": "Guanaco",
-      "scientificName": "Lama guanicoe",
-      "importance": 2,
-      "wantedBy": [
-        "CHL"
+        "KAZ",
+        "MNG"
       ]
     },
     {
@@ -182,7 +426,217 @@
       "scientificName": "Pseudoryx nghetinhensis",
       "importance": 2,
       "wantedBy": [
+        "LAO",
         "VNM"
+      ]
+    },
+    {
+      "name": "Wildebeest",
+      "scientificName": "Connochaetes taurinus",
+      "importance": 2,
+      "wantedBy": [
+        "KEN",
+        "TZA"
+      ]
+    },
+    {
+      "name": "Alpaca",
+      "scientificName": "Vicugna pacos",
+      "importance": 2,
+      "wantedBy": [
+        "PER"
+      ]
+    },
+    {
+      "name": "American alligator",
+      "scientificName": "Alligator mississippiensis",
+      "importance": 2,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Asiatic cheetah",
+      "scientificName": "Acinonyx jubatus venaticus",
+      "importance": 2,
+      "wantedBy": [
+        "IRN"
+      ]
+    },
+    {
+      "name": "Axolotl",
+      "scientificName": "Ambystoma mexicanum",
+      "importance": 2,
+      "wantedBy": [
+        "MEX"
+      ]
+    },
+    {
+      "name": "Bactrian camel",
+      "scientificName": "Camelus bactrianus",
+      "importance": 2,
+      "wantedBy": [
+        "MNG"
+      ]
+    },
+    {
+      "name": "Beaver",
+      "scientificName": "Castor canadensis",
+      "importance": 2,
+      "wantedBy": [
+        "CAN"
+      ]
+    },
+    {
+      "name": "Blue whale",
+      "scientificName": "Balaenoptera musculus",
+      "importance": 2,
+      "wantedBy": [
+        "LKA"
+      ]
+    },
+    {
+      "name": "Bonobo",
+      "scientificName": "Pan paniscus",
+      "importance": 2,
+      "wantedBy": [
+        "COD"
+      ]
+    },
+    {
+      "name": "Eastern lowland gorilla",
+      "scientificName": "Gorilla beringei graueri",
+      "importance": 2,
+      "wantedBy": [
+        "COD"
+      ]
+    },
+    {
+      "name": "Echidna",
+      "scientificName": "Tachyglossus aculeatus",
+      "importance": 2,
+      "wantedBy": [
+        "AUS"
+      ]
+    },
+    {
+      "name": "Giant anteater",
+      "scientificName": "Myrmecophaga tridactyla",
+      "importance": 2,
+      "wantedBy": [
+        "BRA"
+      ]
+    },
+    {
+      "name": "Giant sable antelope",
+      "scientificName": "Hippotragus niger variani",
+      "importance": 2,
+      "wantedBy": [
+        "AGO"
+      ]
+    },
+    {
+      "name": "Giraffe",
+      "scientificName": "Giraffa camelopardalis",
+      "importance": 2,
+      "wantedBy": [
+        "SDS"
+      ]
+    },
+    {
+      "name": "Hyacinth macaw",
+      "scientificName": "Anodorhynchus hyacinthinus",
+      "importance": 2,
+      "wantedBy": [
+        "BRA"
+      ]
+    },
+    {
+      "name": "Iberian lynx",
+      "scientificName": "Lynx pardinus",
+      "importance": 2,
+      "wantedBy": [
+        "ESP"
+      ]
+    },
+    {
+      "name": "Icelandic horse",
+      "scientificName": "Equus ferus caballus",
+      "importance": 2,
+      "wantedBy": [
+        "ISL"
+      ]
+    },
+    {
+      "name": "Kākāpō",
+      "scientificName": "Strigops habroptilus",
+      "importance": 2,
+      "wantedBy": [
+        "NZL"
+      ]
+    },
+    {
+      "name": "Kea",
+      "scientificName": "Nestor notabilis",
+      "importance": 2,
+      "wantedBy": [
+        "NZL"
+      ]
+    },
+    {
+      "name": "Lion",
+      "scientificName": "Panthera leo",
+      "importance": 2,
+      "wantedBy": [
+        "SDS"
+      ]
+    },
+    {
+      "name": "Malayan tapir",
+      "scientificName": "Tapirus indicus",
+      "importance": 2,
+      "wantedBy": [
+        "MYS"
+      ]
+    },
+    {
+      "name": "Malayan tiger",
+      "scientificName": "Panthera tigris jacksoni",
+      "importance": 2,
+      "wantedBy": [
+        "MYS"
+      ]
+    },
+    {
+      "name": "Mediterranean monk seal",
+      "scientificName": "Monachus monachus",
+      "importance": 2,
+      "wantedBy": [
+        "GRC"
+      ]
+    },
+    {
+      "name": "Monarch butterfly",
+      "scientificName": "Danaus plexippus",
+      "importance": 2,
+      "wantedBy": [
+        "MEX"
+      ]
+    },
+    {
+      "name": "Philippine tarsier",
+      "scientificName": "Carlito syrichta",
+      "importance": 2,
+      "wantedBy": [
+        "PHL"
+      ]
+    },
+    {
+      "name": "Ring-tailed lemur",
+      "scientificName": "Lemur catta",
+      "importance": 2,
+      "wantedBy": [
+        "MDG"
       ]
     },
     {
@@ -194,11 +648,59 @@
       ]
     },
     {
+      "name": "Sri Lankan elephant",
+      "scientificName": "Elephas maximus maximus",
+      "importance": 2,
+      "wantedBy": [
+        "LKA"
+      ]
+    },
+    {
+      "name": "Sri Lankan leopard",
+      "scientificName": "Panthera pardus kotiya",
+      "importance": 2,
+      "wantedBy": [
+        "LKA"
+      ]
+    },
+    {
+      "name": "Sumatran tiger",
+      "scientificName": "Panthera tigris sumatrae",
+      "importance": 2,
+      "wantedBy": [
+        "IDN"
+      ]
+    },
+    {
+      "name": "Takin",
+      "scientificName": "Budorcas taxicolor",
+      "importance": 2,
+      "wantedBy": [
+        "BTN"
+      ]
+    },
+    {
+      "name": "Tasmanian devil",
+      "scientificName": "Sarcophilus harrisii",
+      "importance": 2,
+      "wantedBy": [
+        "AUS"
+      ]
+    },
+    {
       "name": "Tuatara",
       "scientificName": "Sphenodon punctatus",
       "importance": 2,
       "wantedBy": [
         "NZL"
+      ]
+    },
+    {
+      "name": "West African giraffe",
+      "scientificName": "Giraffa camelopardalis peralta",
+      "importance": 2,
+      "wantedBy": [
+        "NER"
       ]
     },
     {
@@ -210,6 +712,416 @@
       ]
     },
     {
+      "name": "Nile crocodile",
+      "scientificName": "Crocodylus niloticus",
+      "importance": 3,
+      "wantedBy": [
+        "AGO",
+        "BDI",
+        "CIV",
+        "EGY",
+        "GHA",
+        "MLI",
+        "MOZ",
+        "MWI",
+        "NER",
+        "NGA",
+        "SDN",
+        "SDS",
+        "SEN",
+        "SWZ",
+        "TCD",
+        "ZWE"
+      ]
+    },
+    {
+      "name": "Hippopotamus",
+      "scientificName": "Hippopotamus amphibius",
+      "importance": 3,
+      "wantedBy": [
+        "AGO",
+        "BWA",
+        "COG",
+        "GAB",
+        "GHA",
+        "SDN",
+        "SDS",
+        "SWZ",
+        "TCD"
+      ]
+    },
+    {
+      "name": "Addax",
+      "scientificName": "Addax nasomaculatus",
+      "importance": 3,
+      "wantedBy": [
+        "DZA",
+        "LBY",
+        "MLI",
+        "NER",
+        "TCD"
+      ]
+    },
+    {
+      "name": "African buffalo",
+      "scientificName": "Syncerus caffer",
+      "importance": 3,
+      "wantedBy": [
+        "KEN",
+        "RWA",
+        "SDS",
+        "SEN",
+        "TZA"
+      ]
+    },
+    {
+      "name": "Chamois",
+      "scientificName": "Rupicapra rupicapra",
+      "importance": 3,
+      "wantedBy": [
+        "AUT",
+        "CHE",
+        "FRA",
+        "ITA",
+        "ROU"
+      ]
+    },
+    {
+      "name": "Loggerhead sea turtle",
+      "scientificName": "Caretta caretta",
+      "importance": 3,
+      "wantedBy": [
+        "GRC",
+        "ITA",
+        "MLT",
+        "TUN",
+        "TUR"
+      ]
+    },
+    {
+      "name": "Sun bear",
+      "scientificName": "Helarctos malayanus",
+      "importance": 3,
+      "wantedBy": [
+        "KHM",
+        "LAO",
+        "MMR",
+        "MYS",
+        "VNM"
+      ]
+    },
+    {
+      "name": "Eastern chimpanzee",
+      "scientificName": "Pan troglodytes schweinfurthii",
+      "importance": 3,
+      "wantedBy": [
+        "BDI",
+        "RWA",
+        "TZA",
+        "UGA"
+      ]
+    },
+    {
+      "name": "Grey seal",
+      "scientificName": "Halichoerus grypus",
+      "importance": 3,
+      "wantedBy": [
+        "BEL",
+        "GBR",
+        "IRL",
+        "NLD"
+      ]
+    },
+    {
+      "name": "Grey wolf",
+      "scientificName": "Canis lupus",
+      "importance": 3,
+      "wantedBy": [
+        "DEU",
+        "KAZ",
+        "POL",
+        "ROU"
+      ]
+    },
+    {
+      "name": "African wild dog",
+      "scientificName": "Lycaon pictus",
+      "importance": 3,
+      "wantedBy": [
+        "BWA",
+        "ZMB",
+        "ZWE"
+      ]
+    },
+    {
+      "name": "Arabian leopard",
+      "scientificName": "Panthera pardus nimr",
+      "importance": 3,
+      "wantedBy": [
+        "OMN",
+        "SAU",
+        "YEM"
+      ]
+    },
+    {
+      "name": "Dugong",
+      "scientificName": "Dugong dugon",
+      "importance": 3,
+      "wantedBy": [
+        "EGY",
+        "MOZ",
+        "PHL"
+      ]
+    },
+    {
+      "name": "Humpback whale",
+      "scientificName": "Megaptera novaeangliae",
+      "importance": 3,
+      "wantedBy": [
+        "BMU",
+        "ISL",
+        "OMN"
+      ]
+    },
+    {
+      "name": "Irrawaddy dolphin",
+      "scientificName": "Orcaella brevirostris",
+      "importance": 3,
+      "wantedBy": [
+        "KHM",
+        "LAO",
+        "MMR"
+      ]
+    },
+    {
+      "name": "Springbok",
+      "scientificName": "Antidorcas marsupialis",
+      "importance": 3,
+      "wantedBy": [
+        "BWA",
+        "NAM",
+        "ZAF"
+      ]
+    },
+    {
+      "name": "Whale shark",
+      "scientificName": "Rhincodon typus",
+      "importance": 3,
+      "wantedBy": [
+        "MOZ",
+        "PHL",
+        "THA"
+      ]
+    },
+    {
+      "name": "Alpine marmot",
+      "scientificName": "Marmota marmota",
+      "importance": 3,
+      "wantedBy": [
+        "AUT",
+        "CHE"
+      ]
+    },
+    {
+      "name": "Cape fur seal",
+      "scientificName": "Arctocephalus pusillus",
+      "importance": 3,
+      "wantedBy": [
+        "AGO",
+        "NAM"
+      ]
+    },
+    {
+      "name": "Cheetah",
+      "scientificName": "Acinonyx jubatus",
+      "importance": 3,
+      "wantedBy": [
+        "SDN",
+        "SOM"
+      ]
+    },
+    {
+      "name": "Eurasian otter",
+      "scientificName": "Lutra lutra",
+      "importance": 3,
+      "wantedBy": [
+        "IRL",
+        "NLD"
+      ]
+    },
+    {
+      "name": "Gemsbok",
+      "scientificName": "Oryx gazella",
+      "importance": 3,
+      "wantedBy": [
+        "BWA",
+        "NAM"
+      ]
+    },
+    {
+      "name": "Giant otter",
+      "scientificName": "Pteronura brasiliensis",
+      "importance": 3,
+      "wantedBy": [
+        "BRA",
+        "PER"
+      ]
+    },
+    {
+      "name": "Golden eagle",
+      "scientificName": "Aquila chrysaetos",
+      "importance": 3,
+      "wantedBy": [
+        "MNG",
+        "PRK"
+      ]
+    },
+    {
+      "name": "King cobra",
+      "scientificName": "Ophiophagus hannah",
+      "importance": 3,
+      "wantedBy": [
+        "IND",
+        "THA"
+      ]
+    },
+    {
+      "name": "Moose",
+      "scientificName": "Alces alces",
+      "importance": 3,
+      "wantedBy": [
+        "NOR",
+        "USA"
+      ]
+    },
+    {
+      "name": "Ostrich",
+      "scientificName": "Struthio camelus",
+      "importance": 3,
+      "wantedBy": [
+        "NER",
+        "TCD"
+      ]
+    },
+    {
+      "name": "Puma",
+      "scientificName": "Puma concolor",
+      "importance": 3,
+      "wantedBy": [
+        "ARG",
+        "CHL"
+      ]
+    },
+    {
+      "name": "Shoebill",
+      "scientificName": "Balaeniceps rex",
+      "importance": 3,
+      "wantedBy": [
+        "SDS",
+        "UGA"
+      ]
+    },
+    {
+      "name": "Southern right whale",
+      "scientificName": "Eubalaena australis",
+      "importance": 3,
+      "wantedBy": [
+        "ARG",
+        "ZAF"
+      ]
+    },
+    {
+      "name": "Spectacled bear",
+      "scientificName": "Tremarctos ornatus",
+      "importance": 3,
+      "wantedBy": [
+        "COL",
+        "PER"
+      ]
+    },
+    {
+      "name": "Western chimpanzee",
+      "scientificName": "Pan troglodytes verus",
+      "importance": 3,
+      "wantedBy": [
+        "CIV",
+        "GHA"
+      ]
+    },
+    {
+      "name": "Yak",
+      "scientificName": "Bos grunniens",
+      "importance": 3,
+      "wantedBy": [
+        "CHN",
+        "NPL"
+      ]
+    },
+    {
+      "name": "Anatolian leopard",
+      "scientificName": "Panthera pardus tulliana",
+      "importance": 3,
+      "wantedBy": [
+        "TUR"
+      ]
+    },
+    {
+      "name": "Arctic fox",
+      "scientificName": "Vulpes lagopus",
+      "importance": 3,
+      "wantedBy": [
+        "NOR"
+      ]
+    },
+    {
+      "name": "Asiatic black bear",
+      "scientificName": "Ursus thibetanus",
+      "importance": 3,
+      "wantedBy": [
+        "PRK"
+      ]
+    },
+    {
+      "name": "Asiatic lion",
+      "scientificName": "Panthera leo persica",
+      "importance": 3,
+      "wantedBy": [
+        "IND"
+      ]
+    },
+    {
+      "name": "Aye-aye",
+      "scientificName": "Daubentonia madagascariensis",
+      "importance": 3,
+      "wantedBy": [
+        "MDG"
+      ]
+    },
+    {
+      "name": "Barbary macaque",
+      "scientificName": "Macaca sylvanus",
+      "importance": 3,
+      "wantedBy": [
+        "MAR"
+      ]
+    },
+    {
+      "name": "Basking shark",
+      "scientificName": "Cetorhinus maximus",
+      "importance": 3,
+      "wantedBy": [
+        "IRL"
+      ]
+    },
+    {
+      "name": "Black-necked crane",
+      "scientificName": "Grus nigricollis",
+      "importance": 3,
+      "wantedBy": [
+        "BTN"
+      ]
+    },
+    {
       "name": "Blue rock-thrush",
       "scientificName": "Monticola solitarius",
       "importance": 3,
@@ -218,11 +1130,571 @@
       ]
     },
     {
+      "name": "Camargue horse",
+      "scientificName": "Equus ferus caballus",
+      "importance": 3,
+      "wantedBy": [
+        "FRA"
+      ]
+    },
+    {
+      "name": "Canada lynx",
+      "scientificName": "Lynx canadensis",
+      "importance": 3,
+      "wantedBy": [
+        "CAN"
+      ]
+    },
+    {
+      "name": "Cape buffalo",
+      "scientificName": "Syncerus caffer caffer",
+      "importance": 3,
+      "wantedBy": [
+        "ZAF"
+      ]
+    },
+    {
+      "name": "Caribou",
+      "scientificName": "Rangifer tarandus caribou",
+      "importance": 3,
+      "wantedBy": [
+        "CAN"
+      ]
+    },
+    {
+      "name": "Chinese alligator",
+      "scientificName": "Alligator sinensis",
+      "importance": 3,
+      "wantedBy": [
+        "CHN"
+      ]
+    },
+    {
+      "name": "Cock-of-the-rock",
+      "scientificName": "Rupicola peruvianus",
+      "importance": 3,
+      "wantedBy": [
+        "PER"
+      ]
+    },
+    {
+      "name": "Cotton-top tamarin",
+      "scientificName": "Saguinus oedipus",
+      "importance": 3,
+      "wantedBy": [
+        "COL"
+      ]
+    },
+    {
+      "name": "Cross River gorilla",
+      "scientificName": "Gorilla gorilla diehli",
+      "importance": 3,
+      "wantedBy": [
+        "CMR"
+      ]
+    },
+    {
+      "name": "Dalmatian pelican",
+      "scientificName": "Pelecanus crispus",
+      "importance": 3,
+      "wantedBy": [
+        "ROU"
+      ]
+    },
+    {
+      "name": "Ethiopian wolf",
+      "scientificName": "Canis simensis",
+      "importance": 3,
+      "wantedBy": [
+        "ETH"
+      ]
+    },
+    {
+      "name": "Ezo brown bear",
+      "scientificName": "Ursus arctos yesoensis",
+      "importance": 3,
+      "wantedBy": [
+        "JPN"
+      ]
+    },
+    {
+      "name": "Fennec fox",
+      "scientificName": "Vulpes zerda",
+      "importance": 3,
+      "wantedBy": [
+        "LBY"
+      ]
+    },
+    {
+      "name": "Fossa",
+      "scientificName": "Cryptoprocta ferox",
+      "importance": 3,
+      "wantedBy": [
+        "MDG"
+      ]
+    },
+    {
+      "name": "Ganges river dolphin",
+      "scientificName": "Platanista gangetica",
+      "importance": 3,
+      "wantedBy": [
+        "BGD"
+      ]
+    },
+    {
+      "name": "Gelada",
+      "scientificName": "Theropithecus gelada",
+      "importance": 3,
+      "wantedBy": [
+        "ETH"
+      ]
+    },
+    {
+      "name": "Gerenuk",
+      "scientificName": "Litocranius walleri",
+      "importance": 3,
+      "wantedBy": [
+        "SOM"
+      ]
+    },
+    {
+      "name": "Giant ibis",
+      "scientificName": "Thaumatibis gigantea",
+      "importance": 3,
+      "wantedBy": [
+        "KHM"
+      ]
+    },
+    {
+      "name": "Golden lion tamarin",
+      "scientificName": "Leontopithecus rosalia",
+      "importance": 3,
+      "wantedBy": [
+        "BRA"
+      ]
+    },
+    {
+      "name": "Golden snub-nosed monkey",
+      "scientificName": "Rhinopithecus roxellana",
+      "importance": 3,
+      "wantedBy": [
+        "CHN"
+      ]
+    },
+    {
+      "name": "Green sea turtle",
+      "scientificName": "Chelonia mydas",
+      "importance": 3,
+      "wantedBy": [
+        "OMN"
+      ]
+    },
+    {
+      "name": "Grevy's zebra",
+      "scientificName": "Equus grevyi",
+      "importance": 3,
+      "wantedBy": [
+        "KEN"
+      ]
+    },
+    {
+      "name": "Grey whale",
+      "scientificName": "Eschrichtius robustus",
+      "importance": 3,
+      "wantedBy": [
+        "MEX"
+      ]
+    },
+    {
+      "name": "Hector's dolphin",
+      "scientificName": "Cephalorhynchus hectori",
+      "importance": 3,
+      "wantedBy": [
+        "NZL"
+      ]
+    },
+    {
+      "name": "Himalayan monal",
+      "scientificName": "Lophophorus impejanus",
+      "importance": 3,
+      "wantedBy": [
+        "NPL"
+      ]
+    },
+    {
+      "name": "Humboldt penguin",
+      "scientificName": "Spheniscus humboldti",
+      "importance": 3,
+      "wantedBy": [
+        "CHL"
+      ]
+    },
+    {
+      "name": "Iberian wolf",
+      "scientificName": "Canis lupus signatus",
+      "importance": 3,
+      "wantedBy": [
+        "ESP"
+      ]
+    },
+    {
+      "name": "Indri",
+      "scientificName": "Indri indri",
+      "importance": 3,
+      "wantedBy": [
+        "MDG"
+      ]
+    },
+    {
+      "name": "Indus river dolphin",
+      "scientificName": "Platanista minor",
+      "importance": 3,
+      "wantedBy": [
+        "PAK"
+      ]
+    },
+    {
+      "name": "Italian wolf",
+      "scientificName": "Canis lupus italicus",
+      "importance": 3,
+      "wantedBy": [
+        "ITA"
+      ]
+    },
+    {
+      "name": "Japanese giant salamander",
+      "scientificName": "Andrias japonicus",
+      "importance": 3,
+      "wantedBy": [
+        "JPN"
+      ]
+    },
+    {
+      "name": "Javan rhinoceros",
+      "scientificName": "Rhinoceros sondaicus",
+      "importance": 3,
+      "wantedBy": [
+        "IDN"
+      ]
+    },
+    {
+      "name": "Killer whale",
+      "scientificName": "Orcinus orca",
+      "importance": 3,
+      "wantedBy": [
+        "NOR"
+      ]
+    },
+    {
+      "name": "Kookaburra",
+      "scientificName": "Dacelo novaeguineae",
+      "importance": 3,
+      "wantedBy": [
+        "AUS"
+      ]
+    },
+    {
+      "name": "Kordofan giraffe",
+      "scientificName": "Giraffa camelopardalis antiquorum",
+      "importance": 3,
+      "wantedBy": [
+        "TCD"
+      ]
+    },
+    {
+      "name": "Leatherback sea turtle",
+      "scientificName": "Dermochelys coriacea",
+      "importance": 3,
+      "wantedBy": [
+        "GAB"
+      ]
+    },
+    {
+      "name": "Manatee",
+      "scientificName": "Trichechus manatus",
+      "importance": 3,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Marco Polo sheep",
+      "scientificName": "Ovis ammon polii",
+      "importance": 3,
+      "wantedBy": [
+        "AFG"
+      ]
+    },
+    {
+      "name": "Marsican brown bear",
+      "scientificName": "Ursus arctos marsicanus",
+      "importance": 3,
+      "wantedBy": [
+        "ITA"
+      ]
+    },
+    {
+      "name": "Monk seal",
+      "scientificName": "Monachus monachus",
+      "importance": 3,
+      "wantedBy": [
+        "MRT"
+      ]
+    },
+    {
+      "name": "Muskox",
+      "scientificName": "Ovibos moschatus",
+      "importance": 3,
+      "wantedBy": [
+        "NOR"
+      ]
+    },
+    {
       "name": "New Caledonian crow",
       "scientificName": "Corvus moneduloides",
       "importance": 3,
       "wantedBy": [
         "NCL"
+      ]
+    },
+    {
+      "name": "Nigeria-Cameroon chimpanzee",
+      "scientificName": "Pan troglodytes ellioti",
+      "importance": 3,
+      "wantedBy": [
+        "NGA"
+      ]
+    },
+    {
+      "name": "Pallas's cat",
+      "scientificName": "Otocolobus manul",
+      "importance": 3,
+      "wantedBy": [
+        "MNG"
+      ]
+    },
+    {
+      "name": "Panther chameleon",
+      "scientificName": "Furcifer pardalis",
+      "importance": 3,
+      "wantedBy": [
+        "MDG"
+      ]
+    },
+    {
+      "name": "Pink river dolphin",
+      "scientificName": "Inia geoffrensis",
+      "importance": 3,
+      "wantedBy": [
+        "COL"
+      ]
+    },
+    {
+      "name": "Poison dart frog",
+      "scientificName": "Dendrobatidae",
+      "importance": 3,
+      "wantedBy": [
+        "COL"
+      ]
+    },
+    {
+      "name": "Proboscis monkey",
+      "scientificName": "Nasalis larvatus",
+      "importance": 3,
+      "wantedBy": [
+        "MYS"
+      ]
+    },
+    {
+      "name": "Pronghorn",
+      "scientificName": "Antilocapra americana",
+      "importance": 3,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Pudú",
+      "scientificName": "Pudu puda",
+      "importance": 3,
+      "wantedBy": [
+        "CHL"
+      ]
+    },
+    {
+      "name": "Pygmy hippopotamus",
+      "scientificName": "Choeropsis liberiensis",
+      "importance": 3,
+      "wantedBy": [
+        "CIV"
+      ]
+    },
+    {
+      "name": "Raccoon",
+      "scientificName": "Procyon lotor",
+      "importance": 3,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Red squirrel",
+      "scientificName": "Sciurus vulgaris",
+      "importance": 3,
+      "wantedBy": [
+        "GBR"
+      ]
+    },
+    {
+      "name": "Red-shanked douc",
+      "scientificName": "Pygathrix nemaeus",
+      "importance": 3,
+      "wantedBy": [
+        "VNM"
+      ]
+    },
+    {
+      "name": "Rhinoceros hornbill",
+      "scientificName": "Buceros rhinoceros",
+      "importance": 3,
+      "wantedBy": [
+        "MYS"
+      ]
+    },
+    {
+      "name": "Rothschild's giraffe",
+      "scientificName": "Giraffa camelopardalis rothschildi",
+      "importance": 3,
+      "wantedBy": [
+        "UGA"
+      ]
+    },
+    {
+      "name": "Saiga antelope",
+      "scientificName": "Saiga tatarica",
+      "importance": 3,
+      "wantedBy": [
+        "UZB"
+      ]
+    },
+    {
+      "name": "Saimaa ringed seal",
+      "scientificName": "Pusa hispida saimensis",
+      "importance": 3,
+      "wantedBy": [
+        "FIN"
+      ]
+    },
+    {
+      "name": "Scimitar-horned oryx",
+      "scientificName": "Oryx dammah",
+      "importance": 3,
+      "wantedBy": [
+        "TCD"
+      ]
+    },
+    {
+      "name": "Siberian tiger",
+      "scientificName": "Panthera tigris altaica",
+      "importance": 3,
+      "wantedBy": [
+        "PRK"
+      ]
+    },
+    {
+      "name": "Snow leopard",
+      "scientificName": "Panthera uncia",
+      "importance": 3,
+      "wantedBy": [
+        "BTN"
+      ]
+    },
+    {
+      "name": "Somali wild ass",
+      "scientificName": "Equus africanus somaliensis",
+      "importance": 3,
+      "wantedBy": [
+        "SOM"
+      ]
+    },
+    {
+      "name": "Spanish imperial eagle",
+      "scientificName": "Aquila adalberti",
+      "importance": 3,
+      "wantedBy": [
+        "ESP"
+      ]
+    },
+    {
+      "name": "Sumatran elephant",
+      "scientificName": "Elephas maximus sumatranus",
+      "importance": 3,
+      "wantedBy": [
+        "IDN"
+      ]
+    },
+    {
+      "name": "Tamaraw",
+      "scientificName": "Bubalus mindorensis",
+      "importance": 3,
+      "wantedBy": [
+        "PHL"
+      ]
+    },
+    {
+      "name": "Three-toed sloth",
+      "scientificName": "Bradypus variegatus",
+      "importance": 3,
+      "wantedBy": [
+        "BRA"
+      ]
+    },
+    {
+      "name": "Tree kangaroo",
+      "scientificName": "Dendrolagus",
+      "importance": 3,
+      "wantedBy": [
+        "PNG"
+      ]
+    },
+    {
+      "name": "Vaquita",
+      "scientificName": "Phocoena sinus",
+      "importance": 3,
+      "wantedBy": [
+        "MEX"
+      ]
+    },
+    {
+      "name": "West African lion",
+      "scientificName": "Panthera leo leo",
+      "importance": 3,
+      "wantedBy": [
+        "MLI"
+      ]
+    },
+    {
+      "name": "White stork",
+      "scientificName": "Ciconia ciconia",
+      "importance": 3,
+      "wantedBy": [
+        "DEU"
+      ]
+    },
+    {
+      "name": "White-eared kob",
+      "scientificName": "Kobus kob leucotis",
+      "importance": 3,
+      "wantedBy": [
+        "SDS"
+      ]
+    },
+    {
+      "name": "Yellow-eyed penguin",
+      "scientificName": "Megadyptes antipodes",
+      "importance": 3,
+      "wantedBy": [
+        "NZL"
       ]
     },
     {
@@ -245,11 +1717,474 @@
       ]
     },
     {
+      "name": "African grey parrot",
+      "scientificName": "Psittacus erithacus",
+      "importance": 4,
+      "wantedBy": [
+        "CIV",
+        "CMR",
+        "COG",
+        "GAB",
+        "GHA",
+        "NGA"
+      ]
+    },
+    {
+      "name": "Dorcas gazelle",
+      "scientificName": "Gazella dorcas",
+      "importance": 4,
+      "wantedBy": [
+        "DZA",
+        "LBY",
+        "MLI",
+        "MRT",
+        "SDN",
+        "TUN"
+      ]
+    },
+    {
+      "name": "Warthog",
+      "scientificName": "Phacochoerus africanus",
+      "importance": 4,
+      "wantedBy": [
+        "MLI",
+        "NER",
+        "NGA",
+        "SEN",
+        "SOM"
+      ]
+    },
+    {
+      "name": "Barbary sheep",
+      "scientificName": "Ammotragus lervia",
+      "importance": 4,
+      "wantedBy": [
+        "DZA",
+        "LBY",
+        "NER",
+        "TUN"
+      ]
+    },
+    {
+      "name": "Hamadryas baboon",
+      "scientificName": "Papio hamadryas",
+      "importance": 4,
+      "wantedBy": [
+        "ETH",
+        "SAU",
+        "SOM",
+        "YEM"
+      ]
+    },
+    {
+      "name": "Sable antelope",
+      "scientificName": "Hippotragus niger",
+      "importance": 4,
+      "wantedBy": [
+        "MOZ",
+        "MWI",
+        "ZMB",
+        "ZWE"
+      ]
+    },
+    {
+      "name": "Sand cat",
+      "scientificName": "Felis margarita",
+      "importance": 4,
+      "wantedBy": [
+        "DZA",
+        "LBY",
+        "MRT",
+        "SAU"
+      ]
+    },
+    {
+      "name": "Striped hyena",
+      "scientificName": "Hyaena hyaena",
+      "importance": 4,
+      "wantedBy": [
+        "IRQ",
+        "SDN",
+        "SOM",
+        "TUN"
+      ]
+    },
+    {
+      "name": "Eurasian lynx",
+      "scientificName": "Lynx lynx",
+      "importance": 4,
+      "wantedBy": [
+        "CHE",
+        "DEU",
+        "POL"
+      ]
+    },
+    {
+      "name": "European badger",
+      "scientificName": "Meles meles",
+      "importance": 4,
+      "wantedBy": [
+        "BEL",
+        "GBR",
+        "NLD"
+      ]
+    },
+    {
+      "name": "Goitered gazelle",
+      "scientificName": "Gazella subgutturosa",
+      "importance": 4,
+      "wantedBy": [
+        "IRN",
+        "IRQ",
+        "UZB"
+      ]
+    },
+    {
+      "name": "Spotted hyena",
+      "scientificName": "Crocuta crocuta",
+      "importance": 4,
+      "wantedBy": [
+        "ETH",
+        "KEN",
+        "TZA"
+      ]
+    },
+    {
+      "name": "Water buffalo",
+      "scientificName": "Bubalus bubalis",
+      "importance": 4,
+      "wantedBy": [
+        "IRQ",
+        "LAO",
+        "VNM"
+      ]
+    },
+    {
+      "name": "Arabian wolf",
+      "scientificName": "Canis lupus arabs",
+      "importance": 4,
+      "wantedBy": [
+        "SAU",
+        "YEM"
+      ]
+    },
+    {
+      "name": "Bearded vulture",
+      "scientificName": "Gypaetus barbatus",
+      "importance": 4,
+      "wantedBy": [
+        "AUT",
+        "FRA"
+      ]
+    },
+    {
+      "name": "Bongo",
+      "scientificName": "Tragelaphus eurycerus",
+      "importance": 4,
+      "wantedBy": [
+        "CAF",
+        "CIV"
+      ]
+    },
+    {
+      "name": "Brown bear",
+      "scientificName": "Ursus arctos",
+      "importance": 4,
+      "wantedBy": [
+        "ESP",
+        "FRA"
+      ]
+    },
+    {
+      "name": "Drill",
+      "scientificName": "Mandrillus leucophaeus",
+      "importance": 4,
+      "wantedBy": [
+        "CMR",
+        "NGA"
+      ]
+    },
+    {
+      "name": "Gaur",
+      "scientificName": "Bos gaurus",
+      "importance": 4,
+      "wantedBy": [
+        "MMR",
+        "THA"
+      ]
+    },
+    {
+      "name": "Giant eland",
+      "scientificName": "Taurotragus derbianus",
+      "importance": 4,
+      "wantedBy": [
+        "CAF",
+        "CMR"
+      ]
+    },
+    {
+      "name": "Grey crowned crane",
+      "scientificName": "Balearica regulorum",
+      "importance": 4,
+      "wantedBy": [
+        "BDI",
+        "RWA"
+      ]
+    },
+    {
+      "name": "Himalayan brown bear",
+      "scientificName": "Ursus arctos isabellinus",
+      "importance": 4,
+      "wantedBy": [
+        "AFG",
+        "PAK"
+      ]
+    },
+    {
+      "name": "Hoolock gibbon",
+      "scientificName": "Hoolock hoolock",
+      "importance": 4,
+      "wantedBy": [
+        "BGD",
+        "MMR"
+      ]
+    },
+    {
+      "name": "Moorish gecko",
+      "scientificName": "Tarentola mauritanica",
+      "importance": 4,
+      "wantedBy": [
+        "MAR",
+        "MLT"
+      ]
+    },
+    {
+      "name": "Nubian ibex",
+      "scientificName": "Capra nubiana",
+      "importance": 4,
+      "wantedBy": [
+        "EGY",
+        "SDN"
+      ]
+    },
+    {
+      "name": "Sloth bear",
+      "scientificName": "Melursus ursinus",
+      "importance": 4,
+      "wantedBy": [
+        "IND",
+        "LKA"
+      ]
+    },
+    {
+      "name": "Water deer",
+      "scientificName": "Hydropotes inermis",
+      "importance": 4,
+      "wantedBy": [
+        "KOR",
+        "PRK"
+      ]
+    },
+    {
+      "name": "West African manatee",
+      "scientificName": "Trichechus senegalensis",
+      "importance": 4,
+      "wantedBy": [
+        "NGA",
+        "SEN"
+      ]
+    },
+    {
+      "name": "Wild boar",
+      "scientificName": "Sus scrofa",
+      "importance": 4,
+      "wantedBy": [
+        "BEL",
+        "IRN"
+      ]
+    },
+    {
+      "name": "Arabian tahr",
+      "scientificName": "Arabitragus jayakari",
+      "importance": 4,
+      "wantedBy": [
+        "OMN"
+      ]
+    },
+    {
       "name": "Bald eagle",
       "scientificName": "Haliaeetus leucocephalus",
       "importance": 4,
       "wantedBy": [
         "USA"
+      ]
+    },
+    {
+      "name": "Blue wildebeest",
+      "scientificName": "Connochaetes taurinus",
+      "importance": 4,
+      "wantedBy": [
+        "SWZ"
+      ]
+    },
+    {
+      "name": "Bukhara deer",
+      "scientificName": "Cervus hanglu bactrianus",
+      "importance": 4,
+      "wantedBy": [
+        "UZB"
+      ]
+    },
+    {
+      "name": "Burmese python",
+      "scientificName": "Python bivittatus",
+      "importance": 4,
+      "wantedBy": [
+        "MMR"
+      ]
+    },
+    {
+      "name": "Chinese pangolin",
+      "scientificName": "Manis pentadactyla",
+      "importance": 4,
+      "wantedBy": [
+        "CHN"
+      ]
+    },
+    {
+      "name": "Cichlid",
+      "scientificName": "Cichlidae",
+      "importance": 4,
+      "wantedBy": [
+        "MWI"
+      ]
+    },
+    {
+      "name": "Common loon",
+      "scientificName": "Gavia immer",
+      "importance": 4,
+      "wantedBy": [
+        "CAN"
+      ]
+    },
+    {
+      "name": "Congo peafowl",
+      "scientificName": "Afropavo congensis",
+      "importance": 4,
+      "wantedBy": [
+        "COD"
+      ]
+    },
+    {
+      "name": "Cretan wild goat",
+      "scientificName": "Capra aegagrus cretica",
+      "importance": 4,
+      "wantedBy": [
+        "GRC"
+      ]
+    },
+    {
+      "name": "Dama gazelle",
+      "scientificName": "Nanger dama",
+      "importance": 4,
+      "wantedBy": [
+        "NER"
+      ]
+    },
+    {
+      "name": "Darwin's rhea",
+      "scientificName": "Rhea pennata",
+      "importance": 4,
+      "wantedBy": [
+        "CHL"
+      ]
+    },
+    {
+      "name": "Eland",
+      "scientificName": "Taurotragus oryx",
+      "importance": 4,
+      "wantedBy": [
+        "LSO"
+      ]
+    },
+    {
+      "name": "Eurasian spoonbill",
+      "scientificName": "Platalea leucorodia",
+      "importance": 4,
+      "wantedBy": [
+        "NLD"
+      ]
+    },
+    {
+      "name": "European beaver",
+      "scientificName": "Castor fiber",
+      "importance": 4,
+      "wantedBy": [
+        "POL"
+      ]
+    },
+    {
+      "name": "Fish eagle",
+      "scientificName": "Haliaeetus vocifer",
+      "importance": 4,
+      "wantedBy": [
+        "MWI"
+      ]
+    },
+    {
+      "name": "Fishing cat",
+      "scientificName": "Prionailurus viverrinus",
+      "importance": 4,
+      "wantedBy": [
+        "BGD"
+      ]
+    },
+    {
+      "name": "Golden langur",
+      "scientificName": "Trachypithecus geei",
+      "importance": 4,
+      "wantedBy": [
+        "BTN"
+      ]
+    },
+    {
+      "name": "Golden monkey",
+      "scientificName": "Cercopithecus kandti",
+      "importance": 4,
+      "wantedBy": [
+        "RWA"
+      ]
+    },
+    {
+      "name": "Greater flamingo",
+      "scientificName": "Phoenicopterus roseus",
+      "importance": 4,
+      "wantedBy": [
+        "IRN"
+      ]
+    },
+    {
+      "name": "Griffon vulture",
+      "scientificName": "Gyps fulvus",
+      "importance": 4,
+      "wantedBy": [
+        "GRC"
+      ]
+    },
+    {
+      "name": "Gyrfalcon",
+      "scientificName": "Falco rusticolus",
+      "importance": 4,
+      "wantedBy": [
+        "ISL"
+      ]
+    },
+    {
+      "name": "Harbour seal",
+      "scientificName": "Phoca vitulina",
+      "importance": 4,
+      "wantedBy": [
+        "ISL"
       ]
     },
     {
@@ -261,19 +2196,591 @@
       ]
     },
     {
-      "name": "Loggerhead sea turtle",
-      "scientificName": "Caretta caretta",
+      "name": "Korean magpie",
+      "scientificName": "Pica serica",
       "importance": 4,
       "wantedBy": [
-        "MLT"
+        "KOR"
       ]
     },
     {
-      "name": "Moorish gecko",
-      "scientificName": "Tarentola mauritanica",
+      "name": "Lesser flamingo",
+      "scientificName": "Phoeniconaias minor",
       "importance": 4,
       "wantedBy": [
-        "MLT"
+        "KEN"
+      ]
+    },
+    {
+      "name": "Mongolian gazelle",
+      "scientificName": "Procapra gutturosa",
+      "importance": 4,
+      "wantedBy": [
+        "MNG"
+      ]
+    },
+    {
+      "name": "Mountain nyala",
+      "scientificName": "Tragelaphus buxtoni",
+      "importance": 4,
+      "wantedBy": [
+        "ETH"
+      ]
+    },
+    {
+      "name": "New Zealand fur seal",
+      "scientificName": "Arctocephalus forsteri",
+      "importance": 4,
+      "wantedBy": [
+        "NZL"
+      ]
+    },
+    {
+      "name": "Nile lechwe",
+      "scientificName": "Kobus megaceros",
+      "importance": 4,
+      "wantedBy": [
+        "SDS"
+      ]
+    },
+    {
+      "name": "Northern bald ibis",
+      "scientificName": "Geronticus eremita",
+      "importance": 4,
+      "wantedBy": [
+        "MAR"
+      ]
+    },
+    {
+      "name": "Père David's deer",
+      "scientificName": "Elaphurus davidianus",
+      "importance": 4,
+      "wantedBy": [
+        "CHN"
+      ]
+    },
+    {
+      "name": "Persian fallow deer",
+      "scientificName": "Dama mesopotamica",
+      "importance": 4,
+      "wantedBy": [
+        "IRN"
+      ]
+    },
+    {
+      "name": "Purple-faced langur",
+      "scientificName": "Semnopithecus vetulus",
+      "importance": 4,
+      "wantedBy": [
+        "LKA"
+      ]
+    },
+    {
+      "name": "Rattlesnake",
+      "scientificName": "Crotalus",
+      "importance": 4,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Roadrunner",
+      "scientificName": "Geococcyx californianus",
+      "importance": 4,
+      "wantedBy": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Roe deer",
+      "scientificName": "Capreolus capreolus",
+      "importance": 4,
+      "wantedBy": [
+        "BEL"
+      ]
+    },
+    {
+      "name": "Saltwater crocodile",
+      "scientificName": "Crocodylus porosus",
+      "importance": 4,
+      "wantedBy": [
+        "BGD"
+      ]
+    },
+    {
+      "name": "Scottish wildcat",
+      "scientificName": "Felis silvestris silvestris",
+      "importance": 4,
+      "wantedBy": [
+        "GBR"
+      ]
+    },
+    {
+      "name": "Siamese crocodile",
+      "scientificName": "Crocodylus siamensis",
+      "importance": 4,
+      "wantedBy": [
+        "KHM"
+      ]
+    },
+    {
+      "name": "Spanish ibex",
+      "scientificName": "Capra pyrenaica",
+      "importance": 4,
+      "wantedBy": [
+        "ESP"
+      ]
+    },
+    {
+      "name": "Thornicroft's giraffe",
+      "scientificName": "Giraffa camelopardalis thornicrofti",
+      "importance": 4,
+      "wantedBy": [
+        "ZMB"
+      ]
+    },
+    {
+      "name": "Victoria crowned pigeon",
+      "scientificName": "Goura victoria",
+      "importance": 4,
+      "wantedBy": [
+        "PNG"
+      ]
+    },
+    {
+      "name": "Walia ibex",
+      "scientificName": "Capra walie",
+      "importance": 4,
+      "wantedBy": [
+        "ETH"
+      ]
+    },
+    {
+      "name": "White-handed gibbon",
+      "scientificName": "Hylobates lar",
+      "importance": 4,
+      "wantedBy": [
+        "THA"
+      ]
+    },
+    {
+      "name": "Whooper swan",
+      "scientificName": "Cygnus cygnus",
+      "importance": 4,
+      "wantedBy": [
+        "FIN"
+      ]
+    },
+    {
+      "name": "Forest buffalo",
+      "scientificName": "Syncerus caffer nanus",
+      "importance": 5,
+      "wantedBy": [
+        "CAF",
+        "COD",
+        "COG"
+      ]
+    },
+    {
+      "name": "Golden jackal",
+      "scientificName": "Canis aureus",
+      "importance": 5,
+      "wantedBy": [
+        "IRQ",
+        "MAR",
+        "TUN"
+      ]
+    },
+    {
+      "name": "Bushbuck",
+      "scientificName": "Tragelaphus scriptus",
+      "importance": 5,
+      "wantedBy": [
+        "BDI",
+        "GHA"
+      ]
+    },
+    {
+      "name": "Corsac fox",
+      "scientificName": "Vulpes corsac",
+      "importance": 5,
+      "wantedBy": [
+        "KAZ",
+        "UZB"
+      ]
+    },
+    {
+      "name": "Egyptian vulture",
+      "scientificName": "Neophron percnopterus",
+      "importance": 5,
+      "wantedBy": [
+        "EGY",
+        "YEM"
+      ]
+    },
+    {
+      "name": "Olive baboon",
+      "scientificName": "Papio anubis",
+      "importance": 5,
+      "wantedBy": [
+        "BDI",
+        "SDN"
+      ]
+    },
+    {
+      "name": "Patas monkey",
+      "scientificName": "Erythrocebus patas",
+      "importance": 5,
+      "wantedBy": [
+        "MLI",
+        "SEN"
+      ]
+    },
+    {
+      "name": "Raccoon dog",
+      "scientificName": "Nyctereutes procyonoides",
+      "importance": 5,
+      "wantedBy": [
+        "KOR",
+        "PRK"
+      ]
+    },
+    {
+      "name": "Bactrian deer",
+      "scientificName": "Cervus hanglu bactrianus",
+      "importance": 5,
+      "wantedBy": [
+        "AFG"
+      ]
+    },
+    {
+      "name": "Barbary stag",
+      "scientificName": "Cervus elaphus barbarus",
+      "importance": 5,
+      "wantedBy": [
+        "MAR"
+      ]
+    },
+    {
+      "name": "Beira antelope",
+      "scientificName": "Dorcatragus megalotis",
+      "importance": 5,
+      "wantedBy": [
+        "SOM"
+      ]
+    },
+    {
+      "name": "Black-backed jackal",
+      "scientificName": "Lupulella mesomelas",
+      "importance": 5,
+      "wantedBy": [
+        "LSO"
+      ]
+    },
+    {
+      "name": "Chacma baboon",
+      "scientificName": "Papio ursinus",
+      "importance": 5,
+      "wantedBy": [
+        "ZAF"
+      ]
+    },
+    {
+      "name": "Chinkara",
+      "scientificName": "Gazella bennettii",
+      "importance": 5,
+      "wantedBy": [
+        "PAK"
+      ]
+    },
+    {
+      "name": "Coati",
+      "scientificName": "Nasua narica",
+      "importance": 5,
+      "wantedBy": [
+        "MEX"
+      ]
+    },
+    {
+      "name": "Common buzzard",
+      "scientificName": "Buteo buteo",
+      "importance": 5,
+      "wantedBy": [
+        "NLD"
+      ]
+    },
+    {
+      "name": "Common genet",
+      "scientificName": "Genetta genetta",
+      "importance": 5,
+      "wantedBy": [
+        "MAR"
+      ]
+    },
+    {
+      "name": "Dibatag",
+      "scientificName": "Ammodorcas clarkei",
+      "importance": 5,
+      "wantedBy": [
+        "SOM"
+      ]
+    },
+    {
+      "name": "Douc langur",
+      "scientificName": "Pygathrix",
+      "importance": 5,
+      "wantedBy": [
+        "LAO"
+      ]
+    },
+    {
+      "name": "Egyptian mongoose",
+      "scientificName": "Herpestes ichneumon",
+      "importance": 5,
+      "wantedBy": [
+        "EGY"
+      ]
+    },
+    {
+      "name": "Eurasian eagle-owl",
+      "scientificName": "Bubo bubo",
+      "importance": 5,
+      "wantedBy": [
+        "SWE"
+      ]
+    },
+    {
+      "name": "Himalayan blue sheep",
+      "scientificName": "Pseudois nayaur",
+      "importance": 5,
+      "wantedBy": [
+        "BTN"
+      ]
+    },
+    {
+      "name": "Impala",
+      "scientificName": "Aepyceros melampus",
+      "importance": 5,
+      "wantedBy": [
+        "SWZ"
+      ]
+    },
+    {
+      "name": "Japanese serow",
+      "scientificName": "Capricornis crispus",
+      "importance": 5,
+      "wantedBy": [
+        "JPN"
+      ]
+    },
+    {
+      "name": "Konik horse",
+      "scientificName": "Equus ferus caballus",
+      "importance": 5,
+      "wantedBy": [
+        "NLD"
+      ]
+    },
+    {
+      "name": "Mona monkey",
+      "scientificName": "Cercopithecus mona",
+      "importance": 5,
+      "wantedBy": [
+        "GHA"
+      ]
+    },
+    {
+      "name": "Mugger crocodile",
+      "scientificName": "Crocodylus palustris",
+      "importance": 5,
+      "wantedBy": [
+        "LKA"
+      ]
+    },
+    {
+      "name": "Palawan peacock-pheasant",
+      "scientificName": "Polyplectron napoleonis",
+      "importance": 5,
+      "wantedBy": [
+        "PHL"
+      ]
+    },
+    {
+      "name": "Pileated gibbon",
+      "scientificName": "Hylobates pileatus",
+      "importance": 5,
+      "wantedBy": [
+        "KHM"
+      ]
+    },
+    {
+      "name": "Pine marten",
+      "scientificName": "Martes martes",
+      "importance": 5,
+      "wantedBy": [
+        "IRL"
+      ]
+    },
+    {
+      "name": "Roan antelope",
+      "scientificName": "Hippotragus equinus",
+      "importance": 5,
+      "wantedBy": [
+        "SEN"
+      ]
+    },
+    {
+      "name": "Rock hyrax",
+      "scientificName": "Procavia capensis",
+      "importance": 5,
+      "wantedBy": [
+        "LSO"
+      ]
+    },
+    {
+      "name": "Sacred ibis",
+      "scientificName": "Threskiornis aethiopicus",
+      "importance": 5,
+      "wantedBy": [
+        "EGY"
+      ]
+    },
+    {
+      "name": "Sarus crane",
+      "scientificName": "Antigone antigone",
+      "importance": 5,
+      "wantedBy": [
+        "VNM"
+      ]
+    },
+    {
+      "name": "Secretarybird",
+      "scientificName": "Sagittarius serpentarius",
+      "importance": 5,
+      "wantedBy": [
+        "SDN"
+      ]
+    },
+    {
+      "name": "Siberian flying squirrel",
+      "scientificName": "Pteromys volans",
+      "importance": 5,
+      "wantedBy": [
+        "KOR"
+      ]
+    },
+    {
+      "name": "Southern bald ibis",
+      "scientificName": "Geronticus calvus",
+      "importance": 5,
+      "wantedBy": [
+        "LSO"
+      ]
+    },
+    {
+      "name": "Spotted cuscus",
+      "scientificName": "Spilocuscus maculatus",
+      "importance": 5,
+      "wantedBy": [
+        "PNG"
+      ]
+    },
+    {
+      "name": "Spotted deer",
+      "scientificName": "Axis axis",
+      "importance": 5,
+      "wantedBy": [
+        "BGD"
+      ]
+    },
+    {
+      "name": "Straw-coloured fruit bat",
+      "scientificName": "Eidolon helvum",
+      "importance": 5,
+      "wantedBy": [
+        "ZMB"
+      ]
+    },
+    {
+      "name": "Uganda kob",
+      "scientificName": "Kobus kob thomasi",
+      "importance": 5,
+      "wantedBy": [
+        "UGA"
+      ]
+    },
+    {
+      "name": "Van cat",
+      "scientificName": "Felis catus",
+      "importance": 5,
+      "wantedBy": [
+        "TUR"
+      ]
+    },
+    {
+      "name": "Weta",
+      "scientificName": "Anostostomatidae",
+      "importance": 5,
+      "wantedBy": [
+        "NZL"
+      ]
+    },
+    {
+      "name": "White pelican",
+      "scientificName": "Pelecanus onocrotalus",
+      "importance": 5,
+      "wantedBy": [
+        "MRT"
+      ]
+    },
+    {
+      "name": "Desert monitor",
+      "scientificName": "Varanus griseus",
+      "importance": 6,
+      "wantedBy": [
+        "DZA",
+        "UZB"
+      ]
+    },
+    {
+      "name": "Horned viper",
+      "scientificName": "Cerastes cerastes",
+      "importance": 6,
+      "wantedBy": [
+        "DZA",
+        "LBY"
+      ]
+    },
+    {
+      "name": "Basra reed warbler",
+      "scientificName": "Acrocephalus griseldis",
+      "importance": 6,
+      "wantedBy": [
+        "IRQ"
+      ]
+    },
+    {
+      "name": "Black woodpecker",
+      "scientificName": "Dryocopus martius",
+      "importance": 6,
+      "wantedBy": [
+        "BEL"
+      ]
+    },
+    {
+      "name": "Euphrates softshell turtle",
+      "scientificName": "Rafetus euphraticus",
+      "importance": 6,
+      "wantedBy": [
+        "IRQ"
+      ]
+    },
+    {
+      "name": "Grey rhebok",
+      "scientificName": "Pelea capreolus",
+      "importance": 6,
+      "wantedBy": [
+        "LSO"
       ]
     },
     {
@@ -285,19 +2792,43 @@
       ]
     },
     {
-      "name": "Humpback whale",
-      "scientificName": "Megaptera novaeangliae",
-      "importance": 6,
-      "wantedBy": [
-        "BMU"
-      ]
-    },
-    {
       "name": "Least weasel",
       "scientificName": "Mustela nivalis",
       "importance": 6,
       "wantedBy": [
         "MLT"
+      ]
+    },
+    {
+      "name": "Marbled polecat",
+      "scientificName": "Vormela peregusna",
+      "importance": 6,
+      "wantedBy": [
+        "UZB"
+      ]
+    },
+    {
+      "name": "Olive colobus",
+      "scientificName": "Procolobus verus",
+      "importance": 6,
+      "wantedBy": [
+        "CIV"
+      ]
+    },
+    {
+      "name": "Red-tailed monkey",
+      "scientificName": "Cercopithecus ascanius",
+      "importance": 6,
+      "wantedBy": [
+        "AGO"
+      ]
+    },
+    {
+      "name": "Socotra starling",
+      "scientificName": "Onychognathus frater",
+      "importance": 6,
+      "wantedBy": [
+        "YEM"
       ]
     },
     {
@@ -308,12 +2839,6 @@
     },
     {
       "name": "Grass Snake",
-      "scientificName": null,
-      "importance": 6,
-      "wantedBy": []
-    },
-    {
-      "name": "Harbour Seal",
       "scientificName": null,
       "importance": 6,
       "wantedBy": []
@@ -337,18 +2862,6 @@
       "wantedBy": []
     },
     {
-      "name": "Pine Marten",
-      "scientificName": null,
-      "importance": 6,
-      "wantedBy": []
-    },
-    {
-      "name": "Roe Deer",
-      "scientificName": null,
-      "importance": 6,
-      "wantedBy": []
-    },
-    {
       "name": "Stoat",
       "scientificName": null,
       "importance": 6,
@@ -359,6 +2872,14 @@
       "scientificName": null,
       "importance": 6,
       "wantedBy": []
+    },
+    {
+      "name": "Madagascar hissing cockroach",
+      "scientificName": "Gromphadorhina portentosa",
+      "importance": 7,
+      "wantedBy": [
+        "MDG"
+      ]
     },
     {
       "name": "Octopus",
@@ -414,6 +2935,14 @@
       "importance": 8,
       "wantedBy": [
         "MLT"
+      ]
+    },
+    {
+      "name": "Welwitschia beetle",
+      "scientificName": "Ochryonota",
+      "importance": 8,
+      "wantedBy": [
+        "NAM"
       ]
     },
     {
