@@ -1,4 +1,4 @@
-name: Geography iNaturalist cleanup trigger
+name: Geography final wildlife cleanup trigger
 
 on:
   issues:
@@ -10,160 +10,203 @@ permissions:
 
 jobs:
   cleanup:
-    if: github.event.issue.title == '[tiko-geography-inat-pass-20260824]'
+    if: github.event.issue.title == '[tiko-geography-final-wildlife-20260824]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Replace remaining legacy animal markers with observation data
+      - name: Remove synthetic legacy markers and backfill real observed wildlife
         shell: bash
         run: |
           git checkout feat/tiko-globe-app
           python3 <<'PY'
           import concurrent.futures
           import json
+          import re
           import statistics
           import time
+          import unicodedata
           import urllib.parse
           import urllib.request
           from pathlib import Path
 
-          TODAY = '2026-08-24'
-          ANIMALS_PATH = Path('packages/geography/content/country-animals.json')
-          GENERATED_PATH = Path('packages/geography/generated/countries.json')
+          TODAY='2026-08-24'
+          ROOT=Path('packages/geography/content')
+          PATH=ROOT/'country-animals.json'
+          GEN=Path('packages/geography/generated/countries.json')
+          IMAGE_IDS={p.stem for p in (ROOT/'images').glob('*.png')}
 
-          def load(path):
-              return json.loads(path.read_text(encoding='utf-8'))
-
-          def save(path, data):
-              path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-
-          def req_json(url, timeout=18, retries=3):
-              for attempt in range(retries + 1):
+          def load(p): return json.loads(p.read_text(encoding='utf-8'))
+          def save(p,d): p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          def slug(v):
+              v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+','-',v).strip('-')
+          def req_json(url,timeout=18,retries=3):
+              for n in range(retries+1):
                   try:
-                      req = urllib.request.Request(url, headers={'User-Agent':'TikoGlobeGeographyINatPass/1.0 (github.com/tikotalks/tiko-universe)'})
-                      with urllib.request.urlopen(req, timeout=timeout) as r:
-                          return json.loads(r.read().decode('utf-8'))
+                      r=urllib.request.Request(url,headers={'User-Agent':'TikoGlobeFinalWildlife/1.0 (github.com/tikotalks/tiko-universe)'})
+                      with urllib.request.urlopen(r,timeout=timeout) as f:return json.loads(f.read().decode())
                   except Exception:
-                      if attempt == retries:
-                          return None
-                      time.sleep(0.4 * (attempt + 1))
+                      if n==retries:return None
+                      time.sleep(.35*(n+1))
+
+          data=load(PATH); gen=load(GEN)
+          countries=gen.get('countries',gen if isinstance(gen,list) else [])
+          meta={c['id']:c for c in countries if isinstance(c,dict) and c.get('id')}
+
+          # These are deliberately generic artwork mappings: a gull can use generic gull art, a gecko generic lizard art,
+          # but an unrelated species is never substituted merely because a picture exists.
+          MAP=[
+              (('hermit crab',),'hermit-crab',5),
+              (('gull','seagull'),'seagull',5),
+              (('flamingo',),'flamingo',3),
+              (('penguin',),'penguin',3),
+              (('puffin',),'atlantic-puffin',4),
+              (('eagle',),'golden-eagle',4),
+              (('vulture',),'vulture',5),
+              (('owl',),'barn-owl',5),
+              (('parrot','parakeet'),'parrot',4),
+              (('toucan',),'toucan',4),
+              (('hornbill',),'hornbill',5),
+              (('stork',),'stork',5),
+              (('swan',),'swan',5),
+              (('goose',),'goose',6),
+              (('duck','mallard'),'mallard',6),
+              (('bear',),'bear',3),
+              (('fox',),'fox',4),
+              (('wolf',),'gray-wolf',3),
+              (('lynx',),'lynx',4),
+              (('deer',),'deer',4),
+              (('hare',),'european-hare',5),
+              (('rabbit',),'rabbit',5),
+              (('hedgehog',),'hedgehog',5),
+              (('otter',),'eurasian-otter',4),
+              (('monkey','macaque','baboon'),'monkey',4),
+              (('dolphin',),'bottlenose-dolphin',3),
+              (('whale',),'blue-whale',4),
+              (('seal',),'earless-seal',4),
+              (('shark',),'blacktip-shark',4),
+              (('tortoise',),'tortoise',4),
+              (('turtle',),'box-turtle',5),
+              (('crocodile',),'saltwater-crocodile',3),
+              (('alligator',),'alligator',3),
+              (('gecko','lizard','skink','iguana'),'lizard',5),
+              (('snake',),'snake',5),
+              (('frog',),'frog',5),
+              (('crab',),'crab',6),
+              (('lobster',),'lobster',6),
+              (('butterfly',),'butterfly',7),
+              (('bee',),'bee',7),
+          ]
+          MAP=[(terms,media,imp) for terms,media,imp in MAP if media in IMAGE_IDS]
+
+          def mapped_taxon(taxon):
+              common=(taxon.get('preferred_common_name') or '').lower()
+              scientific=(taxon.get('name') or '').lower()
+              text=common+' '+scientific
+              for terms,media,importance in MAP:
+                  if any(term in text for term in terms):
+                      return media,importance
               return None
 
-          animals = load(ANIMALS_PATH)
-          generated = load(GENERATED_PATH)
-          countries = generated.get('countries', generated if isinstance(generated, list) else [])
-          meta = {c['id']: c for c in countries if isinstance(c, dict) and c.get('id')}
-
-          def median_observation(points):
-              if not points:
-                  return None
-              medlat = statistics.median(p[0] for p in points)
-              medlon = statistics.median(p[1] for p in points)
-              return min(points, key=lambda p:(p[0]-medlat)**2+(p[1]-medlon)**2)
-
-          def inat_point(cc, animal):
-              c = meta.get(cc, {})
-              bbox = c.get('bbox')
-              if not bbox or len(bbox) != 4:
-                  return None
-              west, south, east, north = [float(x) for x in bbox]
-              if west > east:
-                  return None
-              names = []
-              if animal.get('scientificName'):
-                  names.append(animal['scientificName'])
-              en = animal.get('names', {}).get('en')
-              if en and en not in names:
-                  names.append(en)
-              for name in names:
-                  params = urllib.parse.urlencode({
-                      'taxon_name': name,
-                      'nelat': north,
-                      'nelng': east,
-                      'swlat': south,
-                      'swlng': west,
-                      'quality_grade': 'research',
-                      'geo': 'true',
-                      'captive': 'false',
-                      'per_page': 100,
-                      'order_by': 'observed_on',
-                      'order': 'desc',
+          def observations_for(cc):
+              c=meta.get(cc,{})
+              bbox=c.get('bbox')
+              if not bbox or len(bbox)!=4:return []
+              west,south,east,north=map(float,bbox)
+              if west>east:return []
+              params=urllib.parse.urlencode({
+                  'nelat':north,'nelng':east,'swlat':south,'swlng':west,
+                  'quality_grade':'research','geo':'true','captive':'false',
+                  'per_page':200,'order_by':'votes','order':'desc'
+              })
+              r=req_json('https://api.inaturalist.org/v1/observations?'+params)
+              if not isinstance(r,dict):return []
+              out=[]
+              for row in r.get('results',[]):
+                  taxon=row.get('taxon') or {}
+                  mapping=mapped_taxon(taxon)
+                  coords=(row.get('geojson') or {}).get('coordinates')
+                  if not mapping or not coords or len(coords)<2:continue
+                  try:lon,lat=float(coords[0]),float(coords[1])
+                  except (TypeError,ValueError):continue
+                  if not(south<=lat<=north and west<=lon<=east):continue
+                  common=taxon.get('preferred_common_name') or taxon.get('name')
+                  scientific=taxon.get('name')
+                  if not common or not scientific:continue
+                  media,importance=mapping
+                  out.append({
+                      'id':slug(scientific),
+                      'names':{'en':common},
+                      'i18nKey':'geography.animals.'+slug(scientific),
+                      'scientificName':scientific,
+                      'taxonRank':taxon.get('rank') or 'species',
+                      'status':'wild',
+                      'importance':importance,
+                      'mediaId':media,
+                      'lat':round(lat,3),'lon':round(lon,3),
+                      'locationSource':{'source':'inaturalist','observationId':row.get('id')}
                   })
-                  result = req_json('https://api.inaturalist.org/v1/observations?' + params)
-                  if not isinstance(result, dict):
-                      continue
-                  pts = []
-                  for row in result.get('results', []):
-                      coords = (row.get('geojson') or {}).get('coordinates')
-                      if not coords or len(coords) < 2:
-                          continue
-                      try:
-                          lon, lat = float(coords[0]), float(coords[1])
-                      except (TypeError, ValueError):
-                          continue
-                      if not (south <= lat <= north and west <= lon <= east):
-                          continue
-                      pts.append((lat, lon, row.get('id')))
-                  chosen = median_observation(pts)
-                  if chosen:
-                      return {
-                          'lat': round(chosen[0],3),
-                          'lon': round(chosen[1],3),
-                          'locationSource': {'source':'inaturalist','observationId':chosen[2]}
-                      }
-              return None
+              return out
 
-          targets = []
-          for cc, country in animals.get('countries', {}).items():
-              for idx, animal in enumerate(country.get('animals', [])):
-                  if animal.get('locationSource', {}).get('source') == 'legacy-authored-needs-review':
-                      targets.append((cc, idx, animal))
-
-          def resolve(t):
-              cc, idx, animal = t
-              return cc, idx, inat_point(cc, animal)
-
-          resolved = {}
+          country_ids=list(data.get('countries',{}))
+          obs={}
           with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
-              for cc, idx, point in pool.map(resolve, targets):
-                  if point:
-                      resolved[(cc,idx)] = point
+              for cc,items in zip(country_ids,pool.map(observations_for,country_ids)):
+                  obs[cc]=items
 
-          changed = 0
-          for cc, country in animals.get('countries', {}).items():
-              for idx, animal in enumerate(country.get('animals', [])):
-                  point = resolved.get((cc,idx))
-                  if not point:
-                      continue
-                  animal['lat'] = point['lat']
-                  animal['lon'] = point['lon']
-                  animal['locationSource'] = point['locationSource']
-                  changed += 1
-              if country.get('animals'):
-                  all_good = all(a.get('locationSource', {}).get('source') in {'gbif','curated-locality','inaturalist'} for a in country['animals'])
-                  country['review'] = {'state':'reviewed' if all_good else 'draft','by':'openai-geography-inat-pass','at':TODAY}
+          moved=0; added=0; zero_fallback=[]
+          for cc,country in data.get('countries',{}).items():
+              wanted=list(country.get('alsoWanted',[]))
+              good=[]
+              for a in country.get('animals',[]):
+                  if a.get('locationSource',{}).get('source')=='legacy-authored-needs-review':
+                      wanted.append({
+                          'id':a.get('id'),'names':a.get('names',{}),'scientificName':a.get('scientificName'),
+                          'note':'Wildlife occurrence retained for editorial review, but the previous marker was synthetic/legacy and has been removed.'
+                      })
+                      moved+=1
+                  else:
+                      good.append(a)
+              existing_ids={a.get('id') for a in good}
+              existing_media={a.get('mediaId') for a in good if a.get('mediaId')}
+              target=max(2,len(good))
+              for candidate in obs.get(cc,[]):
+                  if len(good)>=target:break
+                  if candidate['id'] in existing_ids or candidate.get('mediaId') in existing_media:continue
+                  good.append(candidate); existing_ids.add(candidate['id']); existing_media.add(candidate.get('mediaId')); added+=1
+              if not good:
+                  # Try any mapped real observation rather than resurrecting a fake coordinate.
+                  for candidate in obs.get(cc,[]):
+                      if candidate['id'] not in existing_ids:
+                          good.append(candidate); added+=1; break
+              if not good:
+                  zero_fallback.append(cc)
+                  # Preserve one old entry only to avoid erasing the country; its provenance remains explicit and the country stays draft.
+                  old=country.get('animals',[None])[0]
+                  if old:good=[old]
+              country['animals']=sorted(good,key=lambda a:(a.get('importance',10),a.get('id','')))
+              if wanted:
+                  ded={}
+                  for w in wanted:ded[w.get('id') or json.dumps(w,sort_keys=True)]=w
+                  country['alsoWanted']=list(ded.values())
+              all_good=all(a.get('locationSource',{}).get('source') in {'gbif','curated-locality','inaturalist'} for a in country['animals'])
+              country['review']={'state':'reviewed' if all_good else 'draft','by':'openai-geography-final-wildlife','at':TODAY}
 
-          remaining = sum(
-              1 for c in animals.get('countries', {}).values() for a in c.get('animals', [])
-              if a.get('locationSource', {}).get('source') == 'legacy-authored-needs-review'
-          )
-          audit = animals.setdefault('locationAudit', {})
-          audit['inaturalistImprovedOccurrences'] = changed
-          audit['legacyLocationsRemaining'] = remaining
-          audit['at'] = TODAY
+          remaining=sum(1 for c in data.get('countries',{}).values() for a in c.get('animals',[]) if a.get('locationSource',{}).get('source')=='legacy-authored-needs-review')
+          audit=data.setdefault('locationAudit',{})
+          audit.update({'at':TODAY,'legacyMovedToAlsoWanted':moved,'realObservationFallbacksAdded':added,'legacyLocationsRemaining':remaining,'countriesUnableToReplaceLastLegacy':zero_fallback})
 
-          for cc, country in animals.get('countries', {}).items():
-              assert country.get('animals'), f'{cc} has no animals'
+          for cc,country in data.get('countries',{}).items():
+              assert country.get('animals'),cc
               for a in country['animals']:
                   assert 'lat' in a and 'lon' in a
-                  assert -90 <= a['lat'] <= 90 and -180 <= a['lon'] <= 180
-                  assert 1 <= a.get('importance',0) <= 10
-
-          save(ANIMALS_PATH, animals)
-          print(f'iNaturalist replaced {changed} legacy markers; {remaining} legacy markers remain')
+                  assert -90<=a['lat']<=90 and -180<=a['lon']<=180
+                  assert 1<=a.get('importance',0)<=10
+          save(PATH,data)
+          print(f'moved {moved} legacy markers; added {added} real-observation fallbacks; remaining={remaining}; unable={zero_fallback}')
           PY
 
           git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json
@@ -171,9 +214,9 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add -- packages/geography/content/country-animals.json
           if git diff --cached --quiet; then
-            echo "No geography changes required"
+            echo "No changes"
           else
-            git commit -m "data(geography): replace legacy markers with observations"
+            git commit -m "data(geography): remove synthetic animal markers"
             git push origin HEAD:feat/tiko-globe-app
           fi
 
@@ -181,4 +224,4 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "iNaturalist geography pass finished."
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Final wildlife cleanup finished."
