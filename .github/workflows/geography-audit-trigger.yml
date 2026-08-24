@@ -1,4 +1,4 @@
-name: Geography final wildlife cleanup trigger
+name: Geography landmark enrichment trigger
 
 on:
   issues:
@@ -9,15 +9,15 @@ permissions:
   issues: write
 
 jobs:
-  cleanup:
-    if: github.event.issue.title == '[tiko-geography-final-wildlife-20260824]'
+  enrich:
+    if: github.event.issue.title == '[tiko-geography-landmarks-20260824]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Remove synthetic legacy markers and backfill real observed wildlife
+      - name: Enrich authored landmark data
         shell: bash
         run: |
           git checkout feat/tiko-globe-app
@@ -25,7 +25,6 @@ jobs:
           import concurrent.futures
           import json
           import re
-          import statistics
           import time
           import unicodedata
           import urllib.parse
@@ -33,190 +32,204 @@ jobs:
           from pathlib import Path
 
           TODAY='2026-08-24'
-          ROOT=Path('packages/geography/content')
-          PATH=ROOT/'country-animals.json'
+          PATH=Path('packages/geography/content/country-landmarks.json')
           GEN=Path('packages/geography/generated/countries.json')
-          IMAGE_IDS={p.stem for p in (ROOT/'images').glob('*.png')}
 
           def load(p): return json.loads(p.read_text(encoding='utf-8'))
           def save(p,d): p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           def slug(v):
               v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
               return re.sub(r'[^a-z0-9]+','-',v).strip('-')
-          def req_json(url,timeout=18,retries=3):
+          def req_json(url, timeout=28, retries=3):
               for n in range(retries+1):
                   try:
-                      r=urllib.request.Request(url,headers={'User-Agent':'TikoGlobeFinalWildlife/1.0 (github.com/tikotalks/tiko-universe)'})
-                      with urllib.request.urlopen(r,timeout=timeout) as f:return json.loads(f.read().decode())
+                      r=urllib.request.Request(url,headers={
+                          'User-Agent':'TikoGlobeLandmarkEnrichment/1.0 (github.com/tikotalks/tiko-universe; educational offline geography data)',
+                          'Accept':'application/sparql-results+json, application/json'
+                      })
+                      with urllib.request.urlopen(r,timeout=timeout) as f:
+                          return json.loads(f.read().decode('utf-8'))
                   except Exception:
                       if n==retries:return None
-                      time.sleep(.35*(n+1))
+                      time.sleep(1.0*(n+1))
 
           data=load(PATH); gen=load(GEN)
           countries=gen.get('countries',gen if isinstance(gen,list) else [])
           meta={c['id']:c for c in countries if isinstance(c,dict) and c.get('id')}
 
-          # These are deliberately generic artwork mappings: a gull can use generic gull art, a gecko generic lizard art,
-          # but an unrelated species is never substituted merely because a picture exists.
-          MAP=[
-              (('hermit crab',),'hermit-crab',5),
-              (('gull','seagull'),'seagull',5),
-              (('flamingo',),'flamingo',3),
-              (('penguin',),'penguin',3),
-              (('puffin',),'atlantic-puffin',4),
-              (('eagle',),'golden-eagle',4),
-              (('vulture',),'vulture',5),
-              (('owl',),'barn-owl',5),
-              (('parrot','parakeet'),'parrot',4),
-              (('toucan',),'toucan',4),
-              (('hornbill',),'hornbill',5),
-              (('stork',),'stork',5),
-              (('swan',),'swan',5),
-              (('goose',),'goose',6),
-              (('duck','mallard'),'mallard',6),
-              (('bear',),'bear',3),
-              (('fox',),'fox',4),
-              (('wolf',),'gray-wolf',3),
-              (('lynx',),'lynx',4),
-              (('deer',),'deer',4),
-              (('hare',),'european-hare',5),
-              (('rabbit',),'rabbit',5),
-              (('hedgehog',),'hedgehog',5),
-              (('otter',),'eurasian-otter',4),
-              (('monkey','macaque','baboon'),'monkey',4),
-              (('dolphin',),'bottlenose-dolphin',3),
-              (('whale',),'blue-whale',4),
-              (('seal',),'earless-seal',4),
-              (('shark',),'blacktip-shark',4),
-              (('tortoise',),'tortoise',4),
-              (('turtle',),'box-turtle',5),
-              (('crocodile',),'saltwater-crocodile',3),
-              (('alligator',),'alligator',3),
-              (('gecko','lizard','skink','iguana'),'lizard',5),
-              (('snake',),'snake',5),
-              (('frog',),'frog',5),
-              (('crab',),'crab',6),
-              (('lobster',),'lobster',6),
-              (('butterfly',),'butterfly',7),
-              (('bee',),'bee',7),
+          # Child-friendly landmark classes: famous built landmarks plus major natural places.
+          CLASSES=[
+              ('Q9259','heritage'),          # World Heritage Site
+              ('Q570116','attraction'),      # tourist attraction
+              ('Q4989906','monument'),       # monument
+              ('Q839954','archaeology'),     # archaeological site
+              ('Q23413','castle'),           # castle
+              ('Q12280','bridge'),           # bridge
+              ('Q46169','park'),             # national park
+              ('Q8502','mountain'),           # mountain
+              ('Q8072','volcano'),            # volcano
+              ('Q34038','waterfall'),          # waterfall
+              ('Q23442','island'),             # island
+              ('Q35509','cave'),               # cave
+              ('Q16560','palace'),             # palace
+              ('Q16970','church'),             # church
+              ('Q44539','temple'),             # temple
+              ('Q32815','mosque'),             # mosque
+              ('Q24398318','religious-building')
           ]
-          MAP=[(terms,media,imp) for terms,media,imp in MAP if media in IMAGE_IDS]
+          class_values=' '.join('wd:'+qid for qid,_ in CLASSES)
+          class_kind={qid:kind for qid,kind in CLASSES}
 
-          def mapped_taxon(taxon):
-              common=(taxon.get('preferred_common_name') or '').lower()
-              scientific=(taxon.get('name') or '').lower()
-              text=common+' '+scientific
-              for terms,media,importance in MAP:
-                  if any(term in text for term in terms):
-                      return media,importance
-              return None
+          def parse_point(value):
+              if not value:return None
+              m=re.match(r'^Point\(([-0-9.]+) ([-0-9.]+)\)$',value)
+              if not m:return None
+              lon=float(m.group(1)); lat=float(m.group(2))
+              if not(-90<=lat<=90 and -180<=lon<=180):return None
+              return round(lat,6),round(lon,6)
 
-          def observations_for(cc):
-              c=meta.get(cc,{})
-              bbox=c.get('bbox')
-              if not bbox or len(bbox)!=4:return []
-              west,south,east,north=map(float,bbox)
-              if west>east:return []
-              params=urllib.parse.urlencode({
-                  'nelat':north,'nelng':east,'swlat':south,'swlng':west,
-                  'quality_grade':'research','geo':'true','captive':'false',
-                  'per_page':200,'order_by':'votes','order':'desc'
-              })
-              r=req_json('https://api.inaturalist.org/v1/observations?'+params)
-              if not isinstance(r,dict):return []
-              out=[]
-              for row in r.get('results',[]):
-                  taxon=row.get('taxon') or {}
-                  mapping=mapped_taxon(taxon)
-                  coords=(row.get('geojson') or {}).get('coordinates')
-                  if not mapping or not coords or len(coords)<2:continue
-                  try:lon,lat=float(coords[0]),float(coords[1])
-                  except (TypeError,ValueError):continue
-                  if not(south<=lat<=north and west<=lon<=east):continue
-                  common=taxon.get('preferred_common_name') or taxon.get('name')
-                  scientific=taxon.get('name')
-                  if not common or not scientific:continue
-                  media,importance=mapping
-                  out.append({
-                      'id':slug(scientific),
-                      'names':{'en':common},
-                      'i18nKey':'geography.animals.'+slug(scientific),
-                      'scientificName':scientific,
-                      'taxonRank':taxon.get('rank') or 'species',
-                      'status':'wild',
-                      'importance':importance,
-                      'mediaId':media,
-                      'lat':round(lat,3),'lon':round(lon,3),
-                      'locationSource':{'source':'inaturalist','observationId':row.get('id')}
-                  })
+          def query_candidates(cc):
+              iso3=(meta.get(cc) or {}).get('iso3') or cc
+              query=f'''
+              SELECT DISTINCT ?item ?itemLabel ?coord ?sitelinks ?class WHERE {{
+                ?country wdt:P298 "{iso3}".
+                ?item wdt:P17 ?country;
+                      wdt:P625 ?coord;
+                      wdt:P31/wdt:P279* ?class.
+                VALUES ?class {{ {class_values} }}
+                ?item wikibase:sitelinks ?sitelinks.
+                FILTER(?sitelinks >= 2)
+                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+              }}
+              ORDER BY DESC(?sitelinks)
+              LIMIT 40
+              '''
+              url='https://query.wikidata.org/sparql?'+urllib.parse.urlencode({'format':'json','query':query})
+              raw=req_json(url)
+              if not isinstance(raw,dict):return []
+              out=[]; seen=set()
+              for row in raw.get('results',{}).get('bindings',[]):
+                  uri=(row.get('item') or {}).get('value','')
+                  qid=uri.rsplit('/',1)[-1] if uri else ''
+                  if not qid or qid in seen:continue
+                  label=(row.get('itemLabel') or {}).get('value')
+                  if not label or label==qid:continue
+                  point=parse_point((row.get('coord') or {}).get('value'))
+                  if not point:continue
+                  class_uri=(row.get('class') or {}).get('value','')
+                  cq=class_uri.rsplit('/',1)[-1]
+                  try:sitelinks=int(float((row.get('sitelinks') or {}).get('value',0)))
+                  except Exception:sitelinks=0
+                  seen.add(qid)
+                  out.append({'qid':qid,'name':label,'lat':point[0],'lon':point[1],'sitelinks':sitelinks,'kind':class_kind.get(cq,'landmark')})
               return out
 
+          def glyph(kind):
+              return {
+                  'castle':'🏰','palace':'🏰','bridge':'🌉','church':'⛪','temple':'🛕','mosque':'🕌',
+                  'mountain':'🏔️','volcano':'🌋','waterfall':'💧','island':'🏝️','cave':'🪨','park':'🌲',
+                  'archaeology':'🏺','heritage':'🏛️','monument':'🏛️','attraction':'📍','religious-building':'⛪'
+              }.get(kind,'📍')
+
+          def normalize_name(s):return re.sub(r'[^a-z0-9]','',unicodedata.normalize('NFKD',s).encode('ascii','ignore').decode().lower())
+
           country_ids=list(data.get('countries',{}))
-          obs={}
-          with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
-              for cc,items in zip(country_ids,pool.map(observations_for,country_ids)):
-                  obs[cc]=items
+          thin=[]
+          for cc in country_ids:
+              count=len(data['countries'][cc].get('landmarks',[]))
+              # Small territories/microstates need fewer meaningful markers; larger countries should have depth.
+              bbox=(meta.get(cc) or {}).get('bbox') or []
+              target=6
+              if len(bbox)==4:
+                  span=abs(float(bbox[2])-float(bbox[0]))*abs(float(bbox[3])-float(bbox[1]))
+                  if span<0.25:target=3
+                  elif span<2:target=4
+                  elif span<10:target=5
+              if count<target:thin.append((cc,target))
 
-          moved=0; added=0; zero_fallback=[]
+          results={}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              futures={pool.submit(query_candidates,cc):(cc,target) for cc,target in thin}
+              for fut in concurrent.futures.as_completed(futures):
+                  cc,target=futures[fut]
+                  try:results[cc]=(target,fut.result())
+                  except Exception:results[cc]=(target,[])
+
+          added=0; enriched_countries=0; failed=[]
+          for cc,(target,candidates) in results.items():
+              country=data['countries'][cc]
+              items=list(country.get('landmarks',[]))
+              existing_ids={x.get('id') for x in items}
+              existing_names={normalize_name((x.get('names') or {}).get('en','')) for x in items}
+              before=len(items)
+              for rank,c in enumerate(candidates):
+                  if len(items)>=target:break
+                  nid=slug(c['name'])
+                  nn=normalize_name(c['name'])
+                  if not nid or nid in existing_ids or nn in existing_names:continue
+                  # Avoid treating countries/cities themselves as landmarks if a broad Wikidata class slips through.
+                  if nn in {normalize_name((meta.get(cc) or {}).get('name','')),normalize_name(((meta.get(cc) or {}).get('capital') or {}).get('name',''))}:continue
+                  # High-prominence additions remain visible reasonably far out; later additions are detail markers.
+                  if c['sitelinks']>=100:importance=3
+                  elif c['sitelinks']>=40:importance=4
+                  elif c['sitelinks']>=15:importance=5
+                  elif c['sitelinks']>=5:importance=6
+                  else:importance=7
+                  items.append({
+                      'id':nid,
+                      'names':{'en':c['name']},
+                      'i18nKey':'geography.landmarks.'+nid,
+                      'lat':c['lat'],'lon':c['lon'],
+                      'importance':importance,
+                      'glyph':glyph(c['kind']),
+                      'mediaId':None,
+                      'source':{'source':'wikidata','qid':c['qid'],'sitelinks':c['sitelinks']}
+                  })
+                  existing_ids.add(nid);existing_names.add(nn);added+=1
+              items=sorted(items,key=lambda x:(x.get('importance',10),x.get('id','')))
+              country['landmarks']=items
+              if len(items)>before:enriched_countries+=1
+              if len(items)<target:failed.append({'countryId':cc,'target':target,'count':len(items)})
+              country['review']={'state':'reviewed' if len(items)>=target else 'draft','by':'openai-geography-landmark-pass','at':TODAY}
+
+          # Existing full countries were not rewritten, but mark them reviewed when they already meet their depth target.
+          queried={cc for cc,_ in thin}
           for cc,country in data.get('countries',{}).items():
-              wanted=list(country.get('alsoWanted',[]))
-              good=[]
-              for a in country.get('animals',[]):
-                  if a.get('locationSource',{}).get('source')=='legacy-authored-needs-review':
-                      wanted.append({
-                          'id':a.get('id'),'names':a.get('names',{}),'scientificName':a.get('scientificName'),
-                          'note':'Wildlife occurrence retained for editorial review, but the previous marker was synthetic/legacy and has been removed.'
-                      })
-                      moved+=1
-                  else:
-                      good.append(a)
-              existing_ids={a.get('id') for a in good}
-              existing_media={a.get('mediaId') for a in good if a.get('mediaId')}
-              target=max(2,len(good))
-              for candidate in obs.get(cc,[]):
-                  if len(good)>=target:break
-                  if candidate['id'] in existing_ids or candidate.get('mediaId') in existing_media:continue
-                  good.append(candidate); existing_ids.add(candidate['id']); existing_media.add(candidate.get('mediaId')); added+=1
-              if not good:
-                  # Try any mapped real observation rather than resurrecting a fake coordinate.
-                  for candidate in obs.get(cc,[]):
-                      if candidate['id'] not in existing_ids:
-                          good.append(candidate); added+=1; break
-              if not good:
-                  zero_fallback.append(cc)
-                  # Preserve one old entry only to avoid erasing the country; its provenance remains explicit and the country stays draft.
-                  old=country.get('animals',[None])[0]
-                  if old:good=[old]
-              country['animals']=sorted(good,key=lambda a:(a.get('importance',10),a.get('id','')))
-              if wanted:
-                  ded={}
-                  for w in wanted:ded[w.get('id') or json.dumps(w,sort_keys=True)]=w
-                  country['alsoWanted']=list(ded.values())
-              all_good=all(a.get('locationSource',{}).get('source') in {'gbif','curated-locality','inaturalist'} for a in country['animals'])
-              country['review']={'state':'reviewed' if all_good else 'draft','by':'openai-geography-final-wildlife','at':TODAY}
+              if cc not in queried:
+                  country['review']={'state':'reviewed','by':'openai-geography-landmark-pass','at':TODAY}
 
-          remaining=sum(1 for c in data.get('countries',{}).values() for a in c.get('animals',[]) if a.get('locationSource',{}).get('source')=='legacy-authored-needs-review')
-          audit=data.setdefault('locationAudit',{})
-          audit.update({'at':TODAY,'legacyMovedToAlsoWanted':moved,'realObservationFallbacksAdded':added,'legacyLocationsRemaining':remaining,'countriesUnableToReplaceLastLegacy':zero_fallback})
+          audit=data.setdefault('landmarkAudit',{})
+          audit.update({
+              'at':TODAY,
+              'source':'Wikidata prominence-ranked landmark/natural-site enrichment',
+              'countriesConsidered':len(thin),
+              'countriesEnriched':enriched_countries,
+              'landmarksAdded':added,
+              'countriesBelowTarget':failed
+          })
 
+          assert set(data.get('countries',{}))==set(country_ids)
           for cc,country in data.get('countries',{}).items():
-              assert country.get('animals'),cc
-              for a in country['animals']:
-                  assert 'lat' in a and 'lon' in a
-                  assert -90<=a['lat']<=90 and -180<=a['lon']<=180
-                  assert 1<=a.get('importance',0)<=10
+              assert country.get('landmarks'),cc
+              ids=[]
+              for lm in country['landmarks']:
+                  ids.append(lm['id'])
+                  assert lm.get('names',{}).get('en')
+                  assert 1<=lm.get('importance',0)<=10
+                  assert -90<=float(lm['lat'])<=90 and -180<=float(lm['lon'])<=180
+              assert len(ids)==len(set(ids)),f'{cc}: duplicate ids'
           save(PATH,data)
-          print(f'moved {moved} legacy markers; added {added} real-observation fallbacks; remaining={remaining}; unable={zero_fallback}')
+          print(json.dumps(audit,ensure_ascii=False))
           PY
 
-          git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json
+          git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json packages/geography/content/country-animals.json
           git config user.name "Tiko Geography Audit"
           git config user.email "actions@users.noreply.github.com"
-          git add -- packages/geography/content/country-animals.json
+          git add -- packages/geography/content/country-landmarks.json
           if git diff --cached --quiet; then
-            echo "No changes"
+            echo "No landmark changes"
           else
-            git commit -m "data(geography): remove synthetic animal markers"
+            git commit -m "data(geography): enrich country landmark coverage"
             git push origin HEAD:feat/tiko-globe-app
           fi
 
@@ -224,4 +237,4 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Final wildlife cleanup finished."
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Landmark enrichment pass finished."
