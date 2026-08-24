@@ -1,4 +1,4 @@
-name: Geography location cleanup trigger
+name: Geography iNaturalist cleanup trigger
 
 on:
   issues:
@@ -10,14 +10,14 @@ permissions:
 
 jobs:
   cleanup:
-    if: github.event.issue.title == '[tiko-geography-location-pass-20260824]'
+    if: github.event.issue.title == '[tiko-geography-inat-pass-20260824]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Checkout Globe branch and improve authored animal locations
+      - name: Replace remaining legacy animal markers with observation data
         shell: bash
         run: |
           git checkout feat/tiko-globe-app
@@ -31,9 +31,8 @@ jobs:
           from pathlib import Path
 
           TODAY = '2026-08-24'
-          ROOT = Path('packages/geography/content')
-          ANIMALS_PATH = ROOT / 'country-animals.json'
-          GENERATED_COUNTRIES = Path('packages/geography/generated/countries.json')
+          ANIMALS_PATH = Path('packages/geography/content/country-animals.json')
+          GENERATED_PATH = Path('packages/geography/generated/countries.json')
 
           def load(path):
               return json.loads(path.read_text(encoding='utf-8'))
@@ -41,199 +40,130 @@ jobs:
           def save(path, data):
               path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
-          def req_json(url, timeout=15, retries=3):
+          def req_json(url, timeout=18, retries=3):
               for attempt in range(retries + 1):
                   try:
-                      request = urllib.request.Request(url, headers={'User-Agent': 'TikoGlobeGeographyLocationPass/1.0 (github.com/tikotalks/tiko-universe)'})
-                      with urllib.request.urlopen(request, timeout=timeout) as response:
-                          return json.loads(response.read().decode('utf-8'))
+                      req = urllib.request.Request(url, headers={'User-Agent':'TikoGlobeGeographyINatPass/1.0 (github.com/tikotalks/tiko-universe)'})
+                      with urllib.request.urlopen(req, timeout=timeout) as r:
+                          return json.loads(r.read().decode('utf-8'))
                   except Exception:
                       if attempt == retries:
                           return None
-                      time.sleep(0.35 * (attempt + 1))
+                      time.sleep(0.4 * (attempt + 1))
               return None
 
-          data = load(ANIMALS_PATH)
-          generated = load(GENERATED_COUNTRIES)
-          generated_countries = generated.get('countries', generated if isinstance(generated, list) else [])
-          iso2_by_id = {c.get('id'): c.get('iso2') for c in generated_countries if isinstance(c, dict) and c.get('id')}
+          animals = load(ANIMALS_PATH)
+          generated = load(GENERATED_PATH)
+          countries = generated.get('countries', generated if isinstance(generated, list) else [])
+          meta = {c['id']: c for c in countries if isinstance(c, dict) and c.get('id')}
 
-          MANUAL = {
-              ('MLT','mediterranean-chameleon'): (35.879, 14.389),
-              ('MLT','north-african-hedgehog'): (35.902, 14.423),
-              ('MLT','european-rabbit'): (35.855, 14.381),
-              ('MLT','maltese-wall-lizard'): (35.816, 14.515),
-              ('MLT','moorish-gecko'): (35.884, 14.398),
-              ('MLT','painted-frog'): (35.858, 14.401),
-              ('MLT','western-whip-snake'): (35.914, 14.355),
-              ('MLT','maltese-freshwater-crab'): (35.895, 14.359),
-              ('MLT','yellow-legged-gull'): (35.948, 14.425),
-              ('MLT','common-bottlenose-dolphin'): (35.866, 14.190),
-              ('MLT','loggerhead-sea-turtle'): (35.827, 14.160),
-              ('MLT','blue-rock-thrush'): (35.829, 14.447),
-              ('MLT','greater-flamingo'): (35.956, 14.427),
-              ('MLT','least-weasel'): (35.886, 14.395),
-              ('MLT','sicilian-shrew'): (36.044, 14.251),
-              ('CYP','cyprus-mouflon'): (34.930, 32.700),
-              ('CYN','cyprus-mouflon'): (35.299, 33.002),
-              ('ECU','galapagos-giant-tortoise'): (-0.640, -90.350),
-              ('MNG','wild-bactrian-camel'): (43.600, 97.000),
-              ('NZL','kiwi'): (-39.280, 175.570),
-              ('NZL','tuatara'): (-41.200, 174.870),
-              ('NCL','kagu'): (-21.610, 165.770),
-              ('VNM','saola'): (17.950, 105.980),
-              ('AUS','southern-cassowary'): (-16.170, 145.420),
-              ('AUS','platypus'): (-37.580, 145.300),
-              ('USA','american-alligator'): (25.560, -80.680),
-              ('ARG','magellanic-penguin'): (-44.040, -65.220),
-              ('CAN','polar-bear'): (58.770, -94.170),
-              ('CHN','giant-panda'): (31.000, 103.000),
-              ('FRA','greater-flamingo'): (43.530, 4.510),
-              ('NOR','orca'): (69.700, 18.700),
-              ('NOR','atlantic-puffin'): (62.400, 5.600),
-          }
-
-          taxon_cache = {}
-          def taxon_key(scientific):
-              if scientific in taxon_cache:
-                  return taxon_cache[scientific]
-              if not scientific:
-                  taxon_cache[scientific] = None
-                  return None
-              params = urllib.parse.urlencode({'name': scientific, 'strict': 'false'})
-              result = req_json('https://api.gbif.org/v1/species/match?' + params)
-              key = result.get('usageKey') if isinstance(result, dict) else None
-              taxon_cache[scientific] = key
-              return key
-
-          def gbif_point(scientific, iso2):
-              if not scientific or not iso2 or len(str(iso2)) != 2:
-                  return None
-              key = taxon_key(scientific)
-              if not key:
-                  return None
-              params = urllib.parse.urlencode({
-                  'taxon_key': key,
-                  'country': iso2,
-                  'has_coordinate': 'true',
-                  'occurrence_status': 'PRESENT',
-                  'year': '2000,2026',
-                  'limit': 100,
-              })
-              result = req_json('https://api.gbif.org/v1/occurrence/search?' + params)
-              if not isinstance(result, dict):
-                  return None
-              points = []
-              for row in result.get('results', []):
-                  lat = row.get('decimalLatitude')
-                  lon = row.get('decimalLongitude')
-                  if lat is None or lon is None or row.get('basisOfRecord') == 'FOSSIL_SPECIMEN':
-                      continue
-                  try:
-                      lat, lon = float(lat), float(lon)
-                  except (TypeError, ValueError):
-                      continue
-                  if not (-90 <= lat <= 90 and -180 <= lon <= 180):
-                      continue
-                  year = row.get('year') or 0
-                  uncertainty = row.get('coordinateUncertaintyInMeters')
-                  if uncertainty is not None:
-                      try:
-                          if float(uncertainty) > 100000:
-                              continue
-                      except (TypeError, ValueError):
-                          pass
-                  points.append((lat, lon, row.get('key'), int(year) if str(year).isdigit() else 0))
+          def median_observation(points):
               if not points:
                   return None
-              # Prefer recent records, then choose a real observation near their geographic median.
-              newest = max(p[3] for p in points)
-              recent = [p for p in points if p[3] >= max(2000, newest - 10)] or points
-              med_lat = statistics.median(p[0] for p in recent)
-              med_lon = statistics.median(p[1] for p in recent)
-              chosen = min(recent, key=lambda p: (p[0]-med_lat)**2 + (p[1]-med_lon)**2)
-              return {
-                  'lat': round(chosen[0], 3),
-                  'lon': round(chosen[1], 3),
-                  'locationSource': {'source': 'gbif', 'occurrenceKey': chosen[2]}
-              }
+              medlat = statistics.median(p[0] for p in points)
+              medlon = statistics.median(p[1] for p in points)
+              return min(points, key=lambda p:(p[0]-medlat)**2+(p[1]-medlon)**2)
+
+          def inat_point(cc, animal):
+              c = meta.get(cc, {})
+              bbox = c.get('bbox')
+              if not bbox or len(bbox) != 4:
+                  return None
+              west, south, east, north = [float(x) for x in bbox]
+              if west > east:
+                  return None
+              names = []
+              if animal.get('scientificName'):
+                  names.append(animal['scientificName'])
+              en = animal.get('names', {}).get('en')
+              if en and en not in names:
+                  names.append(en)
+              for name in names:
+                  params = urllib.parse.urlencode({
+                      'taxon_name': name,
+                      'nelat': north,
+                      'nelng': east,
+                      'swlat': south,
+                      'swlng': west,
+                      'quality_grade': 'research',
+                      'geo': 'true',
+                      'captive': 'false',
+                      'per_page': 100,
+                      'order_by': 'observed_on',
+                      'order': 'desc',
+                  })
+                  result = req_json('https://api.inaturalist.org/v1/observations?' + params)
+                  if not isinstance(result, dict):
+                      continue
+                  pts = []
+                  for row in result.get('results', []):
+                      coords = (row.get('geojson') or {}).get('coordinates')
+                      if not coords or len(coords) < 2:
+                          continue
+                      try:
+                          lon, lat = float(coords[0]), float(coords[1])
+                      except (TypeError, ValueError):
+                          continue
+                      if not (south <= lat <= north and west <= lon <= east):
+                          continue
+                      pts.append((lat, lon, row.get('id')))
+                  chosen = median_observation(pts)
+                  if chosen:
+                      return {
+                          'lat': round(chosen[0],3),
+                          'lon': round(chosen[1],3),
+                          'locationSource': {'source':'inaturalist','observationId':chosen[2]}
+                      }
+              return None
 
           targets = []
-          for cc, country in data.get('countries', {}).items():
-              for index, animal in enumerate(country.get('animals', [])):
-                  source = animal.get('locationSource', {}).get('source')
-                  if (cc, animal.get('id')) in MANUAL or 'lat' not in animal or 'lon' not in animal or source in {None, 'legacy-authored-needs-review', 'location-pending', 'authored-unverified'}:
-                      targets.append((cc, index, animal.get('id'), animal.get('scientificName'), iso2_by_id.get(cc)))
+          for cc, country in animals.get('countries', {}).items():
+              for idx, animal in enumerate(country.get('animals', [])):
+                  if animal.get('locationSource', {}).get('source') == 'legacy-authored-needs-review':
+                      targets.append((cc, idx, animal))
 
-          def resolve(target):
-              cc, index, animal_id, scientific, iso2 = target
-              manual = MANUAL.get((cc, animal_id))
-              if manual:
-                  return cc, index, {
-                      'lat': round(manual[0], 3), 'lon': round(manual[1], 3),
-                      'locationSource': {'source': 'curated-locality'}
-                  }
-              return cc, index, gbif_point(scientific, iso2)
+          def resolve(t):
+              cc, idx, animal = t
+              return cc, idx, inat_point(cc, animal)
 
           resolved = {}
-          with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
-              for cc, index, point in pool.map(resolve, targets):
-                  resolved[(cc, index)] = point
+          with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
+              for cc, idx, point in pool.map(resolve, targets):
+                  if point:
+                      resolved[(cc,idx)] = point
 
-          removed = 0
-          improved = 0
-          for cc, country in data.get('countries', {}).items():
-              wanted = list(country.get('alsoWanted', []))
-              out = []
-              for index, animal in enumerate(country.get('animals', [])):
-                  point = resolved.get((cc, index), '__untouched__')
-                  if point != '__untouched__' and point:
-                      animal['lat'] = point['lat']
-                      animal['lon'] = point['lon']
-                      animal['locationSource'] = point['locationSource']
-                      animal.pop('locationPending', None)
-                      improved += 1
-                  if 'lat' not in animal or 'lon' not in animal:
-                      wanted.append({
-                          'id': animal.get('id'),
-                          'names': animal.get('names', {}),
-                          'scientificName': animal.get('scientificName'),
-                          'note': 'Valid wildlife occurrence retained, but no reliable representative coordinate was found; hidden until located.'
-                      })
-                      removed += 1
+          changed = 0
+          for cc, country in animals.get('countries', {}).items():
+              for idx, animal in enumerate(country.get('animals', [])):
+                  point = resolved.get((cc,idx))
+                  if not point:
                       continue
-                  out.append(animal)
-              if not out:
-                  raise RuntimeError(f'{cc} would have no located animals after cleanup')
-              country['animals'] = sorted(out, key=lambda a: (a.get('importance', 10), a.get('id', '')))
-              if wanted:
-                  dedup = {}
-                  for item in wanted:
-                      key = item.get('id') or item.get('name') or json.dumps(item, sort_keys=True)
-                      dedup[key] = item
-                  country['alsoWanted'] = list(dedup.values())
-              all_good = all(a.get('locationSource', {}).get('source') in {'gbif','curated-locality'} for a in out)
-              country['review'] = {
-                  'state': 'reviewed' if all_good else 'draft',
-                  'by': 'openai-geography-location-pass',
-                  'at': TODAY,
-              }
+                  animal['lat'] = point['lat']
+                  animal['lon'] = point['lon']
+                  animal['locationSource'] = point['locationSource']
+                  changed += 1
+              if country.get('animals'):
+                  all_good = all(a.get('locationSource', {}).get('source') in {'gbif','curated-locality','inaturalist'} for a in country['animals'])
+                  country['review'] = {'state':'reviewed' if all_good else 'draft','by':'openai-geography-inat-pass','at':TODAY}
 
-          for cc, country in data.get('countries', {}).items():
+          remaining = sum(
+              1 for c in animals.get('countries', {}).values() for a in c.get('animals', [])
+              if a.get('locationSource', {}).get('source') == 'legacy-authored-needs-review'
+          )
+          audit = animals.setdefault('locationAudit', {})
+          audit['inaturalistImprovedOccurrences'] = changed
+          audit['legacyLocationsRemaining'] = remaining
+          audit['at'] = TODAY
+
+          for cc, country in animals.get('countries', {}).items():
               assert country.get('animals'), f'{cc} has no animals'
-              for animal in country['animals']:
-                  assert 'lat' in animal and 'lon' in animal, f'{cc}/{animal.get("id")} missing location'
-                  assert -90 <= animal['lat'] <= 90 and -180 <= animal['lon'] <= 180
-                  assert 1 <= animal.get('importance', 0) <= 10
+              for a in country['animals']:
+                  assert 'lat' in a and 'lon' in a
+                  assert -90 <= a['lat'] <= 90 and -180 <= a['lon'] <= 180
+                  assert 1 <= a.get('importance',0) <= 10
 
-          data['locationAudit'] = {
-              'at': TODAY,
-              'rule': 'Every visible country animal has an explicit authored or real-observation coordinate; unresolved animals move to alsoWanted rather than receiving a fake marker.',
-              'improvedOccurrences': improved,
-              'hiddenUntilLocated': removed,
-          }
-          save(ANIMALS_PATH, data)
-          print(f'improved {improved} animal occurrences; moved {removed} unresolved occurrences to alsoWanted')
+          save(ANIMALS_PATH, animals)
+          print(f'iNaturalist replaced {changed} legacy markers; {remaining} legacy markers remain')
           PY
 
           git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json
@@ -243,7 +173,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No geography changes required"
           else
-            git commit -m "data(geography): replace legacy animal marker locations"
+            git commit -m "data(geography): replace legacy markers with observations"
             git push origin HEAD:feat/tiko-globe-app
           fi
 
@@ -251,4 +181,4 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Geography location pass finished."
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "iNaturalist geography pass finished."
