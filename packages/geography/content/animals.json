@@ -486,8 +486,8 @@
           "importance": 5
         },
         {
-          "lat": 0.134,
-          "lon": 13.434,
+          "lat": -2.15,
+          "lon": 14.45,
           "country": "COG",
           "closeUp": true,
           "importance": 4
@@ -2107,8 +2107,8 @@
           "importance": 3
         },
         {
-          "lat": 11.02,
-          "lon": 1.548,
+          "lat": 9.55,
+          "lon": 1.05,
           "country": "TGO",
           "closeUp": true,
           "importance": 3
@@ -4701,15 +4701,15 @@
           "importance": 3
         },
         {
-          "lat": 30.585,
-          "lon": 34.857,
+          "lat": 24.1,
+          "lon": 44.6,
           "country": "SAU",
           "closeUp": true,
           "importance": 3
         },
         {
-          "lat": 35.308,
-          "lon": 57.574,
+          "lat": 38.6,
+          "lon": 58.4,
           "country": "TKM",
           "closeUp": true,
           "importance": 2
@@ -4722,8 +4722,8 @@
           "importance": 4
         },
         {
-          "lat": 17.102,
-          "lon": 54.45,
+          "lat": 15.3,
+          "lon": 45.4,
           "country": "YEM",
           "closeUp": true,
           "importance": 3
@@ -5524,8 +5524,8 @@
           "importance": 3
         },
         {
-          "lat": -16.576,
-          "lon": 146.008,
+          "lat": -17.75,
+          "lon": 177.45,
           "country": "FJI",
           "closeUp": true,
           "importance": 3
@@ -5930,8 +5930,8 @@
           "importance": 5
         },
         {
-          "lat": 10.769,
-          "lon": 2.096,
+          "lat": 16.4,
+          "lon": -3.1,
           "country": "MLI",
           "closeUp": true,
           "importance": 6
@@ -8513,8 +8513,8 @@
       ],
       "markers": [
         {
-          "lat": 23.877,
-          "lon": -14.666,
+          "lat": 24.2,
+          "lon": -13.2,
           "country": "SAH",
           "closeUp": true,
           "importance": 4
@@ -10147,8 +10147,8 @@
       ],
       "markers": [
         {
-          "lat": 23.826,
-          "lon": -15.564,
+          "lat": 23.9,
+          "lon": -13.9,
           "country": "SAH",
           "closeUp": true,
           "importance": 4
@@ -11836,8 +11836,8 @@
           "importance": 6
         },
         {
-          "lat": 1.315,
-          "lon": 103.975,
+          "lat": 1.35,
+          "lon": 173.14,
           "country": "KIR",
           "closeUp": true,
           "importance": 6
@@ -15111,8 +15111,8 @@
           "district": "central-asia"
         },
         {
-          "lat": 29.407,
-          "lon": 65.745,
+          "lat": 34.6,
+          "lon": 65.9,
           "country": "AFG",
           "closeUp": true,
           "importance": 5
@@ -17307,8 +17307,8 @@
           "district": "middle-east"
         },
         {
-          "lat": 33.741,
-          "lon": 73.079,
+          "lat": 34.8,
+          "lon": 67.2,
           "country": "AFG",
           "closeUp": true,
           "importance": 3
@@ -20342,8 +20342,8 @@
           "district": "north-america-desert"
         },
         {
-          "lat": 31.367,
-          "lon": 74.268,
+          "lat": 32.5,
+          "lon": 66.9,
           "country": "AFG",
           "closeUp": true,
           "importance": 7
@@ -20510,8 +20510,8 @@
           "importance": 7
         },
         {
-          "lat": 10.038,
-          "lon": 44.788,
+          "lat": 4.6,
+          "lon": 45.4,
           "country": "SOM",
           "closeUp": true,
           "importance": 7
@@ -21251,8 +21251,8 @@
           "importance": 2
         },
         {
-          "lat": -0.5,
-          "lon": 3.5,
+          "lat": 3.22,
+          "lon": 8.62,
           "country": "GNQ",
           "closeUp": true,
           "importance": 6
@@ -21772,8 +21772,8 @@
           "importance": 3
         },
         {
-          "lat": -33.948,
-          "lon": 18.485,
+          "lat": -41.3,
+          "lon": 174.8,
           "country": "NZL",
           "closeUp": true,
           "importance": 4
@@ -22387,8 +22387,8 @@
           "district": "himalaya"
         },
         {
-          "lat": 38.2,
-          "lon": 73.936,
+          "lat": 37,
+          "lon": 73.4,
           "country": "AFG",
           "closeUp": true,
           "importance": 2

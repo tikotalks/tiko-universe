@@ -38,6 +38,15 @@ const shapes = new Map(
  * spans twelve degrees of longitude and its drawn part is under one — Mount
  * Larsen stands on Thule Island, which the 50 m outline does not have at all.
  */
+/** A country whose parts are far enough apart that its outline proves nothing. */
+const isScattered = (id) => {
+  const country = shapes.get(id)
+  if (!country) return true
+  const [minLon, minLat, maxLon, maxLat] = country.bbox ?? [0, 0, 0, 0]
+  const size = Math.max(country.labelSpanDegrees ?? 0, 0.01)
+  return Math.max(maxLon - minLon, maxLat - minLat) / size > 8
+}
+
 const isTiny = (id) => {
   const country = shapes.get(id)
   if (!country) return true
@@ -55,6 +64,9 @@ const landmarks = JSON.parse(await readFile(join(CONTENT_DIR, 'landmarks.json'),
  * over a strait, and the South Pole. Everything else has to sit in its country.
  */
 const OFFSHORE = new Set([
+  // 600 km off the coast and far too small for the 50 m outline, but as
+  // Australian as Sydney.
+  'landmark.lord-howe-island',
   'landmark.great-barrier-reef', 'landmark.bikini-atoll', 'landmark.bounty-bay',
   'landmark.south-pole', 'landmark.laayoune', 'landmark.bouvet-island',
   'landmark.crimean-bridge', 'landmark.chersonesus', 'landmark.louisa-reef',
@@ -82,6 +94,14 @@ for (const animal of animals) {
   for (const marker of animal.markers) {
     if (marker.country) {
       const wet = !isLand(marker)
+      // Saint Helena reaches from Ascension to Tristan da Cunha, two thousand
+      // kilometres apart, and the French Southern Territories are five specks
+      // in the Indian Ocean. An animal in the water of a country like that
+      // cannot be checked against an outline that does not contain the water.
+      if (wet && isScattered(marker.country)) {
+        notes.push(`${animal.name} is in ${marker.country}'s waters, which its outline does not cover`)
+        continue
+      }
       const reach = isTiny(marker.country)
         ? ISLAND_REACH_DEGREES
         : (wet ? OFFSHORE_REACH_DEGREES : ASHORE_REACH_DEGREES)

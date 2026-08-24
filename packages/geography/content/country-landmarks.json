@@ -60,6 +60,42 @@
           "mediaId": null
         },
         {
+          "id": "mont-blanc",
+          "names": {
+            "en": "Mont Blanc"
+          },
+          "i18nKey": "geography.landmarks.mont-blanc",
+          "lat": 45.8326,
+          "lon": 6.8652,
+          "importance": 3,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
+          "id": "carcassonne",
+          "names": {
+            "en": "Carcassonne"
+          },
+          "i18nKey": "geography.landmarks.carcassonne",
+          "lat": 43.2061,
+          "lon": 2.3639,
+          "importance": 4,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "champs-elysees",
+          "names": {
+            "en": "Champs-Élysées"
+          },
+          "i18nKey": "geography.landmarks.champs-elysees",
+          "lat": 48.8698,
+          "lon": 2.3078,
+          "importance": 4,
+          "glyph": "🌳",
+          "mediaId": null
+        },
+        {
           "id": "arc-de-triomphe",
           "names": {
             "en": "Arc de Triomphe"
@@ -72,6 +108,18 @@
           "mediaId": null
         },
         {
+          "id": "chambord",
+          "names": {
+            "en": "Chambord"
+          },
+          "i18nKey": "geography.landmarks.chambord",
+          "lat": 47.6161,
+          "lon": 1.517,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
           "id": "mont-saint-michel",
           "names": {
             "en": "Mont Saint-Michel"
@@ -81,6 +129,18 @@
           "lon": -1.511,
           "importance": 5,
           "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "musee-d-orsay",
+          "names": {
+            "en": "Musée d'Orsay"
+          },
+          "i18nKey": "geography.landmarks.musee-d-orsay",
+          "lat": 48.86,
+          "lon": 2.3266,
+          "importance": 5,
+          "glyph": "🖼️",
           "mediaId": null
         },
         {
@@ -105,6 +165,30 @@
           "lon": 2.343,
           "importance": 5,
           "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "sainte-chapelle",
+          "names": {
+            "en": "Sainte-Chapelle"
+          },
+          "i18nKey": "geography.landmarks.sainte-chapelle",
+          "lat": 48.8554,
+          "lon": 2.345,
+          "importance": 5,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "verdon-gorge",
+          "names": {
+            "en": "Verdon Gorge"
+          },
+          "i18nKey": "geography.landmarks.verdon-gorge",
+          "lat": 43.7494,
+          "lon": 6.3269,
+          "importance": 6,
+          "glyph": "🏞️",
           "mediaId": null
         },
         {
@@ -189,6 +273,66 @@
           "mediaId": "tower-bridge"
         },
         {
+          "id": "loch-ness",
+          "names": {
+            "en": "Loch Ness"
+          },
+          "i18nKey": "geography.landmarks.loch-ness",
+          "lat": 57.3229,
+          "lon": -4.4244,
+          "importance": 3,
+          "glyph": "🐉",
+          "mediaId": null
+        },
+        {
+          "id": "tower-of-london",
+          "names": {
+            "en": "Tower of London"
+          },
+          "i18nKey": "geography.landmarks.tower-of-london",
+          "lat": 51.5081,
+          "lon": -0.0759,
+          "importance": 3,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "westminster-abbey",
+          "names": {
+            "en": "Westminster Abbey"
+          },
+          "i18nKey": "geography.landmarks.westminster-abbey",
+          "lat": 51.4994,
+          "lon": -0.1273,
+          "importance": 3,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "hadrian-s-wall",
+          "names": {
+            "en": "Hadrian's Wall"
+          },
+          "i18nKey": "geography.landmarks.hadrian-s-wall",
+          "lat": 55.0246,
+          "lon": -2.29,
+          "importance": 4,
+          "glyph": "🧱",
+          "mediaId": null
+        },
+        {
+          "id": "st-paul-s-cathedral",
+          "names": {
+            "en": "St Paul's Cathedral"
+          },
+          "i18nKey": "geography.landmarks.st-paul-s-cathedral",
+          "lat": 51.5138,
+          "lon": -0.0984,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
           "id": "buckingham-palace",
           "names": {
             "en": "Buckingham Palace"
@@ -208,6 +352,30 @@
           "i18nKey": "geography.landmarks.edinburgh-castle",
           "lat": 55.949,
           "lon": -3.2,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "snowdon",
+          "names": {
+            "en": "Snowdon"
+          },
+          "i18nKey": "geography.landmarks.snowdon",
+          "lat": 53.0685,
+          "lon": -4.0763,
+          "importance": 5,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
+          "id": "windsor-castle",
+          "names": {
+            "en": "Windsor Castle"
+          },
+          "i18nKey": "geography.landmarks.windsor-castle",
+          "lat": 51.4839,
+          "lon": -0.6044,
           "importance": 5,
           "glyph": "🏰",
           "mediaId": null
@@ -282,6 +450,90 @@
           "note": "Active stratovolcano on the east coast of Sicily, Italy"
         },
         {
+          "id": "pantheon",
+          "names": {
+            "en": "Pantheon"
+          },
+          "i18nKey": "geography.landmarks.pantheon",
+          "lat": 41.8986,
+          "lon": 12.4769,
+          "importance": 3,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
+          "id": "pompeii",
+          "names": {
+            "en": "Pompeii"
+          },
+          "i18nKey": "geography.landmarks.pompeii",
+          "lat": 40.7497,
+          "lon": 14.4869,
+          "importance": 3,
+          "glyph": "🏺",
+          "mediaId": null
+        },
+        {
+          "id": "roman-forum",
+          "names": {
+            "en": "Roman Forum"
+          },
+          "i18nKey": "geography.landmarks.roman-forum",
+          "lat": 41.8925,
+          "lon": 12.4853,
+          "importance": 3,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
+          "id": "vatican-museums",
+          "names": {
+            "en": "Vatican Museums"
+          },
+          "i18nKey": "geography.landmarks.vatican-museums",
+          "lat": 41.9065,
+          "lon": 12.4536,
+          "importance": 3,
+          "glyph": "🖼️",
+          "mediaId": null
+        },
+        {
+          "id": "grand-canal",
+          "names": {
+            "en": "Grand Canal"
+          },
+          "i18nKey": "geography.landmarks.grand-canal",
+          "lat": 45.4361,
+          "lon": 12.333,
+          "importance": 4,
+          "glyph": "🛶",
+          "mediaId": null
+        },
+        {
+          "id": "milan-cathedral",
+          "names": {
+            "en": "Milan Cathedral"
+          },
+          "i18nKey": "geography.landmarks.milan-cathedral",
+          "lat": 45.4642,
+          "lon": 9.1919,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "castel-sant-angelo",
+          "names": {
+            "en": "Castel Sant'Angelo"
+          },
+          "i18nKey": "geography.landmarks.castel-sant-angelo",
+          "lat": 41.9031,
+          "lon": 12.4663,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
           "id": "duomo-of-florence",
           "names": {
             "en": "Duomo of Florence"
@@ -306,6 +558,18 @@
           "mediaId": null
         },
         {
+          "id": "spanish-steps",
+          "names": {
+            "en": "Spanish Steps"
+          },
+          "i18nKey": "geography.landmarks.spanish-steps",
+          "lat": 41.9058,
+          "lon": 12.4823,
+          "importance": 5,
+          "glyph": "🪜",
+          "mediaId": null
+        },
+        {
           "id": "st-mark-s-square",
           "names": {
             "en": "St Mark's Square"
@@ -327,6 +591,30 @@
           "lon": 12.483,
           "importance": 5,
           "glyph": "⛲",
+          "mediaId": null
+        },
+        {
+          "id": "circus-maximus",
+          "names": {
+            "en": "Circus Maximus"
+          },
+          "i18nKey": "geography.landmarks.circus-maximus",
+          "lat": 41.886,
+          "lon": 12.4853,
+          "importance": 6,
+          "glyph": "🏟️",
+          "mediaId": null
+        },
+        {
+          "id": "colosseum-arch-of-constantine",
+          "names": {
+            "en": "Colosseum Arch of Constantine"
+          },
+          "i18nKey": "geography.landmarks.colosseum-arch-of-constantine",
+          "lat": 41.8898,
+          "lon": 12.4906,
+          "importance": 6,
+          "glyph": "🏛️",
           "mediaId": null
         }
       ]
@@ -454,6 +742,42 @@
           "note": "Basilica under construction since 1882 in Barcelona, Spain"
         },
         {
+          "id": "mezquita-of-cordoba",
+          "names": {
+            "en": "Mezquita of Córdoba"
+          },
+          "i18nKey": "geography.landmarks.mezquita-of-cordoba",
+          "lat": 37.879,
+          "lon": -4.7794,
+          "importance": 4,
+          "glyph": "🕌",
+          "mediaId": null
+        },
+        {
+          "id": "prado-museum",
+          "names": {
+            "en": "Prado Museum"
+          },
+          "i18nKey": "geography.landmarks.prado-museum",
+          "lat": 40.4138,
+          "lon": -3.6921,
+          "importance": 4,
+          "glyph": "🖼️",
+          "mediaId": null
+        },
+        {
+          "id": "santiago-de-compostela-cathedral",
+          "names": {
+            "en": "Santiago de Compostela Cathedral"
+          },
+          "i18nKey": "geography.landmarks.santiago-de-compostela-cathedral",
+          "lat": 42.8806,
+          "lon": -8.5446,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
           "id": "teide",
           "names": {
             "en": "Teide"
@@ -483,6 +807,42 @@
           "lon": -3.588,
           "importance": 5,
           "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "guggenheim-bilbao",
+          "names": {
+            "en": "Guggenheim Bilbao"
+          },
+          "i18nKey": "geography.landmarks.guggenheim-bilbao",
+          "lat": 43.2687,
+          "lon": -2.934,
+          "importance": 5,
+          "glyph": "🖼️",
+          "mediaId": null
+        },
+        {
+          "id": "royal-palace-of-madrid",
+          "names": {
+            "en": "Royal Palace of Madrid"
+          },
+          "i18nKey": "geography.landmarks.royal-palace-of-madrid",
+          "lat": 40.418,
+          "lon": -3.7143,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "segovia-aqueduct",
+          "names": {
+            "en": "Segovia Aqueduct"
+          },
+          "i18nKey": "geography.landmarks.segovia-aqueduct",
+          "lat": 40.9481,
+          "lon": -4.1184,
+          "importance": 5,
+          "glyph": "🌉",
           "mediaId": null
         },
         {
@@ -543,6 +903,18 @@
           "note": "Building in Santa Maria de Belém, Lisbon District, Portugal"
         },
         {
+          "id": "tower-of-belem",
+          "names": {
+            "en": "Tower of Belém"
+          },
+          "i18nKey": "geography.landmarks.tower-of-belem",
+          "lat": 38.6916,
+          "lon": -9.216,
+          "importance": 3,
+          "glyph": "🗼",
+          "mediaId": null
+        },
+        {
           "id": "vasco-da-gama-bridge",
           "names": {
             "en": "Vasco da Gama Bridge"
@@ -561,6 +933,18 @@
             "fameTier": "renowned"
           },
           "note": "Bridge in Portugal"
+        },
+        {
+          "id": "douro-valley",
+          "names": {
+            "en": "Douro Valley"
+          },
+          "i18nKey": "geography.landmarks.douro-valley",
+          "lat": 41.1,
+          "lon": -7.79,
+          "importance": 4,
+          "glyph": "🍇",
+          "mediaId": null
         },
         {
           "id": "madeira-island",
@@ -632,6 +1016,42 @@
           "lon": -9.216,
           "importance": 5,
           "glyph": "🗼",
+          "mediaId": null
+        },
+        {
+          "id": "bom-jesus-do-monte",
+          "names": {
+            "en": "Bom Jesus do Monte"
+          },
+          "i18nKey": "geography.landmarks.bom-jesus-do-monte",
+          "lat": 41.5545,
+          "lon": -8.3776,
+          "importance": 5,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "cabo-da-roca",
+          "names": {
+            "en": "Cabo da Roca"
+          },
+          "i18nKey": "geography.landmarks.cabo-da-roca",
+          "lat": 38.7805,
+          "lon": -9.4989,
+          "importance": 5,
+          "glyph": "🌊",
+          "mediaId": null
+        },
+        {
+          "id": "obidos",
+          "names": {
+            "en": "Óbidos"
+          },
+          "i18nKey": "geography.landmarks.obidos",
+          "lat": 39.3606,
+          "lon": -9.1573,
+          "importance": 6,
+          "glyph": "🏰",
           "mediaId": null
         },
         {
@@ -744,6 +1164,42 @@
           "note": "Roman-Catholic cathedral in Aachen, Germany"
         },
         {
+          "id": "berlin-wall-memorial",
+          "names": {
+            "en": "Berlin Wall Memorial"
+          },
+          "i18nKey": "geography.landmarks.berlin-wall-memorial",
+          "lat": 52.5351,
+          "lon": 13.3901,
+          "importance": 4,
+          "glyph": "🧱",
+          "mediaId": null
+        },
+        {
+          "id": "black-forest",
+          "names": {
+            "en": "Black Forest"
+          },
+          "i18nKey": "geography.landmarks.black-forest",
+          "lat": 48.2,
+          "lon": 8.2,
+          "importance": 4,
+          "glyph": "🌲",
+          "mediaId": null
+        },
+        {
+          "id": "reichstag",
+          "names": {
+            "en": "Reichstag"
+          },
+          "i18nKey": "geography.landmarks.reichstag",
+          "lat": 52.5186,
+          "lon": 13.3761,
+          "importance": 4,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
           "id": "rugen",
           "names": {
             "en": "Rügen"
@@ -764,6 +1220,18 @@
           "note": "Island in the Baltic Sea off the Pomeranian coast of Germany"
         },
         {
+          "id": "zugspitze",
+          "names": {
+            "en": "Zugspitze"
+          },
+          "i18nKey": "geography.landmarks.zugspitze",
+          "lat": 47.4211,
+          "lon": 10.9853,
+          "importance": 4,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
           "id": "cologne-cathedral",
           "names": {
             "en": "Cologne Cathedral"
@@ -773,6 +1241,42 @@
           "lon": 6.958,
           "importance": 5,
           "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "heidelberg-castle",
+          "names": {
+            "en": "Heidelberg Castle"
+          },
+          "i18nKey": "geography.landmarks.heidelberg-castle",
+          "lat": 49.4106,
+          "lon": 8.7154,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "museum-island",
+          "names": {
+            "en": "Museum Island"
+          },
+          "i18nKey": "geography.landmarks.museum-island",
+          "lat": 52.5169,
+          "lon": 13.4019,
+          "importance": 5,
+          "glyph": "🖼️",
+          "mediaId": null
+        },
+        {
+          "id": "rhine-valley",
+          "names": {
+            "en": "Rhine Valley"
+          },
+          "i18nKey": "geography.landmarks.rhine-valley",
+          "lat": 50.15,
+          "lon": 7.7,
+          "importance": 5,
+          "glyph": "🏞️",
           "mediaId": null
         }
       ]
@@ -788,6 +1292,78 @@
         "at": "2026-08-24"
       },
       "landmarks": [
+        {
+          "id": "keukenhof",
+          "names": {
+            "en": "Keukenhof"
+          },
+          "i18nKey": "geography.landmarks.keukenhof",
+          "lat": 52.2697,
+          "lon": 4.5461,
+          "importance": 4,
+          "glyph": "🌷",
+          "mediaId": null
+        },
+        {
+          "id": "van-gogh-museum",
+          "names": {
+            "en": "Van Gogh Museum"
+          },
+          "i18nKey": "geography.landmarks.van-gogh-museum",
+          "lat": 52.3584,
+          "lon": 4.8811,
+          "importance": 4,
+          "glyph": "🖼️",
+          "mediaId": null
+        },
+        {
+          "id": "wadden-sea",
+          "names": {
+            "en": "Wadden Sea"
+          },
+          "i18nKey": "geography.landmarks.wadden-sea",
+          "lat": 53.4,
+          "lon": 5.6,
+          "importance": 4,
+          "glyph": "🐚",
+          "mediaId": null
+        },
+        {
+          "id": "afsluitdijk",
+          "names": {
+            "en": "Afsluitdijk"
+          },
+          "i18nKey": "geography.landmarks.afsluitdijk",
+          "lat": 53.068,
+          "lon": 5.16,
+          "importance": 5,
+          "glyph": "🌊",
+          "mediaId": null
+        },
+        {
+          "id": "binnenhof",
+          "names": {
+            "en": "Binnenhof"
+          },
+          "i18nKey": "geography.landmarks.binnenhof",
+          "lat": 52.0799,
+          "lon": 4.3113,
+          "importance": 5,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
+          "id": "peace-palace",
+          "names": {
+            "en": "Peace Palace"
+          },
+          "i18nKey": "geography.landmarks.peace-palace",
+          "lat": 52.0866,
+          "lon": 4.2955,
+          "importance": 5,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
         {
           "id": "rijksmuseum",
           "names": {
@@ -808,6 +1384,18 @@
           "i18nKey": "geography.landmarks.windmills-of-kinderdijk",
           "lat": 51.884,
           "lon": 4.64,
+          "importance": 5,
+          "glyph": "🌬️",
+          "mediaId": null
+        },
+        {
+          "id": "zaanse-schans",
+          "names": {
+            "en": "Zaanse Schans"
+          },
+          "i18nKey": "geography.landmarks.zaanse-schans",
+          "lat": 52.4746,
+          "lon": 4.8175,
           "importance": 5,
           "glyph": "🌬️",
           "mediaId": null
@@ -1084,13 +1672,25 @@
           "mediaId": null
         },
         {
+          "id": "jungfraujoch",
+          "names": {
+            "en": "Jungfraujoch"
+          },
+          "i18nKey": "geography.landmarks.jungfraujoch",
+          "lat": 46.5474,
+          "lon": 7.9806,
+          "importance": 3,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
           "id": "lake-lugano",
           "names": {
             "en": "Lake Lugano"
           },
           "i18nKey": "geography.landmarks.lake-lugano",
-          "lat": 46.0,
-          "lon": 9.0,
+          "lat": 46,
+          "lon": 9,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -1102,6 +1702,18 @@
             "fameTier": "renowned"
           },
           "note": "Lake in Switzerland and Italy"
+        },
+        {
+          "id": "aletsch-glacier",
+          "names": {
+            "en": "Aletsch Glacier"
+          },
+          "i18nKey": "geography.landmarks.aletsch-glacier",
+          "lat": 46.5008,
+          "lon": 8.0503,
+          "importance": 4,
+          "glyph": "🧊",
+          "mediaId": null
         },
         {
           "id": "chillon-castle",
@@ -1124,6 +1736,18 @@
           "note": "Moated castle in Veytaux in the canton of Vaud, Switzerland"
         },
         {
+          "id": "lake-geneva",
+          "names": {
+            "en": "Lake Geneva"
+          },
+          "i18nKey": "geography.landmarks.lake-geneva",
+          "lat": 46.45,
+          "lon": 6.5,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "rhine-falls",
           "names": {
             "en": "Rhine Falls"
@@ -1142,6 +1766,30 @@
             "fameTier": "renowned"
           },
           "note": "Waterfall on the Rhein River in Switzerland"
+        },
+        {
+          "id": "bern-old-town",
+          "names": {
+            "en": "Bern Old Town"
+          },
+          "i18nKey": "geography.landmarks.bern-old-town",
+          "lat": 46.948,
+          "lon": 7.4474,
+          "importance": 5,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
+          "id": "kapellbrucke",
+          "names": {
+            "en": "Kapellbrücke"
+          },
+          "i18nKey": "geography.landmarks.kapellbrucke",
+          "lat": 47.0516,
+          "lon": 8.3076,
+          "importance": 5,
+          "glyph": "🌉",
+          "mediaId": null
         },
         {
           "id": "chapel-bridge",
@@ -1229,6 +1877,42 @@
           "note": "Building complex that includes two Baroque palaces in Vienna, Austria"
         },
         {
+          "id": "grossglockner",
+          "names": {
+            "en": "Grossglockner"
+          },
+          "i18nKey": "geography.landmarks.grossglockner",
+          "lat": 47.0745,
+          "lon": 12.6939,
+          "importance": 4,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
+          "id": "hallstatt-lake",
+          "names": {
+            "en": "Hallstatt Lake"
+          },
+          "i18nKey": "geography.landmarks.hallstatt-lake",
+          "lat": 47.5622,
+          "lon": 13.6493,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
+          "id": "hofburg",
+          "names": {
+            "en": "Hofburg"
+          },
+          "i18nKey": "geography.landmarks.hofburg",
+          "lat": 48.2069,
+          "lon": 16.3656,
+          "importance": 4,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
           "id": "wachau",
           "names": {
             "en": "Wachau"
@@ -1249,6 +1933,30 @@
           "note": "Valley in Austria"
         },
         {
+          "id": "melk-abbey",
+          "names": {
+            "en": "Melk Abbey"
+          },
+          "i18nKey": "geography.landmarks.melk-abbey",
+          "lat": 48.228,
+          "lon": 15.333,
+          "importance": 5,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "salzburg-old-town",
+          "names": {
+            "en": "Salzburg Old Town"
+          },
+          "i18nKey": "geography.landmarks.salzburg-old-town",
+          "lat": 47.7994,
+          "lon": 13.0439,
+          "importance": 5,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
           "id": "schonbrunn-palace",
           "names": {
             "en": "Schönbrunn Palace"
@@ -1258,6 +1966,18 @@
           "lon": 16.312,
           "importance": 5,
           "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "eisriesenwelt",
+          "names": {
+            "en": "Eisriesenwelt"
+          },
+          "i18nKey": "geography.landmarks.eisriesenwelt",
+          "lat": 47.5033,
+          "lon": 13.19,
+          "importance": 6,
+          "glyph": "🧊",
           "mediaId": null
         },
         {
@@ -1326,6 +2046,18 @@
           "note": "Neolithic monument in County Meath, Ireland"
         },
         {
+          "id": "skellig-michael",
+          "names": {
+            "en": "Skellig Michael"
+          },
+          "i18nKey": "geography.landmarks.skellig-michael",
+          "lat": 51.7711,
+          "lon": -10.5397,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
           "id": "achill-island",
           "names": {
             "en": "Achill Island"
@@ -1344,6 +2076,18 @@
             "fameTier": "notable"
           },
           "note": "Largest of the Irish isles, situated off the west coast of Ireland"
+        },
+        {
+          "id": "blarney-castle",
+          "names": {
+            "en": "Blarney Castle"
+          },
+          "i18nKey": "geography.landmarks.blarney-castle",
+          "lat": 51.9291,
+          "lon": -8.5706,
+          "importance": 5,
+          "glyph": "🏰",
+          "mediaId": null
         },
         {
           "id": "cliffs-of-moher",
@@ -1376,6 +2120,30 @@
             "fameTier": "notable"
           },
           "note": "Castle"
+        },
+        {
+          "id": "ring-of-kerry",
+          "names": {
+            "en": "Ring of Kerry"
+          },
+          "i18nKey": "geography.landmarks.ring-of-kerry",
+          "lat": 51.9,
+          "lon": -9.8,
+          "importance": 5,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
+          "id": "trinity-college-library",
+          "names": {
+            "en": "Trinity College Library"
+          },
+          "i18nKey": "geography.landmarks.trinity-college-library",
+          "lat": 53.3444,
+          "lon": -6.2567,
+          "importance": 5,
+          "glyph": "📚",
+          "mediaId": null
         },
         {
           "id": "rock-of-cashel",
@@ -1580,6 +2348,18 @@
           "note": "Norwegian uninhabited subantarctic volcanic island"
         },
         {
+          "id": "preikestolen",
+          "names": {
+            "en": "Preikestolen"
+          },
+          "i18nKey": "geography.landmarks.preikestolen",
+          "lat": 58.9864,
+          "lon": 6.1904,
+          "importance": 3,
+          "glyph": "🪨",
+          "mediaId": null
+        },
+        {
           "id": "beerenberg",
           "names": {
             "en": "Beerenberg"
@@ -1598,6 +2378,30 @@
             "fameTier": "renowned"
           },
           "note": "Mountain on Jan Mayen island"
+        },
+        {
+          "id": "lofoten",
+          "names": {
+            "en": "Lofoten"
+          },
+          "i18nKey": "geography.landmarks.lofoten",
+          "lat": 68.21,
+          "lon": 13.61,
+          "importance": 4,
+          "glyph": "🏝️",
+          "mediaId": null
+        },
+        {
+          "id": "north-cape",
+          "names": {
+            "en": "North Cape"
+          },
+          "i18nKey": "geography.landmarks.north-cape",
+          "lat": 71.1709,
+          "lon": 25.7836,
+          "importance": 4,
+          "glyph": "🌊",
+          "mediaId": null
         },
         {
           "id": "urnes-stave-church",
@@ -1757,6 +2561,30 @@
           "note": "Royal palace in Ekerö Municipality, Sweden"
         },
         {
+          "id": "gamla-stan",
+          "names": {
+            "en": "Gamla Stan"
+          },
+          "i18nKey": "geography.landmarks.gamla-stan",
+          "lat": 59.3251,
+          "lon": 18.0711,
+          "importance": 4,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
+          "id": "abisko-national-park",
+          "names": {
+            "en": "Abisko National Park"
+          },
+          "i18nKey": "geography.landmarks.abisko-national-park",
+          "lat": 68.35,
+          "lon": 18.83,
+          "importance": 5,
+          "glyph": "🌌",
+          "mediaId": null
+        },
+        {
           "id": "stockholm-palace",
           "names": {
             "en": "Stockholm Palace"
@@ -1775,6 +2603,18 @@
             "fameTier": "renowned"
           },
           "note": "Official residence of the Swedish monarch"
+        },
+        {
+          "id": "visby-city-wall",
+          "names": {
+            "en": "Visby city wall"
+          },
+          "i18nKey": "geography.landmarks.visby-city-wall",
+          "lat": 57.6404,
+          "lon": 18.296,
+          "importance": 5,
+          "glyph": "🧱",
+          "mediaId": null
         },
         {
           "id": "icehotel",
@@ -2108,6 +2948,18 @@
           "note": "Island of Greece"
         },
         {
+          "id": "delphi",
+          "names": {
+            "en": "Delphi"
+          },
+          "i18nKey": "geography.landmarks.delphi",
+          "lat": 38.4824,
+          "lon": 22.501,
+          "importance": 3,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
           "id": "parthenon",
           "names": {
             "en": "Parthenon"
@@ -2128,6 +2980,30 @@
           "note": "Former temple of Athena on the Athenian Acropolis, Greece"
         },
         {
+          "id": "santorini-caldera",
+          "names": {
+            "en": "Santorini caldera"
+          },
+          "i18nKey": "geography.landmarks.santorini-caldera",
+          "lat": 36.405,
+          "lon": 25.435,
+          "importance": 3,
+          "glyph": "🌋",
+          "mediaId": null
+        },
+        {
+          "id": "knossos",
+          "names": {
+            "en": "Knossos"
+          },
+          "i18nKey": "geography.landmarks.knossos",
+          "lat": 35.298,
+          "lon": 25.163,
+          "importance": 4,
+          "glyph": "🏺",
+          "mediaId": null
+        },
+        {
           "id": "mount-olympus",
           "names": {
             "en": "Mount Olympus"
@@ -2146,6 +3022,18 @@
             "fameTier": "iconic"
           },
           "note": "Mountain in Elassona municipality, Greece"
+        },
+        {
+          "id": "olympia",
+          "names": {
+            "en": "Olympia"
+          },
+          "i18nKey": "geography.landmarks.olympia",
+          "lat": 37.6383,
+          "lon": 21.63,
+          "importance": 4,
+          "glyph": "🏛️",
+          "mediaId": null
         },
         {
           "id": "sparta",
@@ -2180,6 +3068,18 @@
           "mediaId": null
         },
         {
+          "id": "mount-athos",
+          "names": {
+            "en": "Mount Athos"
+          },
+          "i18nKey": "geography.landmarks.mount-athos",
+          "lat": 40.1572,
+          "lon": 24.3266,
+          "importance": 5,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
           "id": "santorini",
           "names": {
             "en": "Santorini"
@@ -2189,6 +3089,18 @@
           "lon": 25.462,
           "importance": 5,
           "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
+          "id": "temple-of-poseidon",
+          "names": {
+            "en": "Temple of Poseidon"
+          },
+          "i18nKey": "geography.landmarks.temple-of-poseidon",
+          "lat": 37.6503,
+          "lon": 24.0253,
+          "importance": 5,
+          "glyph": "🏛️",
           "mediaId": null
         }
       ]
@@ -2265,6 +3177,30 @@
           "note": "Sand bar peninsula in northern Poland"
         },
         {
+          "id": "krakow-old-town",
+          "names": {
+            "en": "Kraków Old Town"
+          },
+          "i18nKey": "geography.landmarks.krakow-old-town",
+          "lat": 50.0619,
+          "lon": 19.937,
+          "importance": 4,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
+          "id": "tatra-mountains",
+          "names": {
+            "en": "Tatra Mountains"
+          },
+          "i18nKey": "geography.landmarks.tatra-mountains",
+          "lat": 49.2333,
+          "lon": 20,
+          "importance": 4,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
           "id": "wawel-cathedral",
           "names": {
             "en": "Wawel Cathedral"
@@ -2285,6 +3221,18 @@
           "note": "Cathedral in Kraków, Poland"
         },
         {
+          "id": "wieliczka-salt-mine",
+          "names": {
+            "en": "Wieliczka Salt Mine"
+          },
+          "i18nKey": "geography.landmarks.wieliczka-salt-mine",
+          "lat": 49.9831,
+          "lon": 20.0544,
+          "importance": 4,
+          "glyph": "⛏️",
+          "mediaId": null
+        },
+        {
           "id": "sniardwy",
           "names": {
             "en": "Śniardwy"
@@ -2303,6 +3251,18 @@
             "fameTier": "renowned"
           },
           "note": "Lake in Poland"
+        },
+        {
+          "id": "warsaw-old-town",
+          "names": {
+            "en": "Warsaw Old Town"
+          },
+          "i18nKey": "geography.landmarks.warsaw-old-town",
+          "lat": 52.2497,
+          "lon": 21.0122,
+          "importance": 5,
+          "glyph": "🏘️",
+          "mediaId": null
         },
         {
           "id": "malbork-castle",
@@ -2382,6 +3342,30 @@
           "note": "Roman Catholic cathedral in Prague"
         },
         {
+          "id": "astronomical-clock",
+          "names": {
+            "en": "Astronomical Clock"
+          },
+          "i18nKey": "geography.landmarks.astronomical-clock",
+          "lat": 50.087,
+          "lon": 14.4208,
+          "importance": 4,
+          "glyph": "🕰️",
+          "mediaId": null
+        },
+        {
+          "id": "cesky-krumlov",
+          "names": {
+            "en": "Český Krumlov"
+          },
+          "i18nKey": "geography.landmarks.cesky-krumlov",
+          "lat": 48.8127,
+          "lon": 14.3175,
+          "importance": 4,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
           "id": "karlstejn-castle",
           "names": {
             "en": "Karlštejn Castle"
@@ -2443,6 +3427,18 @@
           "lon": 14.401,
           "importance": 5,
           "glyph": "🏰",
+          "mediaId": null
+        },
+        {
+          "id": "bohemian-switzerland",
+          "names": {
+            "en": "Bohemian Switzerland"
+          },
+          "i18nKey": "geography.landmarks.bohemian-switzerland",
+          "lat": 50.88,
+          "lon": 14.3,
+          "importance": 6,
+          "glyph": "🏞️",
           "mediaId": null
         }
       ]
@@ -4605,6 +5601,18 @@
           "note": "Highest mountain of the Caucasus and highest mountain in Europe"
         },
         {
+          "id": "red-square",
+          "names": {
+            "en": "Red Square"
+          },
+          "i18nKey": "geography.landmarks.red-square",
+          "lat": 55.7539,
+          "lon": 37.6208,
+          "importance": 2,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
           "id": "saint-basil-s-cathedral",
           "names": {
             "en": "Saint Basil's Cathedral"
@@ -4649,6 +5657,30 @@
           "note": "Freshwater lake in Russia and largest lake entirely in Europe"
         },
         {
+          "id": "church-of-the-savior-on-blood",
+          "names": {
+            "en": "Church of the Savior on Blood"
+          },
+          "i18nKey": "geography.landmarks.church-of-the-savior-on-blood",
+          "lat": 59.94,
+          "lon": 30.3286,
+          "importance": 4,
+          "glyph": "⛪",
+          "mediaId": null
+        },
+        {
+          "id": "trans-siberian-railway",
+          "names": {
+            "en": "Trans-Siberian Railway"
+          },
+          "i18nKey": "geography.landmarks.trans-siberian-railway",
+          "lat": 56,
+          "lon": 92.87,
+          "importance": 4,
+          "glyph": "🚂",
+          "mediaId": null
+        },
+        {
           "id": "winter-palace",
           "names": {
             "en": "Winter Palace"
@@ -4687,9 +5719,21 @@
           },
           "i18nKey": "geography.landmarks.lake-baikal",
           "lat": 53.5,
-          "lon": 108.0,
+          "lon": 108,
           "importance": 5,
           "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
+          "id": "valley-of-geysers",
+          "names": {
+            "en": "Valley of Geysers"
+          },
+          "i18nKey": "geography.landmarks.valley-of-geysers",
+          "lat": 54.4333,
+          "lon": 160.14,
+          "importance": 5,
+          "glyph": "♨️",
           "mediaId": null
         }
       ]
@@ -5646,6 +6690,66 @@
           "note": "Mountain in Tibet, China"
         },
         {
+          "id": "leshan-giant-buddha",
+          "names": {
+            "en": "Leshan Giant Buddha"
+          },
+          "i18nKey": "geography.landmarks.leshan-giant-buddha",
+          "lat": 29.545,
+          "lon": 103.7717,
+          "importance": 4,
+          "glyph": "🗿",
+          "mediaId": null
+        },
+        {
+          "id": "li-river",
+          "names": {
+            "en": "Li River"
+          },
+          "i18nKey": "geography.landmarks.li-river",
+          "lat": 24.95,
+          "lon": 110.45,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
+          "id": "summer-palace",
+          "names": {
+            "en": "Summer Palace"
+          },
+          "i18nKey": "geography.landmarks.summer-palace",
+          "lat": 39.999,
+          "lon": 116.2755,
+          "importance": 4,
+          "glyph": "🏯",
+          "mediaId": null
+        },
+        {
+          "id": "temple-of-heaven",
+          "names": {
+            "en": "Temple of Heaven"
+          },
+          "i18nKey": "geography.landmarks.temple-of-heaven",
+          "lat": 39.8822,
+          "lon": 116.4066,
+          "importance": 4,
+          "glyph": "🏯",
+          "mediaId": null
+        },
+        {
+          "id": "zhangjiajie",
+          "names": {
+            "en": "Zhangjiajie"
+          },
+          "i18nKey": "geography.landmarks.zhangjiajie",
+          "lat": 29.315,
+          "lon": 110.435,
+          "importance": 4,
+          "glyph": "⛰️",
+          "mediaId": null
+        },
+        {
           "id": "potala-palace",
           "names": {
             "en": "Potala Palace"
@@ -5739,6 +6843,18 @@
           "mediaId": null
         },
         {
+          "id": "hiroshima-peace-memorial",
+          "names": {
+            "en": "Hiroshima Peace Memorial"
+          },
+          "i18nKey": "geography.landmarks.hiroshima-peace-memorial",
+          "lat": 34.3955,
+          "lon": 132.4536,
+          "importance": 3,
+          "glyph": "🕊️",
+          "mediaId": null
+        },
+        {
           "id": "kiyomizu-dera-temple",
           "names": {
             "en": "Kiyomizu-dera Temple"
@@ -5757,6 +6873,30 @@
             "fameTier": "iconic"
           },
           "note": "Buddhist temple in Higashiyama, Kyoto"
+        },
+        {
+          "id": "senso-ji",
+          "names": {
+            "en": "Senso-ji"
+          },
+          "i18nKey": "geography.landmarks.senso-ji",
+          "lat": 35.7148,
+          "lon": 139.7967,
+          "importance": 4,
+          "glyph": "⛩️",
+          "mediaId": null
+        },
+        {
+          "id": "todai-ji",
+          "names": {
+            "en": "Todai-ji"
+          },
+          "i18nKey": "geography.landmarks.todai-ji",
+          "lat": 34.689,
+          "lon": 135.8398,
+          "importance": 4,
+          "glyph": "🛕",
+          "mediaId": null
         },
         {
           "id": "himeji-castle",
@@ -5780,6 +6920,18 @@
           "lon": 132.32,
           "importance": 5,
           "glyph": "⛩️",
+          "mediaId": null
+        },
+        {
+          "id": "shibuya-crossing",
+          "names": {
+            "en": "Shibuya Crossing"
+          },
+          "i18nKey": "geography.landmarks.shibuya-crossing",
+          "lat": 35.6595,
+          "lon": 139.7004,
+          "importance": 5,
+          "glyph": "🚦",
           "mediaId": null
         },
         {
@@ -5860,6 +7012,18 @@
           "note": "Historic fortress in Delhi, India"
         },
         {
+          "id": "amber-fort",
+          "names": {
+            "en": "Amber Fort"
+          },
+          "i18nKey": "geography.landmarks.amber-fort",
+          "lat": 26.9855,
+          "lon": 75.8513,
+          "importance": 4,
+          "glyph": "🏰",
+          "mediaId": null
+        },
+        {
           "id": "ellora-caves",
           "names": {
             "en": "Ellora Caves"
@@ -5878,6 +7042,30 @@
             "fameTier": "iconic"
           },
           "note": "Ancient cave temples of Hinduism, Buddhism and Jainism in Maharashtra, India"
+        },
+        {
+          "id": "varanasi-ghats",
+          "names": {
+            "en": "Varanasi Ghats"
+          },
+          "i18nKey": "geography.landmarks.varanasi-ghats",
+          "lat": 25.3109,
+          "lon": 83.0104,
+          "importance": 4,
+          "glyph": "🛕",
+          "mediaId": null
+        },
+        {
+          "id": "backwaters-of-kerala",
+          "names": {
+            "en": "Backwaters of Kerala"
+          },
+          "i18nKey": "geography.landmarks.backwaters-of-kerala",
+          "lat": 9.5,
+          "lon": 76.4,
+          "importance": 5,
+          "glyph": "🛶",
+          "mediaId": null
         },
         {
           "id": "gateway-of-india",
@@ -5899,6 +7087,18 @@
           "i18nKey": "geography.landmarks.golden-temple",
           "lat": 31.62,
           "lon": 74.877,
+          "importance": 5,
+          "glyph": "🛕",
+          "mediaId": null
+        },
+        {
+          "id": "konark-sun-temple",
+          "names": {
+            "en": "Konark Sun Temple"
+          },
+          "i18nKey": "geography.landmarks.konark-sun-temple",
+          "lat": 19.8876,
+          "lon": 86.0945,
           "importance": 5,
           "glyph": "🛕",
           "mediaId": null
@@ -6060,7 +7260,7 @@
           },
           "i18nKey": "geography.landmarks.ko-samui",
           "lat": 9.5,
-          "lon": 100.0,
+          "lon": 100,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -6092,6 +7292,18 @@
             "fameTier": "renowned"
           },
           "note": "Royal temple complex in Bangkok, Thailand"
+        },
+        {
+          "id": "ayutthaya",
+          "names": {
+            "en": "Ayutthaya"
+          },
+          "i18nKey": "geography.landmarks.ayutthaya",
+          "lat": 14.3532,
+          "lon": 100.5689,
+          "importance": 4,
+          "glyph": "🏺",
+          "mediaId": null
         },
         {
           "id": "ban-chiang",
@@ -6134,6 +7346,42 @@
           "note": "Nature reserve in Thailand"
         },
         {
+          "id": "phi-phi-islands",
+          "names": {
+            "en": "Phi Phi Islands"
+          },
+          "i18nKey": "geography.landmarks.phi-phi-islands",
+          "lat": 7.7407,
+          "lon": 98.7784,
+          "importance": 4,
+          "glyph": "🏝️",
+          "mediaId": null
+        },
+        {
+          "id": "wat-pho",
+          "names": {
+            "en": "Wat Pho"
+          },
+          "i18nKey": "geography.landmarks.wat-pho",
+          "lat": 13.7465,
+          "lon": 100.4927,
+          "importance": 4,
+          "glyph": "🛕",
+          "mediaId": null
+        },
+        {
+          "id": "white-temple",
+          "names": {
+            "en": "White Temple"
+          },
+          "i18nKey": "geography.landmarks.white-temple",
+          "lat": 19.8242,
+          "lon": 99.7631,
+          "importance": 4,
+          "glyph": "🛕",
+          "mediaId": null
+        },
+        {
           "id": "first-thailao-friendship-bridge",
           "names": {
             "en": "First Thai–Lao Friendship Bridge"
@@ -6163,6 +7411,30 @@
           "lon": 100.492,
           "importance": 5,
           "glyph": "🏯",
+          "mediaId": null
+        },
+        {
+          "id": "railay-beach",
+          "names": {
+            "en": "Railay Beach"
+          },
+          "i18nKey": "geography.landmarks.railay-beach",
+          "lat": 8.011,
+          "lon": 98.8378,
+          "importance": 5,
+          "glyph": "🏖️",
+          "mediaId": null
+        },
+        {
+          "id": "sukhothai",
+          "names": {
+            "en": "Sukhothai"
+          },
+          "i18nKey": "geography.landmarks.sukhothai",
+          "lat": 17.0206,
+          "lon": 99.7036,
+          "importance": 5,
+          "glyph": "🏺",
           "mediaId": null
         },
         {
@@ -6848,6 +8120,18 @@
           "note": "Island in Bali Province, Indonesia"
         },
         {
+          "id": "komodo-national-park",
+          "names": {
+            "en": "Komodo National Park"
+          },
+          "i18nKey": "geography.landmarks.komodo-national-park",
+          "lat": -8.55,
+          "lon": 119.45,
+          "importance": 3,
+          "glyph": "🦎",
+          "mediaId": null
+        },
+        {
           "id": "krakatoa",
           "names": {
             "en": "Krakatoa"
@@ -6866,6 +8150,18 @@
             "fameTier": "iconic"
           },
           "note": "Sunda Strait volcanic island caldera"
+        },
+        {
+          "id": "lake-toba",
+          "names": {
+            "en": "Lake Toba"
+          },
+          "i18nKey": "geography.landmarks.lake-toba",
+          "lat": 2.6845,
+          "lon": 98.8756,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
         },
         {
           "id": "lombok-island",
@@ -6906,6 +8202,30 @@
             "fameTier": "iconic"
           },
           "note": "Active volcano in Central Java and Yogyakarta, Indonesia"
+        },
+        {
+          "id": "raja-ampat",
+          "names": {
+            "en": "Raja Ampat"
+          },
+          "i18nKey": "geography.landmarks.raja-ampat",
+          "lat": -0.5,
+          "lon": 130.5,
+          "importance": 4,
+          "glyph": "🐠",
+          "mediaId": null
+        },
+        {
+          "id": "tanah-lot",
+          "names": {
+            "en": "Tanah Lot"
+          },
+          "i18nKey": "geography.landmarks.tanah-lot",
+          "lat": -8.6212,
+          "lon": 115.0868,
+          "importance": 4,
+          "glyph": "🛕",
+          "mediaId": null
         },
         {
           "id": "borobudur",
@@ -8011,8 +9331,8 @@
             "en": "Lake Zaysan"
           },
           "i18nKey": "geography.landmarks.lake-zaysan",
-          "lat": 48.0,
-          "lon": 84.0,
+          "lat": 48,
+          "lon": 84,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -8248,7 +9568,7 @@
             "en": "South Aral Sea"
           },
           "i18nKey": "geography.landmarks.south-aral-sea",
-          "lat": 45.0,
+          "lat": 45,
           "lon": 58.5,
           "importance": 5,
           "glyph": "🌿",
@@ -8341,7 +9661,7 @@
             "en": "Sarygamysh Lake"
           },
           "i18nKey": "geography.landmarks.sarygamysh-lake",
-          "lat": 42.0,
+          "lat": 42,
           "lon": 57.33333,
           "importance": 4,
           "glyph": "🌿",
@@ -10309,7 +11629,7 @@
           },
           "i18nKey": "geography.landmarks.kuwait-towers",
           "lat": 29.39,
-          "lon": 48.0,
+          "lon": 48,
           "importance": 8,
           "glyph": "🗼",
           "mediaId": null
@@ -11224,6 +12544,18 @@
           "note": "Ancient Homeric-era city in northwest Asia Minor; it is known as the setting for the Greek myth of the Trojan war"
         },
         {
+          "id": "blue-mosque",
+          "names": {
+            "en": "Blue Mosque"
+          },
+          "i18nKey": "geography.landmarks.blue-mosque",
+          "lat": 41.0054,
+          "lon": 28.9768,
+          "importance": 3,
+          "glyph": "🕌",
+          "mediaId": null
+        },
+        {
           "id": "mount-ararat",
           "names": {
             "en": "Mount Ararat"
@@ -11282,6 +12614,30 @@
             "fameTier": "iconic"
           },
           "note": "Largest lake in Turkey"
+        },
+        {
+          "id": "mount-nemrut",
+          "names": {
+            "en": "Mount Nemrut"
+          },
+          "i18nKey": "geography.landmarks.mount-nemrut",
+          "lat": 37.9806,
+          "lon": 38.7411,
+          "importance": 4,
+          "glyph": "🗿",
+          "mediaId": null
+        },
+        {
+          "id": "topkapi-palace",
+          "names": {
+            "en": "Topkapi Palace"
+          },
+          "i18nKey": "geography.landmarks.topkapi-palace",
+          "lat": 41.0115,
+          "lon": 28.9834,
+          "importance": 4,
+          "glyph": "🏰",
+          "mediaId": null
         },
         {
           "id": "cappadocia",
@@ -11785,6 +13141,42 @@
           "note": "Dam in Aswan, Egypt"
         },
         {
+          "id": "luxor-temple",
+          "names": {
+            "en": "Luxor Temple"
+          },
+          "i18nKey": "geography.landmarks.luxor-temple",
+          "lat": 25.6997,
+          "lon": 32.6392,
+          "importance": 3,
+          "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
+          "id": "valley-of-the-kings",
+          "names": {
+            "en": "Valley of the Kings"
+          },
+          "i18nKey": "geography.landmarks.valley-of-the-kings",
+          "lat": 25.7402,
+          "lon": 32.6014,
+          "importance": 3,
+          "glyph": "⚰️",
+          "mediaId": null
+        },
+        {
+          "id": "egyptian-museum",
+          "names": {
+            "en": "Egyptian Museum"
+          },
+          "i18nKey": "geography.landmarks.egyptian-museum",
+          "lat": 30.0478,
+          "lon": 31.2336,
+          "importance": 4,
+          "glyph": "🏺",
+          "mediaId": null
+        },
+        {
           "id": "lighthouse-of-alexandria",
           "names": {
             "en": "Lighthouse of Alexandria"
@@ -11803,6 +13195,18 @@
             "fameTier": "iconic"
           },
           "note": "Lighthouse in Egypt, built in the 3rd century BC and destroyed in the Middle Ages"
+        },
+        {
+          "id": "suez-canal",
+          "names": {
+            "en": "Suez Canal"
+          },
+          "i18nKey": "geography.landmarks.suez-canal",
+          "lat": 30.5852,
+          "lon": 32.2654,
+          "importance": 4,
+          "glyph": "🚢",
+          "mediaId": null
         },
         {
           "id": "abu-simbel",
@@ -11826,6 +13230,18 @@
           "lon": 32.657,
           "importance": 5,
           "glyph": "🏛️",
+          "mediaId": null
+        },
+        {
+          "id": "siwa-oasis",
+          "names": {
+            "en": "Siwa Oasis"
+          },
+          "i18nKey": "geography.landmarks.siwa-oasis",
+          "lat": 29.2032,
+          "lon": 25.5195,
+          "importance": 5,
+          "glyph": "🌴",
           "mediaId": null
         }
       ]
@@ -11977,7 +13393,7 @@
           },
           "i18nKey": "geography.landmarks.tassili-n-ajjer",
           "lat": 25.66667,
-          "lon": 9.0,
+          "lon": 9,
           "importance": 3,
           "glyph": "🏺",
           "mediaId": null,
@@ -12318,8 +13734,8 @@
             "en": "Grand Erg Oriental"
           },
           "i18nKey": "geography.landmarks.grand-erg-oriental",
-          "lat": 30.0,
-          "lon": 6.0,
+          "lat": 30,
+          "lon": 6,
           "importance": 5,
           "glyph": "🌿",
           "mediaId": null,
@@ -12549,7 +13965,7 @@
           },
           "i18nKey": "geography.landmarks.boma-national-park",
           "lat": 6.5,
-          "lon": 34.0,
+          "lon": 34,
           "importance": 8,
           "glyph": "🦌",
           "mediaId": null
@@ -12593,7 +14009,7 @@
             "en": "Lake Tana"
           },
           "i18nKey": "geography.landmarks.lake-tana",
-          "lat": 12.0,
+          "lat": 12,
           "lon": 37.25,
           "importance": 3,
           "glyph": "🌿",
@@ -13173,6 +14589,30 @@
           "note": "First national park in Kenya, Africa"
         },
         {
+          "id": "amboseli",
+          "names": {
+            "en": "Amboseli"
+          },
+          "i18nKey": "geography.landmarks.amboseli",
+          "lat": -2.6527,
+          "lon": 37.2606,
+          "importance": 4,
+          "glyph": "🐘",
+          "mediaId": null
+        },
+        {
+          "id": "great-rift-valley",
+          "names": {
+            "en": "Great Rift Valley"
+          },
+          "i18nKey": "geography.landmarks.great-rift-valley",
+          "lat": -0.5,
+          "lon": 36,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "central-island",
           "names": {
             "en": "Central Island"
@@ -13191,6 +14631,18 @@
             "fameTier": "notable"
           },
           "note": "Island in Lake Turkana, Kenya"
+        },
+        {
+          "id": "diani-beach",
+          "names": {
+            "en": "Diani Beach"
+          },
+          "i18nKey": "geography.landmarks.diani-beach",
+          "lat": -4.28,
+          "lon": 39.59,
+          "importance": 5,
+          "glyph": "🏖️",
+          "mediaId": null
         },
         {
           "id": "maasai-mara",
@@ -13288,7 +14740,7 @@
           },
           "i18nKey": "geography.landmarks.lake-natron",
           "lat": -2.41667,
-          "lon": 36.0,
+          "lon": 36,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -13302,12 +14754,24 @@
           "note": "Salt or soda lake in Arusha Region in Tanzania"
         },
         {
+          "id": "ngorongoro-crater",
+          "names": {
+            "en": "Ngorongoro Crater"
+          },
+          "i18nKey": "geography.landmarks.ngorongoro-crater",
+          "lat": -3.2,
+          "lon": 35.5,
+          "importance": 3,
+          "glyph": "🌋",
+          "mediaId": null
+        },
+        {
           "id": "rukwa-lake",
           "names": {
             "en": "Rukwa Lake"
           },
           "i18nKey": "geography.landmarks.rukwa-lake",
-          "lat": -8.0,
+          "lat": -8,
           "lon": 32.35,
           "importance": 3,
           "glyph": "🌿",
@@ -13360,6 +14824,30 @@
             "fameTier": "notable"
           },
           "note": "Footprints site"
+        },
+        {
+          "id": "olduvai-gorge",
+          "names": {
+            "en": "Olduvai Gorge"
+          },
+          "i18nKey": "geography.landmarks.olduvai-gorge",
+          "lat": -2.993,
+          "lon": 35.35,
+          "importance": 5,
+          "glyph": "🦴",
+          "mediaId": null
+        },
+        {
+          "id": "selous-game-reserve",
+          "names": {
+            "en": "Selous Game Reserve"
+          },
+          "i18nKey": "geography.landmarks.selous-game-reserve",
+          "lat": -8.5,
+          "lon": 37.5,
+          "importance": 5,
+          "glyph": "🐘",
+          "mediaId": null
         },
         {
           "id": "serengeti",
@@ -13425,7 +14913,7 @@
           },
           "i18nKey": "geography.landmarks.lake-kyoga",
           "lat": 1.5,
-          "lon": 33.0,
+          "lon": 33,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -13766,6 +15254,18 @@
           "mediaId": null
         },
         {
+          "id": "robben-island",
+          "names": {
+            "en": "Robben Island"
+          },
+          "i18nKey": "geography.landmarks.robben-island",
+          "lat": -33.8067,
+          "lon": 18.3667,
+          "importance": 3,
+          "glyph": "🏝️",
+          "mediaId": null
+        },
+        {
           "id": "tugela-falls",
           "names": {
             "en": "Tugela Falls"
@@ -13806,6 +15306,18 @@
           "note": "Largest verified impact crater on earth, dating from the Paleoproterozoic Era"
         },
         {
+          "id": "drakensberg",
+          "names": {
+            "en": "Drakensberg"
+          },
+          "i18nKey": "geography.landmarks.drakensberg",
+          "lat": -29.4,
+          "lon": 29.4,
+          "importance": 4,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
           "id": "augrabies-falls",
           "names": {
             "en": "Augrabies Falls"
@@ -13824,6 +15336,30 @@
             "fameTier": "notable"
           },
           "note": "Waterfall on the Orange River in North Cape, South Africa"
+        },
+        {
+          "id": "blyde-river-canyon",
+          "names": {
+            "en": "Blyde River Canyon"
+          },
+          "i18nKey": "geography.landmarks.blyde-river-canyon",
+          "lat": -24.59,
+          "lon": 30.8,
+          "importance": 5,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
+          "id": "boulders-beach",
+          "names": {
+            "en": "Boulders Beach"
+          },
+          "i18nKey": "geography.landmarks.boulders-beach",
+          "lat": -34.1975,
+          "lon": 18.4508,
+          "importance": 5,
+          "glyph": "🐧",
+          "mediaId": null
         },
         {
           "id": "cape-of-good-hope",
@@ -13900,8 +15436,8 @@
             "en": "Lake Kariba"
           },
           "i18nKey": "geography.landmarks.lake-kariba",
-          "lat": -17.0,
-          "lon": 28.0,
+          "lat": -17,
+          "lon": 28,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -14355,7 +15891,7 @@
             "en": "Epupa Falls"
           },
           "i18nKey": "geography.landmarks.epupa-falls",
-          "lat": -17.0,
+          "lat": -17,
           "lon": 13.25,
           "importance": 5,
           "glyph": "💧",
@@ -14842,7 +16378,7 @@
             "en": "Lake Malawi"
           },
           "i18nKey": "geography.landmarks.lake-malawi",
-          "lat": -12.0,
+          "lat": -12,
           "lon": 34.583,
           "importance": 8,
           "glyph": "🏞️",
@@ -15997,8 +17533,8 @@
             "en": "Ennedi Massif"
           },
           "i18nKey": "geography.landmarks.ennedi-massif",
-          "lat": 17.0,
-          "lon": 22.0,
+          "lat": 17,
+          "lon": 22,
           "importance": 8,
           "glyph": "🏜️",
           "mediaId": null
@@ -16042,8 +17578,8 @@
             "en": "Aïr and Ténéré National Nature Reserve"
           },
           "i18nKey": "geography.landmarks.air-and-tenere-national-nature-reserve",
-          "lat": 18.0,
-          "lon": 9.0,
+          "lat": 18,
+          "lon": 9,
           "importance": 5,
           "glyph": "🌿",
           "mediaId": null,
@@ -17449,8 +18985,8 @@
             "en": "Fazao Mafakassa National Park"
           },
           "i18nKey": "geography.landmarks.fazao-mafakassa-national-park",
-          "lat": 9.0,
-          "lon": 1.0,
+          "lat": 9,
+          "lon": 1,
           "importance": 6,
           "glyph": "🌿",
           "mediaId": null,
@@ -17837,7 +19373,7 @@
           },
           "i18nKey": "geography.landmarks.lagune-ndogo",
           "lat": -2.58333,
-          "lon": 10.0,
+          "lon": 10,
           "importance": 6,
           "glyph": "🌿",
           "mediaId": null,
@@ -18502,6 +20038,54 @@
           "mediaId": "statue-of-liberty"
         },
         {
+          "id": "niagara-falls",
+          "names": {
+            "en": "Niagara Falls"
+          },
+          "i18nKey": "geography.landmarks.niagara-falls",
+          "lat": 43.0828,
+          "lon": -79.0742,
+          "importance": 3,
+          "glyph": "💦",
+          "mediaId": null
+        },
+        {
+          "id": "monument-valley",
+          "names": {
+            "en": "Monument Valley"
+          },
+          "i18nKey": "geography.landmarks.monument-valley",
+          "lat": 36.998,
+          "lon": -110.0985,
+          "importance": 4,
+          "glyph": "🏜️",
+          "mediaId": null
+        },
+        {
+          "id": "times-square",
+          "names": {
+            "en": "Times Square"
+          },
+          "i18nKey": "geography.landmarks.times-square",
+          "lat": 40.758,
+          "lon": -73.9855,
+          "importance": 4,
+          "glyph": "🌃",
+          "mediaId": null
+        },
+        {
+          "id": "alcatraz",
+          "names": {
+            "en": "Alcatraz"
+          },
+          "i18nKey": "geography.landmarks.alcatraz",
+          "lat": 37.827,
+          "lon": -122.423,
+          "importance": 5,
+          "glyph": "🏝️",
+          "mediaId": null
+        },
+        {
           "id": "empire-state-building",
           "names": {
             "en": "Empire State Building"
@@ -18607,6 +20191,18 @@
           "mediaId": null
         },
         {
+          "id": "lake-louise",
+          "names": {
+            "en": "Lake Louise"
+          },
+          "i18nKey": "geography.landmarks.lake-louise",
+          "lat": 51.4254,
+          "lon": -116.1773,
+          "importance": 3,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "lake-winnipeg",
           "names": {
             "en": "Lake Winnipeg"
@@ -18627,6 +20223,18 @@
           "note": "Lake in Manitoba, Canada"
         },
         {
+          "id": "bay-of-fundy",
+          "names": {
+            "en": "Bay of Fundy"
+          },
+          "i18nKey": "geography.landmarks.bay-of-fundy",
+          "lat": 45.2,
+          "lon": -65,
+          "importance": 4,
+          "glyph": "🌊",
+          "mediaId": null
+        },
+        {
           "id": "l-anse-aux-meadows",
           "names": {
             "en": "L'Anse aux Meadows"
@@ -18645,6 +20253,30 @@
             "fameTier": "renowned"
           },
           "note": "Archaeological site on the island of Newfoundland, Canada"
+        },
+        {
+          "id": "old-quebec",
+          "names": {
+            "en": "Old Quebec"
+          },
+          "i18nKey": "geography.landmarks.old-quebec",
+          "lat": 46.8123,
+          "lon": -71.2145,
+          "importance": 4,
+          "glyph": "🏘️",
+          "mediaId": null
+        },
+        {
+          "id": "parliament-hill",
+          "names": {
+            "en": "Parliament Hill"
+          },
+          "i18nKey": "geography.landmarks.parliament-hill",
+          "lat": 45.4236,
+          "lon": -75.7009,
+          "importance": 4,
+          "glyph": "🏛️",
+          "mediaId": null
         },
         {
           "id": "banff-national-park",
@@ -18669,6 +20301,18 @@
           "importance": 5,
           "glyph": "🗼",
           "mediaId": "cn-tower"
+        },
+        {
+          "id": "moraine-lake",
+          "names": {
+            "en": "Moraine Lake"
+          },
+          "i18nKey": "geography.landmarks.moraine-lake",
+          "lat": 51.3217,
+          "lon": -116.186,
+          "importance": 5,
+          "glyph": "🏞️",
+          "mediaId": null
         },
         {
           "id": "chateau-frontenac",
@@ -18748,6 +20392,18 @@
           "note": "Highest mountain and volcano in Mexico"
         },
         {
+          "id": "copper-canyon",
+          "names": {
+            "en": "Copper Canyon"
+          },
+          "i18nKey": "geography.landmarks.copper-canyon",
+          "lat": 27.3,
+          "lon": -107.7,
+          "importance": 4,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "mexico-city-metropolitan-cathedral",
           "names": {
             "en": "Mexico City Metropolitan Cathedral"
@@ -18768,6 +20424,18 @@
           "note": "Cathedral in Mexico City"
         },
         {
+          "id": "tulum",
+          "names": {
+            "en": "Tulum"
+          },
+          "i18nKey": "geography.landmarks.tulum",
+          "lat": 20.2144,
+          "lon": -87.4291,
+          "importance": 4,
+          "glyph": "🏺",
+          "mediaId": null
+        },
+        {
           "id": "uxmal",
           "names": {
             "en": "Uxmal"
@@ -18786,6 +20454,42 @@
             "fameTier": "renowned"
           },
           "note": "Pre-Columbian Maya city in Yucatan"
+        },
+        {
+          "id": "angel-of-independence",
+          "names": {
+            "en": "Angel of Independence"
+          },
+          "i18nKey": "geography.landmarks.angel-of-independence",
+          "lat": 19.427,
+          "lon": -99.1677,
+          "importance": 5,
+          "glyph": "🗽",
+          "mediaId": null
+        },
+        {
+          "id": "cenote-ik-kil",
+          "names": {
+            "en": "Cenote Ik Kil"
+          },
+          "i18nKey": "geography.landmarks.cenote-ik-kil",
+          "lat": 20.66,
+          "lon": -88.5686,
+          "importance": 5,
+          "glyph": "💧",
+          "mediaId": null
+        },
+        {
+          "id": "monte-alban",
+          "names": {
+            "en": "Monte Albán"
+          },
+          "i18nKey": "geography.landmarks.monte-alban",
+          "lat": 17.0439,
+          "lon": -96.7678,
+          "importance": 5,
+          "glyph": "🏺",
+          "mediaId": null
         },
         {
           "id": "teotihuacan",
@@ -21567,6 +23271,18 @@
       },
       "landmarks": [
         {
+          "id": "amazon-river",
+          "names": {
+            "en": "Amazon River"
+          },
+          "i18nKey": "geography.landmarks.amazon-river",
+          "lat": -3.119,
+          "lon": -60.0217,
+          "importance": 2,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "christ-the-redeemer",
           "names": {
             "en": "Christ the Redeemer"
@@ -21611,6 +23327,18 @@
           "note": "Football stadium in the state of Minas Gerais, Brazil"
         },
         {
+          "id": "pantanal",
+          "names": {
+            "en": "Pantanal"
+          },
+          "i18nKey": "geography.landmarks.pantanal",
+          "lat": -17.6,
+          "lon": -57,
+          "importance": 3,
+          "glyph": "🐊",
+          "mediaId": null
+        },
+        {
           "id": "sao-paulo-museum-of-art",
           "names": {
             "en": "São Paulo Museum of Art"
@@ -21629,6 +23357,18 @@
             "fameTier": "renowned"
           },
           "note": "Art museum in São Paulo, Brazil"
+        },
+        {
+          "id": "copacabana",
+          "names": {
+            "en": "Copacabana"
+          },
+          "i18nKey": "geography.landmarks.copacabana",
+          "lat": -22.9711,
+          "lon": -43.1822,
+          "importance": 4,
+          "glyph": "🏖️",
+          "mediaId": null
         },
         {
           "id": "ilha-da-queimada-grande",
@@ -21651,6 +23391,18 @@
           "note": "Brazilian island"
         },
         {
+          "id": "lencois-maranhenses",
+          "names": {
+            "en": "Lençóis Maranhenses"
+          },
+          "i18nKey": "geography.landmarks.lencois-maranhenses",
+          "lat": -2.486,
+          "lon": -43.128,
+          "importance": 4,
+          "glyph": "🏜️",
+          "mediaId": null
+        },
+        {
           "id": "amazon-rainforest",
           "names": {
             "en": "Amazon Rainforest"
@@ -21660,6 +23412,30 @@
           "lon": -62.216,
           "importance": 5,
           "glyph": "🌳",
+          "mediaId": null
+        },
+        {
+          "id": "maracana",
+          "names": {
+            "en": "Maracanã"
+          },
+          "i18nKey": "geography.landmarks.maracana",
+          "lat": -22.9121,
+          "lon": -43.2302,
+          "importance": 5,
+          "glyph": "🏟️",
+          "mediaId": null
+        },
+        {
+          "id": "ouro-preto",
+          "names": {
+            "en": "Ouro Preto"
+          },
+          "i18nKey": "geography.landmarks.ouro-preto",
+          "lat": -20.3856,
+          "lon": -43.5035,
+          "importance": 5,
+          "glyph": "🏘️",
           "mediaId": null
         },
         {
@@ -21728,6 +23504,18 @@
           "note": "Waterfalls on the Igazú River on the border of Misiones, Argentina and Paraná, Brazil"
         },
         {
+          "id": "fitz-roy",
+          "names": {
+            "en": "Fitz Roy"
+          },
+          "i18nKey": "geography.landmarks.fitz-roy",
+          "lat": -49.2717,
+          "lon": -73.0439,
+          "importance": 4,
+          "glyph": "🏔️",
+          "mediaId": null
+        },
+        {
           "id": "llullaillaco",
           "names": {
             "en": "Llullaillaco"
@@ -21768,6 +23556,18 @@
           "note": "Highest volcano in the world"
         },
         {
+          "id": "valdes-peninsula",
+          "names": {
+            "en": "Valdés Peninsula"
+          },
+          "i18nKey": "geography.landmarks.valdes-peninsula",
+          "lat": -42.5,
+          "lon": -63.9,
+          "importance": 4,
+          "glyph": "🐋",
+          "mediaId": null
+        },
+        {
           "id": "iguazu-falls",
           "names": {
             "en": "Iguazú Falls"
@@ -21789,6 +23589,30 @@
           "lon": -73.14,
           "importance": 5,
           "glyph": "🧊",
+          "mediaId": null
+        },
+        {
+          "id": "quebrada-de-humahuaca",
+          "names": {
+            "en": "Quebrada de Humahuaca"
+          },
+          "i18nKey": "geography.landmarks.quebrada-de-humahuaca",
+          "lat": -23.2,
+          "lon": -65.35,
+          "importance": 5,
+          "glyph": "🏜️",
+          "mediaId": null
+        },
+        {
+          "id": "caminito",
+          "names": {
+            "en": "Caminito"
+          },
+          "i18nKey": "geography.landmarks.caminito",
+          "lat": -34.6395,
+          "lon": -58.3626,
+          "importance": 6,
+          "glyph": "🎨",
           "mediaId": null
         },
         {
@@ -21998,6 +23822,18 @@
           "note": "Archaeological site in Peru"
         },
         {
+          "id": "lake-titicaca",
+          "names": {
+            "en": "Lake Titicaca"
+          },
+          "i18nKey": "geography.landmarks.lake-titicaca",
+          "lat": -15.75,
+          "lon": -69.5,
+          "importance": 3,
+          "glyph": "🏞️",
+          "mediaId": null
+        },
+        {
           "id": "alpamayo",
           "names": {
             "en": "Alpamayo"
@@ -22016,6 +23852,18 @@
             "fameTier": "notable"
           },
           "note": "Mountain in Peru"
+        },
+        {
+          "id": "colca-canyon",
+          "names": {
+            "en": "Colca Canyon"
+          },
+          "i18nKey": "geography.landmarks.colca-canyon",
+          "lat": -15.61,
+          "lon": -71.86,
+          "importance": 5,
+          "glyph": "🏞️",
+          "mediaId": null
         },
         {
           "id": "coropuna",
@@ -22067,6 +23915,30 @@
           "lon": -75.13,
           "importance": 5,
           "glyph": "🗿",
+          "mediaId": null
+        },
+        {
+          "id": "rainbow-mountain",
+          "names": {
+            "en": "Rainbow Mountain"
+          },
+          "i18nKey": "geography.landmarks.rainbow-mountain",
+          "lat": -13.8697,
+          "lon": -71.303,
+          "importance": 5,
+          "glyph": "🌈",
+          "mediaId": null
+        },
+        {
+          "id": "sacsayhuaman",
+          "names": {
+            "en": "Sacsayhuamán"
+          },
+          "i18nKey": "geography.landmarks.sacsayhuaman",
+          "lat": -13.5089,
+          "lon": -71.9819,
+          "importance": 5,
+          "glyph": "🏺",
           "mediaId": null
         }
       ]
@@ -22817,7 +24689,7 @@
             "en": "Central Suriname Nature Reserve"
           },
           "i18nKey": "geography.landmarks.central-suriname-nature-reserve",
-          "lat": 4.0,
+          "lat": 4,
           "lon": -56.5,
           "importance": 5,
           "glyph": "🌿",
@@ -23167,7 +25039,7 @@
             "en": "Santa Teresa National Park"
           },
           "i18nKey": "geography.landmarks.santa-teresa-national-park",
-          "lat": -34.0,
+          "lat": -34,
           "lon": -53.55,
           "importance": 6,
           "glyph": "🌿",
@@ -23337,8 +25209,8 @@
             "en": "Northeast Greenland National Park"
           },
           "i18nKey": "geography.landmarks.northeast-greenland-national-park",
-          "lat": 77.0,
-          "lon": -31.0,
+          "lat": 77,
+          "lon": -31,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -23558,6 +25430,42 @@
           "note": "Island in the Tasman Sea between Australia and New Zealand, part of New South Wales"
         },
         {
+          "id": "blue-mountains",
+          "names": {
+            "en": "Blue Mountains"
+          },
+          "i18nKey": "geography.landmarks.blue-mountains",
+          "lat": -33.7,
+          "lon": 150.3,
+          "importance": 4,
+          "glyph": "⛰️",
+          "mediaId": null
+        },
+        {
+          "id": "kakadu-national-park",
+          "names": {
+            "en": "Kakadu National Park"
+          },
+          "i18nKey": "geography.landmarks.kakadu-national-park",
+          "lat": -12.8375,
+          "lon": 132.838,
+          "importance": 4,
+          "glyph": "🐊",
+          "mediaId": null
+        },
+        {
+          "id": "bondi-beach",
+          "names": {
+            "en": "Bondi Beach"
+          },
+          "i18nKey": "geography.landmarks.bondi-beach",
+          "lat": -33.8908,
+          "lon": 151.2743,
+          "importance": 5,
+          "glyph": "🏖️",
+          "mediaId": null
+        },
+        {
           "id": "sydney-harbour-bridge",
           "names": {
             "en": "Sydney Harbour Bridge"
@@ -23620,7 +25528,7 @@
             "en": "Stewart Island/Rakiura"
           },
           "i18nKey": "geography.landmarks.stewart-island-rakiura",
-          "lat": -47.0,
+          "lat": -47,
           "lon": 167.9,
           "importance": 3,
           "glyph": "🌿",
@@ -23655,6 +25563,30 @@
           "note": "Active stratovolcano in central North Island, New Zealand"
         },
         {
+          "id": "rotorua-geysers",
+          "names": {
+            "en": "Rotorua geysers"
+          },
+          "i18nKey": "geography.landmarks.rotorua-geysers",
+          "lat": -38.1368,
+          "lon": 176.2497,
+          "importance": 4,
+          "glyph": "♨️",
+          "mediaId": null
+        },
+        {
+          "id": "tongariro-crossing",
+          "names": {
+            "en": "Tongariro Crossing"
+          },
+          "i18nKey": "geography.landmarks.tongariro-crossing",
+          "lat": -39.1333,
+          "lon": 175.65,
+          "importance": 4,
+          "glyph": "🌋",
+          "mediaId": null
+        },
+        {
           "id": "tongariro-national-park",
           "names": {
             "en": "Tongariro National Park"
@@ -23673,6 +25605,18 @@
             "fameTier": "renowned"
           },
           "note": "National park in New Zealand"
+        },
+        {
+          "id": "franz-josef-glacier",
+          "names": {
+            "en": "Franz Josef Glacier"
+          },
+          "i18nKey": "geography.landmarks.franz-josef-glacier",
+          "lat": -43.4667,
+          "lon": 170.1833,
+          "importance": 5,
+          "glyph": "🧊",
+          "mediaId": null
         },
         {
           "id": "hobbiton",
@@ -24018,8 +25962,8 @@
             "en": "Malaita"
           },
           "i18nKey": "geography.landmarks.malaita",
-          "lat": -9.0,
-          "lon": 161.0,
+          "lat": -9,
+          "lon": 161,
           "importance": 3,
           "glyph": "🌿",
           "mediaId": null,
@@ -25216,7 +27160,7 @@
             "en": "Beveridge Reef"
           },
           "i18nKey": "geography.landmarks.beveridge-reef",
-          "lat": -20.0,
+          "lat": -20,
           "lon": -167.8,
           "importance": 6,
           "glyph": "🌿",
@@ -25406,8 +27350,8 @@
             "en": "South Pole"
           },
           "i18nKey": "geography.landmarks.south-pole",
-          "lat": -90.0,
-          "lon": 0.0,
+          "lat": -90,
+          "lon": 0,
           "importance": 2,
           "glyph": "❄️",
           "mediaId": null

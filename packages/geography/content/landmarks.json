@@ -19,6 +19,22 @@
       }
     },
     {
+      "id": "landmark.abisko-national-park",
+      "name": "Abisko National Park",
+      "glyph": "🌌",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "SWE",
+      "marker": {
+        "lat": 68.35,
+        "lon": 18.83,
+        "country": "SWE"
+      }
+    },
+    {
       "id": "landmark.abraj-al-bait",
       "name": "Abraj Al Bait",
       "glyph": "🗼",
@@ -227,6 +243,22 @@
       }
     },
     {
+      "id": "landmark.afsluitdijk",
+      "name": "Afsluitdijk",
+      "glyph": "🌊",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 53.068,
+        "lon": 5.16,
+        "country": "NLD"
+      }
+    },
+    {
       "id": "landmark.air-and-tenere-national-nature-reserve",
       "name": "Aïr and Ténéré National Nature Reserve",
       "glyph": "🌿",
@@ -371,6 +403,22 @@
       }
     },
     {
+      "id": "landmark.alcatraz",
+      "name": "Alcatraz",
+      "glyph": "🏝️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "USA",
+      "marker": {
+        "lat": 37.827,
+        "lon": -122.423,
+        "country": "USA"
+      }
+    },
+    {
       "id": "landmark.alcazar-de-colon",
       "name": "Alcázar de Colón",
       "glyph": "🏛️",
@@ -400,6 +448,22 @@
         "lat": 49.71701,
         "lon": -2.19675,
         "country": "GGY"
+      }
+    },
+    {
+      "id": "landmark.aletsch-glacier",
+      "name": "Aletsch Glacier",
+      "glyph": "🧊",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHE",
+      "marker": {
+        "lat": 46.5008,
+        "lon": 8.0503,
+        "country": "CHE"
       }
     },
     {
@@ -499,6 +563,38 @@
       }
     },
     {
+      "id": "landmark.amazon-river",
+      "name": "Amazon River",
+      "glyph": "🏞️",
+      "importance": 2,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -3.119,
+        "lon": -60.0217,
+        "country": "BRA"
+      }
+    },
+    {
+      "id": "landmark.amber-fort",
+      "name": "Amber Fort",
+      "glyph": "🏰",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IND",
+      "marker": {
+        "lat": 26.9855,
+        "lon": 75.8513,
+        "country": "IND"
+      }
+    },
+    {
       "id": "landmark.amber-mountain-national-park",
       "name": "Amber Mountain National Park",
       "glyph": "🌳",
@@ -512,6 +608,22 @@
         "lat": -12.595,
         "lon": 49.155,
         "country": "MDG"
+      }
+    },
+    {
+      "id": "landmark.amboseli",
+      "name": "Amboseli",
+      "glyph": "🐘",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "KEN",
+      "marker": {
+        "lat": -2.6527,
+        "lon": 37.2606,
+        "country": "KEN"
       }
     },
     {
@@ -560,6 +672,22 @@
         "lat": 5.969,
         "lon": -62.536,
         "country": "VEN"
+      }
+    },
+    {
+      "id": "landmark.angel-of-independence",
+      "name": "Angel of Independence",
+      "glyph": "🗽",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "MEX",
+      "marker": {
+        "lat": 19.427,
+        "lon": -99.1677,
+        "country": "MEX"
       }
     },
     {
@@ -949,6 +1077,22 @@
       }
     },
     {
+      "id": "landmark.astronomical-clock",
+      "name": "Astronomical Clock",
+      "glyph": "🕰️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CZE",
+      "marker": {
+        "lat": 50.087,
+        "lon": 14.4208,
+        "country": "CZE"
+      }
+    },
+    {
       "id": "landmark.aswan-dam",
       "name": "Aswan Dam",
       "glyph": "🏛️",
@@ -1125,6 +1269,22 @@
       }
     },
     {
+      "id": "landmark.ayutthaya",
+      "name": "Ayutthaya",
+      "glyph": "🏺",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 14.3532,
+        "lon": 100.5689,
+        "country": "THA"
+      }
+    },
+    {
       "id": "landmark.baalbek",
       "name": "Baalbek",
       "glyph": "🏛️",
@@ -1154,6 +1314,22 @@
         "lat": 7.53028,
         "lon": 134.56472,
         "country": "PLW"
+      }
+    },
+    {
+      "id": "landmark.backwaters-of-kerala",
+      "name": "Backwaters of Kerala",
+      "glyph": "🛶",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IND",
+      "marker": {
+        "lat": 9.5,
+        "lon": 76.4,
+        "country": "IND"
       }
     },
     {
@@ -1621,6 +1797,22 @@
       }
     },
     {
+      "id": "landmark.bay-of-fundy",
+      "name": "Bay of Fundy",
+      "glyph": "🌊",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CAN",
+      "marker": {
+        "lat": 45.2,
+        "lon": -65,
+        "country": "CAN"
+      }
+    },
+    {
       "id": "landmark.bay-of-kotor",
       "name": "Bay of Kotor",
       "glyph": "⛵",
@@ -1813,6 +2005,22 @@
       }
     },
     {
+      "id": "landmark.berlin-wall-memorial",
+      "name": "Berlin Wall Memorial",
+      "glyph": "🧱",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 52.5351,
+        "lon": 13.3901,
+        "country": "DEU"
+      }
+    },
+    {
       "id": "landmark.bermuda-aquarium-museum-and-zoo",
       "name": "Bermuda Aquarium, Museum and Zoo",
       "glyph": "🎡",
@@ -1826,6 +2034,22 @@
         "lat": 32.3234,
         "lon": -64.73713,
         "country": "BMU"
+      }
+    },
+    {
+      "id": "landmark.bern-old-town",
+      "name": "Bern Old Town",
+      "glyph": "🏘️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHE",
+      "marker": {
+        "lat": 46.948,
+        "lon": 7.4474,
+        "country": "CHE"
       }
     },
     {
@@ -1927,6 +2151,22 @@
       }
     },
     {
+      "id": "landmark.binnenhof",
+      "name": "Binnenhof",
+      "glyph": "🏛️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 52.0799,
+        "lon": 4.3113,
+        "country": "NLD"
+      }
+    },
+    {
       "id": "landmark.birka",
       "name": "Birka",
       "glyph": "🏺",
@@ -1940,6 +2180,38 @@
         "lat": 59.33667,
         "lon": 17.545,
         "country": "SWE"
+      }
+    },
+    {
+      "id": "landmark.black-forest",
+      "name": "Black Forest",
+      "glyph": "🌲",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 48.2,
+        "lon": 8.2,
+        "country": "DEU"
+      }
+    },
+    {
+      "id": "landmark.blarney-castle",
+      "name": "Blarney Castle",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IRL",
+      "marker": {
+        "lat": 51.9291,
+        "lon": -8.5706,
+        "country": "IRL"
       }
     },
     {
@@ -2039,6 +2311,22 @@
       }
     },
     {
+      "id": "landmark.blue-mosque-tur",
+      "name": "Blue Mosque",
+      "glyph": "🕌",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "TUR",
+      "marker": {
+        "lat": 41.0054,
+        "lon": 28.9768,
+        "country": "TUR"
+      }
+    },
+    {
       "id": "landmark.blue-mountain-peak",
       "name": "Blue Mountain Peak",
       "glyph": "🌿",
@@ -2052,6 +2340,38 @@
         "lat": 18.04667,
         "lon": -76.57917,
         "country": "JAM"
+      }
+    },
+    {
+      "id": "landmark.blue-mountains",
+      "name": "Blue Mountains",
+      "glyph": "⛰️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUS",
+      "marker": {
+        "lat": -33.7,
+        "lon": 150.3,
+        "country": "AUS"
+      }
+    },
+    {
+      "id": "landmark.blyde-river-canyon",
+      "name": "Blyde River Canyon",
+      "glyph": "🏞️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ZAF",
+      "marker": {
+        "lat": -24.59,
+        "lon": 30.8,
+        "country": "ZAF"
       }
     },
     {
@@ -2084,6 +2404,22 @@
         "lat": 11.1778,
         "lon": -4.2959,
         "country": "BFA"
+      }
+    },
+    {
+      "id": "landmark.bohemian-switzerland",
+      "name": "Bohemian Switzerland",
+      "glyph": "🏞️",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CZE",
+      "marker": {
+        "lat": 50.88,
+        "lon": 14.3,
+        "country": "CZE"
       }
     },
     {
@@ -2135,6 +2471,22 @@
       }
     },
     {
+      "id": "landmark.bom-jesus-do-monte",
+      "name": "Bom Jesus do Monte",
+      "glyph": "⛪",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PRT",
+      "marker": {
+        "lat": 41.5545,
+        "lon": -8.3776,
+        "country": "PRT"
+      }
+    },
+    {
       "id": "landmark.boma-national-park",
       "name": "Boma National Park",
       "glyph": "🦌",
@@ -2148,6 +2500,22 @@
         "lat": 6.5,
         "lon": 34,
         "country": "SDS"
+      }
+    },
+    {
+      "id": "landmark.bondi-beach",
+      "name": "Bondi Beach",
+      "glyph": "🏖️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUS",
+      "marker": {
+        "lat": -33.8908,
+        "lon": 151.2743,
+        "country": "AUS"
       }
     },
     {
@@ -2260,6 +2628,22 @@
         "lat": 27.721,
         "lon": 85.362,
         "country": "NPL"
+      }
+    },
+    {
+      "id": "landmark.boulders-beach",
+      "name": "Boulders Beach",
+      "glyph": "🐧",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ZAF",
+      "marker": {
+        "lat": -34.1975,
+        "lon": 18.4508,
+        "country": "ZAF"
       }
     },
     {
@@ -2761,6 +3145,22 @@
       }
     },
     {
+      "id": "landmark.cabo-da-roca",
+      "name": "Cabo da Roca",
+      "glyph": "🌊",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PRT",
+      "marker": {
+        "lat": 38.7805,
+        "lon": -9.4989,
+        "country": "PRT"
+      }
+    },
+    {
       "id": "landmark.cacheu-mangroves-natural-park",
       "name": "Cacheu Mangroves Natural Park",
       "glyph": "🌳",
@@ -2822,6 +3222,22 @@
         "lat": 12.615,
         "lon": -70.052,
         "country": "ABW"
+      }
+    },
+    {
+      "id": "landmark.caminito",
+      "name": "Caminito",
+      "glyph": "🎨",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ARG",
+      "marker": {
+        "lat": -34.6395,
+        "lon": -58.3626,
+        "country": "ARG"
       }
     },
     {
@@ -2953,6 +3369,22 @@
       }
     },
     {
+      "id": "landmark.carcassonne",
+      "name": "Carcassonne",
+      "glyph": "🏰",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 43.2061,
+        "lon": 2.3639,
+        "country": "FRA"
+      }
+    },
+    {
       "id": "landmark.cartagena-old-town",
       "name": "Cartagena Old Town",
       "glyph": "🏰",
@@ -3014,6 +3446,22 @@
         "lat": 36.784,
         "lon": 3.06,
         "country": "DZA"
+      }
+    },
+    {
+      "id": "landmark.castel-sant-angelo",
+      "name": "Castel Sant'Angelo",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.9031,
+        "lon": 12.4663,
+        "country": "ITA"
       }
     },
     {
@@ -3193,6 +3641,22 @@
       }
     },
     {
+      "id": "landmark.cenote-ik-kil",
+      "name": "Cenote Ik Kil",
+      "glyph": "💧",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "MEX",
+      "marker": {
+        "lat": 20.66,
+        "lon": -88.5686,
+        "country": "MEX"
+      }
+    },
+    {
       "id": "landmark.central-island",
       "name": "Central Island",
       "glyph": "🌋",
@@ -3270,6 +3734,54 @@
         "lat": 14.38333,
         "lon": -89.11667,
         "country": "SLV"
+      }
+    },
+    {
+      "id": "landmark.cesky-krumlov",
+      "name": "Český Krumlov",
+      "glyph": "🏘️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CZE",
+      "marker": {
+        "lat": 48.8127,
+        "lon": 14.3175,
+        "country": "CZE"
+      }
+    },
+    {
+      "id": "landmark.chambord",
+      "name": "Chambord",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 47.6161,
+        "lon": 1.517,
+        "country": "FRA"
+      }
+    },
+    {
+      "id": "landmark.champs-elysees",
+      "name": "Champs-Élysées",
+      "glyph": "🌳",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 48.8698,
+        "lon": 2.3078,
+        "country": "FRA"
       }
     },
     {
@@ -3737,6 +4249,22 @@
       }
     },
     {
+      "id": "landmark.church-of-the-savior-on-blood",
+      "name": "Church of the Savior on Blood",
+      "glyph": "⛪",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "RUS",
+      "marker": {
+        "lat": 59.94,
+        "lon": 30.3286,
+        "country": "RUS"
+      }
+    },
+    {
       "id": "landmark.chutes-de-la-kagera",
       "name": "Chutes de la Kagera",
       "glyph": "💧",
@@ -3766,6 +4294,22 @@
         "lat": 14.916,
         "lon": -23.605,
         "country": "CPV"
+      }
+    },
+    {
+      "id": "landmark.circus-maximus",
+      "name": "Circus Maximus",
+      "glyph": "🏟️",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.886,
+        "lon": 12.4853,
+        "country": "ITA"
       }
     },
     {
@@ -3883,6 +4427,22 @@
       }
     },
     {
+      "id": "landmark.colca-canyon",
+      "name": "Colca Canyon",
+      "glyph": "🏞️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PER",
+      "marker": {
+        "lat": -15.61,
+        "lon": -71.86,
+        "country": "PER"
+      }
+    },
+    {
       "id": "landmark.cologne-cathedral",
       "name": "Cologne Cathedral",
       "glyph": "⛪",
@@ -3929,6 +4489,22 @@
       "marker": {
         "lat": 41.89,
         "lon": 12.492,
+        "country": "ITA"
+      }
+    },
+    {
+      "id": "landmark.colosseum-arch-of-constantine",
+      "name": "Colosseum Arch of Constantine",
+      "glyph": "🏛️",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.8898,
+        "lon": 12.4906,
         "country": "ITA"
       }
     },
@@ -3981,6 +4557,22 @@
       }
     },
     {
+      "id": "landmark.copacabana",
+      "name": "Copacabana",
+      "glyph": "🏖️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -22.9711,
+        "lon": -43.1822,
+        "country": "BRA"
+      }
+    },
+    {
       "id": "landmark.copan",
       "name": "Copán",
       "glyph": "🗿",
@@ -3994,6 +4586,22 @@
         "lat": 14.837,
         "lon": -89.142,
         "country": "HND"
+      }
+    },
+    {
+      "id": "landmark.copper-canyon",
+      "name": "Copper Canyon",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "MEX",
+      "marker": {
+        "lat": 27.3,
+        "lon": -107.7,
+        "country": "MEX"
       }
     },
     {
@@ -4301,6 +4909,22 @@
       }
     },
     {
+      "id": "landmark.delphi",
+      "name": "Delphi",
+      "glyph": "🏛️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 38.4824,
+        "lon": 22.501,
+        "country": "GRC"
+      }
+    },
+    {
       "id": "landmark.delta-works",
       "name": "Delta Works",
       "glyph": "🌊",
@@ -4362,6 +4986,22 @@
         "lat": 16.21582,
         "lon": -16.41495,
         "country": "SEN"
+      }
+    },
+    {
+      "id": "landmark.diani-beach",
+      "name": "Diani Beach",
+      "glyph": "🏖️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "KEN",
+      "marker": {
+        "lat": -4.28,
+        "lon": 39.59,
+        "country": "KEN"
       }
     },
     {
@@ -4557,6 +5197,38 @@
       }
     },
     {
+      "id": "landmark.douro-valley",
+      "name": "Douro Valley",
+      "glyph": "🍇",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PRT",
+      "marker": {
+        "lat": 41.1,
+        "lon": -7.79,
+        "country": "PRT"
+      }
+    },
+    {
+      "id": "landmark.drakensberg",
+      "name": "Drakensberg",
+      "glyph": "🏔️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ZAF",
+      "marker": {
+        "lat": -29.4,
+        "lon": 29.4,
+        "country": "ZAF"
+      }
+    },
+    {
       "id": "landmark.drottningholm-palace",
       "name": "Drottningholm Palace",
       "glyph": "🏛️",
@@ -4749,6 +5421,22 @@
       }
     },
     {
+      "id": "landmark.egyptian-museum",
+      "name": "Egyptian Museum",
+      "glyph": "🏺",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "EGY",
+      "marker": {
+        "lat": 30.0478,
+        "lon": 31.2336,
+        "country": "EGY"
+      }
+    },
+    {
       "id": "landmark.eiffel-tower",
       "name": "Eiffel Tower",
       "glyph": "🗼",
@@ -4764,6 +5452,22 @@
         "lat": 48.858,
         "lon": 2.294,
         "country": "FRA"
+      }
+    },
+    {
+      "id": "landmark.eisriesenwelt",
+      "name": "Eisriesenwelt",
+      "glyph": "🧊",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 47.5033,
+        "lon": 13.19,
+        "country": "AUT"
       }
     },
     {
@@ -5377,6 +6081,22 @@
       }
     },
     {
+      "id": "landmark.fitz-roy",
+      "name": "Fitz Roy",
+      "glyph": "🏔️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ARG",
+      "marker": {
+        "lat": -49.2717,
+        "lon": -73.0439,
+        "country": "ARG"
+      }
+    },
+    {
       "id": "landmark.flame-towers",
       "name": "Flame Towers",
       "glyph": "🏙️",
@@ -5569,6 +6289,22 @@
       }
     },
     {
+      "id": "landmark.franz-josef-glacier",
+      "name": "Franz Josef Glacier",
+      "glyph": "🧊",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NZL",
+      "marker": {
+        "lat": -43.4667,
+        "lon": 170.1833,
+        "country": "NZL"
+      }
+    },
+    {
       "id": "landmark.freedom-monument",
       "name": "Freedom Monument",
       "glyph": "🏛️",
@@ -5710,6 +6446,22 @@
         "lat": 1.21667,
         "lon": -77.36667,
         "country": "COL"
+      }
+    },
+    {
+      "id": "landmark.gamla-stan",
+      "name": "Gamla Stan",
+      "glyph": "🏘️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "SWE",
+      "marker": {
+        "lat": 59.3251,
+        "lon": 18.0711,
+        "country": "SWE"
       }
     },
     {
@@ -6227,6 +6979,22 @@
       }
     },
     {
+      "id": "landmark.grand-canal",
+      "name": "Grand Canal",
+      "glyph": "🛶",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 45.4361,
+        "lon": 12.333,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.grand-canyon",
       "name": "Grand Canyon",
       "glyph": "🏜️",
@@ -6579,6 +7347,22 @@
       }
     },
     {
+      "id": "landmark.great-rift-valley",
+      "name": "Great Rift Valley",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "KEN",
+      "marker": {
+        "lat": -0.5,
+        "lon": 36,
+        "country": "KEN"
+      }
+    },
+    {
       "id": "landmark.great-sand-sea",
       "name": "Great Sand Sea",
       "glyph": "🌿",
@@ -6643,6 +7427,22 @@
       }
     },
     {
+      "id": "landmark.grossglockner",
+      "name": "Grossglockner",
+      "glyph": "🏔️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 47.0745,
+        "lon": 12.6939,
+        "country": "AUT"
+      }
+    },
+    {
       "id": "landmark.grytviken",
       "name": "Grytviken",
       "glyph": "🐧",
@@ -6688,6 +7488,22 @@
         "lat": 43.937,
         "lon": 12.446,
         "country": "SMR"
+      }
+    },
+    {
+      "id": "landmark.guggenheim-bilbao",
+      "name": "Guggenheim Bilbao",
+      "glyph": "🖼️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 43.2687,
+        "lon": -2.934,
+        "country": "ESP"
       }
     },
     {
@@ -6835,6 +7651,22 @@
       }
     },
     {
+      "id": "landmark.hadrian-s-wall",
+      "name": "Hadrian's Wall",
+      "glyph": "🧱",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 55.0246,
+        "lon": -2.29,
+        "country": "GBR"
+      }
+    },
+    {
       "id": "landmark.agar-qim",
       "name": "Ħaġar Qim",
       "glyph": "🪨",
@@ -6913,6 +7745,22 @@
       "marker": {
         "lat": 47.562,
         "lon": 13.649,
+        "country": "AUT"
+      }
+    },
+    {
+      "id": "landmark.hallstatt-lake",
+      "name": "Hallstatt Lake",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 47.5622,
+        "lon": 13.6493,
         "country": "AUT"
       }
     },
@@ -7093,6 +7941,22 @@
       }
     },
     {
+      "id": "landmark.heidelberg-castle",
+      "name": "Heidelberg Castle",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 49.4106,
+        "lon": 8.7154,
+        "country": "DEU"
+      }
+    },
+    {
       "id": "landmark.hekla",
       "name": "Hekla",
       "glyph": "🌋",
@@ -7221,6 +8085,22 @@
       }
     },
     {
+      "id": "landmark.hiroshima-peace-memorial",
+      "name": "Hiroshima Peace Memorial",
+      "glyph": "🕊️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "JPN",
+      "marker": {
+        "lat": 34.3955,
+        "lon": 132.4536,
+        "country": "JPN"
+      }
+    },
+    {
       "id": "landmark.hkakabo-razi",
       "name": "Hkakabo Razi",
       "glyph": "🌿",
@@ -7250,6 +8130,22 @@
         "lat": -37.872,
         "lon": 175.683,
         "country": "NZL"
+      }
+    },
+    {
+      "id": "landmark.hofburg",
+      "name": "Hofburg",
+      "glyph": "🏰",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 48.2069,
+        "lon": 16.3656,
+        "country": "AUT"
       }
     },
     {
@@ -8335,6 +9231,22 @@
       }
     },
     {
+      "id": "landmark.jungfraujoch",
+      "name": "Jungfraujoch",
+      "glyph": "🏔️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHE",
+      "marker": {
+        "lat": 46.5474,
+        "lon": 7.9806,
+        "country": "CHE"
+      }
+    },
+    {
       "id": "landmark.k2",
       "name": "K2",
       "glyph": "🏔️",
@@ -8449,6 +9361,22 @@
       }
     },
     {
+      "id": "landmark.kakadu-national-park",
+      "name": "Kakadu National Park",
+      "glyph": "🐊",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUS",
+      "marker": {
+        "lat": -12.8375,
+        "lon": 132.838,
+        "country": "AUS"
+      }
+    },
+    {
       "id": "landmark.kalambo-falls",
       "name": "Kalambo Falls",
       "glyph": "💧",
@@ -8542,6 +9470,22 @@
         "lat": 22.628,
         "lon": 120.34192,
         "country": "TWN"
+      }
+    },
+    {
+      "id": "landmark.kapellbrucke",
+      "name": "Kapellbrücke",
+      "glyph": "🌉",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHE",
+      "marker": {
+        "lat": 47.0516,
+        "lon": 8.3076,
+        "country": "CHE"
       }
     },
     {
@@ -8785,6 +9729,22 @@
       }
     },
     {
+      "id": "landmark.keukenhof",
+      "name": "Keukenhof",
+      "glyph": "🌷",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 52.2697,
+        "lon": 4.5461,
+        "country": "NLD"
+      }
+    },
+    {
       "id": "landmark.kgale-hill",
       "name": "Kgale Hill",
       "glyph": "🌳",
@@ -9009,6 +9969,22 @@
       }
     },
     {
+      "id": "landmark.knossos",
+      "name": "Knossos",
+      "glyph": "🏺",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 35.298,
+        "lon": 25.163,
+        "country": "GRC"
+      }
+    },
+    {
       "id": "landmark.ko-samui",
       "name": "Ko Samui",
       "glyph": "🌿",
@@ -9038,6 +10014,38 @@
         "lat": -9.07,
         "lon": 147.73,
         "country": "PNG"
+      }
+    },
+    {
+      "id": "landmark.komodo-national-park",
+      "name": "Komodo National Park",
+      "glyph": "🦎",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IDN",
+      "marker": {
+        "lat": -8.55,
+        "lon": 119.45,
+        "country": "IDN"
+      }
+    },
+    {
+      "id": "landmark.konark-sun-temple",
+      "name": "Konark Sun Temple",
+      "glyph": "🛕",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IND",
+      "marker": {
+        "lat": 19.8876,
+        "lon": 86.0945,
+        "country": "IND"
       }
     },
     {
@@ -9176,6 +10184,22 @@
         "lat": -6.102,
         "lon": 105.423,
         "country": "IDN"
+      }
+    },
+    {
+      "id": "landmark.krakow-old-town",
+      "name": "Kraków Old Town",
+      "glyph": "🏘️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "POL",
+      "marker": {
+        "lat": 50.0619,
+        "lon": 19.937,
+        "country": "POL"
       }
     },
     {
@@ -9851,6 +10875,22 @@
       }
     },
     {
+      "id": "landmark.lake-geneva",
+      "name": "Lake Geneva",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHE",
+      "marker": {
+        "lat": 46.45,
+        "lon": 6.5,
+        "country": "CHE"
+      }
+    },
+    {
       "id": "landmark.lake-ilopango",
       "name": "Lake Ilopango",
       "glyph": "🌿",
@@ -9992,6 +11032,22 @@
         "lat": -13.294,
         "lon": -176.204,
         "country": "WLF"
+      }
+    },
+    {
+      "id": "landmark.lake-louise",
+      "name": "Lake Louise",
+      "glyph": "🏞️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CAN",
+      "marker": {
+        "lat": 51.4254,
+        "lon": -116.1773,
+        "country": "CAN"
       }
     },
     {
@@ -10373,6 +11429,38 @@
       }
     },
     {
+      "id": "landmark.lake-titicaca",
+      "name": "Lake Titicaca",
+      "glyph": "🏞️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PER",
+      "marker": {
+        "lat": -15.75,
+        "lon": -69.5,
+        "country": "PER"
+      }
+    },
+    {
+      "id": "landmark.lake-toba",
+      "name": "Lake Toba",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IDN",
+      "marker": {
+        "lat": 2.6845,
+        "lon": 98.8756,
+        "country": "IDN"
+      }
+    },
+    {
       "id": "landmark.lake-togo",
       "name": "Lake Togo",
       "glyph": "🌿",
@@ -10663,6 +11751,22 @@
       }
     },
     {
+      "id": "landmark.lencois-maranhenses",
+      "name": "Lençóis Maranhenses",
+      "glyph": "🏜️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -2.486,
+        "lon": -43.128,
+        "country": "BRA"
+      }
+    },
+    {
       "id": "landmark.leon-cathedral",
       "name": "León Cathedral",
       "glyph": "⛪",
@@ -10708,6 +11812,38 @@
         "lat": 49.333,
         "lon": -2.083,
         "country": "JEY"
+      }
+    },
+    {
+      "id": "landmark.leshan-giant-buddha",
+      "name": "Leshan Giant Buddha",
+      "glyph": "🗿",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHN",
+      "marker": {
+        "lat": 29.545,
+        "lon": 103.7717,
+        "country": "CHN"
+      }
+    },
+    {
+      "id": "landmark.li-river",
+      "name": "Li River",
+      "glyph": "🏞️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHN",
+      "marker": {
+        "lat": 24.95,
+        "lon": 110.45,
+        "country": "CHN"
       }
     },
     {
@@ -10839,6 +11975,38 @@
       }
     },
     {
+      "id": "landmark.loch-ness",
+      "name": "Loch Ness",
+      "glyph": "🐉",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 57.3229,
+        "lon": -4.4244,
+        "country": "GBR"
+      }
+    },
+    {
+      "id": "landmark.lofoten",
+      "name": "Lofoten",
+      "glyph": "🏝️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NOR",
+      "marker": {
+        "lat": 68.21,
+        "lon": 13.61,
+        "country": "NOR"
+      }
+    },
+    {
       "id": "landmark.lombok-island",
       "name": "Lombok Island",
       "glyph": "🌿",
@@ -10964,6 +12132,22 @@
         "lat": 49.611,
         "lon": 6.131,
         "country": "LUX"
+      }
+    },
+    {
+      "id": "landmark.luxor-temple",
+      "name": "Luxor Temple",
+      "glyph": "🏛️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "EGY",
+      "marker": {
+        "lat": 25.6997,
+        "lon": 32.6392,
+        "country": "EGY"
       }
     },
     {
@@ -11401,6 +12585,22 @@
       }
     },
     {
+      "id": "landmark.maracana",
+      "name": "Maracanã",
+      "glyph": "🏟️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -22.9121,
+        "lon": -43.2302,
+        "country": "BRA"
+      }
+    },
+    {
       "id": "landmark.margarita-island",
       "name": "Margarita Island",
       "glyph": "🌿",
@@ -11721,6 +12921,22 @@
       }
     },
     {
+      "id": "landmark.melk-abbey",
+      "name": "Melk Abbey",
+      "glyph": "⛪",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 48.228,
+        "lon": 15.333,
+        "country": "AUT"
+      }
+    },
+    {
       "id": "landmark.merapi",
       "name": "Merapi",
       "glyph": "🌋",
@@ -11830,6 +13046,38 @@
         "lat": 19.43439,
         "lon": -99.13308,
         "country": "MEX"
+      }
+    },
+    {
+      "id": "landmark.mezquita-of-cordoba",
+      "name": "Mezquita of Córdoba",
+      "glyph": "🕌",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 37.879,
+        "lon": -4.7794,
+        "country": "ESP"
+      }
+    },
+    {
+      "id": "landmark.milan-cathedral",
+      "name": "Milan Cathedral",
+      "glyph": "⛪",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 45.4642,
+        "lon": 9.1919,
+        "country": "ITA"
       }
     },
     {
@@ -12089,6 +13337,22 @@
       }
     },
     {
+      "id": "landmark.mont-blanc",
+      "name": "Mont Blanc",
+      "glyph": "🏔️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 45.8326,
+        "lon": 6.8652,
+        "country": "FRA"
+      }
+    },
+    {
       "id": "landmark.mont-orgueil",
       "name": "Mont Orgueil",
       "glyph": "🏰",
@@ -12118,6 +13382,22 @@
         "lat": 48.636,
         "lon": -1.511,
         "country": "FRA"
+      }
+    },
+    {
+      "id": "landmark.monte-alban",
+      "name": "Monte Albán",
+      "glyph": "🏺",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "MEX",
+      "marker": {
+        "lat": 17.0439,
+        "lon": -96.7678,
+        "country": "MEX"
       }
     },
     {
@@ -12182,6 +13462,38 @@
         "lat": 9.52147,
         "lon": -13.69051,
         "country": "GIN"
+      }
+    },
+    {
+      "id": "landmark.monument-valley",
+      "name": "Monument Valley",
+      "glyph": "🏜️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "USA",
+      "marker": {
+        "lat": 36.998,
+        "lon": -110.0985,
+        "country": "USA"
+      }
+    },
+    {
+      "id": "landmark.moraine-lake",
+      "name": "Moraine Lake",
+      "glyph": "🏞️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CAN",
+      "marker": {
+        "lat": 51.3217,
+        "lon": -116.186,
+        "country": "CAN"
       }
     },
     {
@@ -12358,6 +13670,22 @@
         "lat": 39.70194,
         "lon": 44.29833,
         "country": "TUR"
+      }
+    },
+    {
+      "id": "landmark.mount-athos",
+      "name": "Mount Athos",
+      "glyph": "⛪",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 40.1572,
+        "lon": 24.3266,
+        "country": "GRC"
       }
     },
     {
@@ -12761,6 +14089,22 @@
       }
     },
     {
+      "id": "landmark.mount-nemrut",
+      "name": "Mount Nemrut",
+      "glyph": "🗿",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "TUR",
+      "marker": {
+        "lat": 37.9806,
+        "lon": 38.7411,
+        "country": "TUR"
+      }
+    },
+    {
       "id": "landmark.mount-nimba",
       "name": "Mount Nimba",
       "glyph": "🏔️",
@@ -13097,6 +14441,22 @@
       }
     },
     {
+      "id": "landmark.musee-d-orsay",
+      "name": "Musée d'Orsay",
+      "glyph": "🖼️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 48.86,
+        "lon": 2.3266,
+        "country": "FRA"
+      }
+    },
+    {
       "id": "landmark.musee-oceanographique-de-monaco",
       "name": "Musée océanographique de Monaco",
       "glyph": "🏛️",
@@ -13110,6 +14470,22 @@
         "lat": 43.73083,
         "lon": 7.42528,
         "country": "MCO"
+      }
+    },
+    {
+      "id": "landmark.museum-island",
+      "name": "Museum Island",
+      "glyph": "🖼️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 52.5169,
+        "lon": 13.4019,
+        "country": "DEU"
       }
     },
     {
@@ -13721,19 +15097,45 @@
       }
     },
     {
-      "id": "landmark.niagara-falls",
-      "name": "Niagara Falls",
-      "glyph": "💦",
-      "importance": 2,
+      "id": "landmark.ngorongoro-crater",
+      "name": "Ngorongoro Crater",
+      "glyph": "🌋",
+      "importance": 3,
       "review": {
         "state": "reviewed",
         "source": "openai-geography-landmark-enrichment"
       },
-      "country": "CAN",
+      "country": "TZA",
       "marker": {
-        "lat": 43.078,
-        "lon": -79.075,
-        "country": "CAN"
+        "lat": -3.2,
+        "lon": 35.5,
+        "country": "TZA"
+      }
+    },
+    {
+      "id": "landmark.niagara-falls",
+      "name": "Niagara Falls",
+      "glyph": "💦",
+      "importance": 3,
+      "countries": [
+        "USA",
+        "CAN"
+      ],
+      "markers": [
+        {
+          "lat": 43.0828,
+          "lon": -79.0742,
+          "country": "USA"
+        },
+        {
+          "lat": 43.078,
+          "lon": -79.075,
+          "country": "CAN"
+        }
+      ],
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
       }
     },
     {
@@ -13897,6 +15299,22 @@
       }
     },
     {
+      "id": "landmark.north-cape",
+      "name": "North Cape",
+      "glyph": "🌊",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NOR",
+      "marker": {
+        "lat": 71.1709,
+        "lon": 25.7836,
+        "country": "NOR"
+      }
+    },
+    {
       "id": "landmark.northeast-greenland-national-park",
       "name": "Northeast Greenland National Park",
       "glyph": "🌿",
@@ -14041,6 +15459,22 @@
       }
     },
     {
+      "id": "landmark.obidos",
+      "name": "Óbidos",
+      "glyph": "🏰",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PRT",
+      "marker": {
+        "lat": 39.3606,
+        "lon": -9.1573,
+        "country": "PRT"
+      }
+    },
+    {
       "id": "landmark.ohrid",
       "name": "Ohrid",
       "glyph": "⛪",
@@ -14121,6 +15555,38 @@
       }
     },
     {
+      "id": "landmark.old-quebec",
+      "name": "Old Quebec",
+      "glyph": "🏘️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CAN",
+      "marker": {
+        "lat": 46.8123,
+        "lon": -71.2145,
+        "country": "CAN"
+      }
+    },
+    {
+      "id": "landmark.olduvai-gorge",
+      "name": "Olduvai Gorge",
+      "glyph": "🦴",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "TZA",
+      "marker": {
+        "lat": -2.993,
+        "lon": 35.35,
+        "country": "TZA"
+      }
+    },
+    {
       "id": "landmark.olumo-rock",
       "name": "Olumo Rock",
       "glyph": "🪨",
@@ -14134,6 +15600,22 @@
         "lat": 7.152,
         "lon": 3.348,
         "country": "NGA"
+      }
+    },
+    {
+      "id": "landmark.olympia",
+      "name": "Olympia",
+      "glyph": "🏛️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 37.6383,
+        "lon": 21.63,
+        "country": "GRC"
       }
     },
     {
@@ -14329,6 +15811,22 @@
       }
     },
     {
+      "id": "landmark.ouro-preto",
+      "name": "Ouro Preto",
+      "glyph": "🏘️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -20.3856,
+        "lon": -43.5035,
+        "country": "BRA"
+      }
+    },
+    {
       "id": "landmark.outamba-kilimi-national-park",
       "name": "Outamba-Kilimi National Park",
       "glyph": "🌿",
@@ -14521,6 +16019,38 @@
       }
     },
     {
+      "id": "landmark.pantanal",
+      "name": "Pantanal",
+      "glyph": "🐊",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "BRA",
+      "marker": {
+        "lat": -17.6,
+        "lon": -57,
+        "country": "BRA"
+      }
+    },
+    {
+      "id": "landmark.pantheon",
+      "name": "Pantheon",
+      "glyph": "🏛️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.8986,
+        "lon": 12.4769,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.papua-new-guinea-national-museum-and-art-gallery",
       "name": "Papua New Guinea National Museum and Art Gallery",
       "glyph": "🏛️",
@@ -14569,6 +16099,22 @@
       }
     },
     {
+      "id": "landmark.parliament-hill",
+      "name": "Parliament Hill",
+      "glyph": "🏛️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CAN",
+      "marker": {
+        "lat": 45.4236,
+        "lon": -75.7009,
+        "country": "CAN"
+      }
+    },
+    {
       "id": "landmark.paro-taktsang",
       "name": "Paro Taktsang",
       "glyph": "⛪",
@@ -14614,6 +16160,22 @@
         "lat": 27.7105,
         "lon": 85.34865,
         "country": "NPL"
+      }
+    },
+    {
+      "id": "landmark.peace-palace",
+      "name": "Peace Palace",
+      "glyph": "🏛️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 52.0866,
+        "lon": 4.2955,
+        "country": "NLD"
       }
     },
     {
@@ -14842,6 +16404,22 @@
         "lat": 17.976,
         "lon": 102.617,
         "country": "LAO"
+      }
+    },
+    {
+      "id": "landmark.phi-phi-islands",
+      "name": "Phi Phi Islands",
+      "glyph": "🏝️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 7.7407,
+        "lon": 98.7784,
+        "country": "THA"
       }
     },
     {
@@ -15181,6 +16759,22 @@
       }
     },
     {
+      "id": "landmark.pompeii",
+      "name": "Pompeii",
+      "glyph": "🏺",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 40.7497,
+        "lon": 14.4869,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.pont-du-gard",
       "name": "Pont du Gard",
       "glyph": "🌉",
@@ -15309,6 +16903,22 @@
       }
     },
     {
+      "id": "landmark.prado-museum",
+      "name": "Prado Museum",
+      "glyph": "🖼️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 40.4138,
+        "lon": -3.6921,
+        "country": "ESP"
+      }
+    },
+    {
       "id": "landmark.prague-astronomical-clock",
       "name": "Prague Astronomical Clock",
       "glyph": "🗼",
@@ -15370,6 +16980,22 @@
         "lat": -4.32056,
         "lon": 55.73222,
         "country": "SYC"
+      }
+    },
+    {
+      "id": "landmark.preikestolen",
+      "name": "Preikestolen",
+      "glyph": "🪨",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NOR",
+      "marker": {
+        "lat": 58.9864,
+        "lon": 6.1904,
+        "country": "NOR"
       }
     },
     {
@@ -15629,6 +17255,22 @@
       }
     },
     {
+      "id": "landmark.quebrada-de-humahuaca",
+      "name": "Quebrada de Humahuaca",
+      "glyph": "🏜️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ARG",
+      "marker": {
+        "lat": -23.2,
+        "lon": -65.35,
+        "country": "ARG"
+      }
+    },
+    {
       "id": "landmark.queen-emma-bridge",
       "name": "Queen Emma Bridge",
       "glyph": "🌉",
@@ -15693,6 +17335,54 @@
       }
     },
     {
+      "id": "landmark.railay-beach",
+      "name": "Railay Beach",
+      "glyph": "🏖️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 8.011,
+        "lon": 98.8378,
+        "country": "THA"
+      }
+    },
+    {
+      "id": "landmark.rainbow-mountain",
+      "name": "Rainbow Mountain",
+      "glyph": "🌈",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PER",
+      "marker": {
+        "lat": -13.8697,
+        "lon": -71.303,
+        "country": "PER"
+      }
+    },
+    {
+      "id": "landmark.raja-ampat",
+      "name": "Raja Ampat",
+      "glyph": "🐠",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IDN",
+      "marker": {
+        "lat": -0.5,
+        "lon": 130.5,
+        "country": "IDN"
+      }
+    },
+    {
       "id": "landmark.ras-nouadhibou-lighthouse",
       "name": "Ras Nouadhibou lighthouse",
       "glyph": "🗼",
@@ -15725,6 +17415,22 @@
       }
     },
     {
+      "id": "landmark.red-square",
+      "name": "Red Square",
+      "glyph": "🏛️",
+      "importance": 2,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "RUS",
+      "marker": {
+        "lat": 55.7539,
+        "lon": 37.6208,
+        "country": "RUS"
+      }
+    },
+    {
       "id": "landmark.registan",
       "name": "Registan",
       "glyph": "🕌",
@@ -15741,6 +17447,22 @@
       }
     },
     {
+      "id": "landmark.reichstag",
+      "name": "Reichstag",
+      "glyph": "🏛️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 52.5186,
+        "lon": 13.3761,
+        "country": "DEU"
+      }
+    },
+    {
       "id": "landmark.rhine-falls",
       "name": "Rhine Falls",
       "glyph": "💧",
@@ -15754,6 +17476,22 @@
         "lat": 47.67722,
         "lon": 8.61583,
         "country": "CHE"
+      }
+    },
+    {
+      "id": "landmark.rhine-valley",
+      "name": "Rhine Valley",
+      "glyph": "🏞️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 50.15,
+        "lon": 7.7,
+        "country": "DEU"
       }
     },
     {
@@ -15853,6 +17591,22 @@
       }
     },
     {
+      "id": "landmark.ring-of-kerry",
+      "name": "Ring of Kerry",
+      "glyph": "🏞️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IRL",
+      "marker": {
+        "lat": 51.9,
+        "lon": -9.8,
+        "country": "IRL"
+      }
+    },
+    {
       "id": "landmark.rio-platano-biosphere-reserve",
       "name": "Río Plátano Biosphere Reserve",
       "glyph": "🌿",
@@ -15882,6 +17636,22 @@
         "lat": 13.63889,
         "lon": -14.95944,
         "country": "GMB"
+      }
+    },
+    {
+      "id": "landmark.robben-island",
+      "name": "Robben Island",
+      "glyph": "🏝️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ZAF",
+      "marker": {
+        "lat": -33.8067,
+        "lon": 18.3667,
+        "country": "ZAF"
       }
     },
     {
@@ -15981,6 +17751,22 @@
       }
     },
     {
+      "id": "landmark.roman-forum",
+      "name": "Roman Forum",
+      "glyph": "🏛️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.8925,
+        "lon": 12.4853,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.rongerik-atoll",
       "name": "Rongerik Atoll",
       "glyph": "🌿",
@@ -16029,6 +17815,22 @@
       }
     },
     {
+      "id": "landmark.rotorua-geysers",
+      "name": "Rotorua geysers",
+      "glyph": "♨️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NZL",
+      "marker": {
+        "lat": -38.1368,
+        "lon": 176.2497,
+        "country": "NZL"
+      }
+    },
+    {
       "id": "landmark.rova-of-antananarivo",
       "name": "Rova of Antananarivo",
       "glyph": "🏰",
@@ -16074,6 +17876,22 @@
         "lat": 32.327,
         "lon": -64.836,
         "country": "BMU"
+      }
+    },
+    {
+      "id": "landmark.royal-palace-of-madrid",
+      "name": "Royal Palace of Madrid",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 40.418,
+        "lon": -3.7143,
+        "country": "ESP"
       }
     },
     {
@@ -16333,6 +18151,22 @@
       }
     },
     {
+      "id": "landmark.sacsayhuaman",
+      "name": "Sacsayhuamán",
+      "glyph": "🏺",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PER",
+      "marker": {
+        "lat": -13.5089,
+        "lon": -71.9819,
+        "country": "PER"
+      }
+    },
+    {
       "id": "landmark.sagrada-familia",
       "name": "Sagrada Família",
       "glyph": "⛪",
@@ -16447,6 +18281,22 @@
       }
     },
     {
+      "id": "landmark.sainte-chapelle",
+      "name": "Sainte-Chapelle",
+      "glyph": "⛪",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 48.8554,
+        "lon": 2.345,
+        "country": "FRA"
+      }
+    },
+    {
       "id": "landmark.saksun",
       "name": "Saksun",
       "glyph": "🏘️",
@@ -16508,6 +18358,22 @@
         "lat": -20.133,
         "lon": -67.489,
         "country": "BOL"
+      }
+    },
+    {
+      "id": "landmark.salzburg-old-town",
+      "name": "Salzburg Old Town",
+      "glyph": "🏘️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "AUT",
+      "marker": {
+        "lat": 47.7994,
+        "lon": 13.0439,
+        "country": "AUT"
       }
     },
     {
@@ -16623,6 +18489,22 @@
       }
     },
     {
+      "id": "landmark.santiago-de-compostela-cathedral",
+      "name": "Santiago de Compostela Cathedral",
+      "glyph": "⛪",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 42.8806,
+        "lon": -8.5446,
+        "country": "ESP"
+      }
+    },
+    {
       "id": "landmark.santorini",
       "name": "Santorini",
       "glyph": "🏘️",
@@ -16635,6 +18517,22 @@
       "marker": {
         "lat": 36.393,
         "lon": 25.462,
+        "country": "GRC"
+      }
+    },
+    {
+      "id": "landmark.santorini-caldera",
+      "name": "Santorini caldera",
+      "glyph": "🌋",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 36.405,
+        "lon": 25.435,
         "country": "GRC"
       }
     },
@@ -16831,6 +18729,38 @@
       }
     },
     {
+      "id": "landmark.segovia-aqueduct",
+      "name": "Segovia Aqueduct",
+      "glyph": "🌉",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ESP",
+      "marker": {
+        "lat": 40.9481,
+        "lon": -4.1184,
+        "country": "ESP"
+      }
+    },
+    {
+      "id": "landmark.selous-game-reserve",
+      "name": "Selous Game Reserve",
+      "glyph": "🐘",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "TZA",
+      "marker": {
+        "lat": -8.5,
+        "lon": 37.5,
+        "country": "TZA"
+      }
+    },
+    {
       "id": "landmark.senegambia-bridge",
       "name": "Senegambia bridge",
       "glyph": "🏛️",
@@ -16844,6 +18774,22 @@
         "lat": 13.51639,
         "lon": -15.5725,
         "country": "GMB"
+      }
+    },
+    {
+      "id": "landmark.senso-ji",
+      "name": "Senso-ji",
+      "glyph": "⛩️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "JPN",
+      "marker": {
+        "lat": 35.7148,
+        "lon": 139.7967,
+        "country": "JPN"
       }
     },
     {
@@ -16956,6 +18902,22 @@
         "lat": 7.55,
         "lon": -12.7,
         "country": "SLE"
+      }
+    },
+    {
+      "id": "landmark.shibuya-crossing",
+      "name": "Shibuya Crossing",
+      "glyph": "🚦",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "JPN",
+      "marker": {
+        "lat": 35.6595,
+        "lon": 139.7004,
+        "country": "JPN"
       }
     },
     {
@@ -17183,6 +19145,22 @@
       }
     },
     {
+      "id": "landmark.siwa-oasis",
+      "name": "Siwa Oasis",
+      "glyph": "🌴",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "EGY",
+      "marker": {
+        "lat": 29.2032,
+        "lon": 25.5195,
+        "country": "EGY"
+      }
+    },
+    {
       "id": "landmark.sixty-dome-mosque",
       "name": "Sixty Dome Mosque",
       "glyph": "🕌",
@@ -17196,6 +19174,22 @@
         "lat": 22.674,
         "lon": 89.742,
         "country": "BGD"
+      }
+    },
+    {
+      "id": "landmark.skellig-michael",
+      "name": "Skellig Michael",
+      "glyph": "⛪",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IRL",
+      "marker": {
+        "lat": 51.7711,
+        "lon": -10.5397,
+        "country": "IRL"
       }
     },
     {
@@ -17292,6 +19286,22 @@
         "lat": 53.75,
         "lon": 21.71667,
         "country": "POL"
+      }
+    },
+    {
+      "id": "landmark.snowdon",
+      "name": "Snowdon",
+      "glyph": "🏔️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 53.0685,
+        "lon": -4.0763,
+        "country": "GBR"
       }
     },
     {
@@ -17489,6 +19499,22 @@
       }
     },
     {
+      "id": "landmark.spanish-steps",
+      "name": "Spanish Steps",
+      "glyph": "🪜",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.9058,
+        "lon": 12.4823,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.sparta",
       "name": "Sparta",
       "glyph": "🏺",
@@ -17582,6 +19608,22 @@
         "lat": 45.434,
         "lon": 12.339,
         "country": "ITA"
+      }
+    },
+    {
+      "id": "landmark.st-paul-s-cathedral",
+      "name": "St Paul's Cathedral",
+      "glyph": "⛪",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 51.5138,
+        "lon": -0.0984,
+        "country": "GBR"
       }
     },
     {
@@ -17923,6 +19965,22 @@
       }
     },
     {
+      "id": "landmark.suez-canal",
+      "name": "Suez Canal",
+      "glyph": "🚢",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "EGY",
+      "marker": {
+        "lat": 30.5852,
+        "lon": 32.2654,
+        "country": "EGY"
+      }
+    },
+    {
       "id": "landmark.sugarloaf-mountain",
       "name": "Sugarloaf Mountain",
       "glyph": "🚡",
@@ -17936,6 +19994,22 @@
         "lat": -22.949,
         "lon": -43.157,
         "country": "BRA"
+      }
+    },
+    {
+      "id": "landmark.sukhothai",
+      "name": "Sukhothai",
+      "glyph": "🏺",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 17.0206,
+        "lon": 99.7036,
+        "country": "THA"
       }
     },
     {
@@ -18000,6 +20074,22 @@
         "lat": 23.583,
         "lon": 58.388,
         "country": "OMN"
+      }
+    },
+    {
+      "id": "landmark.summer-palace",
+      "name": "Summer Palace",
+      "glyph": "🏯",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHN",
+      "marker": {
+        "lat": 39.999,
+        "lon": 116.2755,
+        "country": "CHN"
       }
     },
     {
@@ -18343,6 +20433,22 @@
       }
     },
     {
+      "id": "landmark.tanah-lot",
+      "name": "Tanah Lot",
+      "glyph": "🛕",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IDN",
+      "marker": {
+        "lat": -8.6212,
+        "lon": 115.0868,
+        "country": "IDN"
+      }
+    },
+    {
       "id": "landmark.tarso-tousside",
       "name": "Tarso Toussidé",
       "glyph": "🌋",
@@ -18407,6 +20513,22 @@
       }
     },
     {
+      "id": "landmark.tatra-mountains",
+      "name": "Tatra Mountains",
+      "glyph": "🏔️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "POL",
+      "marker": {
+        "lat": 49.2333,
+        "lon": 20,
+        "country": "POL"
+      }
+    },
+    {
       "id": "landmark.tatra-national-park",
       "name": "Tatra National Park",
       "glyph": "🌿",
@@ -18468,6 +20590,38 @@
         "lat": 28.27264,
         "lon": -16.64361,
         "country": "ESP"
+      }
+    },
+    {
+      "id": "landmark.temple-of-heaven",
+      "name": "Temple of Heaven",
+      "glyph": "🏯",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHN",
+      "marker": {
+        "lat": 39.8822,
+        "lon": 116.4066,
+        "country": "CHN"
+      }
+    },
+    {
+      "id": "landmark.temple-of-poseidon",
+      "name": "Temple of Poseidon",
+      "glyph": "🏛️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GRC",
+      "marker": {
+        "lat": 37.6503,
+        "lon": 24.0253,
+        "country": "GRC"
       }
     },
     {
@@ -18791,6 +20945,22 @@
       }
     },
     {
+      "id": "landmark.times-square",
+      "name": "Times Square",
+      "glyph": "🌃",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "USA",
+      "marker": {
+        "lat": 40.758,
+        "lon": -73.9855,
+        "country": "USA"
+      }
+    },
+    {
       "id": "landmark.timgad",
       "name": "Timgad",
       "glyph": "🏺",
@@ -18887,6 +21057,22 @@
       }
     },
     {
+      "id": "landmark.todai-ji",
+      "name": "Todai-ji",
+      "glyph": "🛕",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "JPN",
+      "marker": {
+        "lat": 34.689,
+        "lon": 135.8398,
+        "country": "JPN"
+      }
+    },
+    {
       "id": "landmark.toktogul-dam",
       "name": "Toktogul Dam",
       "glyph": "🏛️",
@@ -18967,6 +21153,22 @@
       }
     },
     {
+      "id": "landmark.tongariro-crossing",
+      "name": "Tongariro Crossing",
+      "glyph": "🌋",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NZL",
+      "marker": {
+        "lat": -39.1333,
+        "lon": 175.65,
+        "country": "NZL"
+      }
+    },
+    {
       "id": "landmark.tongariro-national-park",
       "name": "Tongariro National Park",
       "glyph": "🌿",
@@ -19028,6 +21230,22 @@
         "lat": 59.43556,
         "lon": 24.73722,
         "country": "EST"
+      }
+    },
+    {
+      "id": "landmark.topkapi-palace",
+      "name": "Topkapi Palace",
+      "glyph": "🏰",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "TUR",
+      "marker": {
+        "lat": 41.0115,
+        "lon": 28.9834,
+        "country": "TUR"
       }
     },
     {
@@ -19097,6 +21315,38 @@
       }
     },
     {
+      "id": "landmark.tower-of-belem",
+      "name": "Tower of Belém",
+      "glyph": "🗼",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "PRT",
+      "marker": {
+        "lat": 38.6916,
+        "lon": -9.216,
+        "country": "PRT"
+      }
+    },
+    {
+      "id": "landmark.tower-of-london",
+      "name": "Tower of London",
+      "glyph": "🏰",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 51.5081,
+        "lon": -0.0759,
+        "country": "GBR"
+      }
+    },
+    {
       "id": "landmark.trakai-island-castle",
       "name": "Trakai Island Castle",
       "glyph": "🏰",
@@ -19110,6 +21360,22 @@
         "lat": 54.652,
         "lon": 24.933,
         "country": "LTU"
+      }
+    },
+    {
+      "id": "landmark.trans-siberian-railway",
+      "name": "Trans-Siberian Railway",
+      "glyph": "🚂",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "RUS",
+      "marker": {
+        "lat": 56,
+        "lon": 92.87,
+        "country": "RUS"
       }
     },
     {
@@ -19174,6 +21440,22 @@
         "lat": 10.46056,
         "lon": -61.24861,
         "country": "TTO"
+      }
+    },
+    {
+      "id": "landmark.trinity-college-library",
+      "name": "Trinity College Library",
+      "glyph": "📚",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IRL",
+      "marker": {
+        "lat": 53.3444,
+        "lon": -6.2567,
+        "country": "IRL"
       }
     },
     {
@@ -19286,6 +21568,22 @@
         "lat": -28.7522,
         "lon": 28.8941,
         "country": "ZAF"
+      }
+    },
+    {
+      "id": "landmark.tulum",
+      "name": "Tulum",
+      "glyph": "🏺",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "MEX",
+      "marker": {
+        "lat": 20.2144,
+        "lon": -87.4291,
+        "country": "MEX"
       }
     },
     {
@@ -19561,6 +21859,22 @@
       }
     },
     {
+      "id": "landmark.valdes-peninsula",
+      "name": "Valdés Peninsula",
+      "glyph": "🐋",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ARG",
+      "marker": {
+        "lat": -42.5,
+        "lon": -63.9,
+        "country": "ARG"
+      }
+    },
+    {
       "id": "landmark.vallee-de-mai",
       "name": "Vallée de Mai",
       "glyph": "🌴",
@@ -19574,6 +21888,54 @@
         "lat": -4.331,
         "lon": 55.74,
         "country": "SYC"
+      }
+    },
+    {
+      "id": "landmark.valley-of-geysers",
+      "name": "Valley of Geysers",
+      "glyph": "♨️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "RUS",
+      "marker": {
+        "lat": 54.4333,
+        "lon": 160.14,
+        "country": "RUS"
+      }
+    },
+    {
+      "id": "landmark.valley-of-the-kings",
+      "name": "Valley of the Kings",
+      "glyph": "⚰️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "EGY",
+      "marker": {
+        "lat": 25.7402,
+        "lon": 32.6014,
+        "country": "EGY"
+      }
+    },
+    {
+      "id": "landmark.van-gogh-museum",
+      "name": "Van Gogh Museum",
+      "glyph": "🖼️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 52.3584,
+        "lon": 4.8811,
+        "country": "NLD"
       }
     },
     {
@@ -19606,6 +21968,22 @@
         "lat": -16.58333,
         "lon": 179.18333,
         "country": "FJI"
+      }
+    },
+    {
+      "id": "landmark.varanasi-ghats",
+      "name": "Varanasi Ghats",
+      "glyph": "🛕",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "IND",
+      "marker": {
+        "lat": 25.3109,
+        "lon": 83.0104,
+        "country": "IND"
       }
     },
     {
@@ -19657,6 +22035,22 @@
       }
     },
     {
+      "id": "landmark.vatican-museums",
+      "name": "Vatican Museums",
+      "glyph": "🖼️",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "ITA",
+      "marker": {
+        "lat": 41.9065,
+        "lon": 12.4536,
+        "country": "ITA"
+      }
+    },
+    {
       "id": "landmark.vattern",
       "name": "Vättern",
       "glyph": "🌿",
@@ -19686,6 +22080,22 @@
         "lat": 48.31667,
         "lon": 15.38333,
         "country": "AUT"
+      }
+    },
+    {
+      "id": "landmark.verdon-gorge",
+      "name": "Verdon Gorge",
+      "glyph": "🏞️",
+      "importance": 6,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "FRA",
+      "marker": {
+        "lat": 43.7494,
+        "lon": 6.3269,
+        "country": "FRA"
       }
     },
     {
@@ -19798,6 +22208,22 @@
         "lat": 43.0425,
         "lon": 16.1525,
         "country": "HRV"
+      }
+    },
+    {
+      "id": "landmark.visby-city-wall",
+      "name": "Visby city wall",
+      "glyph": "🧱",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "SWE",
+      "marker": {
+        "lat": 57.6404,
+        "lon": 18.296,
+        "country": "SWE"
       }
     },
     {
@@ -19945,6 +22371,22 @@
       }
     },
     {
+      "id": "landmark.wadden-sea",
+      "name": "Wadden Sea",
+      "glyph": "🐚",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 53.4,
+        "lon": 5.6,
+        "country": "NLD"
+      }
+    },
+    {
       "id": "landmark.wadi-rum",
       "name": "Wadi Rum",
       "glyph": "🏜️",
@@ -19977,6 +22419,22 @@
       }
     },
     {
+      "id": "landmark.warsaw-old-town",
+      "name": "Warsaw Old Town",
+      "glyph": "🏘️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "POL",
+      "marker": {
+        "lat": 52.2497,
+        "lon": 21.0122,
+        "country": "POL"
+      }
+    },
+    {
       "id": "landmark.wat-arun",
       "name": "Wat Arun",
       "glyph": "🛕",
@@ -19989,6 +22447,22 @@
       "marker": {
         "lat": 13.744,
         "lon": 100.489,
+        "country": "THA"
+      }
+    },
+    {
+      "id": "landmark.wat-pho",
+      "name": "Wat Pho",
+      "glyph": "🛕",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 13.7465,
+        "lon": 100.4927,
         "country": "THA"
       }
     },
@@ -20073,6 +22547,22 @@
       }
     },
     {
+      "id": "landmark.westminster-abbey",
+      "name": "Westminster Abbey",
+      "glyph": "⛪",
+      "importance": 3,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 51.4994,
+        "lon": -0.1273,
+        "country": "GBR"
+      }
+    },
+    {
       "id": "landmark.whelk-point-fort",
       "name": "Whelk Point Fort",
       "glyph": "🏺",
@@ -20105,6 +22595,22 @@
       }
     },
     {
+      "id": "landmark.white-temple",
+      "name": "White Temple",
+      "glyph": "🛕",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "THA",
+      "marker": {
+        "lat": 19.8242,
+        "lon": 99.7631,
+        "country": "THA"
+      }
+    },
+    {
       "id": "landmark.white-witch-of-rose-hall",
       "name": "White Witch of Rose Hall",
       "glyph": "🏛️",
@@ -20118,6 +22624,22 @@
         "lat": 18.08389,
         "lon": -77.13389,
         "country": "JAM"
+      }
+    },
+    {
+      "id": "landmark.wieliczka-salt-mine",
+      "name": "Wieliczka Salt Mine",
+      "glyph": "⛏️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "POL",
+      "marker": {
+        "lat": 49.9831,
+        "lon": 20.0544,
+        "country": "POL"
       }
     },
     {
@@ -20150,6 +22672,22 @@
         "lat": 51.884,
         "lon": 4.64,
         "country": "NLD"
+      }
+    },
+    {
+      "id": "landmark.windsor-castle",
+      "name": "Windsor Castle",
+      "glyph": "🏰",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "GBR",
+      "marker": {
+        "lat": 51.4839,
+        "lon": -0.6044,
+        "country": "GBR"
       }
     },
     {
@@ -20233,6 +22771,22 @@
       }
     },
     {
+      "id": "landmark.zaanse-schans",
+      "name": "Zaanse Schans",
+      "glyph": "🌬️",
+      "importance": 5,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "NLD",
+      "marker": {
+        "lat": 52.4746,
+        "lon": 4.8175,
+        "country": "NLD"
+      }
+    },
+    {
       "id": "landmark.zealand",
       "name": "Zealand",
       "glyph": "🌿",
@@ -20246,6 +22800,22 @@
         "lat": 55.57,
         "lon": 11.89,
         "country": "DNK"
+      }
+    },
+    {
+      "id": "landmark.zhangjiajie",
+      "name": "Zhangjiajie",
+      "glyph": "⛰️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "CHN",
+      "marker": {
+        "lat": 29.315,
+        "lon": 110.435,
+        "country": "CHN"
       }
     },
     {
@@ -20326,6 +22896,22 @@
         "lat": 25.98339,
         "lon": 51.02722,
         "country": "QAT"
+      }
+    },
+    {
+      "id": "landmark.zugspitze",
+      "name": "Zugspitze",
+      "glyph": "🏔️",
+      "importance": 4,
+      "review": {
+        "state": "reviewed",
+        "source": "openai-geography-landmark-enrichment"
+      },
+      "country": "DEU",
+      "marker": {
+        "lat": 47.4211,
+        "lon": 10.9853,
+        "country": "DEU"
       }
     },
     {

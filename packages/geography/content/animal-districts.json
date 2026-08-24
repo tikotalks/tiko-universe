@@ -3711,24 +3711,7 @@
           "lat": 67.22,
           "lon": 128.496,
           "districtId": "siberia"
-        }
-      ],
-      "importance": 2
-    },
-    {
-      "id": "gray-wolf",
-      "names": {
-        "en": "Gray wolf"
-      },
-      "i18nKey": "geography.animals.gray-wolf",
-      "scientificName": "Canis lupus",
-      "taxonRank": "species",
-      "mediaId": "gray-wolf",
-      "districtIds": [
-        "north-america-forest",
-        "siberia"
-      ],
-      "markers": [
+        },
         {
           "lat": 49.376,
           "lon": -93.146,
@@ -6359,7 +6342,8 @@
         "mediterranean",
         "europe-west",
         "europe-north",
-        "north-america-forest"
+        "north-america-forest",
+        "europe-east"
       ],
       "markers": [
         {
@@ -6401,24 +6385,7 @@
           "lat": 45.74,
           "lon": -70.853,
           "districtId": "north-america-forest"
-        }
-      ],
-      "importance": 4
-    },
-    {
-      "id": "red-fox",
-      "names": {
-        "en": "Red fox"
-      },
-      "i18nKey": "geography.animals.red-fox",
-      "scientificName": "Vulpes vulpes",
-      "taxonRank": "species",
-      "mediaId": "fox",
-      "districtIds": [
-        "europe-west",
-        "europe-east"
-      ],
-      "markers": [
+        },
         {
           "lat": 50.809,
           "lon": 3.573,
@@ -7491,23 +7458,7 @@
           "lat": 73.154,
           "lon": 116.634,
           "districtId": "arctic"
-        }
-      ],
-      "importance": 6
-    },
-    {
-      "id": "snowy-owl",
-      "names": {
-        "en": "Snowy owl"
-      },
-      "i18nKey": "geography.animals.snowy-owl",
-      "scientificName": "Bubo scandiacus",
-      "taxonRank": "species",
-      "mediaId": "snow-owl",
-      "districtIds": [
-        "arctic"
-      ],
-      "markers": [
+        },
         {
           "lat": 77.74,
           "lon": -78.622,
