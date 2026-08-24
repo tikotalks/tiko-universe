@@ -4,10 +4,10 @@ import worker, { type Env } from '../workers/admin-api/src/index'
 type Row = Record<string, unknown>
 
 class MemoryResult {
-  constructor(private rows: Row[] = []) {}
+  constructor(private rows: Row[] = [], private changes = 1) {}
   async first<T = Row>(): Promise<T | null> { return (this.rows[0] as T | undefined) ?? null }
   async all<T = Row>(): Promise<{ results: T[] }> { return { results: this.rows as T[] } }
-  async run(): Promise<{ success: true }> { return { success: true } }
+  async run(): Promise<{ success: true, meta: { changes: number } }> { return { success: true, meta: { changes: this.changes } } }
 }
 
 class MemoryStatement {
@@ -45,6 +45,36 @@ class AdminMemoryD1 {
   }
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
+    if (normalized.startsWith('SELECT id, name, key_prefix') && normalized.includes('FROM identity_api_keys')) {
+      const product = String(values[0])
+      return new MemoryResult(this.apiKeys
+        .filter((key) => key.product === product && !key.revoked_at)
+        .sort((left, right) => String(right.created_at).localeCompare(String(left.created_at))))
+    }
+    if (normalized.startsWith('INSERT INTO identity_api_keys')) {
+      const [id, subjectId, product, name, keyHash, keyPrefix, scopesJson, createdAt, expiresAt, lastUsedAt, revokedAt] = values
+      this.apiKeys.push({
+        id,
+        subject_id: subjectId,
+        product,
+        name,
+        key_hash: keyHash,
+        key_prefix: keyPrefix,
+        scopes_json: scopesJson,
+        created_at: createdAt,
+        expires_at: expiresAt,
+        last_used_at: lastUsedAt,
+        revoked_at: revokedAt,
+      })
+      return new MemoryResult()
+    }
+    if (normalized.startsWith('UPDATE identity_api_keys SET revoked_at')) {
+      const [revokedAt, id, product] = values
+      const key = this.apiKeys.find((candidate) => candidate.id === id && candidate.product === product && !candidate.revoked_at)
+      if (!key) return new MemoryResult([], 0)
+      key.revoked_at = revokedAt
+      return new MemoryResult()
+    }
     if (normalized.startsWith('SELECT app, title') && normalized.includes('FROM app_config')) {
       if (normalized.includes('WHERE app = ?')) {
         const row = this.appConfig.get(String(values[0]))
@@ -564,6 +594,46 @@ describe('admin-api role based access', () => {
     const replaceBody = await replaceLastAdminResponse.json() as { error: { code: string } }
     expect(replaceLastAdminResponse.status).toBe(409)
     expect(replaceBody.error.code).toBe('last_admin_role')
+  })
+
+  it('creates, lists, and revokes scoped media-upload API keys without retaining raw key material', async () => {
+    const testEnv = await makeEnv()
+    const createdResponse = await worker.fetch(new Request('https://admin.test/v1/admin/api-keys', {
+      method: 'POST',
+      headers: { authorization: 'Bearer ank_test', 'content-type': 'application/json' },
+      body: JSON.stringify({ name: 'Codex image publisher', expiresInDays: 30 }),
+    }), testEnv as never)
+    const created = await createdResponse.json() as { data: { id: string, key: string, prefix: string, scopes: string[], expiresAt: string } }
+
+    expect(createdResponse.status).toBe(201)
+    expect(created.data.key).toMatch(/^tiko_media_[a-f0-9]{64}$/)
+    expect(created.data.prefix).toMatch(/^tiko_media_[a-f0-9]{8}$/)
+    expect(created.data.scopes).toEqual(['media:write'])
+    expect(created.data.expiresAt).toBeTruthy()
+    expect(testEnv.AUTH_DB.apiKeys[0]).toMatchObject({
+      subject_id: 'sub_admin',
+      product: 'tiko',
+      name: 'Codex image publisher',
+      key_prefix: created.data.prefix,
+      scopes_json: JSON.stringify(['media:write']),
+    })
+    expect(testEnv.AUTH_DB.apiKeys[0].key_hash).not.toBe(created.data.key)
+
+    const listedResponse = await fetchAdmin('/v1/admin/api-keys', testEnv)
+    const listed = await listedResponse.json() as { data: { keys: Array<{ id: string, key?: string, name: string }> } }
+    expect(listedResponse.status).toBe(200)
+    expect(listed.data.keys).toEqual([expect.objectContaining({ id: created.data.id, name: 'Codex image publisher' })])
+    expect(listed.data.keys[0].key).toBeUndefined()
+
+    const revokedResponse = await worker.fetch(new Request(`https://admin.test/v1/admin/api-keys/${created.data.id}`, {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer ank_test' },
+    }), testEnv as never)
+    expect(revokedResponse.status).toBe(200)
+    expect(testEnv.AUTH_DB.apiKeys[0].revoked_at).toBeTruthy()
+
+    const afterRevoke = await fetchAdmin('/v1/admin/api-keys', testEnv)
+    expect((await afterRevoke.json() as { data: { keys: unknown[] } }).data.keys).toEqual([])
   })
 
   it('scheduled cleanup skips managed children and continues after one subject fails', async () => {

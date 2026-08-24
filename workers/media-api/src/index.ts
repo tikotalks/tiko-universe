@@ -1535,22 +1535,22 @@ export default {
     // ── Media routes (write operations require auth, reads are public) ──
     if (resource === 'media') {
       if (request.method === 'POST' && id === 'upload') {
-        const authed = await authenticate(request, env)
+        const authed = await authenticate(request, env, { scopes: ['media:write'] })
         if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaUpload(request, env, { auth: authed }))
       }
       if (request.method === 'POST' && id === 'analyze') {
-        const authed = await authenticate(request, env)
+        const authed = await authenticate(request, env, { scopes: ['media:write'] })
         if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaAnalyze(request, env, { auth: authed }))
       }
       if (request.method === 'PUT' && id) {
-        const authed = await authenticate(request, env)
+        const authed = await authenticate(request, env, { scopes: ['media:manage'] })
         if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaUpdate(request, env, id))
       }
       if (request.method === 'DELETE' && id) {
-        const authed = await authenticate(request, env)
+        const authed = await authenticate(request, env, { scopes: ['media:manage'] })
         if (authed.ok === false) return withCors(authed.response)
         return withCors(await handleMediaDelete(request, env, id))
       }
