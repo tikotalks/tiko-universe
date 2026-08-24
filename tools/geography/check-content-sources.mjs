@@ -1,14 +1,13 @@
 #!/usr/bin/env node
-// Validates the authored content sources — the files a person or another agent
-// edits by hand — before anything is built from them.
+// Validates the authored content — the files a person or another agent edits by
+// hand — before anything is compiled from them.
 //
 //   node tools/geography/check-content-sources.mjs
 //
-// Structure and references only: whether an animal really lives in a country is
-// an editorial question, which is what the review state is for.
+// Structure, identity and references only. Whether a chameleon really lives in
+// Malta is an editorial question, which is what the review state is for.
 
 import { readFile } from 'node:fs/promises'
-import { countriesNear, isInsideCountry } from './country-lookup.mjs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -22,36 +21,46 @@ const countries = (await read('countries.json', GENERATED_DIR)).countries
 const countryIds = new Set(countries.map((country) => country.id))
 const districts = await read('districts.json')
 const districtIds = new Set(districts.items.map((district) => district.id))
+const ranges = await read('animal-districts.json')
 const animalSource = await read('country-animals.json')
 const landmarkSource = await read('country-landmarks.json')
-const districtSource = await read('animal-districts.json')
 
 const problems = []
-const REVIEW_STATES = ['draft', 'verified']
-const slug = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+const REVIEW_STATES = ['draft', 'reviewed', 'verified']
+const SLUG = /^[a-z0-9-]+$/
 
-/** Identity is the id; the name is only the English label beside it. */
-const keyOf = (entry) => entry?.id ?? (entry?.name ? slug(entry.name) : null)
-
-/** An id has to be a slug, or it cannot be a translation key either. */
-function checkId(where, entry) {
-  const id = keyOf(entry)
-  if (!id) return null
-  if (!/^[a-z0-9-]+$/.test(id)) problems.push(`${where} has id "${id}", which is not a lowercase slug`)
-  return id
+/**
+ * Identity is the id, and a translation key is built from it, so an id that is
+ * not a slug cannot be either. The English name beside it is a label.
+ */
+function checkIdentity(where, entry, namespace) {
+  if (!entry?.id) {
+    problems.push(`${where} has no id`)
+    return null
+  }
+  if (!SLUG.test(entry.id)) problems.push(`${where} has id "${entry.id}", which is not a lowercase slug`)
+  if (!entry.names?.en) problems.push(`${where} has no English name`)
+  if (entry.i18nKey && entry.i18nKey !== `${namespace}.${entry.id}`) {
+    problems.push(`${where} says its key is ${entry.i18nKey}, which is not ${namespace}.${entry.id}`)
+  }
+  return entry.id
 }
-const marineDistricts = new Set(districts.items.filter((district) => district.isMarine).map((district) => district.id))
 
-// The district file is keyed by the library's own lower-case titles.
-const districtsByName = new Map(
-  Object.entries(districtSource.animals).map(([name, entry]) => [name.toLowerCase(), entry])
-)
+function checkPosition(where, entry) {
+  const { lat, lon } = entry
+  if (!(lat >= -90 && lat <= 90) || !(lon >= -180 && lon <= 180)) {
+    problems.push(`${where} has coordinates outside the world`)
+  }
+}
 
-/** A sea animal is placed in the water off a country, which is further out. */
-function livesInWaterOnly(name) {
-  const entry = districtsByName.get(name.toLowerCase())
-  if (!entry) return false
-  return entry.districts.every((id) => marineDistricts.has(id))
+function checkImportance(where, value, required = true) {
+  if (value === undefined || value === null) {
+    if (required) problems.push(`${where} has no importance`)
+    return
+  }
+  if (!(value >= 1 && value <= 10)) {
+    problems.push(`${where} has importance ${value}, expected 1 (shows from space) to 10 (closest zoom)`)
+  }
 }
 
 function checkReview(where, review) {
@@ -59,8 +68,32 @@ function checkReview(where, review) {
     problems.push(`${where} has no review state (one of ${REVIEW_STATES.join(', ')})`)
     return
   }
-  if (review.state === 'verified' && (!review.by || !review.at)) {
-    problems.push(`${where} is marked verified without who checked it and when`)
+  if (review.state !== 'draft' && (!review.by || !review.at)) {
+    problems.push(`${where} is marked ${review.state} without who checked it and when`)
+  }
+}
+
+// The world-scale ranges.
+const rangeIds = new Set()
+for (const item of ranges.items) {
+  const where = `animal-districts.json ${item.id ?? '(no id)'}`
+  const id = checkIdentity(where, item, 'geography.animals')
+  if (id) {
+    if (rangeIds.has(id)) problems.push(`${where} is listed twice`)
+    rangeIds.add(id)
+  }
+  checkImportance(where, item.importance)
+  if (!Array.isArray(item.districtIds) || item.districtIds.length === 0) {
+    problems.push(`${where} belongs to no district`)
+  }
+  for (const districtId of item.districtIds ?? []) {
+    if (!districtIds.has(districtId)) problems.push(`${where} references unknown district ${districtId}`)
+  }
+  for (const marker of item.markers ?? []) {
+    checkPosition(`${where} marker`, marker)
+    if (marker.districtId && !districtIds.has(marker.districtId)) {
+      problems.push(`${where} has a marker in unknown district ${marker.districtId}`)
+    }
   }
 }
 
@@ -68,40 +101,27 @@ function checkReview(where, review) {
 for (const id of countryIds) {
   if (!animalSource.countries[id]) problems.push(`country-animals.json has no entry for ${id}`)
 }
+let reviewedCountries = 0
+let countryAnimals = 0
 for (const [id, entry] of Object.entries(animalSource.countries)) {
   if (!countryIds.has(id)) {
     problems.push(`country-animals.json has ${id}, which is not a country in this build`)
     continue
   }
   checkReview(`country-animals.json ${id}`, entry.review)
+  if (entry.review?.state !== 'draft') reviewedCountries += 1
   if (!Array.isArray(entry.animals) || entry.animals.length === 0) {
     problems.push(`country-animals.json ${id} lists no animals`)
   }
   const seen = new Set()
   for (const animal of entry.animals ?? []) {
-    if (!animal?.name) problems.push(`country-animals.json ${id} has an animal with no name`)
-    const key = checkId(`country-animals.json ${id} ${animal?.name ?? '(unnamed)'}`, animal)
-    if (key && seen.has(key)) problems.push(`country-animals.json ${id} lists ${key} twice`)
+    const where = `country-animals.json ${id} ${animal?.id ?? '(no id)'}`
+    const key = checkIdentity(where, animal, 'geography.animals')
+    if (key && seen.has(key)) problems.push(`${where} is listed twice`)
     if (key) seen.add(key)
-    if (animal?.importance !== undefined
-      && !(animal.importance >= 1 && animal.importance <= 10)) {
-      problems.push(`country-animals.json ${id} ${animal.name} has importance ${animal.importance}, expected 1 to 10`)
-    }
-
-    // Positions are authored data now, so they are checked like any other.
-    if (animal?.at) {
-      const { lat, lon } = animal.at
-      if (!(lat >= -90 && lat <= 90) || !(lon >= -180 && lon <= 180)) {
-        problems.push(`country-animals.json ${id} ${animal.name} has coordinates outside the world`)
-      } else {
-        // Land animals stand in the country; sea animals sit off its coast, so
-        // they are allowed further out.
-        const reach = livesInWaterOnly(animal.name) ? 5 : 1
-        if (!isInsideCountry(id, animal.at) && !countriesNear(animal.at, reach).includes(id)) {
-          problems.push(`country-animals.json ${id} ${animal.name} is placed nowhere near ${id}`)
-        }
-      }
-    }
+    checkImportance(where, animal.importance)
+    checkPosition(where, animal)
+    countryAnimals += 1
   }
 }
 
@@ -109,6 +129,7 @@ for (const [id, entry] of Object.entries(animalSource.countries)) {
 for (const id of countryIds) {
   if (!landmarkSource.countries[id]) problems.push(`country-landmarks.json has no entry for ${id}`)
 }
+let landmarkCount = 0
 for (const [id, entry] of Object.entries(landmarkSource.countries)) {
   if (!countryIds.has(id)) {
     problems.push(`country-landmarks.json has ${id}, which is not a country in this build`)
@@ -118,52 +139,28 @@ for (const [id, entry] of Object.entries(landmarkSource.countries)) {
   if (!Array.isArray(entry.landmarks) || entry.landmarks.length === 0) {
     problems.push(`country-landmarks.json ${id} lists no landmarks — every country needs at least one`)
   }
-  const seenLandmarks = new Set()
+  const seen = new Set()
   for (const landmark of entry.landmarks ?? []) {
-    const where = `country-landmarks.json ${id} ${landmark?.name ?? '(unnamed)'}`
-    if (!landmark?.name) problems.push(`${where} has no name`)
-    const key = checkId(where, landmark)
-    if (key && seenLandmarks.has(key)) problems.push(`${where} is listed twice`)
-    if (key) seenLandmarks.add(key)
-    if (!landmark?.glyph) problems.push(`${where} has no glyph`)
-    if (!(landmark?.importance >= 1 && landmark?.importance <= 10)) {
-      problems.push(`${where} has importance ${landmark?.importance}, expected 1 (shows from space) to 10 (closest zoom)`)
-    }
-    if (!(landmark?.lat >= -90 && landmark?.lat <= 90) || !(landmark?.lon >= -180 && landmark?.lon <= 180)) {
-      problems.push(`${where} has coordinates outside the world`)
-    }
-  }
-}
-
-// Districts each animal belongs to.
-for (const [name, entry] of Object.entries(districtSource.animals)) {
-  if (!Array.isArray(entry.districts) || entry.districts.length === 0) {
-    problems.push(`animal-districts.json ${name} has no districts`)
-    continue
-  }
-  for (const id of entry.districts) {
-    if (!districtIds.has(id)) problems.push(`animal-districts.json ${name} references unknown district ${id}`)
-  }
-  if (entry.importance !== undefined && !(entry.importance >= 1 && entry.importance <= 10)) {
-    problems.push(`animal-districts.json ${name} has importance ${entry.importance}, expected 1 to 10`)
-  }
-  for (const point of entry.at ?? []) {
-    if (!entry.districts.includes(point.district)) {
-      problems.push(`animal-districts.json ${name} has a position in ${point.district}, which it does not live in`)
-    }
-    if (!(point.lat >= -90 && point.lat <= 90) || !(point.lon >= -180 && point.lon <= 180)) {
-      problems.push(`animal-districts.json ${name} has a position outside the world`)
-    }
+    const where = `country-landmarks.json ${id} ${landmark?.id ?? '(no id)'}`
+    const key = checkIdentity(where, landmark, 'geography.landmarks')
+    if (key && seen.has(key)) problems.push(`${where} is listed twice`)
+    if (key) seen.add(key)
+    checkImportance(where, landmark.importance)
+    checkPosition(where, landmark)
+    if (!landmark.glyph) problems.push(`${where} has no glyph`)
+    landmarkCount += 1
   }
 }
 
 if (problems.length > 0) {
   process.stderr.write(`${problems.length} problem(s) in the authored content:\n`)
   for (const problem of problems.slice(0, 40)) process.stderr.write(`  - ${problem}\n`)
-  process.exitCode = 1
-} else {
-  const verified = Object.values(animalSource.countries).filter((entry) => entry.review.state === 'verified').length
-  const positioned = Object.values(animalSource.countries)
-    .reduce((total, entry) => total + entry.animals.filter((animal) => animal.at).length, 0)
-  process.stdout.write(`content sources ok: ${Object.keys(animalSource.countries).length} countries of animals (${verified} verified, ${positioned} with coordinates), ${Object.values(landmarkSource.countries).reduce((total, entry) => total + entry.landmarks.length, 0)} landmarks, ${Object.keys(districtSource.animals).length} animals placed in districts\n`)
+  if (problems.length > 40) process.stderr.write(`  … and ${problems.length - 40} more\n`)
+  process.exit(1)
 }
+
+process.stdout.write(
+  `content sources ok: ${Object.keys(animalSource.countries).length} countries of animals ` +
+  `(${reviewedCountries} reviewed, ${countryAnimals} placements), ${landmarkCount} landmarks, ` +
+  `${ranges.items.length} animals with a world range\n`
+)

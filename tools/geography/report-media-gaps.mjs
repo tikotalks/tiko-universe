@@ -3,47 +3,71 @@
 //
 //   node tools/geography/report-media-gaps.mjs
 //
-// Writes docs/apps/globe-media-gaps.md and prints a summary. Ordered by how
-// much it matters: a landmark a child looks for from space outranks a beetle.
+// Writes docs/apps/globe-media-gaps.md and prints a summary, ordered by how
+// much each one matters: a landmark a child looks for from space outranks a
+// beetle. Reads the authored files, where `mediaId` says which picture a
+// subject should have — no picture, no mediaId, and the gap is real.
 
 import { readFile, writeFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-
 const HERE = dirname(fileURLToPath(import.meta.url))
 const CONTENT_DIR = join(HERE, '..', '..', 'packages', 'geography', 'content')
+const IMAGE_DIR = join(CONTENT_DIR, 'images')
+const GENERATED_DIR = join(HERE, '..', '..', 'packages', 'geography', 'generated')
 const DOC = join(HERE, '..', '..', 'docs', 'apps', 'globe-media-gaps.md')
 
-const source = JSON.parse(await readFile(join(CONTENT_DIR, 'country-animals.json'), 'utf8'))
-const COUNTRY_ANIMALS = Object.fromEntries(
-  Object.entries(source.countries).map(([id, entry]) => [id, entry.animals.map((animal) => animal.name)])
-)
-const WISHLIST = Object.fromEntries(
-  Object.entries(source.countries)
-    .filter(([, entry]) => (entry.alsoWanted ?? []).length > 0)
-    .map(([id, entry]) => [id, entry.alsoWanted.map((animal) => animal.name)])
-)
-const NEAREST_AVAILABLE = JSON.parse(await readFile(join(CONTENT_DIR, 'animal-districts.json'), 'utf8')).renames ?? {}
-const animals = JSON.parse(await readFile(join(CONTENT_DIR, 'animals.json'), 'utf8')).items
-const landmarks = JSON.parse(await readFile(join(CONTENT_DIR, 'landmarks.json'), 'utf8')).items
-const countries = JSON.parse(await readFile(join(HERE, '..', '..', 'packages', 'geography', 'generated', 'countries.json'), 'utf8')).countries
+const read = async (name, dir = CONTENT_DIR) => JSON.parse(await readFile(join(dir, name), 'utf8'))
+const englishName = (entry) => entry.names?.en ?? entry.name ?? entry.id
+const hasArtwork = (mediaId) => Boolean(mediaId) && existsSync(join(IMAGE_DIR, `${mediaId}.png`))
+
+const byCountry = await read('country-animals.json')
+const ranges = await read('animal-districts.json')
+const landmarkSource = await read('country-landmarks.json')
+const countries = (await read('countries.json', GENERATED_DIR)).countries
 const countryName = new Map(countries.map((country) => [country.id, country.name]))
 
-// Animals a country is known for that the library has no picture of.
-const animalNames = new Set(animals.map((animal) => animal.name.toLowerCase()))
-const wantedAnimals = new Map()
-for (const [id, names] of Object.entries(COUNTRY_ANIMALS)) {
-  for (const name of names) {
-    if (animalNames.has(name.toLowerCase())) continue
-    if (!wantedAnimals.has(name)) wantedAnimals.set(name, { countries: [], standIn: NEAREST_AVAILABLE[name] ?? null })
-    wantedAnimals.get(name).countries.push(id)
+/** Animals with no picture, and the countries that wanted them. */
+const wanted = new Map()
+function want(entry, countryId) {
+  if (hasArtwork(entry.mediaId)) return
+  const existing = wanted.get(entry.id) ?? {
+    name: englishName(entry),
+    importance: entry.importance ?? 10,
+    countries: [],
+    scientificName: entry.scientificName ?? null
   }
+  existing.importance = Math.min(existing.importance, entry.importance ?? 10)
+  if (countryId && !existing.countries.includes(countryId)) existing.countries.push(countryId)
+  wanted.set(entry.id, existing)
 }
 
-const missingLandmarks = landmarks.filter((landmark) => !landmark.mediaId)
-/** Grouped by how soon a landmark shows: the ones a child sees from space first. */
-const byBand = (low, high) => missingLandmarks.filter((landmark) => landmark.importance >= low && landmark.importance <= high)
+for (const [countryId, entry] of Object.entries(byCountry.countries)) {
+  for (const animal of entry.animals ?? []) want(animal, countryId)
+}
+for (const item of ranges.items) want(item, null)
+
+const missingAnimals = [...wanted.values()].sort(
+  (a, b) => a.importance - b.importance || b.countries.length - a.countries.length || a.name.localeCompare(b.name)
+)
+
+/** Landmarks with no picture. Still drawn, with their glyph — only the art is missing. */
+const landmarks = []
+for (const [countryId, entry] of Object.entries(landmarkSource.countries)) {
+  for (const landmark of entry.landmarks ?? []) {
+    if (hasArtwork(landmark.mediaId)) continue
+    landmarks.push({ name: englishName(landmark), country: countryId, importance: landmark.importance })
+  }
+}
+landmarks.sort((a, b) => a.importance - b.importance || a.name.localeCompare(b.name))
+
+const totalLandmarks = Object.values(landmarkSource.countries)
+  .reduce((total, entry) => total + (entry.landmarks?.length ?? 0), 0)
+
+const band = (low, high) => landmarks.filter((item) => item.importance >= low && item.importance <= high)
+const named = (id) => countryName.get(id) ?? id
 
 const lines = [
   '# Tiko Globe — what the media library is missing',
@@ -57,56 +81,39 @@ const lines = [
   'A **landmark** with no picture is still on the globe, drawn with its glyph. The',
   'place is real either way; only the artwork is missing.',
   '',
-  `At the time of writing: **${wantedAnimals.size} animals** and`,
-  `**${missingLandmarks.length} of ${landmarks.length} landmarks** have no picture.`,
+  `At the time of writing: **${missingAnimals.length} animals** and`,
+  `**${landmarks.length} of ${totalLandmarks} landmarks** have no picture.`,
   '',
   '## Animals',
   '',
-  'Each of these is an animal a country is known for and Globe cannot show.',
-  '"Renamed to" is the same animal under the title the library files it by —',
-  'those are covered; the rest are missing outright.',
+  'Most important first — importance 1 shows from space, 10 only at the closest',
+  'zoom — then by how many countries are waiting on it.',
   '',
-  '| Animal | Wanted by | Renamed to |',
-  '| --- | --- | --- |'
+  '| Animal | Species | Importance | Wanted by |',
+  '| --- | --- | --- | --- |',
 ]
 
-for (const [name, detail] of [...wantedAnimals].sort((a, b) => b[1].countries.length - a[1].countries.length)) {
-  const where = detail.countries.slice(0, 6).map((id) => countryName.get(id) ?? id).join(', ')
-  const more = detail.countries.length > 6 ? ` +${detail.countries.length - 6}` : ''
-  lines.push(`| ${name} | ${where}${more} | ${detail.standIn ?? '— (glyph only)'} |`)
+for (const animal of missingAnimals) {
+  const where = animal.countries.length === 0
+    ? 'its world range'
+    : animal.countries.slice(0, 6).map(named).join(', ') +
+      (animal.countries.length > 6 ? ` +${animal.countries.length - 6} more` : '')
+  lines.push(`| ${animal.name} | ${animal.scientificName ?? '—'} | ${animal.importance} | ${where} |`)
 }
 
-// Animals a country really has, that are not even on its list because there is
-// no picture to put on the globe.
-const wishlist = Object.entries(WISHLIST)
-if (wishlist.length > 0) {
-  lines.push('', '## Also asked for', '',
-    'Animals a country genuinely has that Globe cannot list at all yet.',
-    '', '| Animal | Country |', '| --- | --- |')
-  for (const [id, names] of wishlist) {
-    for (const name of names) {
-      if (animalNames.has(name.toLowerCase())) continue
-      lines.push(`| ${name} | ${countryName.get(id) ?? id} |`)
-    }
-  }
-}
-
-for (const [low, high, heading, note] of [
-  [1, 3, '## Landmarks — the famous ones', 'Importance 1–3: visible from the whole-Earth view. These are the ones a child goes looking for.'],
-  [4, 6, '## Landmarks — well known', 'Importance 4–6: visible once a child is looking at a region.'],
-  [7, 10, '## Landmarks — one per country', 'Importance 7–10: visible at country zoom. Often the only landmark that country has.']
+for (const [title, low, high, note] of [
+  ['Landmarks — the famous ones', 1, 3, 'Visible from the whole-Earth view. These are the ones a child goes looking for.'],
+  ['Landmarks — well known', 4, 6, 'Visible once a child is looking at a region.'],
+  ['Landmarks — at country zoom', 7, 10, 'Often the only landmark that country has.'],
 ]) {
-  const group = byBand(low, high)
-  if (group.length === 0) continue
-  lines.push('', heading, '', note, '', '| Landmark | Country |', '| --- | --- |')
-  for (const landmark of group.sort((a, b) => a.name.localeCompare(b.name))) {
-    lines.push(`| ${landmark.name} | ${countryName.get(landmark.country) ?? landmark.country} |`)
-  }
+  lines.push('', `## ${title}`, '', note, '', '| Landmark | Country |', '| --- | --- |')
+  for (const landmark of band(low, high)) lines.push(`| ${landmark.name} | ${named(landmark.country)} |`)
 }
 
-lines.push('', '## Already covered', '', `${animals.length} animals and ${landmarks.length - missingLandmarks.length} landmarks have a Tiko picture bundled with the app.`, '')
-
+lines.push('')
 await writeFile(DOC, `${lines.join('\n')}\n`)
-const wishlistCount = wishlist.reduce((total, [, names]) => total + names.filter((name) => !animalNames.has(name.toLowerCase())).length, 0)
-process.stdout.write(`${wantedAnimals.size} animals on country lists, ${wishlistCount} more asked for, and ${missingLandmarks.length} landmarks have no picture — written to docs/apps/globe-media-gaps.md\n`)
-process.stdout.write(`famous landmarks with no picture: ${byBand(1, 3).map((l) => l.name).join(', ')}\n`)
+
+process.stdout.write(
+  `${missingAnimals.length} animals and ${landmarks.length} of ${totalLandmarks} landmarks have no picture ` +
+  `(${band(1, 3).length} of those landmarks show from space)\n`
+)

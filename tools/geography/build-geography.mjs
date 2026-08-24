@@ -592,7 +592,7 @@ async function checkContent(countryIds) {
     const districts = JSON.parse(await readFile(join(CONTENT_DIR, 'districts.json'), 'utf8'))
     districtIds = new Set(districts.items.map((district) => district.id))
     for (const district of districts.items) {
-      if (!district.name) problems.push(`district ${district.id} has no name`)
+      if (!(district.names?.en ?? district.name)) problems.push(`district ${district.id} has no name`)
       if (!(district.points?.length > 0)) problems.push(`district ${district.id} has no points`)
       for (const point of district.points ?? []) {
         if (!(point.lat >= -90 && point.lat <= 90) || !(point.lon >= -180 && point.lon <= 180)) {
@@ -637,7 +637,9 @@ async function checkContent(countryIds) {
         if (!countryIds.has(id)) problems.push(`${where} references ${id}, which is not a country in this build`)
       }
 
-      const markers = file.markers === 'marker' ? [item.marker] : (item.markers ?? [])
+      // A landmark on a border is one landmark with two positions, so both
+      // shapes have to be accepted here.
+      const markers = item.markers ?? (item.marker ? [item.marker] : [])
       if (markers.length === 0) problems.push(`${where} has no marker`)
       for (const marker of markers) {
         if (!marker || !(marker.lat >= -90 && marker.lat <= 90) || !(marker.lon >= -180 && marker.lon <= 180)) {
