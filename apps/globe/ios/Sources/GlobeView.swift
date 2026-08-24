@@ -57,7 +57,7 @@ struct GlobeView: View {
         }
         .onChange(of: saysNames) { _, value in controller.speaksNames = value }
         .onChange(of: reduceMotion) { _, value in controller.reduceMotion = value }
-        .sheet(isPresented: $showingCountryList) {
+        .tikoPopup(isPresented: $showingCountryList) {
             GlobeCountryList(
                 countries: controller.countries,
                 entities: controller.entitiesForCurrentMode,
@@ -67,7 +67,6 @@ struct GlobeView: View {
                 onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) },
                 appColor: appColor
             )
-            .presentationCornerRadius(34)
         }
     }
 

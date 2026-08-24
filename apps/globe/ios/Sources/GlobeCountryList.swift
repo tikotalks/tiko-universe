@@ -35,48 +35,19 @@ struct GlobeCountryList: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            searchField
-            list
+        TikoPopupCard(
+            title: i18n.t("globe.list.title"),
+            icon: "list.bullet",
+            appColor: appColor,
+            onClose: { dismiss() }
+        ) {
+            VStack(spacing: 0) {
+                searchField
+                list.frame(height: 460)
+            }
         }
-        .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("globe-country-list")
-    }
-
-    /// The same head every Tiko sheet wears: the way out on the left, what this
-    /// is in the middle, and what it is about on the right.
-    private var header: some View {
-        HStack(spacing: 14) {
-            Button { dismiss() } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(.primary.opacity(0.75))
-                    .frame(width: 44, height: 44)
-                    .background(Color.primary.opacity(0.055))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(i18n.t("common.close"))
-
-            Text(i18n.t("globe.list.title"))
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
-                .foregroundStyle(.primary)
-                .accessibilityAddTraits(.isHeader)
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "list.bullet")
-                .font(.system(size: 19, weight: .bold))
-                .foregroundStyle(appColor.palette.primary)
-                .frame(width: 44, height: 44)
-                .background(appColor.palette.primary.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 18)
-        .padding(.bottom, 14)
     }
 
     private var searchField: some View {
@@ -97,8 +68,7 @@ struct GlobeCountryList: View {
         .padding(.horizontal, 14)
         .frame(height: 44)
         .background(Color.primary.opacity(0.055), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 20)
-        .padding(.bottom, 12)
+        .padding(.bottom, 10)
     }
 
     private var list: some View {
@@ -129,9 +99,7 @@ struct GlobeCountryList: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            if let flag = GlobeCountryNaming.flag(for: country) {
-                                Text(flag).font(.title2).accessibilityHidden(true)
-                            }
+                            GlobeFlagImage(country: country, size: 28)
                             Text(GlobeCountryNaming.name(for: country, languageCode: languageCode))
                                 .font(.body)
                             Spacer()

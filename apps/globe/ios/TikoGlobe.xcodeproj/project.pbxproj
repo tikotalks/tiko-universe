@@ -37,6 +37,7 @@
 		D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738B434CE752431B9D1DC059 /* GlobeCountryList.swift */; };
 		D7CEBD46F962A7F1B3A747D7 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7A205FB2FCEC1447AD619F /* TikoKit */; };
 		D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404C639172C12A5CC9251A0E /* GlobeWater.swift */; };
+		DC5CE39442514A33F6A3F94B /* GlobeFlagImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */; };
 		DCF30D52D0BBFB33187CCEAC /* mode-animals.png in Resources */ = {isa = PBXBuildFile; fileRef = 69424DF8CBD6A225DEF38B86 /* mode-animals.png */; };
 		E4B55DF5B4EBAF534CAE4785 /* GlobeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B48B8253D08F9048D3CD01 /* GlobeMath.swift */; };
 		E6C2494BD43A6E010C57317E /* Geography in Resources */ = {isa = PBXBuildFile; fileRef = F3DD7D1C84834BD71805E0C3 /* Geography */; };
@@ -90,6 +91,7 @@
 		8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeographyTests.swift; sourceTree = "<group>"; };
 		8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCamera.swift; sourceTree = "<group>"; };
 		92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeContentTests.swift; sourceTree = "<group>"; };
+		945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeFlagImage.swift; sourceTree = "<group>"; };
 		98C8953DF39609607B929F38 /* mode-countries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-countries.png"; sourceTree = "<group>"; };
 		99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeAppearance.swift; sourceTree = "<group>"; };
 		A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMomentumTests.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				738B434CE752431B9D1DC059 /* GlobeCountryList.swift */,
 				16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */,
 				DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */,
+				945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */,
 				56E848A064642605763CB8D3 /* GlobeGeography.swift */,
 				3D04293C93969B8E06766BD6 /* GlobeHitTesting.swift */,
 				18977981E4A3D345CC3DB9FF /* GlobeMarkerImage.swift */,
@@ -409,6 +412,7 @@
 				D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */,
 				0959C493F16F426CCB882D0A /* GlobeCountryNaming.swift in Sources */,
 				1C968C601B629A11084A173F /* GlobeDetailPanel.swift in Sources */,
+				DC5CE39442514A33F6A3F94B /* GlobeFlagImage.swift in Sources */,
 				23013F064DDE0657085F23ED /* GlobeGeography.swift in Sources */,
 				5D6EB2563E334055DEEE4E5E /* GlobeHitTesting.swift in Sources */,
 				70B39B72189002882FDF5A0D /* GlobeMarkerImage.swift in Sources */,

@@ -23,11 +23,23 @@ struct GlobeDetailPanel: View {
     @ScaledMetric(relativeTo: .largeTitle) private var artworkSize: CGFloat = 132
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            Divider()
+        // The card every other Tiko app uses, rather than a lookalike of it:
+        // same head, same corners, same shadow, and it inherits whatever those
+        // gain later. Only the placement is Globe's own — a full-height panel
+        // beside the map instead of a card in the middle of it, because what it
+        // says is about the thing you can still see.
+        TikoPopupCard(
+            title: title,
+            subtitle: kindLabel,
+            icon: kindIcon,
+            appColor: appColor,
+            onClose: onClose
+        ) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    artwork
+                        .frame(maxWidth: .infinity)
+                    speaker
                     map
                     facts
                     if !countries.isEmpty { countryChips }
@@ -39,83 +51,35 @@ struct GlobeDetailPanel: View {
                     }
                     if let footnote { Text(footnote).font(.footnote).foregroundStyle(.secondary) }
                 }
-                .padding(20)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        // The same card every other Tiko sheet is: material, deeply rounded,
-        // and lifted off what it covers.
-        .background(.regularMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
-        .shadow(color: .black.opacity(0.14), radius: 28, x: -6, y: 14)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("globe-selection-card")
     }
 
-    // MARK: - Pieces
-
-    private var header: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center, spacing: 12) {
-                Button(action: onClose) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.primary.opacity(0.75))
-                        .frame(width: 44, height: 44)
-                        .background(Color.primary.opacity(0.055))
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(i18n.t("common.close"))
-                .accessibilityIdentifier("globe-close-card")
-
-                Text(kindLabel)
-                    .font(.subheadline.weight(.bold))
-                    .foregroundStyle(appColor.palette.primary)
-
-                Spacer(minLength: 0)
-
-                Image(systemName: kindIcon)
-                    .font(.system(size: 19, weight: .bold))
-                    .foregroundStyle(appColor.palette.primary)
-                    .frame(width: 44, height: 44)
-                    .background(appColor.palette.primary.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    /// Say it again. Its own row now the title lives in the card's head.
+    private var speaker: some View {
+        Button(action: onSpeak) {
+            HStack(spacing: 10) {
+                Image(systemName: "speaker.wave.2.fill").font(.headline)
+                Text(i18n.t("globe.action.sayAgain")).font(.headline)
             }
-
-            artwork
-
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                Text(title)
-                    .font(.largeTitle.weight(.semibold))
-                    .minimumScaleFactor(0.5)
-                    .lineLimit(3)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityAddTraits(.isHeader)
-                Spacer(minLength: 0)
-                Button(action: onSpeak) {
-                    Image(systemName: "speaker.wave.2.fill")
-                        .font(.title2)
-                        .frame(width: 56, height: 56)
-                        .background(appColor.palette.primary.opacity(0.18), in: Circle())
-                }
-                .accessibilityLabel(i18n.t("globe.action.sayAgain"))
-                .accessibilityIdentifier("globe-speak")
-            }
+            .frame(maxWidth: .infinity, minHeight: 52)
+            .background(appColor.palette.primary.opacity(0.16), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-        .padding(.bottom, 16)
+        .buttonStyle(.plain)
+        .accessibilityLabel(i18n.t("globe.action.sayAgain"))
+        .accessibilityIdentifier("globe-speak")
     }
+
+    // MARK: - Pieces
 
     @ViewBuilder
     private var artwork: some View {
         switch selection {
         case .country(let country):
-            if let flag = GlobeCountryNaming.flag(for: country) {
-                Text(flag)
-                    .font(.system(size: artworkSize * 0.7))
-                    .accessibilityHidden(true)
-            }
+            GlobeFlagImage(country: country, size: artworkSize)
         case .entity(let entity, _):
             GlobeMarkerImage(entity: entity, size: artworkSize)
         }
@@ -165,8 +129,8 @@ struct GlobeDetailPanel: View {
                     Button {
                         onSelectCountry(country)
                     } label: {
-                        HStack(spacing: 4) {
-                            if let flag = GlobeCountryNaming.flag(for: country) { Text(flag) }
+                        HStack(spacing: 5) {
+                            GlobeFlagImage(country: country, size: 20)
                             Text(GlobeCountryNaming.name(for: country, languageCode: languageCode))
                                 .font(.subheadline)
                         }
