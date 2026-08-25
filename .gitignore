@@ -30,3 +30,6 @@ artifacts/
 
 # iOS build output (archives, .ipa, dSYMs)
 apps/*/ios/build/
+
+# Git worktrees for parallel agent sessions — never part of the repo itself.
+.claude/worktrees/

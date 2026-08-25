@@ -26,6 +26,7 @@ struct TikoYesNoApp: App {
         TikoDeviceDefaults.register()
         TikoI18n.translationsBaseURL = "https://translations.tikoapi.org"
         TikoIdentityClient.identityBaseURL = "https://identity.tikoapi.org/v1"
+        TikoVoiceService.appName = "yes-no"
     }
 
     var body: some Scene {

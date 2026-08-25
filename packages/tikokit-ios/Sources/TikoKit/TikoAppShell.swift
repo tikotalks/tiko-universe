@@ -196,6 +196,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let settingsContent: SettingsContent
 
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
+    // The user's own answer to "how light is light" and "how dark is dark".
+    // Empty means they have not chosen, so the app's own values stand.
+    @AppStorage(TikoSurfaceStorage.lightKey) private var lightBackgroundHex = ""
+    @AppStorage(TikoSurfaceStorage.darkKey) private var darkBackgroundHex = ""
     @Environment(\.colorScheme) private var deviceScheme
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
@@ -206,6 +210,9 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var showingProfileMenu = false
     @State private var showingParentCodeEntry = false
     @State private var showingCreateParentCode = false
+    /// Set by Settings → Delete account, so the account sheet opens on the
+    /// confirmation step instead of the profile.
+    @State private var accountOpensOnDelete = false
     /// Mirrors `TikoParentGate.isLocalChildModeActive` so SwiftUI re-renders
     /// when a device without a verified email enters or leaves child mode.
     @State private var localChildMode = TikoParentGate.isLocalChildModeActive
@@ -216,6 +223,21 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     /// Parent mode means NOT in child mode — either the API-backed runtime or,
     /// for a device with no verified email, the local gate.
     private var parentMode: Bool { !(localChildMode || (identityBundle?.isChildMode ?? false)) }
+
+    /// Precedence: what the user chose, then what the app passed in, then the
+    /// Tiko defaults.
+    private var surfaces: TikoSurfaces {
+        TikoSurfaceResolver.surfaces(
+            lightHex: lightBackgroundHex,
+            darkHex: darkBackgroundHex,
+            appLight: backgroundColor,
+            appDark: darkBackgroundColor
+        )
+    }
+
+    private var activeBackground: Color {
+        surfaces.background(for: selectedColorScheme)
+    }
 
 
     public init(
@@ -288,7 +310,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     public var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            .background(activeBackground)
             .preferredColorScheme(preferredColorSchemeValue)
             .safeAreaInset(edge: .top, spacing: 0) {
                 TikoAppHeader(
@@ -313,12 +335,19 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                         }
                     }
                 )
-                .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+                .background(activeBackground)
             }
-        .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
+        .tikoSettingsPopup(
+            isPresented: $showingSettings,
+            appColor: appColor,
+            accountEmail: signedInEmail,
+            onChildMode: { closeSettings(then: { handleChildModeRequest() }) },
+            onAccount: { closeSettings(then: { accountOpensOnDelete = false; showingAccount = true }) },
+            onDeleteAccount: { closeSettings(then: { accountOpensOnDelete = true; showingAccount = true }) }
+        ) {
             settingsContent
         }
-        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
+        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, startInDeleteFlow: accountOpensOnDelete, onIdentityChanged: {
             Task { @MainActor in
                 let bundle = await refreshIdentityBundle()
                 identityBundle = bundle
@@ -450,6 +479,25 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
     }
 
+    /// The signed-in address, or nil for a guest — what Settings shows on the
+    /// account row, and what decides whether it can offer deletion.
+    private var signedInEmail: String? {
+        guard let account = identityBundle?.account, account.emailVerified == true else { return nil }
+        return account.email
+    }
+
+    /// One popup at a time: PopupView will not swap a presented card for a new
+    /// one in the same update, so every settings route closes first and opens
+    /// the next after the dismissal animation — the same 250ms the profile
+    /// menu already uses.
+    private func closeSettings(then open: @escaping () -> Void) {
+        showingSettings = false
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            open()
+        }
+    }
+
     private func handleChildModeRequest() {
         showingProfileMenu = false
         Task { @MainActor in
@@ -568,6 +616,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             fetchedAvatarURL = resolved
             return
         }
+        // A device with no account keeps the person glyph. The header button is
+        // the way into the account and the parental control, and a random
+        // picture from the media library on it reads as decoration — which is
+        // how two App Review passes missed both (2.3.6 on Talk and Timer,
+        // 5.1.1(v) on Radio). A signed-in user who has not picked an avatar
+        // still gets one, and can change it in the profile.
+        guard signedInEmail != nil else { return }
         // Pick a random avatar and store its media ID
         if let mediaId = await fetchRandomMediaId() {
             profilePrefs.setAvatarURL(mediaId)
