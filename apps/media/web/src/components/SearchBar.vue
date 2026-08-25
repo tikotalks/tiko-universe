@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, watch } from 'vue'
 import { useBemm } from 'bemm'
 import { SilIcon } from '@tiko/ui'
 
@@ -17,6 +17,13 @@ const bemm = useBemm('search-bar', { return: 'string', includeBaseClass: true })
 
 const query = ref(props.modelValue ?? '')
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => props.modelValue,
+  (value) => {
+    if ((value ?? '') !== query.value) query.value = value ?? ''
+  },
+)
 
 function onInput() {
   emit('update:modelValue', query.value)

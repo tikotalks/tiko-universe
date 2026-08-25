@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useBemm } from 'bemm'
 import { useMediaLibrary } from '../composables/useMediaLibrary'
 import SearchBar from '../components/SearchBar.vue'
@@ -11,6 +11,7 @@ import type { MediaItem, MediaType } from '../types/media'
 
 const bemm = useBemm('gallery', { return: 'string', includeBaseClass: true })
 
+const route = useRoute()
 const router = useRouter()
 const {
   items,
@@ -34,6 +35,13 @@ const {
   setCategory,
 } = useMediaLibrary()
 
+function routeSearch(value: unknown): string {
+  const candidate = Array.isArray(value) ? value[0] : value
+  return typeof candidate === 'string' ? candidate.trim() : ''
+}
+
+searchQuery.value = routeSearch(route.query.search)
+
 // The hero shows real library content rather than a stand-in illustration.
 const previewItems = computed(() => items.value.filter((item) => item.thumbnailUrl || item.url).slice(0, 4))
 
@@ -53,6 +61,14 @@ onMounted(() => {
   fetchMedia()
 })
 
+watch(
+  () => route.query.search,
+  (value) => {
+    const query = routeSearch(value)
+    if (query !== searchQuery.value) setSearch(query)
+  },
+)
+
 function onCardClick(item: MediaItem) {
   router.push({ name: 'asset-detail', params: { id: item.id } })
 }
@@ -63,6 +79,17 @@ function onDownload(item: MediaItem) {
 
 function onTypeChange(type: MediaType | undefined) {
   setType(type)
+}
+
+function onSearch(query: string) {
+  const search = query.trim()
+  setSearch(search)
+  void router.replace({
+    query: {
+      ...route.query,
+      search: search || undefined,
+    },
+  })
 }
 </script>
 
@@ -113,7 +140,7 @@ function onTypeChange(type: MediaType | undefined) {
         <SearchBar
           :model-value="searchQuery"
           placeholder="Search images, audio, stories…"
-          @search="setSearch"
+          @search="onSearch"
         />
         <TypeFilter :model-value="activeType" @update:model-value="onTypeChange" />
       </div>
