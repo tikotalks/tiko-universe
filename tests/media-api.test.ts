@@ -68,6 +68,21 @@ class MemoryD1 {
   execute(sql: string, values: unknown[]): MemoryResult {
     const normalized = sql.replace(/\s+/g, ' ').trim()
 
+    if (normalized.startsWith('UPDATE media SET')) {
+      const id = String(values.at(-1))
+      const row = this.media.find(item => item.id === id)
+      if (!row) return new MemoryResult()
+      const fields = ['title', 'description', 'name', 'tags', 'categories', 'is_active', 'is_hidden', 'updated_at']
+      let valueIndex = 0
+      for (const field of fields) {
+        if (!normalized.includes(`${field} = ?`)) continue
+        row[field] = values[valueIndex]
+        if (field === 'categories') row.folder = values[valueIndex]
+        valueIndex += 1
+      }
+      return new MemoryResult()
+    }
+
     if (normalized.startsWith('INSERT INTO media')) {
       const row = {
         id: values[0],
@@ -645,6 +660,26 @@ describe('media-api worker', () => {
 
     expect(response.status).toBe(401)
     expect(body.error.code).toBe('unauthorized')
+  })
+
+  it('allows the scoped automation key to update catalog metadata, but not delete media', async () => {
+    const env = { ...makeEnv(), MEDIA_AUTOMATION_API_KEY: 'metadata-automation-key' }
+
+    const update = await worker.fetch(new Request('https://media.test/v1/media/media_1', {
+      method: 'PUT',
+      headers: { authorization: 'Bearer metadata-automation-key', 'content-type': 'application/json' },
+      body: JSON.stringify({ description: 'The springbok is an antelope native to southern Africa.' }),
+    }), env as never)
+
+    expect(update.status).toBe(200)
+    expect((await parseJson(update)).data.description).toBe('The springbok is an antelope native to southern Africa.')
+    expect(env.MEDIA_DB.media[0].description).toBe('The springbok is an antelope native to southern Africa.')
+
+    const deletion = await worker.fetch(new Request('https://media.test/v1/media/media_1', {
+      method: 'DELETE',
+      headers: { authorization: 'Bearer metadata-automation-key' },
+    }), env as never)
+    expect(deletion.status).toBe(401)
   })
 
   it('uploads media with API key auth, persists catalog metadata, and skips Vision when no OpenAI key is configured', async () => {

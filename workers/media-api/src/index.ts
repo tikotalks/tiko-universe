@@ -22,6 +22,18 @@ interface Env {
   OPENAI_SECRET?: SecretStoreBinding
   PEPPER_SECRET?: SecretStoreBinding
   IDENTITY_BASE_URL?: string
+  /**
+   * Service key for trusted metadata automation. This is intentionally limited
+   * to media metadata updates; it must never authorize deletion or private
+   * user-media access.
+   */
+  MEDIA_AUTOMATION_API_KEY?: string
+}
+
+function hasMediaAutomationKey(request: Request, env: Env): boolean {
+  const authorization = request.headers.get('authorization')
+  const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]
+  return Boolean(token && env.MEDIA_AUTOMATION_API_KEY && token === env.MEDIA_AUTOMATION_API_KEY)
 }
 
 interface D1Database {
@@ -1546,7 +1558,7 @@ export default {
       }
       if (request.method === 'PUT' && id) {
         const authed = await authenticate(request, env)
-        if (authed.ok === false) return withCors(authed.response)
+        if (authed.ok === false && !hasMediaAutomationKey(request, env)) return withCors(authed.response)
         return withCors(await handleMediaUpdate(request, env, id))
       }
       if (request.method === 'DELETE' && id) {
