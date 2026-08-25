@@ -258,13 +258,30 @@ final class RadioLibraryStore {
 
 let defaultUncategorizedCategoryID = "uncategorized"
 
+/// Curated Tiko Media artwork per built-in collection.
+///
+/// These are pinned URLs rather than a live search: the media search endpoint
+/// ranks poorly for bare category words (querying "Animals" returns Milk and
+/// Grass, "Music" returns Sea Conch), so picking at runtime would put the wrong
+/// picture on a child's tile. This mirrors how `TikoAppConfig` pins
+/// `appIconImageUrl` for each app.
+private func mediaIcon(_ path: String) -> URL? {
+    URL(string: "https://data.tikocdn.org/uploads/\(path)")
+}
+
 let defaultRadioCategories: [RadioCategory] = [
-    RadioCategory(id: "animals", title: "Animals", symbol: "pawprint.fill", color: "yellow"),
-    RadioCategory(id: "stories", title: "Stories", symbol: "book.fill", color: "purple"),
-    RadioCategory(id: "music", title: "Music", symbol: "music.note", color: "orange"),
-    RadioCategory(id: "calm", title: "Calm", symbol: "moon.stars.fill", color: "blue"),
-    RadioCategory(id: "favorites", title: "Favorites", symbol: "star.fill", color: "gold"),
-    RadioCategory(id: defaultUncategorizedCategoryID, title: "Unsorted", symbol: "tray.fill", color: "lime")
+    RadioCategory(id: "animals", title: "Animals", symbol: "pawprint.fill", color: "yellow",
+                  imageURL: mediaIcon("1781443435229-cat.png")),
+    RadioCategory(id: "stories", title: "Stories", symbol: "book.fill", color: "purple",
+                  imageURL: mediaIcon("1781474706796-teddy-bear-with-book.png")),
+    RadioCategory(id: "music", title: "Music", symbol: "music.note", color: "orange",
+                  imageURL: mediaIcon("1755106316235-music-note.png")),
+    RadioCategory(id: "calm", title: "Calm", symbol: "moon.stars.fill", color: "blue",
+                  imageURL: mediaIcon("1756035358916-moon.png")),
+    RadioCategory(id: "favorites", title: "Favorites", symbol: "star.fill", color: "gold",
+                  imageURL: mediaIcon("1756035319481-hearts.png")),
+    RadioCategory(id: defaultUncategorizedCategoryID, title: "Unsorted", symbol: "tray.fill", color: "lime",
+                  imageURL: mediaIcon("1755105859570-folders.png"))
 ]
 
 private let defaultCategoryColors: [String] = [

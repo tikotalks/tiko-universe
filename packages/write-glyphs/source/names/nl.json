@@ -1,0 +1,322 @@
+{
+  "locale": "nl",
+  "letters": {
+    "a": {
+      "name": "aa",
+      "sound": "a",
+      "word": "appel"
+    },
+    "b": {
+      "name": "bee",
+      "sound": "b",
+      "word": "bal"
+    },
+    "c": {
+      "name": "see",
+      "sound": "k",
+      "word": "cirkel"
+    },
+    "d": {
+      "name": "dee",
+      "sound": "d",
+      "word": "duif"
+    },
+    "e": {
+      "name": "ee",
+      "sound": "e",
+      "word": "eend"
+    },
+    "f": {
+      "name": "ef",
+      "sound": "f",
+      "word": "fiets"
+    },
+    "g": {
+      "name": "gee",
+      "sound": "g",
+      "word": "geit"
+    },
+    "h": {
+      "name": "haa",
+      "sound": "h",
+      "word": "hond"
+    },
+    "i": {
+      "name": "ie",
+      "sound": "i",
+      "word": "inkt"
+    },
+    "j": {
+      "name": "jee",
+      "sound": "j",
+      "word": "jas"
+    },
+    "k": {
+      "name": "kaa",
+      "sound": "k",
+      "word": "kat"
+    },
+    "l": {
+      "name": "el",
+      "sound": "l",
+      "word": "lamp"
+    },
+    "m": {
+      "name": "em",
+      "sound": "m",
+      "word": "maan"
+    },
+    "n": {
+      "name": "en",
+      "sound": "n",
+      "word": "neus"
+    },
+    "o": {
+      "name": "oo",
+      "sound": "o",
+      "word": "oog"
+    },
+    "p": {
+      "name": "pee",
+      "sound": "p",
+      "word": "paard"
+    },
+    "q": {
+      "name": "kuu",
+      "sound": "kw",
+      "word": "quiz"
+    },
+    "r": {
+      "name": "er",
+      "sound": "r",
+      "word": "roos"
+    },
+    "s": {
+      "name": "es",
+      "sound": "s",
+      "word": "slang"
+    },
+    "t": {
+      "name": "tee",
+      "sound": "t",
+      "word": "tas"
+    },
+    "u": {
+      "name": "uu",
+      "sound": "u",
+      "word": "uil"
+    },
+    "v": {
+      "name": "vee",
+      "sound": "v",
+      "word": "vis"
+    },
+    "w": {
+      "name": "wee",
+      "sound": "w",
+      "word": "wolk"
+    },
+    "x": {
+      "name": "iks",
+      "sound": "ks",
+      "word": "xylofoon"
+    },
+    "y": {
+      "name": "ei",
+      "sound": "j",
+      "word": "yoghurt"
+    },
+    "z": {
+      "name": "zet",
+      "sound": "z",
+      "word": "zon"
+    }
+  },
+  "digits": {
+    "0": {
+      "name": "nul"
+    },
+    "1": {
+      "name": "een"
+    },
+    "2": {
+      "name": "twee"
+    },
+    "3": {
+      "name": "drie"
+    },
+    "4": {
+      "name": "vier"
+    },
+    "5": {
+      "name": "vijf"
+    },
+    "6": {
+      "name": "zes"
+    },
+    "7": {
+      "name": "zeven"
+    },
+    "8": {
+      "name": "acht"
+    },
+    "9": {
+      "name": "negen"
+    }
+  },
+  "shapes": {
+    "vertical-line": {
+      "name": "streep omlaag"
+    },
+    "horizontal-line": {
+      "name": "streep opzij"
+    },
+    "diagonal-line": {
+      "name": "schuine streep"
+    },
+    "cross": {
+      "name": "kruis"
+    },
+    "cross-diagonal": {
+      "name": "X"
+    },
+    "zigzag": {
+      "name": "zigzag"
+    },
+    "circle": {
+      "name": "cirkel"
+    },
+    "square": {
+      "name": "vierkant"
+    },
+    "triangle": {
+      "name": "driehoek"
+    },
+    "diamond": {
+      "name": "ruit"
+    },
+    "heart": {
+      "name": "hart"
+    },
+    "star": {
+      "name": "ster"
+    },
+    "spiral": {
+      "name": "spiraal"
+    },
+    "fish": {
+      "name": "vis"
+    },
+    "bird": {
+      "name": "vogel"
+    },
+    "butterfly": {
+      "name": "vlinder"
+    },
+    "snake": {
+      "name": "slang"
+    },
+    "cat": {
+      "name": "kat"
+    },
+    "duck": {
+      "name": "eend"
+    },
+    "ladybird": {
+      "name": "lieveheersbeestje"
+    },
+    "snail": {
+      "name": "slak"
+    },
+    "car": {
+      "name": "auto"
+    },
+    "bus": {
+      "name": "bus"
+    },
+    "boat": {
+      "name": "boot"
+    },
+    "plane": {
+      "name": "vliegtuig"
+    },
+    "rocket": {
+      "name": "raket"
+    },
+    "train": {
+      "name": "trein"
+    },
+    "balloon": {
+      "name": "ballon"
+    },
+    "bicycle": {
+      "name": "fiets"
+    },
+    "sun": {
+      "name": "zon"
+    },
+    "cloud": {
+      "name": "wolk"
+    },
+    "tree": {
+      "name": "boom"
+    },
+    "flower": {
+      "name": "bloem"
+    },
+    "leaf": {
+      "name": "blad"
+    },
+    "moon": {
+      "name": "maan"
+    },
+    "mountain": {
+      "name": "berg"
+    },
+    "raindrop": {
+      "name": "druppel"
+    },
+    "apple": {
+      "name": "appel"
+    },
+    "banana": {
+      "name": "banaan"
+    },
+    "ice-cream": {
+      "name": "ijsje"
+    },
+    "cherry": {
+      "name": "kers"
+    },
+    "carrot": {
+      "name": "wortel"
+    },
+    "cupcake": {
+      "name": "cakeje"
+    },
+    "bee": {
+      "name": "bij"
+    },
+    "frog": {
+      "name": "kikker"
+    },
+    "owl": {
+      "name": "uil"
+    },
+    "turtle": {
+      "name": "schildpad"
+    },
+    "mouse": {
+      "name": "muis"
+    },
+    "dog": {
+      "name": "hond"
+    },
+    "whale": {
+      "name": "walvis"
+    },
+    "crab": {
+      "name": "krab"
+    }
+  }
+}

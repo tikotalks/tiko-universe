@@ -4,20 +4,65 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@tiko/data": ["packages/data/src/index.ts"],
-      "@tiko/data/*": ["packages/data/src/*"],
-      "@tiko/identity": ["packages/identity/src/index.ts"],
-      "@tiko/identity/*": ["packages/identity/src/*"],
-      "@tiko/i18n": ["packages/i18n/src/index.ts"],
-      "@tiko/i18n/*": ["packages/i18n/src/*"],
-      "@tiko/media": ["packages/media/src/index.ts"],
-      "@tiko/media/*": ["packages/media/src/*"],
-      "@tiko/testing": ["packages/testing/src/index.ts"],
-      "@tiko/testing/*": ["packages/testing/src/*"],
-      "@tiko/ui": ["packages/ui/src/index.ts"],
-      "@tiko/ui/*": ["packages/ui/src/*"]
+      "@tiko/data": [
+        "packages/data/src/index.ts"
+      ],
+      "@tiko/data/*": [
+        "packages/data/src/*"
+      ],
+      "@tiko/i18n": [
+        "packages/i18n/src/index.ts"
+      ],
+      "@tiko/i18n/*": [
+        "packages/i18n/src/*"
+      ],
+      "@tiko/identity": [
+        "packages/identity/src/index.ts"
+      ],
+      "@tiko/identity/*": [
+        "packages/identity/src/*"
+      ],
+      "@tiko/media": [
+        "packages/media/src/index.ts"
+      ],
+      "@tiko/media/*": [
+        "packages/media/src/*"
+      ],
+      "@tiko/talk-packs": [
+        "packages/talk-packs/src/index.ts"
+      ],
+      "@tiko/talk-packs/*": [
+        "packages/talk-packs/*"
+      ],
+      "@tiko/talk-realizer": [
+        "packages/talk-realizer/src/index.ts"
+      ],
+      "@tiko/talk-realizer/*": [
+        "packages/talk-realizer/src/*"
+      ],
+      "@tiko/testing": [
+        "packages/testing/src/index.ts"
+      ],
+      "@tiko/testing/*": [
+        "packages/testing/src/*"
+      ],
+      "@tiko/ui": [
+        "packages/ui/src/index.ts"
+      ],
+      "@tiko/ui/*": [
+        "packages/ui/src/*"
+      ],
+      "@tiko/write-glyphs": [
+        "packages/write-glyphs/src/index.ts"
+      ],
+      "@tiko/write-glyphs/*": [
+        "packages/write-glyphs/src/*"
+      ]
     },
-    "types": ["vitest/globals", "node"]
+    "types": [
+      "vitest/globals",
+      "node"
+    ]
   },
   "include": [
     "apps/**/*.ts",

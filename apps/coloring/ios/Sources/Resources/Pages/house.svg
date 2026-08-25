@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140">
+  <path id="sky" data-z-index="0" d="M 0 0 H 200 V 140 H 0 Z"/>
+  <path id="ground" data-z-index="1" d="M 0 112 H 200 V 140 H 0 Z"/>
+  <path id="wall" data-z-index="2" d="M 45 62 H 155 V 112 H 45 Z"/>
+  <path id="roof" data-z-index="3" d="M 35 62 L 100 20 L 165 62 Z"/>
+  <path id="door" data-z-index="4" d="M 88 82 H 112 V 112 H 88 Z"/>
+  <path id="window-left" data-z-index="4" d="M 58 74 H 78 V 92 H 58 Z"/>
+  <path id="window-right" data-z-index="4" d="M 122 74 H 142 V 92 H 122 Z"/>
+  <path id="sun" data-z-index="1" d="M 168 18 L 180 18 L 188 26 L 188 38 L 180 46 L 168 46 L 160 38 L 160 26 Z"/>
+</svg>

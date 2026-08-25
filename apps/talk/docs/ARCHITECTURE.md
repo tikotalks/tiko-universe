@@ -526,7 +526,7 @@ wrangler d1 execute tiko-sentence-db-dev --command="SELECT locale, COUNT(*) as w
 
 ## Offline Fallback Pack
 
-`apps/talk/web/src/data/fallback-pack-en.json` is a stripped-down subset of the English pack. It uses **the same schema** as the server-side `LanguagePack` type — no separate format.
+`@tiko/talk-packs` carries every language pack in full, and the app loads the one the child uses. It uses **the same schema** as the server-side `LanguagePack` type — no separate format.
 
 **Contents:**
 - ~50 highest-frequency words (frequency ≥ 8 only)
@@ -539,7 +539,7 @@ wrangler d1 execute tiko-sentence-db-dev --command="SELECT locale, COUNT(*) as w
 workers/sentence-api/scripts/generate-fallback.ts
 ```
 
-This script reads `seed-en.sql`, filters to frequency ≥ 8, writes `fallback-pack-en.json`. Run it any time the English pack changes.
+There is no fallback pack to generate: `packages/talk-packs/data/*.json` **is** the data, shared by the app, the worker and the seed generator.
 
 **Frontend fallback logic (in `useSentenceApi.ts`):**
 ```typescript
@@ -839,7 +839,7 @@ apps/talk/web/src/
 │   └── useAudioPlayer.ts          # Play TTS audio from URL
 ├── types.ts                       # TypeScript interfaces (from shared types)
 └── data/
-    └── fallback-pack-en.json      # Minimal offline fallback (~50 words)
+    └── (no fallback pack)          # The real packs ship in @tiko/talk-packs
 ```
 
 **Estimated size:** 300-500 lines of Vue/TypeScript. No grammar logic. No language packs (except offline fallback).

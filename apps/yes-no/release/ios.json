@@ -5,9 +5,9 @@
   "project": "apps/yes-no/ios/TikoYesNo.xcodeproj",
   "iosDir": "apps/yes-no/ios",
   "bundleId": "mt.tiko.yesno",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "6781237407",
+  "appStoreId": "6781237407",
+  "appStoreUrl": "https://apps.apple.com/app/id6781237407",
   "validation": {
     "script": "apps/yes-no/ios/scripts/validate-local.sh"
   },
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/yes-no",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "home-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "settings-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       },
       {
         "id": "answered-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
@@ -140,7 +140,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/yes-no/TikoYesNo.xcarchive",
     "exportPath": "artifacts/archives/yes-no/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {

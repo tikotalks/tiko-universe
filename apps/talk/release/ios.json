@@ -5,9 +5,9 @@
   "project": "apps/talk/ios/TikoTalk.xcodeproj",
   "iosDir": "apps/talk/ios",
   "bundleId": "mt.tiko.talk",
-  "appleId": "",
-  "appStoreId": "",
-  "appStoreUrl": "",
+  "appleId": "6793059330",
+  "appStoreId": "6793059330",
+  "appStoreUrl": "https://apps.apple.com/app/id6793059330",
   "validation": {
     "script": "apps/talk/ios/scripts/validate-local.sh"
   },
@@ -15,7 +15,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/talk",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "tiles-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "sentence-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "settings-light",
@@ -131,7 +131,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 3
+        "waitSeconds": 8
       }
     ],
     "scenarioBudgetPerDevice": 10
@@ -140,11 +140,11 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/talk/TikoTalk.xcarchive",
     "exportPath": "artifacts/archives/talk/export",
-    "exportOptionsPlist": null,
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {
-    "ipaPath": "artifacts/archives/talk/export/TikoTalk.ipa",
+    "ipaPath": "artifacts/archives/talk/export/Talk.ipa",
     "deliverDir": "artifacts/app-store/talk",
     "apiKeyEnv": "APP_STORE_CONNECT_KEY_ID",
     "apiIssuerEnv": "APP_STORE_CONNECT_ISSUER_ID"

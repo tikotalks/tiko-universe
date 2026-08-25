@@ -5,7 +5,7 @@
   "project": "apps/first/ios/TikoFirst.xcodeproj",
   "iosDir": "apps/first/ios",
   "bundleId": "mt.tiko.first",
-  "appleId": "me@sil.mt",
+  "appleId": "6794608348",
   "validation": {
     "script": "apps/first/ios/scripts/validate-local.sh"
   },
@@ -13,7 +13,7 @@
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/first",
     "configuration": "Debug",
     "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 2,
+    "defaultWaitSeconds": 8,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -75,7 +75,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "home-dark",
@@ -93,7 +93,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 2
+        "waitSeconds": 8
       },
       {
         "id": "routine-light",
@@ -111,7 +111,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 4
+        "waitSeconds": 8
       },
       {
         "id": "routine-dark",
@@ -129,7 +129,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 4
+        "waitSeconds": 8
       },
       {
         "id": "celebrate-light",
@@ -147,7 +147,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 5.5
+        "waitSeconds": 8
       },
       {
         "id": "celebrate-dark",
@@ -165,7 +165,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 5.5
+        "waitSeconds": 8
       }
     ]
   },
@@ -173,7 +173,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/first/TikoFirst.xcarchive",
     "exportPath": "artifacts/archives/first/export",
-    "exportOptionsPlist": "apps/first/release/exportOptions.plist",
+    "exportOptionsPlist": "release/ExportOptions.plist",
     "allowProvisioningUpdates": true
   },
   "upload": {

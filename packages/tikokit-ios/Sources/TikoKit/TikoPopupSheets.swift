@@ -198,35 +198,52 @@ public enum TikoDeviceDefaults {
     }
 }
 
+/// How complete a language's interface translation is.
+public enum TikoInterfaceCoverage: String, Codable, Sendable {
+    /// Translated throughout, by a person.
+    case full
+    /// The shared interface vocabulary is translated; the rest falls back to English.
+    case core
+    /// The interface is English; only the child's own tiles are in this language.
+    case none
+}
+
 public struct TikoLanguage: Identifiable, Codable, Equatable, Sendable {
     public let id: String
     public let title: String
     public let nativeTitle: String
+    /// Written right to left.
+    public let isRightToLeft: Bool
+    /// The Talk realizer builds sentences in this language rather than joining tiles.
+    public let hasTalkGrammar: Bool
+    /// How much of the interface is translated.
+    public let interfaceCoverage: TikoInterfaceCoverage
 
-    public init(id: String, title: String, nativeTitle: String) {
+    public init(
+        id: String,
+        title: String,
+        nativeTitle: String,
+        isRightToLeft: Bool = false,
+        hasTalkGrammar: Bool = false,
+        interfaceCoverage: TikoInterfaceCoverage = .none
+    ) {
         self.id = id
         self.title = title
         self.nativeTitle = nativeTitle
+        self.isRightToLeft = isRightToLeft
+        self.hasTalkGrammar = hasTalkGrammar
+        self.interfaceCoverage = interfaceCoverage
     }
 
-    public static let defaultLanguages: [TikoLanguage] = [
-        TikoLanguage(id: "en", title: "English", nativeTitle: "English"),
-        TikoLanguage(id: "nl", title: "Dutch", nativeTitle: "Nederlands"),
-        TikoLanguage(id: "fr", title: "French", nativeTitle: "Français"),
-        TikoLanguage(id: "de", title: "German", nativeTitle: "Deutsch"),
-        TikoLanguage(id: "es", title: "Spanish", nativeTitle: "Español"),
-        TikoLanguage(id: "pt", title: "Portuguese", nativeTitle: "Português"),
-        TikoLanguage(id: "it", title: "Italian", nativeTitle: "Italiano"),
-        TikoLanguage(id: "mt", title: "Maltese", nativeTitle: "Malti"),
-        TikoLanguage(id: "ja", title: "Japanese", nativeTitle: "日本語"),
-        TikoLanguage(id: "zh", title: "Chinese", nativeTitle: "中文"),
-        TikoLanguage(id: "ko", title: "Korean", nativeTitle: "한국어"),
-        TikoLanguage(id: "ar", title: "Arabic", nativeTitle: "العربية"),
-        TikoLanguage(id: "hy", title: "Armenian", nativeTitle: "Հայերեն"),
-    ]
+    /// Every language the app offers. Generated from `tools/locales.mjs` into
+    /// `TikoLocales.generated.swift`, which is the only place the list lives.
+    public static var defaultLanguages: [TikoLanguage] { allLanguages }
 
-    public static var supportedLanguageCodes: [String] {
-        defaultLanguages.map(\.id)
+    public static var supportedLanguageCodes: [String] { allLanguageCodes }
+
+    /// Looks a language up by code, falling back to English.
+    public static func named(_ code: String) -> TikoLanguage {
+        allLanguages.first { $0.id == code } ?? allLanguages[0]
     }
 }
 
@@ -803,6 +820,7 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
     @State private var showingLanguagePicker = false
     @State private var showingColorModePicker = false
     @State private var showingSurfacePicker = false
+    @State private var showingSupport = false
 
     public init(
         appColor: TikoAppColor,
@@ -854,12 +872,27 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                         icon: "paintpalette.fill",
                         appColor: appColor
                     ) { showingSurfacePicker = true }
+                    // Settings are already behind Parent Mode, so Support is
+                    // reachable by a grown-up and by no child. Hidden entirely
+                    // when this app has no Arlez project, rather than offering a
+                    // form whose messages would go nowhere.
+                    if TikoArlez.productIDForRunningApp != nil {
+                        TikoSettingsActionRow(
+                            title: TikoSupportLabels.forLanguage(languageID).support,
+                            value: nil,
+                            icon: "lifepreserver.fill",
+                            appColor: appColor
+                        ) { showingSupport = true }
+                    }
                 }
 
                 parentSection(labels: labels)
 
                 appSettings
             }
+        }
+        .tikoPopup(isPresented: $showingSupport) {
+            TikoSupportSheet(appColor: appColor) { showingSupport = false }
         }
         .tikoPopup(isPresented: $showingLanguagePicker) {
             TikoLanguagePickerSheet(

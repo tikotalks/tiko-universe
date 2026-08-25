@@ -14,6 +14,7 @@ public enum TikoAppKey: String, Sendable {
     case say = "say"
     case sum = "sum"
     case first = "first"
+    case write = "write"
 }
 
 // MARK: - TikoI18n
@@ -84,8 +85,20 @@ public final class TikoI18n: ObservableObject {
     }
 
     private func loadLocalBundles() {
-        for (code, translations) in TikoLocalTranslations.bundles(for: app) {
+        // The generated bundles come first: they cover every locale the app
+        // offers. The hand-written ones then merge on top, because a translation a
+        // person wrote for this app beats a generated one.
+        for (code, translations) in TikoLocalTranslations.generatedBundles(for: app) {
             bundles[bundleKey(app.rawValue, code)] = translations
+        }
+        for (code, translations) in TikoLocalTranslations.bundles(for: app) {
+            let key = bundleKey(app.rawValue, code)
+            if var existing = bundles[key] {
+                for (k, v) in translations { existing[k] = v }
+                bundles[key] = existing
+            } else {
+                bundles[key] = translations
+            }
         }
     }
 
@@ -131,6 +144,7 @@ enum TikoLocalTranslations {
         case .say:      return sayBundles
         case .sum:      return sumBundles
         case .first:    return firstBundles
+        case .write:    return writeBundles
         }
     }
 

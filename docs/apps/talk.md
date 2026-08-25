@@ -72,7 +72,7 @@ Talk is implemented in source on `development`, but live operation depends on Cl
 - [x] Usage logging and scheduled learning hooks implemented
 - [x] Web app implemented against Sentence API
 - [x] i18n keys mapped (`talk.*`)
-- [x] Offline fallback pack bundled (`apps/talk/web/src/data/fallback-pack-en.json`)
+- [x] Offline by default: every pack bundled via `@tiko/talk-packs`, sentences built on the device by `@tiko/talk-realizer`
 - [x] Local/CI smoke coverage for Talk package, worker, and web build paths
 - [ ] D1 schema provisioned on live dev/prod Cloudflare databases
 - [ ] App domain provisioned: `talk.tikoapps.org`

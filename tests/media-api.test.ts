@@ -4,6 +4,25 @@ import worker from '../workers/media-api/src/index'
 
 type Row = Record<string, unknown>
 
+// SQLite LIKE with ESCAPE '\': `%` and `_` are wildcards unless backslash-escaped.
+function likeMatches(subject: string, pattern: string): boolean {
+  let regex = ''
+  for (let index = 0; index < pattern.length; index += 1) {
+    const character = pattern[index]
+    if (character === '\\') {
+      index += 1
+      regex += pattern[index]?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') ?? ''
+    } else if (character === '%') {
+      regex += '.*'
+    } else if (character === '_') {
+      regex += '.'
+    } else {
+      regex += character.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    }
+  }
+  return new RegExp(`^${regex}$`, 'i').test(subject)
+}
+
 class MemoryResult {
   constructor(private rows: Row[] = []) {}
 
@@ -74,6 +93,23 @@ class MemoryD1 {
       }
       this.media.push(row)
       return new MemoryResult()
+    }
+
+    for (const column of ['tags', 'categories'] as const) {
+      if (!normalized.includes(`json_each(media.${column})`)) continue
+      const rows = this.facetRows(column)
+      // COUNT(DISTINCT …) backs the truncation meta; the list query takes LIMIT ?.
+      if (normalized.includes('COUNT(DISTINCT')) return new MemoryResult([{ count: rows.length }])
+      const limit = normalized.includes('LIMIT ?') ? Number(values.at(-1)) : rows.length
+      return new MemoryResult(rows.slice(0, limit))
+    }
+    if (normalized.includes('substr(mime_type')) {
+      const counts = new Map<string, number>()
+      for (const row of this.media) {
+        const kind = String(row.mime_type ?? '').split('/')[0]
+        if (kind) counts.set(kind, (counts.get(kind) ?? 0) + 1)
+      }
+      return new MemoryResult([...counts].map(([value, count]) => ({ value, count })))
     }
 
     if (normalized.includes('FROM media')) {
@@ -148,6 +184,23 @@ class MemoryD1 {
     throw new Error(`Unhandled SQL in media-api test fake: ${normalized}`)
   }
 
+  // Stands in for `json_each` over a JSON array column.
+  private facetRows(column: 'tags' | 'categories'): Row[] {
+    const counts = new Map<string, number>()
+    for (const row of this.media) {
+      let parsed: unknown
+      try { parsed = JSON.parse(String(row[column] ?? '[]')) } catch { continue }
+      if (!Array.isArray(parsed)) continue
+      for (const value of parsed) {
+        if (typeof value !== 'string') continue
+        counts.set(value, (counts.get(value) ?? 0) + 1)
+      }
+    }
+    return [...counts]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([value, count]) => ({ value, count }))
+  }
+
   private filterRows(rows: Row[], normalized: string, values: unknown[]): Row[] {
     let filtered = rows
     let valueIndex = 0
@@ -172,6 +225,18 @@ class MemoryD1 {
       valueIndex += 1
       filtered = filtered.filter(row => row.user_id === userId)
     }
+    if (normalized.includes('title LIKE ? ESCAPE') && normalized.includes('description LIKE ? ESCAPE')) {
+      // Prose columns take `%term%`; tags/categories take `%"term%`. Apply each
+      // bound pattern to its own column so the anchoring is actually tested.
+      const searchClause = normalized.slice(normalized.indexOf('(title LIKE ?'))
+      const patternCount = (searchClause.slice(0, searchClause.indexOf(')')).match(/LIKE \?/g) ?? []).length
+      const patterns = values.slice(valueIndex, valueIndex + patternCount).map(String)
+      valueIndex += patternCount
+      const columns = ['title', 'description', 'name', 'filename', 'tags', 'categories']
+      filtered = filtered.filter(row => columns.some((column, index) =>
+        likeMatches(String(row[column] ?? ''), patterns[index] ?? '')))
+    }
+
     if (normalized.includes('categories LIKE ?')) {
       const categoryPatterns = values
         .slice(valueIndex)
@@ -342,6 +407,148 @@ describe('media-api worker', () => {
     expect(response.status).toBe(200)
     expect(body.data.map((item: { id: string }) => item.id)).toEqual(['media_1', 'media_2'])
     expect(body.meta).toMatchObject({ total: 2, page: 1, limit: 10 })
+  })
+
+  it('searches media by tag, not just by title and description', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_cat',
+      filename: 'img_2847.png',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify(['cat', 'pet']),
+      categories: JSON.stringify(['animals']),
+      folder: JSON.stringify(['animals']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=cat&limit=10'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.map((item: { id: string }) => item.id)).toContain('media_cat')
+  })
+
+  it('searches media by category', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_food',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify([]),
+      categories: JSON.stringify(['food']),
+      folder: JSON.stringify(['food']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=food&limit=10'), env as never)
+    const body = await parseJson(response)
+
+    expect(body.data.map((item: { id: string }) => item.id)).toEqual(['media_food'])
+  })
+
+  it('exposes the full category list on each media item', async () => {
+    const response = await worker.fetch(new Request('https://media.test/v1/media?limit=10'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(body.data[0]).toMatchObject({ folder: 'cards', categories: ['cards'] })
+  })
+
+  it('anchors tag and category search to the start of a value, so "pet" does not match "carpet"', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_pets',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify(['pets', 'shop']),
+      categories: JSON.stringify(['places']),
+    }))
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_vacuum',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify(['carpet', 'home']),
+      categories: JSON.stringify(['tools']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=pet&limit=10'), env as never)
+    const ids = (await parseJson(response)).data.map((item: { id: string }) => item.id)
+
+    expect(ids).toContain('media_pets')
+    expect(ids).not.toContain('media_vacuum')
+  })
+
+  it('still matches a partially typed tag', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_cat',
+      title: 'Untitled upload',
+      description: null,
+      tags: JSON.stringify(['cat']),
+      categories: JSON.stringify(['animals']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media?search=ca&limit=10'), env as never)
+    const ids = (await parseJson(response)).data.map((item: { id: string }) => item.id)
+
+    expect(ids).toContain('media_cat')
+  })
+
+  it('treats LIKE wildcards in a search term as literal characters', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({ id: 'media_pct', title: '100% Juice', description: null, tags: JSON.stringify([]) }))
+
+    const wildcard = await worker.fetch(new Request('https://media.test/v1/media?search=%25&limit=10'), env as never)
+    const literal = await worker.fetch(new Request('https://media.test/v1/media?search=100%25&limit=10'), env as never)
+
+    // A bare "%" must not behave as "match everything".
+    expect((await parseJson(wildcard)).data.map((item: { id: string }) => item.id)).toEqual(['media_pct'])
+    expect((await parseJson(literal)).data.map((item: { id: string }) => item.id)).toEqual(['media_pct'])
+  })
+
+  it('reports how much of each facet list it left out', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({ id: 'media_2', tags: JSON.stringify(['alpha', 'beta', 'gamma']) }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/facets?limit=2'), env as never)
+    const body = await parseJson(response)
+
+    expect(body.data.tags).toHaveLength(2)
+    expect(body.meta.limit).toBe(2)
+    expect(body.meta.tags).toMatchObject({ returned: 2, truncated: true })
+    expect(body.meta.tags.total).toBeGreaterThan(2)
+  })
+
+  it('does not claim truncation when the whole facet list fits', async () => {
+    const response = await worker.fetch(new Request('https://media.test/v1/media/facets'), makeEnv() as never)
+    const body = await parseJson(response)
+
+    expect(body.meta.tags.truncated).toBe(false)
+    expect(body.meta.categories.truncated).toBe(false)
+    expect(body.meta.tags.total).toBe(body.data.tags.length)
+  })
+
+  it('reports the categories, tags and types that media actually uses', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.push(mediaRow({
+      id: 'media_cat',
+      mime_type: 'audio/mpeg',
+      tags: JSON.stringify(['cat', 'test']),
+      categories: JSON.stringify(['animals']),
+    }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/facets'), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.categories).toEqual(expect.arrayContaining([
+      { value: 'animals', count: 1 },
+      { value: 'cards', count: 1 },
+    ]))
+    // 'test' appears on both rows, so it must outrank the single-use tags.
+    expect(body.data.tags[0]).toEqual({ value: 'test', count: 2 })
+    expect(body.data.types).toEqual(expect.arrayContaining([
+      { value: 'image', count: 1 },
+      { value: 'audio', count: 1 },
+    ]))
   })
 
   it('returns one media record and 404s missing media', async () => {

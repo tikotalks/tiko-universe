@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { useBemm } from 'bemm'
 import type { MediaType } from '../types/media'
 
-type FilterOption = { value: MediaType | undefined; label: string; icon: string }
+interface FilterOption {
+  value: MediaType | undefined
+  label: string
+}
 
-const props = defineProps<{
+defineProps<{
   modelValue?: MediaType | undefined
 }>()
 
@@ -11,11 +15,13 @@ const emit = defineEmits<{
   'update:modelValue': [value: MediaType | undefined]
 }>()
 
+const bemm = useBemm('type-filter', { return: 'string', includeBaseClass: true })
+
 const options: FilterOption[] = [
-  { value: undefined, label: 'All', icon: '☰' },
-  { value: 'image', label: 'Images', icon: '🖼' },
-  { value: 'audio', label: 'Audio', icon: '♪' },
-  { value: 'video', label: 'Video', icon: '▶' },
+  { value: undefined, label: 'All' },
+  { value: 'image', label: 'Images' },
+  { value: 'audio', label: 'Audio' },
+  { value: 'video', label: 'Video' },
 ]
 
 function select(option: FilterOption) {
@@ -24,52 +30,58 @@ function select(option: FilterOption) {
 </script>
 
 <template>
-  <div class="type-filter">
+  <div :class="bemm('')" role="group" aria-label="Filter by media type">
     <button
       v-for="option in options"
       :key="String(option.value)"
-      class="type-filter__pill"
-      :class="{ 'type-filter__pill--active': modelValue === option.value }"
+      :class="bemm('option', ['', modelValue === option.value ? 'active' : ''])"
+      :aria-pressed="modelValue === option.value"
       @click="select(option)"
     >
-      <span class="type-filter__icon">{{ option.icon }}</span>
-      <span class="type-filter__label">{{ option.label }}</span>
+      {{ option.label }}
     </button>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+// A segmented control rather than four loose pills: the options are mutually
+// exclusive, so they read as one control.
 .type-filter {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--surface-subtle);
 
-  &__pill {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem 0.85rem;
-    border: 1px solid var(--tiko-border);
+  &__option {
+    padding: 6px 14px;
+    border: none;
     border-radius: 999px;
-    background: var(--tiko-surface);
-    color: var(--color-foreground);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-family);
     font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s var(--ease-out), color 0.15s var(--ease-out);
 
     &:hover {
-      background: var(--tiko-surface-raised);
+      color: var(--color-foreground);
     }
 
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 1px;
+    }
+
+    // Selection is a tint, not an outline.
     &--active {
-      background: var(--tiko-app-primary);
-      border-color: var(--tiko-app-primary);
-      color: var(--tiko-app-primary-text);
+      background: var(--color-background);
+      color: var(--color-foreground);
+      box-shadow: var(--shadow-s);
     }
-  }
-
-  &__icon {
-    font-size: 0.9rem;
   }
 }
 </style>

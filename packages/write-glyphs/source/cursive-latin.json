@@ -1,0 +1,808 @@
+{
+  "packId": "cursive-latin",
+  "packSchemaVersion": 1,
+  "packVersion": 3,
+  "style": "cursive",
+  "viewBox": [
+    0,
+    0,
+    100,
+    140
+  ],
+  "guides": {
+    "ascender": 10,
+    "capHeight": 24,
+    "xHeight": 60,
+    "baseline": 110,
+    "descender": 134
+  },
+  "groups": [
+    {
+      "id": "cursive-lowercase",
+      "sortOrder": 1
+    },
+    {
+      "id": "cursive-uppercase",
+      "sortOrder": 2
+    }
+  ],
+  "glyphs": [
+    {
+      "id": "cursive-lower-a",
+      "char": "a",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M66 72 C62 63 55 60 48 60 C37 60 30 71 30 85 C30 99 37 110 48 110 C56 110 63 105 66 98"
+        },
+        {
+          "d": "M66 60 L66 110 C74 113 82 109 88 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-b",
+      "char": "b",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M32 24 L32 110"
+        },
+        {
+          "d": "M32 70 C44 58 68 64 68 85 C68 99 58 107 46 106 C54 109 62 105 68 100"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-c",
+      "char": "c",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M66 72 C62 63 55 60 48 60 C37 60 30 71 30 85 C30 99 37 110 48 110 C55 110 62 107 66 98 C74 101 82 97 88 92"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-d",
+      "char": "d",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M66 72 C62 63 55 60 48 60 C37 60 30 71 30 85 C30 99 37 110 48 110 C56 110 63 105 66 98"
+        },
+        {
+          "d": "M66 24 L66 110 C74 113 82 109 88 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-e",
+      "char": "e",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M31 84 L64 84 C64 68 54 60 46 60 C36 60 30 70 30 85 C30 100 38 110 48 110 C56 110 62 106 66 99 C74 102 82 98 88 93"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-f",
+      "char": "f",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M64 32 C60 24 48 22 44 34 L44 110 C52 113 60 109 66 104"
+        },
+        {
+          "d": "M30 60 L60 60"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-g",
+      "char": "g",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M66 72 C62 63 55 60 48 60 C37 60 30 71 30 85 C30 99 37 110 48 110 C56 110 63 105 66 98"
+        },
+        {
+          "d": "M66 60 L66 120 C66 130 56 134 46 132 C40 131 36 127 35 123"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-h",
+      "char": "h",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 8,
+      "strokes": [
+        {
+          "d": "M32 24 L32 110"
+        },
+        {
+          "d": "M32 74 C38 62 52 58 60 64 C66 69 68 76 68 84 L68 110 C76 113 84 109 90 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-i",
+      "char": "i",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 9,
+      "strokes": [
+        {
+          "d": "M50 60 L50 110 C58 113 66 109 72 104"
+        },
+        {
+          "d": "M50 38 L50 46"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-j",
+      "char": "j",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 10,
+      "strokes": [
+        {
+          "d": "M52 60 L52 120 C52 130 42 134 34 131 C29 129 26 125 25 121"
+        },
+        {
+          "d": "M52 38 L52 46"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-k",
+      "char": "k",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 11,
+      "strokes": [
+        {
+          "d": "M32 24 L32 110"
+        },
+        {
+          "d": "M64 60 L32 88"
+        },
+        {
+          "d": "M44 79 L66 110 C74 113 82 109 88 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-l",
+      "char": "l",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 12,
+      "strokes": [
+        {
+          "d": "M50 24 L50 110 C58 113 66 109 72 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-m",
+      "char": "m",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 13,
+      "strokes": [
+        {
+          "d": "M26 60 L26 110"
+        },
+        {
+          "d": "M26 72 C31 62 42 58 47 64 C50 68 50 74 50 82 L50 110"
+        },
+        {
+          "d": "M50 72 C55 62 66 58 71 64 C74 68 74 74 74 82 L74 110 C82 113 90 109 94 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-n",
+      "char": "n",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 14,
+      "strokes": [
+        {
+          "d": "M32 60 L32 110"
+        },
+        {
+          "d": "M32 74 C38 62 52 58 60 64 C66 69 68 76 68 84 L68 110 C76 113 84 109 90 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-o",
+      "char": "o",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 15,
+      "strokes": [
+        {
+          "d": "M63 70 C59 63 54 60 49 60 C38 60 30 71 30 85 C30 99 38 110 49 110 C60 110 68 99 68 85 C68 78 66 74 63 70 C71 73 79 69 85 64"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-p",
+      "char": "p",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 16,
+      "strokes": [
+        {
+          "d": "M32 60 L32 134"
+        },
+        {
+          "d": "M32 70 C44 58 68 64 68 85 C68 99 58 107 46 106 C54 109 62 105 68 100"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-q",
+      "char": "q",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 17,
+      "strokes": [
+        {
+          "d": "M66 72 C62 63 55 60 48 60 C37 60 30 71 30 85 C30 99 37 110 48 110 C56 110 63 105 66 98"
+        },
+        {
+          "d": "M66 60 L66 134"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-r",
+      "char": "r",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 18,
+      "strokes": [
+        {
+          "d": "M34 60 L34 110 C42 113 50 109 56 104"
+        },
+        {
+          "d": "M34 74 C40 63 54 58 62 62"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-s",
+      "char": "s",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 19,
+      "strokes": [
+        {
+          "d": "M64 70 C60 62 52 60 46 60 C38 60 32 64 32 71 C32 78 40 82 48 85 C56 88 64 92 64 99 C64 106 56 110 48 110 C42 110 36 108 33 104 C41 107 49 103 55 98"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-t",
+      "char": "t",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 20,
+      "strokes": [
+        {
+          "d": "M46 34 L46 100 C46 108 52 111 58 110 C66 113 74 109 80 104"
+        },
+        {
+          "d": "M32 60 L62 60"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-u",
+      "char": "u",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 21,
+      "strokes": [
+        {
+          "d": "M32 60 L32 96 C32 106 40 110 48 110 C56 110 64 106 64 96 L64 60"
+        },
+        {
+          "d": "M64 60 L64 110 C72 113 80 109 86 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-v",
+      "char": "v",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 22,
+      "strokes": [
+        {
+          "d": "M32 60 L50 110 L68 60 C76 63 84 59 90 54"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-w",
+      "char": "w",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 23,
+      "strokes": [
+        {
+          "d": "M26 60 L38 110 L50 70 L62 110 L74 60 C82 63 90 59 94 54"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-x",
+      "char": "x",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 24,
+      "strokes": [
+        {
+          "d": "M32 60 L68 110 C76 113 84 109 90 104"
+        },
+        {
+          "d": "M68 60 L32 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-y",
+      "char": "y",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 25,
+      "strokes": [
+        {
+          "d": "M32 60 L50 104"
+        },
+        {
+          "d": "M68 60 L40 134"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-lower-z",
+      "char": "z",
+      "groupId": "cursive-lowercase",
+      "sortOrder": 26,
+      "strokes": [
+        {
+          "d": "M32 60 L68 60 L32 110 L68 110 C76 113 84 109 90 104"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-a",
+      "char": "A",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 1,
+      "strokes": [
+        {
+          "d": "M50 24 L28 110",
+          "widthScale": 1.1
+        },
+        {
+          "d": "M50 24 L72 110",
+          "widthScale": 1.1
+        },
+        {
+          "d": "M36 84 L64 84"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-b",
+      "char": "B",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 2,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 C58 24 68 32 68 45 C68 58 56 66 30 66 C60 66 72 76 72 88 C72 100 60 110 30 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-c",
+      "char": "C",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 3,
+      "strokes": [
+        {
+          "d": "M70 40 C64 28 52 24 44 24 C32 24 26 40 26 67 C26 94 32 110 44 110 C52 110 64 106 70 94"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-d",
+      "char": "D",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 4,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 C58 24 72 40 72 67 C72 94 58 110 30 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-e",
+      "char": "E",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 5,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 L70 24"
+        },
+        {
+          "d": "M30 66 L62 66"
+        },
+        {
+          "d": "M30 110 L70 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-f",
+      "char": "F",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 6,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 L70 24"
+        },
+        {
+          "d": "M30 66 L62 66"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-g",
+      "char": "G",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 7,
+      "strokes": [
+        {
+          "d": "M70 40 C64 28 52 24 44 24 C32 24 26 40 26 67 C26 94 32 110 44 110 C58 110 70 100 70 82"
+        },
+        {
+          "d": "M52 82 L70 82"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-h",
+      "char": "H",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 8,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M70 24 L70 110"
+        },
+        {
+          "d": "M30 66 L70 66"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-i",
+      "char": "I",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 9,
+      "strokes": [
+        {
+          "d": "M50 24 L50 110"
+        },
+        {
+          "d": "M34 24 L66 24"
+        },
+        {
+          "d": "M34 110 L66 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-j",
+      "char": "J",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 10,
+      "strokes": [
+        {
+          "d": "M62 24 L62 92 C62 106 50 113 42 110 C35 107 32 100 32 94"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-k",
+      "char": "K",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 11,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M70 24 L30 67",
+          "widthScale": 1.1
+        },
+        {
+          "d": "M46 50 L72 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-l",
+      "char": "L",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 12,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 110 L70 110"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-m",
+      "char": "M",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 13,
+      "strokes": [
+        {
+          "d": "M24 24 L24 110"
+        },
+        {
+          "d": "M24 24 L50 76 L76 24 L76 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-n",
+      "char": "N",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 14,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 L70 110 L70 24",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-o",
+      "char": "O",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 15,
+      "strokes": [
+        {
+          "d": "M66 38 C60 29 55 24 50 24 C36 24 24 43 24 67 C24 91 36 110 50 110 C64 110 76 91 76 67 C76 55 72 45 66 38"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-p",
+      "char": "P",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 16,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 C58 24 70 33 70 48 C70 63 58 72 30 72"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-q",
+      "char": "Q",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 17,
+      "strokes": [
+        {
+          "d": "M66 38 C60 29 55 24 50 24 C36 24 24 43 24 67 C24 91 36 110 50 110 C64 110 76 91 76 67 C76 55 72 45 66 38"
+        },
+        {
+          "d": "M58 88 L78 116",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-r",
+      "char": "R",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 18,
+      "strokes": [
+        {
+          "d": "M30 24 L30 110"
+        },
+        {
+          "d": "M30 24 C58 24 70 33 70 48 C70 63 58 72 30 72"
+        },
+        {
+          "d": "M46 72 L72 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-s",
+      "char": "S",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 19,
+      "strokes": [
+        {
+          "d": "M70 38 C66 28 56 24 48 24 C36 24 28 32 28 44 C28 56 40 62 52 66 C64 70 74 76 74 90 C74 102 64 110 50 110 C40 110 30 104 28 96"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-t",
+      "char": "T",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 20,
+      "strokes": [
+        {
+          "d": "M50 24 L50 110"
+        },
+        {
+          "d": "M26 24 L74 24"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-u",
+      "char": "U",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 21,
+      "strokes": [
+        {
+          "d": "M30 24 L30 84 C30 100 40 110 50 110 C60 110 70 100 70 84 L70 24"
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-v",
+      "char": "V",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 22,
+      "strokes": [
+        {
+          "d": "M28 24 L50 110 L72 24",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-w",
+      "char": "W",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 23,
+      "strokes": [
+        {
+          "d": "M22 24 L38 110 L50 44 L62 110 L78 24",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-x",
+      "char": "X",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 24,
+      "strokes": [
+        {
+          "d": "M28 24 L72 110",
+          "widthScale": 1.1
+        },
+        {
+          "d": "M72 24 L28 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-y",
+      "char": "Y",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 25,
+      "strokes": [
+        {
+          "d": "M30 24 L50 68",
+          "widthScale": 1.1
+        },
+        {
+          "d": "M70 24 L50 68 L50 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    },
+    {
+      "id": "cursive-upper-z",
+      "char": "Z",
+      "groupId": "cursive-uppercase",
+      "sortOrder": 26,
+      "strokes": [
+        {
+          "d": "M28 24 L72 24 L28 110 L72 110",
+          "widthScale": 1.1
+        }
+      ],
+      "strokeOrderStrict": true
+    }
+  ]
+}

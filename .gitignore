@@ -11,6 +11,14 @@ coverage/
 !.env.example
 .DS_Store
 
+# Gradle / Kotlin Multiplatform build state
+**/.gradle/
+**/.kotlin/
+engines/**/build/
+packages/**/build/
+# Gradle writes its configuration-cache and problems reports to the invocation root
+/build/
+
 # Xcode / SwiftPM build + per-user state
 DerivedData/
 **/xcuserdata/
@@ -25,6 +33,17 @@ apps/ios/**/*.xcodeproj/
 apps/android/**/.gradle/
 apps/android/**/build/
 
+# Kotlin / Gradle (root build for :stroke-core and :tikokotlinkit).
+# The TikoCore XCFramework is built, never committed.
+.gradle/
+**/.gradle/
+/build/
+engines/*/build/
+packages/tikokotlinkit/build/
+local.properties
+.kotlin/
+**/.kotlin/
+
 # iOS release artifacts (screenshots, archives, videos, generated metadata)
 artifacts/
 
@@ -33,3 +52,6 @@ apps/*/ios/build/
 
 # Git worktrees for parallel agent sessions — never part of the repo itself.
 .claude/worktrees/
+
+# XcodeGen output for Write (generated from Project.yml)
+apps/write/ios/TikoWrite.xcodeproj/

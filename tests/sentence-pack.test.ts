@@ -2,11 +2,15 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { LanguagePack } from '@tiko/talk-types'
 
-const DATA_DIR = 'workers/sentence-api/data'
+const DATA_DIR = 'packages/talk-packs/data'
+const SOURCE_DIR = 'packages/talk-packs/source'
 const DB_DIR = 'workers/sentence-api/db'
 const emojiPattern = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u
 
-const packFiles = readdirSync(DATA_DIR).filter((name) => /^[a-z]{2}-v\d+\.json$/.test(name)).sort()
+// Two- and three-letter codes both: `pap` and `cnr` were silently excluded while
+// this only matched two, which meant two language packs were never tested.
+const packFiles = readdirSync(DATA_DIR).filter((name) => /^[a-z]{2,3}-v\d+\.json$/.test(name)).sort()
+const localeOf = (fileName: string): string => fileName.replace(/-v\d+\.json$/, '')
 const packs = new Map<string, LanguagePack>(
   packFiles.map((name) => [name, JSON.parse(readFileSync(`${DATA_DIR}/${name}`, 'utf8')) as LanguagePack]),
 )
@@ -61,17 +65,22 @@ describe('Talk English v1 language pack seed', () => {
 })
 
 describe('Talk language packs — all supported locales', () => {
-  it('covers every supported Tiko language', () => {
-    // The platform language list (packages/i18n tikoLanguageOptions).
-    const supported = ['en', 'de', 'es', 'fr', 'nl', 'pt', 'ja', 'zh', 'ko', 'mt', 'it', 'ar', 'hy']
-    const present = packFiles.map((name) => name.slice(0, 2))
-    for (const locale of supported) {
-      expect(present, `missing language pack for "${locale}" — every supported language must be seeded`).toContain(locale)
+  it('covers every language the app offers', async () => {
+    // Read the real list rather than a copy of it: this test used to hold its own
+    // thirteen locales and call them "the platform language list", which is how the
+    // registry drifted in the first place.
+    const { locales } = await import('../tools/locales.mjs')
+    const present = packFiles.map(localeOf)
+    for (const locale of locales) {
+      expect(
+        present,
+        `missing language pack for "${locale.code}" (${locale.name}) — every language the picker offers must be seeded`,
+      ).toContain(locale.code)
     }
   })
 
   for (const [fileName, pack] of packs) {
-    const locale = fileName.slice(0, 2)
+    const locale = localeOf(fileName)
 
     describe(`${fileName}`, () => {
       it('declares the right locale and version', () => {
@@ -134,6 +143,62 @@ describe('Talk language packs — all supported locales', () => {
         // Non-en packs must namespace global word/template ids with the locale prefix.
         if (locale !== 'en') {
           expect(seedSql).toContain(`'${locale}-i'`)
+        }
+      })
+    })
+  }
+})
+
+/**
+ * The packs are generated from one spine and one file per language. These are the
+ * properties that made that worth doing: before it, each concept's part of speech,
+ * category, frequency and icon were written out 54 times with nothing comparing the
+ * copies.
+ */
+describe('Talk pack source of truth', () => {
+  interface Spine {
+    version: number
+    words: Array<{ id: string, pos: string, category: string, frequency: number, icon?: string }>
+    templates: Array<{ id: string, category: string, icon?: string, slots: unknown[] }>
+  }
+  interface Source {
+    locale: string
+    words: Record<string, string>
+    templates: Record<string, string>
+    grammar: unknown
+  }
+
+  const spine = JSON.parse(readFileSync(`${SOURCE_DIR}/spine.json`, 'utf8')) as Spine
+  const sourceFiles = readdirSync(SOURCE_DIR).filter((name) => name.endsWith('.json') && name !== 'spine.json').sort()
+
+  it('has one source file per pack, and one pack per source file', () => {
+    expect(sourceFiles.map((name) => name.replace(/\.json$/, ''))).toEqual(packFiles.map(localeOf))
+  })
+
+  it('states each concept once, not once per language', () => {
+    expect(spine.words).toHaveLength(enPack.words.length)
+    expect(spine.words.map((word) => word.id)).toEqual(enWordIds)
+    expect(spine.templates.map((template) => template.id)).toEqual(enTemplateIds)
+    expect(new Set(spine.words.map((word) => word.id)).size).toBe(spine.words.length)
+  })
+
+  for (const fileName of sourceFiles) {
+    const source = JSON.parse(readFileSync(`${SOURCE_DIR}/${fileName}`, 'utf8')) as Source
+    const pack = packs.get(`${source.locale}-v${spine.version}.json`)
+
+    describe(source.locale, () => {
+      it('names every concept in the spine, and none outside it', () => {
+        expect(Object.keys(source.words).sort()).toEqual(spine.words.map((word) => word.id).sort())
+        expect(Object.keys(source.templates).sort()).toEqual(spine.templates.map((template) => template.id).sort())
+      })
+
+      it('is what the generated pack says — nobody edited data/ by hand', () => {
+        expect(pack, `no pack for ${source.locale}`).toBeDefined()
+        for (const word of pack!.words) {
+          expect(word.text, `${source.locale}/${word.id} drifted from source`).toBe(source.words[word.id])
+        }
+        for (const template of pack!.templates) {
+          expect(template.pattern, `${source.locale}/${template.id} drifted from source`).toBe(source.templates[template.id])
         }
       })
     })

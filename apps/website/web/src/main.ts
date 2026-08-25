@@ -20,6 +20,12 @@ const router = createRouter({
     { path: '/privacy-policy', component: () => import('./pages/PrivacyPolicyPage.vue') },
     { path: '/docs', component: () => import('./pages/DocsPage.vue') },
     { path: '/docs/:section', component: () => import('./pages/DocsPage.vue') },
+    // The App Store records for Say, Sum and First ship `tikoapps.org/{slug}` as
+    // their marketing_url, so those bare paths have to resolve.
+    { path: '/say', redirect: '/apps/say' },
+    { path: '/sum', redirect: '/apps/sum' },
+    { path: '/first', redirect: '/apps/first' },
+    { path: '/:pathMatch(.*)*', component: () => import('./pages/NotFoundPage.vue') },
   ],
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) return savedPosition

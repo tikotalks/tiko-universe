@@ -1,0 +1,681 @@
+import { chunk, firstNounComplement, splitClause, subjectPerson, type Chunks, type NounPhrase, type Phrase, type Word } from './chunk'
+import type { Realization, RealizedToken } from './features'
+import { absorb, flushPending, note, push, type Builder, type LanguageRules, type NegationPlan, type PhraseContext, type Role, type SentenceContext } from './profile'
+
+/**
+ * The one sentence-building flow, shared by every language.
+ *
+ * It owns *structure* — order, where negation lands, when a copula is needed,
+ * punctuation and spacing — and delegates every language-specific string to that
+ * language's rules. So a new language is a profile plus a few dozen lines of
+ * hooks, and a fix to the flow fixes every language at once.
+ */
+export function realizeWith(
+  rules: LanguageRules,
+  words: Parameters<typeof chunk>[0],
+  options: {
+    negated?: boolean
+    tense?: 'present' | 'past'
+    speakerGender?: 'masculine' | 'feminine'
+    /**
+     * Realize this as one clause of a longer sentence: no capital at the start, no
+     * mark at the end. The caller adds both once, around the whole thing.
+     */
+    asClause?: boolean
+    /** True where a subordinating conjunction introduced this clause. */
+    subordinate?: boolean
+  } = {},
+): Realization {
+  // Two clauses joined by a conjunction are two sentences, and each needs the whole
+  // grammar. Splitting first is what makes "I am sad because I want Mum" possible.
+  const split = splitClause(words)
+  if (split) {
+    return joinClauses(
+      rules,
+      realizeWith(rules, split.left, { ...options, asClause: true }),
+      split.conjunction,
+      realizeWith(rules, split.right, {
+        ...options,
+        asClause: true,
+        subordinate: split.conjunction.features.subordinating === true,
+      }),
+      isQuestionSelection(split.left),
+      options.asClause === true,
+    )
+  }
+
+  const chunks = chunk(words, options.negated ?? false)
+  const builder: Builder = { tokens: [], inserted: [], notes: [] }
+  const { person, number } = subjectPerson(chunks)
+
+  const predicate = chunks.complements.find((phrase) => phrase.kind === 'adjp')
+  const isQuestion = !!chunks.question || chunks.invertedCopula === true
+  let needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
+  const subjectHead = chunks.subject?.kind === 'np' ? chunks.subject.head : undefined
+
+  const ctx: SentenceContext = {
+    verb: chunks.verb,
+    predicate: predicate?.kind === 'adjp' ? predicate.adjectives[0] : undefined,
+    scratch: {},
+    person,
+    number,
+    tense: options.tense ?? 'present',
+    speakerGender: options.speakerGender ?? 'masculine',
+    speakerGenderAssumed: options.speakerGender === undefined,
+    negated: chunks.negated,
+    isQuestion,
+    needsCopula,
+    subjectGender: subjectHead?.features.gender,
+    subjectPlural: chunks.subject?.kind === 'np'
+      ? chunks.subject.determiner?.features.forcesNumber === 'pl'
+      : undefined,
+    subjectAnimate: chunks.subject?.kind === 'np'
+      ? !!chunks.subject.pronoun || subjectHead?.features.animate === true
+      : undefined,
+    builder,
+  }
+
+  // A language may restructure the clause before anything is emitted.
+  rules.transform?.(chunks, ctx)
+  ctx.verb = chunks.verb
+
+  /**
+   * An "is" tile takes the same path as a copula the language supplies: the same
+   * word, chosen by the same hook. This matters most where the language has no
+   * copula to choose — Russian "Яблоко большое", Arabic "التفاحة كبيرة" — because
+   * then there is nothing to conjugate and the tile is absorbed instead.
+   */
+  const copulaTile = chunks.verb?.features.copula ? chunks.verb : undefined
+  if (copulaTile) {
+    chunks.verb = undefined
+    ctx.verb = undefined
+    needsCopula = true
+  }
+
+  const plan: NegationPlan = chunks.negated ? rules.negation(ctx) : { kind: 'none' }
+
+  // Negation can live inside an indefinite object phrase instead of, or as well
+  // as, next to the verb.
+  const negatableObjectPhrase = chunks.negated
+    ? negatableObject(chunks, plan.negatesAnyObject === true)
+    : undefined
+  const negateInPhrase = !!negatableObjectPhrase && !!plan.phraseNegation
+  const suppressVerbParticle = negateInPhrase && plan.phraseNegation === 'replace'
+  const particleAfterObject =
+    plan.kind === 'afterVerb'
+    && plan.afterDefiniteObject === true
+    && hasDefiniteObject(chunks)
+    && !suppressVerbParticle
+
+  const phraseContext = (
+    role: Role,
+    np: Phrase | undefined,
+    afterPreposition: boolean,
+    preposition?: typeof chunks.verb,
+  ): PhraseContext => ({
+    ...ctx,
+    role,
+    afterPreposition,
+    preposition,
+    negateHere: negateInPhrase && np === negatableObjectPhrase,
+  })
+
+  const emitNounPhrase = (
+    np: NounPhrase,
+    role: Role,
+    afterPreposition = false,
+    preposition?: typeof chunks.verb,
+  ): void => {
+    const phraseCtx = phraseContext(role, np, afterPreposition, preposition)
+    const startedAt = builder.tokens.length
+
+    if (np.pronoun) {
+      push(builder, rules.pronoun(np.pronoun, phraseCtx), np.pronoun.id)
+    } else {
+      const determiner = rules.determiner(np, phraseCtx)
+      if (determiner) {
+        // A language may render a determiner as nothing at all (Vietnamese does
+        // for mass nouns). The tile still has to reach the audit trail.
+        if (determiner.text.trim() || !determiner.from) {
+          push(builder, determiner.text, determiner.from, determiner.merged)
+        } else {
+          absorb(builder, determiner.from)
+        }
+      }
+
+      // Each adjective may override the language's default position.
+      const fallbackPosition = rules.adjectivePosition ?? 'before'
+      const emitAdjectives = (where: 'before' | 'after'): void => {
+        for (const adjective of np.adjectives) {
+          const position = adjective.features.adjectivePosition ?? fallbackPosition
+          if (position !== where) continue
+          push(builder, rules.adjective(adjective, np, phraseCtx), adjective.id)
+        }
+      }
+      emitAdjectives('before')
+      if (np.head) {
+        const noun = rules.noun(np.head, np, phraseCtx)
+        if (typeof noun === 'string') push(builder, noun, np.head.id)
+        else push(builder, noun.text, np.head.id, noun.merged)
+      }
+      emitAdjectives('after')
+      const postposed = rules.postposed?.(np, phraseCtx)
+      if (postposed) push(builder, postposed.text, postposed.from, postposed.merged)
+    }
+
+    const realized = builder.tokens.slice(startedAt).map((token) => token.text).join('')
+    const particle = rules.particle?.(np, phraseCtx, realized)
+    if (particle) {
+      if (rules.profile.glueParticles && builder.tokens.length) {
+        const previous = builder.tokens[builder.tokens.length - 1]
+        previous.text = `${previous.text}${particle}`
+      } else {
+        push(builder, particle, null)
+      }
+    }
+  }
+
+  /** Degree adverbs already placed in front of the word they strengthen. */
+  const placedDegrees = new Set<string>()
+
+  const emitPhrase = (phrase: Phrase): void => {
+    switch (phrase.kind) {
+      case 'raw':
+        push(builder, phrase.word.text, phrase.word.id)
+        return
+      case 'vp': {
+        // A second verb wants the infinitive. The packs disagree about which form
+        // they list a verb in — the Romance ones give the infinitive, but Dutch,
+        // German and the Slavic ones give a finite form — so it comes from the
+        // curated `inf` where there is one, and otherwise from the tile with a note
+        // saying so, because the alternative is dropping the word the child chose.
+        const infinitive = phrase.verb.features.forms?.inf
+        const base = infinitive ?? phrase.verb.text
+        const written = rules.verbComplement?.(phrase.verb, ctx, base)
+        if (!infinitive && !written && (rules.profile.verbCitation ?? 'finite') === 'finite') {
+          note(builder, `no infinitive for "${phrase.verb.text}": the second verb is left as the pack lists it`)
+        }
+        const supplied = written ?? [base]
+        const parts = typeof supplied === 'string' ? [supplied] : supplied
+        // The last part is the verb itself and carries the tile; anything in front
+        // of it is a marker the language inserted.
+        parts.forEach((part, at) => {
+          push(builder, part, at === parts.length - 1 ? phrase.verb.id : null)
+        })
+        return
+      }
+      case 'adjp': {
+        const phraseCtx = phraseContext('predicate', phrase, false)
+        for (const adjective of phrase.adjectives) {
+          const written = rules.adjective(adjective, { kind: 'np', adjectives: [] }, phraseCtx)
+          // "very" belongs in front of what it strengthens — "I am very happy", not
+          // "I am happy very", which is where the clause adverbs go.
+          for (const degree of chunks.adverbs.filter((adverb) => adverb.features.degree)) {
+            // Chinese marks an adjectival predicate with 很, which is also its word
+            // for "very": "我很开心", not "我很很开心".
+            placedDegrees.add(degree.id)
+            if (written.startsWith(degree.text)) {
+              absorb(builder, degree.id)
+              note(builder, `"${degree.text}" is already there, as the predicate marker`)
+              continue
+            }
+            push(builder, degree.text, degree.id)
+          }
+          push(builder, written, adjective.id)
+        }
+        return
+      }
+      case 'pp': {
+        const after = rules.profile.prepositionPosition === 'after'
+        // A language may render the relation as a case suffix and no word at all.
+        const written = rules.preposition
+          ? rules.preposition(phrase.preposition, ctx)
+          : phrase.preposition.text
+        if (!written) {
+          // The relation is spelled on the noun, so the preposition tile rides
+          // along with it rather than disappearing.
+          absorb(builder, phrase.preposition.id)
+          if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true, phrase.preposition)
+          return
+        }
+        if (!after) push(builder, written, phrase.preposition.id)
+        if (phrase.object) emitNounPhrase(phrase.object, 'oblique', true, phrase.preposition)
+        if (after) {
+          // A postposition attaches to the phrase it marks: "こうえんへ".
+          const previous = builder.tokens[builder.tokens.length - 1]
+          if (previous && rules.profile.spacing === 'none') {
+            previous.text = `${previous.text}${phrase.preposition.text}`
+            previous.merged = [...(previous.merged ?? []), phrase.preposition.id]
+          } else if (previous && rules.profile.glueParticles) {
+            previous.text = `${previous.text}${phrase.preposition.text}`
+            previous.merged = [...(previous.merged ?? []), phrase.preposition.id]
+          } else {
+            push(builder, phrase.preposition.text, phrase.preposition.id)
+          }
+        }
+        return
+      }
+      default:
+        emitNounPhrase(phrase, 'object')
+    }
+  }
+
+  /**
+   * A verb whose lexical half is a separate word — Swedish "vill **ha**", Afrikaans
+   * "wil … **hê**" — does not want it when a second verb follows: "Jag vill leka",
+   * not "Jag vill ha leker".
+   */
+  const hasVerbComplement = chunks.complements.some((phrase) => phrase.kind === 'vp')
+  const verbTailOf = (verb: typeof chunks.verb): string | undefined =>
+    hasVerbComplement && !rules.profile.verbTailIsVerb ? undefined : verb?.features.verbTail
+
+  /**
+   * In a Scandinavian subordinate clause the negation moves in front of the verb —
+   * "för att jag **inte** vill", not "för att jag vill **inte**". Swedish teaches it
+   * as the BIFF rule; Dutch and German reorder the verb instead.
+   */
+  const negationBeforeVerbHere = options.subordinate === true
+    && rules.profile.subordinateNegationBeforeVerb === true
+    && chunks.negated
+    && !suppressVerbParticle
+    && plan.kind === 'afterVerb'
+
+  // Under verb-second inversion a verb's tail follows the subject rather than
+  // the verb: "Vad vill du ha?", not "Vad vill ha du?".
+  let deferTail = false
+  /** Set while the verb is emitted ahead of its subject, so the particle waits. */
+  let deferNegation = false
+
+  /** The finite verb (or the copula), with any verb-adjacent negation. */
+  const emitVerb = (bare = false): void => {
+    if (needsCopula) {
+      // A language may spell its negated copula as one indivisible form.
+      if (chunks.negated && !suppressVerbParticle) {
+        const fused = rules.negatedCopula?.(ctx)
+        if (fused) {
+          push(builder, fused, copulaTile?.id ?? null)
+          note(builder, `"${fused}": the negated copula is a form of its own`)
+          return
+        }
+      }
+      const copula = rules.copula(ctx)
+      // A circumfix language wraps the copula too: "je **ne** suis **pas** …".
+      if (chunks.negated && plan.kind === 'circumfix' && !suppressVerbParticle) {
+        push(builder, plan.before, null)
+      }
+      if (chunks.negated && plan.kind === 'beforeVerb' && !suppressVerbParticle) {
+        push(builder, plan.word, null)
+      }
+      if (negationBeforeVerbHere) {
+        push(builder, plan.word, null)
+        note(builder, `"${plan.word}": the negation precedes the verb in a subordinate clause`)
+      }
+      if (copula) {
+        // A prefixing language writes the negation onto the copula: "nejsem".
+        if (chunks.negated && plan.kind === 'prefixVerb' && !suppressVerbParticle) {
+          const negated = `${plan.prefix}${copula}`
+          push(builder, negated, copulaTile?.id ?? null)
+          note(builder, `"${negated}": the negation is written onto the copula`)
+          return
+        }
+        push(builder, copula, copulaTile?.id ?? null)
+        note(builder, copulaTile
+          ? `copula "${copula}", from the tile the child chose`
+          : `copula "${copula}": a subject and a predicate with no verb tile`)
+      } else {
+        note(builder, copulaTile
+          ? `no copula in this language: "${copulaTile.text}" is not spoken`
+          : 'no copula: this language leaves it out here')
+        if (copulaTile) absorb(builder, copulaTile.id)
+      }
+      if (chunks.negated && !suppressVerbParticle) {
+        const word = plan.kind === 'afterVerb'
+          ? plan.word
+          : plan.kind === 'circumfix' ? plan.after : plan.kind === 'auxiliary' ? plan.word : null
+        if (word) push(builder, word, null)
+      }
+      return
+    }
+    if (!chunks.verb) return
+    const verb = chunks.verb
+
+    // A preverbal object clitic, parked by the language's transform hook.
+    const emitClitic = (): void => {
+      const clitic = ctx.scratch.clitic as { text: string, from: string } | undefined
+      if (clitic) push(builder, clitic.text, clitic.from)
+    }
+
+    if (bare) {
+      push(builder, verb.text, verb.id)
+      return
+    }
+
+    const clauseFinalTail = verb.features.verbTailPosition === 'clauseFinal'
+    const tail = deferTail || clauseFinalTail ? undefined : verbTailOf(verb)
+
+    if (!chunks.negated || suppressVerbParticle) {
+      emitClitic()
+      push(builder, rules.verbForm(verb, ctx), verb.id)
+      if (tail) push(builder, tail, verb.id)
+      if (suppressVerbParticle) {
+        note(builder, 'the negation is carried by the object phrase')
+      }
+      return
+    }
+
+    switch (plan.kind) {
+      case 'auxiliary':
+        push(builder, plan.auxiliary, null)
+        push(builder, plan.word, null)
+        note(builder, `"${plan.auxiliary} ${plan.word}": auxiliary negation, verb stays bare`)
+        push(builder, verb.text, verb.id)
+        if (tail) push(builder, tail, verb.id)
+        return
+      case 'circumfix':
+        push(builder, plan.before, null)
+        emitClitic()
+        push(builder, rules.verbForm(verb, ctx), verb.id)
+        push(builder, plan.after, null)
+        if (tail) push(builder, tail, verb.id)
+        note(builder, `"${plan.before} … ${plan.after}": negation around the verb`)
+        return
+      case 'beforeVerb':
+        if (!deferNegation) push(builder, plan.word, null)
+        emitClitic()
+        push(builder, rules.verbForm(verb, ctx), verb.id)
+        if (tail) push(builder, tail, verb.id)
+        if (!deferNegation) note(builder, `"${plan.word}": negation before the verb`)
+        return
+      case 'prefixVerb': {
+        emitClitic()
+        // One word, so the tile that carries it is the verb.
+        const negated = `${plan.prefix}${rules.verbForm(verb, ctx)}`
+        push(builder, negated, verb.id)
+        if (tail) push(builder, tail, verb.id)
+        note(builder, `"${negated}": the negation is a prefix on the verb`)
+        return
+      }
+      case 'afterVerb':
+        emitClitic()
+        if (negationBeforeVerbHere) {
+          push(builder, plan.word, null)
+          note(builder, `"${plan.word}": the negation precedes the verb in a subordinate clause`)
+        }
+        push(builder, rules.verbForm(verb, ctx), verb.id)
+        if (!particleAfterObject && !deferNegation && !negationBeforeVerbHere) {
+          push(builder, plan.word, null)
+          note(builder, `"${plan.word}": negation after the verb`)
+        }
+        // The tail follows the negation: "vill inte ha".
+        if (tail) push(builder, tail, verb.id)
+        return
+      default:
+        push(builder, rules.verbForm(verb, ctx), verb.id)
+    }
+  }
+
+  // ---- Assemble ----
+
+  for (const social of chunks.leadingSocials) {
+    push(builder, social.text, social.id)
+  }
+  const questionWordPosition = rules.profile.questionWordPosition ?? 'initial'
+  const questionWordFinal = questionWordPosition === 'final'
+  if (chunks.question && questionWordPosition === 'initial') {
+    push(builder, chunks.question.text, chunks.question.id)
+  }
+
+  // A subordinate clause is verb-final in Dutch and German, which is the same shape
+  // the verb-final languages have all the time.
+  const sov = rules.profile.wordOrder === 'sov'
+    || (options.subordinate === true && rules.profile.subordinateVerbFinal === true)
+  const vso = rules.profile.wordOrder === 'vso'
+  const strategy = rules.profile.questionStrategy
+
+  if (isQuestion && strategy === 'inversion') {
+    deferTail = true
+    deferNegation = chunks.negated && (plan.kind === 'afterVerb' || plan.kind === 'beforeVerb')
+    emitVerb()
+    note(builder, 'verb-second: the verb precedes the subject in a question')
+    if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    if (deferNegation && (plan.kind === 'afterVerb' || plan.kind === 'beforeVerb')) {
+      push(builder, plan.word, null)
+      note(builder, `"${plan.word}": the negation follows the subject in a question`)
+      deferNegation = false
+    }
+    // Only a verb-adjacent tail follows the subject; a clause-final one waits
+    // for the complements.
+    const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
+      ? undefined
+      : verbTailOf(chunks.verb)
+    if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
+    deferTail = false
+  } else if (isQuestion && strategy === 'auxiliary') {
+    if (needsCopula || chunks.verb?.features.copula) {
+      emitVerb()
+      if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    } else if (chunks.verb) {
+      const auxiliary = chunks.negated && plan.kind === 'auxiliary'
+        ? plan.auxiliary
+        : auxiliaryFor(ctx)
+      push(builder, auxiliary, null)
+      note(builder, `do-support: "${auxiliary}" fronted for the question`)
+      // The subject comes between the auxiliary and the particle: "What do you not
+      // want?", never "What do not you want?".
+      if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+      if (chunks.negated && plan.kind === 'auxiliary') push(builder, plan.word, null)
+      emitVerb(true)
+    } else if (chunks.subject) {
+      emitNounPhrase(chunks.subject, 'subject')
+    }
+  } else if (vso) {
+    // The Celtic order: the verb first, and whatever the verb leaves for later —
+    // the "yn bwyta" of Welsh, the "ag ithe" of Irish — after the subject.
+    deferTail = true
+    emitVerb()
+    if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    const tail = chunks.verb?.features.verbTailPosition === 'clauseFinal'
+      ? undefined
+      : verbTailOf(chunks.verb)
+    if (tail && chunks.verb) push(builder, tail, chunks.verb.id)
+    deferTail = false
+  } else {
+    if (chunks.subject) emitNounPhrase(chunks.subject, 'subject')
+    // Hungarian puts its question word in focus, immediately before the verb:
+    // "Te mit akarsz?"
+    if (chunks.question && questionWordPosition === 'preverbal' && !sov) {
+      push(builder, chunks.question.text, chunks.question.id)
+      note(builder, 'the question word stands in focus, before the verb')
+    }
+    if (!sov) emitVerb()
+  }
+
+  // A Germanic infinitive waits for the end of the clause, behind the object.
+  const complementLast = rules.profile.verbComplementPosition === 'clauseFinal'
+  for (const phrase of chunks.complements) {
+    if (complementLast && phrase.kind === 'vp') continue
+    emitPhrase(phrase)
+  }
+  if (complementLast) {
+    for (const phrase of chunks.complements) {
+      if (phrase.kind !== 'vp') continue
+      emitPhrase(phrase)
+      note(builder, 'the second verb closes the clause')
+    }
+  }
+
+  // A verb-final language may keep its question word in the object's slot,
+  // immediately before the verb: "Sen ne istiyorsun?"
+  if (chunks.question && questionWordPosition === 'preverbal' && sov) {
+    push(builder, chunks.question.text, chunks.question.id)
+    note(builder, 'the question word stands where the object would')
+  }
+
+  if (sov) emitVerb()
+
+  if (particleAfterObject && plan.kind === 'afterVerb') {
+    push(builder, plan.word, null)
+    note(builder, `"${plan.word}": negation after a definite object`)
+  }
+
+  // A clause-final verb tail comes after the complements: "wil … hê".
+  if (chunks.verb?.features.verbTailPosition === 'clauseFinal' && verbTailOf(chunks.verb)) {
+    push(builder, chunks.verb.features.verbTail as string, chunks.verb.id)
+    note(builder, 'the infinitive closes the clause')
+  }
+
+  // A bracketing negation closes the clause: Afrikaans "nie … nie".
+  if (chunks.negated && plan.kind === 'afterVerb' && plan.closing) {
+    const last = builder.tokens[builder.tokens.length - 1]
+    if (last?.text !== plan.closing) {
+      push(builder, plan.closing, null)
+      note(builder, `"${plan.closing}": the negation brackets the clause`)
+    }
+  }
+
+  for (const adverb of chunks.adverbs) {
+    // A degree adverb has already gone in front of the word it strengthens, unless
+    // there was no such word — in which case the child still chose the tile.
+    if (placedDegrees.has(adverb.id)) continue
+    push(builder, adverb.text, adverb.id)
+  }
+
+  if (chunks.question && questionWordFinal) {
+    push(builder, chunks.question.text, chunks.question.id)
+    note(builder, 'the question word goes at the end, as in speech')
+  }
+
+  if (isQuestion && strategy === 'particle' && rules.profile.questionParticle) {
+    push(builder, rules.profile.questionParticle, null)
+    note(builder, `question particle "${rules.profile.questionParticle}"`)
+  }
+
+  let tokens = builder.tokens
+  if (rules.postprocess) {
+    tokens = rules.postprocess(tokens, ctx)
+    // A language may add a word here — the Finnish negative verb, the Hungarian
+    // copula — and the audit of inserted words has to know about it, because that
+    // list is what proves nothing was invented.
+    for (const token of tokens) {
+      if (token.from === null && !builder.inserted.includes(token.text)) {
+        builder.inserted.push(token.text)
+      }
+    }
+  }
+
+  const flushed = { ...builder, tokens }
+  flushPending(flushed)
+  return finish(rules, flushed, chunks, isQuestion, options.asClause === true)
+}
+
+/** True where this clause asks something, which decides the whole sentence's mark. */
+function isQuestionSelection(words: Word[]): boolean {
+  if (words.some((word) => word.effectivePos === 'question')) return true
+  // A copula before its subject asks a yes/no question: "is the apple big".
+  const first = words[0]
+  return !!first?.features.copula
+}
+
+/**
+ * Two realized clauses and the conjunction between them, as one sentence. The halves
+ * were built without a capital or a final mark, so this adds one of each — around the
+ * whole sentence, not around each half.
+ */
+function joinClauses(
+  rules: LanguageRules,
+  left: Realization,
+  conjunction: Word,
+  right: Realization,
+  isQuestion: boolean,
+  asClause: boolean,
+): Realization {
+  const separator = rules.profile.spacing === 'none' ? '' : ' '
+  const parts = [left.text, conjunction.text, right.text].filter(Boolean)
+  let text = parts.join(separator)
+  const tokens: RealizedToken[] = [
+    ...left.tokens,
+    { text: conjunction.text, from: conjunction.id },
+    ...right.tokens,
+  ]
+  const notes = [
+    ...left.notes,
+    `"${conjunction.text}" joins two clauses, each built on its own`,
+    ...right.notes,
+  ]
+
+  if (!asClause && text) {
+    if (rules.profile.capitalize) text = text.charAt(0).toLocaleUpperCase() + text.slice(1)
+    const { statement, question, questionPrefix } = rules.profile.punctuation
+    text = isQuestion ? `${questionPrefix ?? ''}${text}${question}` : `${text}${statement}`
+  }
+
+  return {
+    text,
+    tokens,
+    inserted: [...left.inserted, ...right.inserted],
+    notes,
+  }
+}
+
+/** English do-support auxiliary for the subject and tense. */
+function auxiliaryFor(ctx: SentenceContext): string {
+  if (ctx.tense === 'past') return 'did'
+  return ctx.person === 3 && ctx.number === 'sg' ? 'does' : 'do'
+}
+
+/** An object noun phrase a language can negate in place (geen, kein, pas de). */
+function negatableObject(chunks: Chunks, anyObject: boolean): NounPhrase | undefined {
+  const np = firstNounComplement(chunks)
+  if (!np) return undefined
+  if (anyObject) return np
+  const kind = np.determiner?.features.determinerKind
+  if (kind && kind !== 'indefinite') return undefined
+  return np
+}
+
+function hasDefiniteObject(chunks: Chunks): boolean {
+  for (const phrase of chunks.complements) {
+    if (phrase.kind !== 'np') continue
+    if (phrase.pronoun) return true
+    if (!phrase.head) continue
+    const kind = phrase.determiner?.features.determinerKind
+    if (kind && kind !== 'indefinite') return true
+  }
+  return false
+}
+
+function finish(
+  rules: LanguageRules,
+  builder: Builder,
+  chunks: Chunks,
+  isQuestion: boolean,
+  asClause = false,
+): Realization {
+  const separator = rules.profile.spacing === 'none' ? '' : ' '
+  const tokens = [...builder.tokens]
+  const body = tokens.map((token) => token.text).filter(Boolean).join(separator).replace(/\s+/g, ' ').trim()
+
+  let text = body
+  if (chunks.trailingSocials.length) {
+    const listSeparator = rules.profile.listSeparator ?? (separator === '' ? '，' : ', ')
+    const tail = chunks.trailingSocials.map((social) => social.text).join(listSeparator)
+    text = text ? `${text}${listSeparator}${tail}` : tail
+    for (const social of chunks.trailingSocials) {
+      tokens.push({ text: social.text, from: social.id })
+    }
+  }
+
+  // One clause of a longer sentence gets neither: the caller capitalises the first
+  // word of the whole thing and marks the end of it, once.
+  if (text && !asClause) {
+    if (rules.profile.capitalize) {
+      text = text.charAt(0).toLocaleUpperCase() + text.slice(1)
+    }
+    const { statement, question, questionPrefix } = rules.profile.punctuation
+    text = isQuestion ? `${questionPrefix ?? ''}${text}${question}` : `${text}${statement}`
+  }
+
+  return { text, tokens, inserted: builder.inserted, notes: builder.notes }
+}
+
+export type { RealizedToken }

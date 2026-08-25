@@ -183,6 +183,76 @@ final class TikoTalkUITests: XCTestCase {
         )
     }
 
+    // MARK: - The grammar, end to end on the device
+
+    /// Six taps, two clauses: "I am sad because I want mum."
+    ///
+    /// This is the whole point of the realizer, driven through the real app on a real
+    /// simulator: the copula the child never tapped, the second clause getting its own
+    /// subject, and the finished sentence shown above the strip rather than only
+    /// spoken.
+    func testBuildsATwoClauseSentenceAndShowsIt() {
+        for word in ["i", "sad", "because", "i", "want", "mum"] {
+            tapBoardWord(word)
+        }
+
+        let sentence = app.staticTexts["talk.sentence.text"]
+        XCTAssertTrue(sentence.waitForExistence(timeout: 10), "the sentence should be shown, not only spoken")
+        XCTAssertEqual(sentence.label, "I am sad because I want mum")
+
+        // A passing test discards its attachments unless told to keep them, and this
+        // screenshot is the evidence the sentence really reached the screen.
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    /// The negation tile, which no pack had until now: three tiles and a noun give the
+    /// do-support nobody tapped.
+    func testNegationTileProducesDoSupport() {
+        for word in ["i", "not", "want", "mum"] {
+            tapBoardWord(word)
+        }
+
+        let sentence = app.staticTexts["talk.sentence.text"]
+        XCTAssertTrue(sentence.waitForExistence(timeout: 10))
+        XCTAssertEqual(sentence.label, "I do not want mum")
+
+        // A passing test discards its attachments unless told to keep them, and this
+        // screenshot is the evidence the sentence really reached the screen.
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    /// Finds a tile through the search field, which is how a child reaches a word the
+    /// ranked board does not offer — and taps it. Searching first means the tile is on
+    /// screen, so this never has to scroll a moving board.
+    private func tapBoardWord(_ id: String, file: StaticString = #filePath, line: UInt = #line) {
+        // The search field lives behind a floating button until it is opened.
+        var field = app.textFields["talk.board.search"]
+        if !field.exists {
+            let open = app.buttons["Search or add a word"]
+            XCTAssertTrue(open.waitForExistence(timeout: 20), "search button should exist", file: file, line: line)
+            XCTAssertTrue(waitUntilHittable(open, timeout: 15), "search button should be hittable", file: file, line: line)
+            robustTap(open)
+            field = app.textFields["talk.board.search"]
+        }
+        XCTAssertTrue(field.waitForExistence(timeout: 20), "search field should exist", file: file, line: line)
+        if !field.isHittable { _ = waitUntilHittable(field, timeout: 10) }
+        field.tap()
+        // Clear whatever the last search left behind.
+        if let existing = field.value as? String, !existing.isEmpty {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count))
+        }
+        field.typeText(id)
+
+        let tile = app.buttons["talk.board.word.\(id)"]
+        XCTAssertTrue(tile.waitForExistence(timeout: 15), "no board tile for \"\(id)\"", file: file, line: line)
+        XCTAssertTrue(waitUntilHittable(tile, timeout: 15), "tile \"\(id)\" never became hittable", file: file, line: line)
+        robustTap(tile)
+    }
+
     // MARK: - Req 17: REGRESSION — login popup survives email input
 
     func testLoginPopupSurvivesEmailInput() {

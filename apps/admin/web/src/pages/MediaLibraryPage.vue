@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
-import { Button, InputSearch, Icon, useConfirm } from '@sil/ui'
-import { useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
+import { Button, Icon, useConfirm } from '@sil/ui'
+import { EMPTY_MEDIA_FACETS, useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
 import { useAdminAuth } from '../composables/useAdminAuth'
 import { useImageGeneration } from '../composables/useImageGeneration'
 import { useToast } from '../composables/useToast'
-import type { AdminMediaItem, AudioLibraryAlbum } from '../composables/useAdminMediaLibrary'
+import type { AdminMediaItem, AudioLibraryAlbum, MediaFacets, MediaState } from '../composables/useAdminMediaLibrary'
 import type { ImageGalleryItem } from '../composables/useImageGeneration'
 import type { ImageGenerationResult } from '../types/admin'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
+import MediaFilterBar from '../components/media/MediaFilterBar.vue'
+import MediaDetailsModal from '../components/media/MediaDetailsModal.vue'
+import type { MediaDetails } from '../components/media/mediaTypes'
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
 const toast = useToast()
@@ -17,7 +20,7 @@ const { confirmDelete } = useConfirm()
 
 const {
   items, total, page, totalPages, loading, uploading, error,
-  list, upload, updateMedia, deleteMedia, toggleActive, toggleHidden,
+  list, listFacets, upload, updateMedia, deleteMedia, toggleActive, toggleHidden,
   itemUrl, itemPreviewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack,
 } = useAdminMediaLibrary()
 
@@ -30,8 +33,10 @@ function getAdminToken(): string {
 
 const search = ref('')
 const type = ref('')
-const showInactive = ref(true)
-const showHidden = ref(true)
+const category = ref('')
+const tag = ref('')
+const state = ref<MediaState>('')
+const facets = ref<MediaFacets>(EMPTY_MEDIA_FACETS)
 const selectedFile = ref<File | null>(null)
 const selectedThumbnail = ref<File | null>(null)
 const uploadResult = ref<string | null>(null)
@@ -51,30 +56,86 @@ const audioLibraryError = ref<string | null>(null)
 const editItem = ref<ImageGalleryItem | null>(null)
 const editSourceUrl = ref<string>('')
 const editSourceId = ref<string>('')
+/** The media id the AI editor was opened from; editSourceId becomes the imported generation id. */
+const editSourceMediaId = ref<string>('')
 const editResultUrl = ref<string | null>(null)
 const editResultItem = ref<ImageGenerationResult | null>(null)
 const editLoading = ref(false)
 const editMode = ref<'edit' | 'result'>('edit')
 const savingNew = ref(false)
 const applyingChange = ref(false)
-const deleteConfirmId = ref<string | null>(null)
-const actionError = ref<string | null>(null)
+const detailsItem = ref<AdminMediaItem | null>(null)
+const savingDetails = ref(false)
 
 onMounted(() => {
   void refreshList()
+  void loadFacets()
   void loadAudioAlbums()
 })
 
-async function refreshList() {
-  await list({ search: search.value, type: type.value, page: 1, includeInactive: true, includeHidden: true } as Record<string, unknown>)
+function currentFilters(targetPage: number) {
+  return {
+    search: search.value,
+    type: type.value,
+    category: category.value,
+    tag: tag.value,
+    state: state.value,
+    page: targetPage,
+    // Admin is the one place inactive and hidden assets have to stay visible.
+    includeInactive: true,
+    includeHidden: true,
+  }
 }
 
-async function onSearch() {
-  await refreshList()
+async function refreshList() {
+  await list(currentFilters(1))
+}
+
+async function loadFacets() {
+  try {
+    facets.value = await listFacets()
+  } catch {
+    // Filter options are a convenience; the page still works without them.
+  }
 }
 
 async function go(delta: number) {
-  await list({ search: search.value, type: type.value, page: page.value + delta, includeInactive: true, includeHidden: true } as Record<string, unknown>)
+  await list(currentFilters(page.value + delta))
+}
+
+const detailsDraft = computed<MediaDetails>(() => ({
+  title: detailsItem.value?.title ?? '',
+  description: detailsItem.value?.description ?? '',
+  category: detailsItem.value?.category ?? '',
+  tags: detailsItem.value?.tags ?? [],
+}))
+
+const categorySuggestions = computed(() => facets.value.categories.map(facet => facet.value))
+const tagSuggestions = computed(() => facets.value.tags.map(facet => facet.value))
+
+function openDetails(item: AdminMediaItem) {
+  detailsItem.value = item
+}
+
+async function onSaveDetails(details: MediaDetails) {
+  const item = detailsItem.value
+  if (!item) return
+  savingDetails.value = true
+  try {
+    await updateMedia(item.id, {
+      title: details.title,
+      description: details.description,
+      tags: details.tags,
+      categories: details.category ? [details.category] : [],
+    })
+    detailsItem.value = null
+    toast.success('Details saved')
+    void loadFacets()
+  } catch (e) {
+    toast.error(e instanceof Error ? e.message : 'Failed to save details.')
+  } finally {
+    savingDetails.value = false
+  }
 }
 
 function onFileChange(event: Event) {
@@ -221,6 +282,7 @@ async function onEditImage(item: AdminMediaItem) {
   editResultItem.value = null
   editSourceUrl.value = itemUrl(item)
   editSourceId.value = item.id
+  editSourceMediaId.value = item.id
   try {
     const imported = await importImage(itemUrl(item), {
       title: item.title || item.file_name,
@@ -261,7 +323,9 @@ async function onApplyChange() {
   if (!editSourceUrl.value || !editResultUrl.value) return
   applyingChange.value = true
   try {
-    const originalItem = items.value.find(i => i.id === editSourceUrl.value.match(/\/media\/([^/]+)/)?.[1])
+    // The source URL is a CDN URL for most assets, so it can't be parsed back
+    // into a media id — track the id we opened the editor with instead.
+    const originalItem = items.value.find(i => i.id === editSourceMediaId.value)
     if (!originalItem) throw new Error('Could not find original media item')
 
     const imgResponse = await fetch(editResultUrl.value)
@@ -270,6 +334,7 @@ async function onApplyChange() {
     const formData = new FormData()
     formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
     if (originalItem.title) formData.set('title', originalItem.title)
+    if (originalItem.description) formData.set('description', originalItem.description)
     if (originalItem.category) formData.set('categories', JSON.stringify([originalItem.category]))
     if (originalItem.tags?.length) formData.set('tags', JSON.stringify(originalItem.tags))
 
@@ -303,6 +368,7 @@ async function onSaveAsNew() {
     const formData = new FormData()
     formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
     if (editItem.value?.title) formData.set('title', editItem.value.title)
+    if (editItem.value?.description) formData.set('description', editItem.value.description)
     if (editItem.value?.category) formData.set('categories', JSON.stringify([editItem.value.category]))
     if (editItem.value?.tags?.length) formData.set('tags', JSON.stringify(editItem.value.tags))
 
@@ -356,16 +422,23 @@ async function onSaveAsNew() {
       <p v-if="lastUploadedMediaId" :class="bemm('hint')">Media ID for covers/tracks: {{ lastUploadedMediaId }}</p>
     </section>
 
-    <section :class="bemm('toolbar')">
-      <InputSearch v-model="search" placeholder="Search media…" :search-action="onSearch" @search="onSearch" />
-      <select :class="bemm('select')" v-model="type">
-        <option value="">All types</option>
-        <option value="image">Images</option>
-        <option value="audio">Audio</option>
-        <option value="video">Video</option>
-      </select>
-      <Button :loading="loading" :disabled="loading" @click="onSearch">Search</Button>
-    </section>
+    <MediaFilterBar
+      v-model:search="search"
+      v-model:type="type"
+      v-model:category="category"
+      v-model:tag="tag"
+      v-model:state="state"
+      :categories="facets.categories"
+      :tags="facets.tags"
+      :types="facets.types"
+      :category-meta="facets.meta.categories"
+      :tag-meta="facets.meta.tags"
+      show-type
+      show-state
+      :loading="loading"
+      :total="total"
+      @apply="refreshList"
+    />
 
     <p v-if="error" :class="bemm('error')">{{ error }}</p>
 
@@ -410,26 +483,31 @@ async function onSaveAsNew() {
 
           <div :class="bemm('row-actions')">
             <button
+              :class="bemm('icon-btn')"
+              title="Edit details — title, description, category, tags"
+              @click="openDetails(item)"
+            ><Icon name="ui/edit-fat" size="small" aria-hidden="true" /></button>
+            <button
               v-if="mediaKind(item) === 'image'"
               :class="bemm('icon-btn')"
-              title="Edit image"
+              title="Edit image — redraw it with AI"
               :disabled="editLoading"
               @click="onEditImage(item)"
-            ><Icon name="ui/edit-fat" size="small" aria-hidden="true" /></button>
+            ><Icon name="ui/ai-stars" size="small" aria-hidden="true" /></button>
             <button
               :class="bemm('icon-btn')"
               :title="item.is_hidden ? 'Unhide from apps' : 'Hide from apps'"
               @click="onToggleHidden(item)"
-            ><Icon :name="item.is_hidden ? 'ui/eye-closed' : 'ui/eye'" size="small" aria-hidden="true" /></button>
+            ><Icon :name="item.is_hidden ? 'ui/invisible-m' : 'ui/visible-m'" size="small" aria-hidden="true" /></button>
             <button
               :class="bemm('icon-btn')"
               :title="item.is_active === false ? 'Activate' : 'Deactivate'"
               @click="onToggleActive(item)"
             >
-              <Icon :name="item.is_active === false ? 'ui/play' : 'ui/pause'" size="small" aria-hidden="true" />
+              <Icon :name="item.is_active === false ? 'ui/playback-play' : 'ui/playback-pause'" size="small" aria-hidden="true" />
             </button>
             <a :class="bemm('icon-btn')" :href="itemUrl(item)" target="_blank" rel="noreferrer" title="Open">
-              <Icon name="ui/external-link" size="small" aria-hidden="true" />
+              <Icon name="ui/link" size="small" aria-hidden="true" />
             </a>
             <button
               :class="bemm('icon-btn', { danger: true })"
@@ -447,7 +525,20 @@ async function onSaveAsNew() {
       <Button variant="outline" :disabled="page >= totalPages || loading" @click="go(1)">Next</Button>
     </footer>
 
-    <!-- Edit Modal -->
+    <!-- Metadata editor — title, description, category, tags -->
+    <MediaDetailsModal
+      v-if="detailsItem"
+      :name="detailsItem.title || detailsItem.file_name || detailsItem.id"
+      :preview-src="mediaKind(detailsItem) === 'image' ? itemPreviewUrl(detailsItem, 200) : ''"
+      :details="detailsDraft"
+      :category-suggestions="categorySuggestions"
+      :tag-suggestions="tagSuggestions"
+      :saving="savingDetails"
+      @close="detailsItem = null"
+      @save="onSaveDetails"
+    />
+
+    <!-- AI image editor — regenerates the picture itself -->
     <ImageEditModal
       v-if="editItem"
       :item="editItem"
@@ -553,20 +644,6 @@ async function onSaveAsNew() {
     align-items: end;
   }
 
-  &__toolbar {
-    display: flex;
-    gap: var(--space-s);
-    background: var(--admin-surface);
-    border-radius: var(--border-radius-m);
-    padding: var(--space-s) var(--space-m);
-    align-items: center;
-
-    > *:first-child {
-      flex: 1;
-      min-width: 0;
-    }
-  }
-
   &__label {
     display: flex;
     flex-direction: column;
@@ -577,8 +654,7 @@ async function onSaveAsNew() {
   }
 
   &__file-input,
-  &__input,
-  &__select {
+  &__input {
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--admin-border);
@@ -940,7 +1016,6 @@ async function onSaveAsNew() {
 
   @media (max-width: 860px) {
     &__upload-grid { grid-template-columns: 1fr; }
-    &__toolbar { flex-wrap: wrap; }
     &__row { flex-wrap: wrap; }
     &__row-meta, &__row-date { display: none; }
     &__result-compare { grid-template-columns: 1fr; }

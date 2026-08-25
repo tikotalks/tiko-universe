@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useBemm } from 'bemm'
+import { SilIcon } from '@tiko/ui'
 import type { MediaItem } from '../types/media'
 
-defineProps<{
+const props = defineProps<{
   item: MediaItem
 }>()
 
@@ -9,6 +11,8 @@ const emit = defineEmits<{
   click: []
   download: []
 }>()
+
+const bemm = useBemm('media-card', { return: 'string', includeBaseClass: true })
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -24,70 +28,95 @@ function formatDuration(seconds?: number): string {
 }
 
 const typeIcons: Record<string, string> = {
-  image: '🖼',
-  audio: '♪',
-  video: '▶',
+  image: 'media/image',
+  audio: 'media/music-note',
+  video: 'media/filmroll',
+}
+
+function placeholderIcon(): string {
+  return typeIcons[props.item.fileType] ?? 'ui/simple-note'
 }
 </script>
 
 <template>
-  <article class="media-card" @click="emit('click')">
-    <div class="media-card__preview">
-      <img
-        v-if="item.thumbnailUrl"
-        :src="item.thumbnailUrl"
-        :alt="item.title"
-        class="media-card__image"
-        loading="lazy"
-      />
-      <div v-else class="media-card__placeholder">
-        <span class="media-card__placeholder-icon">{{ typeIcons[item.fileType] ?? '📄' }}</span>
-      </div>
-      <span class="media-card__type-badge">{{ item.fileType }}</span>
-      <span v-if="item.durationSeconds" class="media-card__duration">
-        {{ formatDuration(item.durationSeconds) }}
+  <article :class="bemm('')">
+    <button :class="bemm('open')" @click="emit('click')">
+      <span :class="bemm('preview')">
+        <img
+          v-if="item.thumbnailUrl"
+          :class="bemm('image')"
+          :src="item.thumbnailUrl"
+          :alt="item.title"
+          loading="lazy"
+        >
+        <span v-else :class="bemm('placeholder')">
+          <SilIcon :name="placeholderIcon()" />
+        </span>
+        <span v-if="item.durationSeconds" :class="bemm('duration')">
+          {{ formatDuration(item.durationSeconds) }}
+        </span>
       </span>
-    </div>
-    <div class="media-card__info">
-      <h3 class="media-card__title">{{ item.title }}</h3>
-      <div class="media-card__meta">
-        <span class="media-card__category">{{ item.category }}</span>
-        <span class="media-card__size">{{ formatSize(item.fileSizeBytes) }}</span>
-      </div>
-    </div>
+
+      <span :class="bemm('info')">
+        <span :class="bemm('title')">{{ item.title }}</span>
+        <span :class="bemm('meta')">
+          <span :class="bemm('category')">{{ item.category }}</span>
+          <span :class="bemm('size')">{{ formatSize(item.fileSizeBytes) }}</span>
+        </span>
+      </span>
+    </button>
+
     <button
-      class="media-card__download"
-      aria-label="Download"
-      @click.stop="emit('download')"
+      :class="bemm('download')"
+      :aria-label="`Download ${item.title}`"
+      @click="emit('download')"
     >
-      ↓
+      <SilIcon name="arrows/arrow-download" />
     </button>
   </article>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .media-card {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  background: var(--tiko-surface-raised);
-  border: 1px solid var(--tiko-border);
-  border-radius: 1rem;
+  border-radius: 20px;
+  background: var(--surface-card);
   overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.18s var(--ease-out), box-shadow 0.18s var(--ease-out);
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--tiko-shadow);
+    box-shadow: var(--shadow-m);
+  }
+
+  // The whole card is one control, so the card itself carries no click handler —
+  // a nested button inside a clickable article is not reachable by keyboard.
+  &__open {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: -2px;
+    }
   }
 
   &__preview {
     position: relative;
-    aspect-ratio: 1;
-    background: color-mix(in srgb, var(--color-foreground) 6%, var(--color-background));
     display: flex;
     align-items: center;
     justify-content: center;
+    aspect-ratio: 1;
+    background: var(--surface-subtle);
     overflow: hidden;
   }
 
@@ -101,52 +130,36 @@ const typeIcons: Record<string, string> = {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    &-icon {
-      font-size: 2.5rem;
-      opacity: 0.4;
-    }
-  }
-
-  &__type-badge {
-    position: absolute;
-    top: 0.5rem;
-    left: 0.5rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--color-background), transparent 20%);
-    color: var(--color-foreground);
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    backdrop-filter: blur(4px);
+    font-size: 2rem;
+    color: var(--text-muted);
   }
 
   &__duration {
     position: absolute;
-    bottom: 0.5rem;
-    right: 0.5rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 0.3rem;
-    background: color-mix(in srgb, var(--color-background), transparent 20%);
-    color: var(--color-foreground);
-    font-size: 0.75rem;
-    font-variant-numeric: tabular-nums;
+    bottom: var(--space-s);
+    left: var(--space-s);
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-background), transparent 15%);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: var(--color-foreground);
+    font-size: 0.7rem;
+    font-variant-numeric: tabular-nums;
   }
 
   &__info {
-    padding: 0.65rem 0.75rem;
-    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--space-xs);
+    flex: 1;
+    padding: var(--space);
   }
 
   &__title {
-    font-size: 0.85rem;
     font-weight: 600;
-    line-height: 1.3;
+    font-size: 0.9rem;
+    line-height: 1.35;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -155,31 +168,52 @@ const typeIcons: Record<string, string> = {
   &__meta {
     display: flex;
     justify-content: space-between;
+    gap: var(--space-s);
     font-size: 0.75rem;
-    color: color-mix(in srgb, var(--color-foreground) 55%, transparent);
+    color: var(--text-muted);
+  }
+
+  &__category {
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__size {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
   }
 
   &__download {
     position: absolute;
-    bottom: 0.5rem;
-    right: 0.5rem;
-    width: 2rem;
-    height: 2rem;
+    top: var(--space-s);
+    right: var(--space-s);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 2rem;
+    height: 2rem;
     border: none;
     border-radius: 50%;
-    background: var(--tiko-app-primary);
-    color: var(--tiko-app-primary-text);
-    font-size: 1rem;
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+    font-size: 0.85rem;
     cursor: pointer;
     opacity: 0;
-    transition: opacity 0.15s;
+    transition: opacity 0.15s var(--ease-out);
 
-    .media-card:hover & {
+    .media-card:hover &,
+    &:focus-visible {
       opacity: 1;
     }
+  }
+}
+
+// Touch devices never get a hover, so the download action has to stay visible.
+@media (hover: none) {
+  .media-card__download {
+    opacity: 1;
   }
 }
 </style>

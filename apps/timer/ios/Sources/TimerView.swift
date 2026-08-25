@@ -9,8 +9,12 @@ struct TimerView: View {
     @AppStorage("timer.remainingMs") private var persistedRemainingMs = 0.0
     @AppStorage("timer.soundEnabled") private var soundEnabled = true
     @AppStorage("tiko.language") private var languageCode = "en"
+    @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
 
     @StateObject private var i18n = TikoI18n(app: .timer)
+
+    /// Bumped when the countdown reaches zero, to fire the celebration overlay.
+    @State private var celebrationTrigger = 0
 
     /// All countdown state + math lives in the pure, unit-tested engine.
     @State private var engine = TimerEngine()
@@ -33,8 +37,15 @@ struct TimerView: View {
 
     private let ringCircumference = 2 * Double.pi * 80
 
-    private var timerPrimary: Color { TikoAppColor.timer.palette.primary }
-    private var timerDark: Color { TikoAppColor.timer.palette.dark }
+    private var effectiveColorScheme: ColorScheme {
+        (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
+    }
+
+    private var timerPrimary: Color { TimerPalette.primary }
+    private var timerDark: Color { TimerPalette.foreground(for: effectiveColorScheme) }
+    private var controlBackground: Color { TimerPalette.controlBackground(for: effectiveColorScheme) }
+    private var presetBackground: Color { TimerPalette.presetBackground(for: effectiveColorScheme) }
+    private var presetForeground: Color { TimerPalette.presetForeground(for: effectiveColorScheme) }
 
     var body: some View {
         TikoAppShell(
@@ -50,7 +61,7 @@ struct TimerView: View {
                 // Countdown ring
                 ZStack {
                     Circle()
-                        .stroke(timerPrimary.opacity(0.22), lineWidth: 12)
+                        .stroke(TimerPalette.ringTrack(for: effectiveColorScheme), lineWidth: 12)
                         .frame(width: 180, height: 180)
 
                     Circle()
@@ -83,9 +94,9 @@ struct TimerView: View {
                                 start(durationMs: presets[index].ms)
                             }
                             .font(.system(.title3, design: .rounded).weight(.heavy))
-                            .foregroundStyle(Color(hex: 0x8a5d00))
+                            .foregroundStyle(presetForeground)
                             .frame(maxWidth: .infinity, minHeight: 56)
-                            .background(.white)
+                            .background(presetBackground)
                             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                             .accessibilityIdentifier("timer.preset.\(index)")
                         }
@@ -101,7 +112,7 @@ struct TimerView: View {
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(timerPrimary.opacity(0.22))
+                                .background(controlBackground)
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Start")
@@ -114,7 +125,7 @@ struct TimerView: View {
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(timerPrimary.opacity(0.22))
+                                .background(controlBackground)
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Pause")
@@ -127,7 +138,7 @@ struct TimerView: View {
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(timerPrimary.opacity(0.22))
+                                .background(controlBackground)
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Resume")
@@ -140,7 +151,7 @@ struct TimerView: View {
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(timerDark)
                                 .frame(width: 64, height: 64)
-                                .background(timerPrimary.opacity(0.14))
+                                .background(TimerPalette.resetBackground(for: effectiveColorScheme))
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel("Reset")
@@ -148,6 +159,17 @@ struct TimerView: View {
                     }
                 }
             }
+        }
+        .overlay {
+            // Reaching zero is the whole point of the app, so it gets the same
+            // payoff the other Tiko apps give a win.
+            TikoCelebrationOverlay(
+                trigger: celebrationTrigger,
+                variant: .confettiRain,
+                emoji: "⏰",
+                appColor: .timer
+            )
+            .allowsHitTesting(false)
         }
         .environmentObject(i18n)
         .onAppear {
@@ -165,8 +187,9 @@ struct TimerView: View {
             guard engine.mode == .running else { return }
             now = Date()
             if engine.expireIfElapsed(now: now) {
+                celebrationTrigger += 1
                 if soundEnabled {
-                    // TODO: play shared Tiko completion sound when the audio asset is available.
+                    TikoFeedback.playSuccess()
                 }
                 persist()
             }

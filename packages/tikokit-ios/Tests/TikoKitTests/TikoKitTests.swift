@@ -157,7 +157,9 @@ final class TikoKitTests: XCTestCase {
         let i18n = TikoI18n(app: .yesNo, languageCode: "hy")
         let initialRevision = i18n.revision
 
-        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Yes")
+        // Armenian is translated now, so this is its bundled string rather than the
+        // English fallback the test was written against.
+        XCTAssertEqual(i18n.t("yesNo.answers.yes"), "Այո")
 
         i18n.addBundle(languageCode: "hy", translations: ["yesNo.answers.yes": "Runtime yes"])
 

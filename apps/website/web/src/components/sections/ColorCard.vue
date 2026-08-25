@@ -43,7 +43,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   >
     <div v-if="image || $slots.visual" :class="bemm('visual')">
       <slot name="visual">
-        <img :src="image" :alt="imageAlt ?? title ?? ''" loading="lazy" :class="bemm('image')" />
+        <img :src="image" :alt="imageAlt ?? title ?? ''" loading="eager" :class="bemm('image')" />
       </slot>
     </div>
     <div :class="bemm('content')">
@@ -63,23 +63,23 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   gap: 1rem;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
   border-radius: 24px;
-  border: none;
+  // Keeps the card's edge readable when its own colour sits close to the page
+  // background — Talk's near-black in dark mode, pale tones in light mode.
+  border: 1px solid var(--surface-hairline);
   background: var(--card-bg);
   color: var(--card-fg);
-  box-shadow: 0 18px 40px -28px color-mix(in srgb, var(--card-bg), #000 55%);
   text-decoration: none;
-  transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+  transition: transform 0.22s var(--ease-out);
 
   &--link { cursor: pointer; }
   &--link:hover {
     transform: translateY(-4px);
-    box-shadow: 0 26px 50px -26px color-mix(in srgb, var(--card-bg), #000 50%);
   }
 
   &__visual {
     display: grid;
     place-items: center;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 1;
     border-radius: 16px;
     overflow: hidden;
     background: color-mix(in srgb, var(--card-fg), transparent 86%);
@@ -94,6 +94,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   }
 
   &__eyebrow {
+    font-family: var(--font-family-heading);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -111,6 +112,7 @@ const tag = computed(() => (props.to ? RouterLink : props.href ? 'a' : 'div'))
   &__body { line-height: 1.55; opacity: 0.9; }
 
   &__badge {
+    font-family: var(--font-family-heading);
     align-self: flex-start;
     margin-top: 0.5rem;
     padding: 3px 10px;

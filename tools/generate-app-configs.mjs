@@ -22,11 +22,13 @@ const fallbackConfigs = {
   talk: { id: 'talk', title: 'Talk', appColor: 'talk', appIcon: 'ui/talk', appIconMediaCategory: 'communication', themeColor: '#17131c', iosIcon: 'message.fill' },
   say: { id: 'say', title: 'Say', appColor: 'say', appIcon: 'ui/microphone', appIconMediaCategory: 'communication', appIconImageUrl: 'https://data.tikocdn.org/uploads/1781443432968-speech-balloon.png', themeColor: '#8b5cf6', iosIcon: 'waveform' },
   sum: { id: 'sum', title: 'Sum', appColor: 'sum', appIcon: 'ui/calculator', appIconMediaCategory: 'numbers', appIconImageUrl: 'https://data.tikocdn.org/uploads/1755105954065-calculator.png', themeColor: '#dd8966', iosIcon: 'plus.forwardslash.minus' },
+  write: { id: 'write', title: 'Write', appColor: 'write', appIcon: 'ui/pencil', appIconMediaCategory: 'letters', appIconImageUrl: 'https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png', themeColor: '#22c55e', iosIcon: 'pencil.and.outline' },
+  coloring: { id: 'coloring', title: 'Coloring', appColor: 'coloring', appIcon: 'ui/paint-brush', appIconMediaCategory: 'art', themeColor: '#f2802b', iosIcon: 'paintbrush.pointed.fill' },
   first: { id: 'first', title: 'First', appColor: 'first', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', appIconImageUrl: 'https://data.tikocdn.org/uploads/1754413862502-todo.png', themeColor: '#06b6d4', iosIcon: 'checklist' },
 }
 
 const webApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'todo', 'talk']
-const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first']
+const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first', 'write', 'coloring']
 const iosApps = {
   'yes-no': 'YesNoAppConfig.swift',
   type: 'TypeAppConfig.swift',

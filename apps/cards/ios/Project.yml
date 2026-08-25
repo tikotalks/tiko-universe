@@ -5,7 +5,12 @@ options:
     iOS: "17.0"
 settings:
   base:
-    DEVELOPMENT_TEAM: ""
+    # The Apple Developer team the apps are signed with. It used to be empty, which
+    # meant a device build could not be signed at all until someone set the team in
+    # Xcode by hand — and xcodegen then overwrote that on the next generate, so the
+    # next device build failed the same way. A build machine that signs as somebody
+    # else overrides it on the command line, where it takes precedence.
+    DEVELOPMENT_TEAM: 38MGF83L2L
 packages:
   TikoKit:
     path: ../../../packages/tikokit-ios

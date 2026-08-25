@@ -1,0 +1,103 @@
+name: TikoWrite
+options:
+  bundleIdPrefix: mt.tiko
+  deploymentTarget:
+    iOS: "18.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 38MGF83L2L
+packages:
+  TikoKit:
+    path: ../../../packages/tikokit-ios
+targets:
+  TikoWrite:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+      # The authored glyph packs, bundled from their single source of truth
+      # rather than copied — a duplicated pack is a pack that drifts.
+      - path: ../../../packages/write-glyphs/source
+        name: GlyphPacks
+        buildPhase: resources
+        type: folder
+    dependencies:
+      - package: TikoKit
+        product: TikoKit
+      - framework: ../../../packages/tikokotlinkit/build/XCFrameworks/release/TikoCore.xcframework
+        embed: true
+        codeSign: true
+    preBuildScripts:
+      - name: Generate Tiko app config
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          if ! command -v node >/dev/null 2>&1; then
+            echo "error: node is required to generate Tiko app configs before an iOS build."
+            exit 1
+          fi
+          TIKO_APP_CONFIG_STRICT=1 node "${REPO_ROOT}/tools/generate-app-configs.mjs"
+      - name: Build TikoCore if missing
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          FRAMEWORK="${REPO_ROOT}/packages/tikokotlinkit/build/XCFrameworks/release/TikoCore.xcframework"
+          if [ -d "$FRAMEWORK" ]; then exit 0; fi
+          echo "TikoCore.xcframework not found; building it."
+          if [ -z "${JAVA_HOME:-}" ]; then
+            for candidate in /opt/homebrew/opt/openjdk@21 /opt/homebrew/opt/openjdk /usr/libexec/java_home; do
+              if [ -d "$candidate/libexec/openjdk.jdk/Contents/Home" ]; then
+                export JAVA_HOME="$candidate/libexec/openjdk.jdk/Contents/Home"; break
+              fi
+            done
+          fi
+          if [ -z "${JAVA_HOME:-}" ] || [ ! -x "${JAVA_HOME}/bin/java" ]; then
+            echo "error: a JDK 17+ is required to build TikoCore. Try: brew install openjdk@21"
+            exit 1
+          fi
+          cd "$REPO_ROOT" && ./gradlew assembleTikoCoreXCFramework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.write
+        INFOPLIST_FILE: Sources/Info.plist
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoWrite.entitlements
+  TikoWriteTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    dependencies:
+      - target: TikoWrite
+      - package: TikoKit
+        product: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoWriteUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoWrite
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoWrite
+schemes:
+  TikoWrite:
+    build:
+      targets:
+        TikoWrite: all
+        TikoWriteTests: [test]
+        TikoWriteUITests: [test]
+    test:
+      targets:
+        - TikoWriteTests
+        - TikoWriteUITests
+    run:
+      config: Debug

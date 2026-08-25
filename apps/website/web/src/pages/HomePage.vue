@@ -1,36 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { mediaImage } from '../content/mediaImages'
 import { tikoApps } from '../content/appUniverse'
-import { trustPrinciples, whyTikoPillars, whyFreePillars, platformNotes } from '../siteContent'
+import { trustPrinciples, whyTikoPillars, whyFreePillars, platformNotes, sectionTones as tones } from '../siteContent'
 import HeroSection from '../components/sections/HeroSection.vue'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
 import AppCardGrid from '../components/sections/AppCardGrid.vue'
+import AppStoreLineup from '../components/sections/AppStoreLineup.vue'
+import PrinciplePanels, { type Principle } from '../components/sections/PrinciplePanels.vue'
 import SplitMedia from '../components/sections/SplitMedia.vue'
 import MediaStream from '../components/sections/MediaStream.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
 
-// Colour rotation so adjacent cards read as distinct Tiko colours.
-const tones = ['primary', 'secondary', 'tertiary', 'accent', 'warning', 'yes-no', 'cards', 'sequence']
-
-// A small pool of Tiko Media images to give each section a real visual.
-const MEDIA_API = (import.meta as { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL
-  ?? 'https://media.tikoapi.org/v1'
-const pool = ref<string[]>([])
-function poolImage(i: number): string | undefined {
-  return pool.value.length ? pool.value[i % pool.value.length] : undefined
-}
-onMounted(async () => {
-  try {
-    const res = await fetch(`${MEDIA_API}/media?type=image&limit=24&page=1`)
-    const body = await res.json() as { data?: Array<{ id?: string; original_url?: string }> }
-    pool.value = (body.data ?? [])
-      .map((m) => m.original_url || (m.id ? `${MEDIA_API}/media/${m.id}/download` : ''))
-      .filter(Boolean)
-  } catch { pool.value = [] }
-})
+/** The Why-Tiko pillars as numbered colour panels. Copy is unchanged. */
+const whyTikoPanels: Principle[] = whyTikoPillars.map((pillar, i) => ({
+  marker: String(i + 1).padStart(2, '0'),
+  title: pillar.title,
+  body: pillar.body,
+  tone: tones[i % tones.length],
+}))
 </script>
 
 <template>
@@ -42,40 +32,46 @@ onMounted(async () => {
       note="No ads · No account · Any language"
     >
       <template #actions>
-        <RouterLink class="button button--primary" to="/tools">Explore the apps</RouterLink>
-        <RouterLink class="button button--ghost" to="/why-tiko">Why Tiko</RouterLink>
+        <RouterLink class="btn btn--primary" to="/tools">Explore the apps</RouterLink>
+        <RouterLink class="btn btn--ghost" to="/why-tiko">Why Tiko</RouterLink>
       </template>
     </HeroSection>
 
     <PageSection
       eyebrow="Why Tiko"
-      title="Small on purpose."
       intro="Each app stays focused so the moment stays calm — for the child and the adult beside them."
-      align="center"
+      layout="split"
     >
-      <CardGrid min="240px">
-        <ColorCard
-          v-for="(pillar, i) in whyTikoPillars"
-          :key="pillar.title"
-          :tone="tones[i % tones.length]"
-          :title="pillar.title"
-          :body="pillar.body"
-          :image="poolImage(i)"
-        />
-      </CardGrid>
+      <template #title>Small <em>on purpose.</em></template>
+      <!--
+        Numbered colour panels rather than image cards: the pillar artwork was
+        generic stock (a light bulb, a puzzle piece, a globe) that illustrated
+        nothing the copy actually says.
+      -->
+      <PrinciplePanels :panels="whyTikoPanels" />
     </PageSection>
 
     <PageSection
       eyebrow="Education and Communication"
-      title="One everyday moment. One tiny app."
       intro="Open the one that fits the moment."
-      align="center"
+      layout="split"
     >
+      <template #title>One everyday moment. <em>One tiny app.</em></template>
       <AppCardGrid :apps="tikoApps" />
     </PageSection>
 
+    <PageSection
+      eyebrow="Download"
+      intro="Five Tiko apps are on the App Store for iPhone and iPad, free and without an account. The rest run on the web today."
+      layout="split"
+      id="download"
+    >
+      <template #title>Get them on <em>the App Store.</em></template>
+      <AppStoreLineup />
+    </PageSection>
+
     <PageSection tone="dark">
-      <SplitMedia :image="poolImage(4)" image-alt="A calm Tiko moment" media-side="right">
+      <SplitMedia :image="mediaImage('adultAndChildTalking')" image-alt="A caregiver and child talking together" media-side="right">
         <p class="home__eyebrow">For caregivers</p>
         <h2 class="home__split-title">Built so the first moment isn't an account form.</h2>
         <ul class="home__trust">
@@ -87,7 +83,6 @@ onMounted(async () => {
     <PageSection
       eyebrow="From the Tiko library"
       title="Thousands of clear, colourful images."
-      align="center"
     >
       <MediaStream :limit="24" />
     </PageSection>
@@ -95,7 +90,6 @@ onMounted(async () => {
     <PageSection
       eyebrow="Why free"
       title="Free, and ad-free, always."
-      align="center"
     >
       <CardGrid min="260px">
         <ColorCard
@@ -104,7 +98,7 @@ onMounted(async () => {
           :tone="tones[(i + 3) % tones.length]"
           :title="pillar.title"
           :body="pillar.body"
-          :image="poolImage(i + 6)"
+          :image="mediaImage(pillar.image)"
         />
       </CardGrid>
     </PageSection>
@@ -112,7 +106,6 @@ onMounted(async () => {
     <PageSection
       eyebrow="One Tiko, many screens"
       title="Start on the web. Stay consistent everywhere."
-      align="center"
     >
       <CardGrid min="240px">
         <ColorCard
@@ -121,20 +114,20 @@ onMounted(async () => {
           :tone="tones[(i + 1) % tones.length]"
           :title="note.label"
           :body="note.copy"
-          :image="poolImage(i + 10)"
+          :image="mediaImage(note.image)"
         />
       </CardGrid>
     </PageSection>
 
-    <PageSection align="center">
+    <PageSection>
       <CtaBanner
         tone="primary"
         title="Ready to try?"
         body="Open a Tiko app and use it with a child right now — no account, no download, no waiting room."
       >
         <template #actions>
-          <RouterLink class="button button--light" to="/tools">Explore the apps</RouterLink>
-          <a class="button button--ghost-light" href="https://yesno.tikoapps.org">Open Yes No</a>
+          <RouterLink class="btn btn--light" to="/tools">Explore the apps</RouterLink>
+          <a class="btn btn--ghost-light" href="https://yesno.tikoapps.org">Open Yes No</a>
         </template>
       </CtaBanner>
     </PageSection>

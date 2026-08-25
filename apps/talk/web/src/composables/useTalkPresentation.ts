@@ -84,17 +84,40 @@ export function useTalkPresentation(options: {
   words: Ref<WordTile[]>
   suggestions: Ref<WordTile[]>
   categories: Ref<Category[]>
-  selectedWordIds: Ref<string[]>
+  /** What the child typed in the search box, if anything. */
+  filter?: Ref<string>
 }) {
   const shortcuts = computed(() => options.categories.value.map((category, index) => toShortcut(category, index)))
 
   const cloudWords = computed<VisualWordNode[]>(() => {
-    const selected = new Set(options.selectedWordIds.value)
     const suggestionIds = new Set(options.suggestions.value.map((word) => word.id))
-    const source = options.suggestions.value.length ? options.suggestions.value : options.words.value
+    const searching = (options.filter?.value ?? '').trim().length > 0
 
+    /**
+     * What the board shows.
+     *
+     * This used to be `suggestions.length ? suggestions : words`, which meant two
+     * things went wrong the moment a child tapped their first tile. Search stopped
+     * working — the matches land in `words` and nothing ever read it again — and the
+     * other 300-odd words in the pack became unreachable, because only the
+     * two dozen ranked suggestions were ever drawn.
+     *
+     * Searching shows the matches and nothing else. Otherwise the suggestions lead
+     * and the rest of the vocabulary follows them.
+     */
+    const source = searching
+      ? options.words.value
+      : [
+          ...options.suggestions.value,
+          ...options.words.value.filter((word) => !suggestionIds.has(word.id)),
+        ]
+
+    /**
+     * A word already in the strip stays on the board. It used to be filtered out,
+     * which made "I want juice and I want water" unbuildable — the second "I" was
+     * gone — and quietly forbade the repetition a child leans on: "more more".
+     */
     return source
-      .filter((word) => !selected.has(word.id))
       .slice(0, 50)
       .map((word, index) => {
         const category = normalizeCategoryId(word.category)

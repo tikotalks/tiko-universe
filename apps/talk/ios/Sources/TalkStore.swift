@@ -1,4 +1,5 @@
 import Foundation
+import TikoKit
 import Observation
 
 @MainActor
@@ -13,7 +14,10 @@ final class TalkStore {
     var isLoading = false
     // True while a /next prediction request is in flight (drives a subtle loader).
     var isPredicting = false
-    var isOfflineFallback = false
+    /// True when the server could not be reached. The board still works — the pack
+    /// and the grammar are in the app — so this only means no learned suggestions,
+    /// no saved phrases and no recorded speech.
+    var isOffline = false
     var sentenceWords: [TalkWordTile] = []
     var templates: [TalkTemplate] = []
     var categories: [TalkCategory] = []
@@ -30,18 +34,35 @@ final class TalkStore {
     var stripDisplay: String = ""
     var validNext: [String] = []
     private var serverCanComplete = false
+    private var cachedPackWords: [String: [TalkWordTile]] = [:]
 
     init(apiClient: any TalkSentenceAPI = TalkAPIClient(), identityProvider: (any TalkIdentityProviding)? = TikoTalkIdentityProvider()) {
         self.apiClient = apiClient
         self.identityProvider = identityProvider
     }
 
-    var sentenceText: String {
-        sentenceWords.talkSentenceText
+    /// The words this child added themselves, which the realizer treats as names.
+    private var customWordIds: Set<String> {
+        Set(sentenceWords.map(\.id).filter { $0.hasPrefix("uword-") })
     }
 
+    /// The finished sentence, with its article and full stop, built on the device.
+    var sentenceText: String {
+        sentenceWords.talkSentence(locale: locale, customWordIds: customWordIds).text
+    }
+
+    /// The same sentence without its terminator: the strip is not finished yet.
+    private var localStrip: String {
+        sentenceWords.talkSentence(locale: locale, customWordIds: customWordIds).strip
+    }
+
+    /// True where the pack for this language ships with the app, which is every
+    /// language the picker offers.
+    var hasLocalPack: Bool { TikoSentenceBuilder.shared.hasPack(for: locale) }
+
+    /// Anything the child has built can be spoken: the sentence is made here.
     var canSpeak: Bool {
-        serverCanComplete || (isOfflineFallback && !sentenceWords.isEmpty)
+        serverCanComplete || !sentenceWords.isEmpty
     }
 
     var filteredWords: [TalkWordTile] {
@@ -73,33 +94,41 @@ final class TalkStore {
 
         await bootstrapIdentityIfNeeded()
 
+        // The board comes from the pack in the app, first and always. The server is
+        // asked afterwards, and what it returns is an improvement on this rather
+        // than the thing that makes the screen work.
+        if let local = TalkLocalBoard.startResponse(locale: locale) {
+            applyStartResponse(local, offline: true)
+        }
+
         do {
             // Identity is carried by the session token (Authorization header); the
             // server derives the subject from it. We deliberately do NOT pass userId
             // — an unvalidatable userId is rejected, and the token is the source of
             // truth (and the IDOR-safe contract).
             let response = try await apiClient.start(locale: locale, userId: nil, sessionToken: sessionToken)
-            applyStartResponse(response, fallback: false)
+            applyStartResponse(response, offline: false)
             await refreshVocabularyIfPossible()
         } catch {
-            // Offline is an expected graceful-degrade state, not an error. The
-            // isOfflineFallback flag already drives the banner, so don't double it
-            // up in release — but in debug surface the real reason so we can see
-            // exactly why a request failed.
+            // No server is not an error state for this app; the board is already on
+            // screen. Only say why in debug, where it is worth knowing.
             #if DEBUG
             errorMessage = "offline: \(error.localizedDescription)"
             #else
             errorMessage = nil
             #endif
-            applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
+            if visibleWords.isEmpty, let local = TalkLocalBoard.startResponse(locale: locale) {
+                applyStartResponse(local, offline: true)
+            }
         }
     }
 
-    /// Seeds the deterministic offline starter board with no network access, so
-    /// screenshot capture and UI tests get a populated, stable board without a
-    /// backend. Mirrors the offline-fallback scene the app already degrades to.
-    func loadOfflineFallbackForCapture() {
-        applyStartResponse(TalkOfflineFallback.startResponse, fallback: true)
+    /// Seeds the board from the pack with no network access, for screenshot capture
+    /// and UI tests. This is the same board the app shows offline, which is the same
+    /// board it shows online — the server only reorders it.
+    func loadLocalBoardForCapture() {
+        guard let local = TalkLocalBoard.startResponse(locale: locale) else { return }
+        applyStartResponse(local, offline: true)
     }
 
     func addWord(_ word: TalkWordTile) async {
@@ -143,14 +172,6 @@ final class TalkStore {
     }
 
     func applyTemplate(_ template: TalkTemplate) async {
-        let fallbackWords = TalkOfflineFallback.templateWords(for: template)
-        if !fallbackWords.isEmpty {
-            sentenceWords = fallbackWords
-            stripDisplay = template.pattern
-            await refreshSuggestions()
-            return
-        }
-
         let prefilledWords = wordsForTemplatePattern(template.pattern)
         guard !prefilledWords.isEmpty || template.slotCount > 0 else {
             errorMessage = "This template needs the Sentence API before it can fill words."
@@ -203,7 +224,7 @@ final class TalkStore {
         } catch {
             completedSentence = sentenceText
             audioURL = nil
-            if !isOfflineFallback {
+            if !isOffline {
                 errorMessage = "Using native speech fallback"
             }
             return nil
@@ -249,16 +270,18 @@ final class TalkStore {
         }
     }
 
-    private func applyStartResponse(_ response: TalkSentenceStartResponse, fallback: Bool) {
-        isOfflineFallback = fallback
+    private func applyStartResponse(_ response: TalkSentenceStartResponse, offline: Bool) {
+        isOffline = offline
         templates = response.templates
         categories = response.initialCategories
         visibleWords = response.initialWords.deduplicatedById()
         baselineWords = visibleWords
         wordsByCategory = Dictionary(grouping: visibleWords, by: \.category)
         suggestions = []
-        savedPhrases = response.savedPhrases
-        stripDisplay = response.stripState.display ?? ""
+        // The server knows this child's saved phrases; the pack cannot, so an empty
+        // list from it must not wipe what the server already gave us.
+        if !offline || !response.savedPhrases.isEmpty { savedPhrases = response.savedPhrases }
+        stripDisplay = localStrip
         validNext = response.stripState.validNext
         serverCanComplete = response.stripState.canComplete
         selectedCategoryId = categories.first?.id
@@ -279,16 +302,19 @@ final class TalkStore {
             resetBoardToBaseline()
             return
         }
-        guard !isOfflineFallback else {
-            suggestions = []
-            stripDisplay = sentenceText
+        // Offline, the pack's own frequencies and transition table stand in for the
+        // ranking the server would have done.
+        guard !isOffline else {
+            suggestions = TalkLocalBoard.suggestions(after: sentenceWords, locale: locale)
+            validNext = TalkLocalBoard.validNext(after: sentenceWords, locale: locale)
+            stripDisplay = localStrip
             serverCanComplete = true
             return
         }
         // Locally-added custom words aren't in the language pack, so /next would
         // reject the whole id list. Keep the current board and stay speakable.
         guard !sentenceWords.contains(where: { $0.id.hasPrefix("uword-local-") }) else {
-            stripDisplay = sentenceText
+            stripDisplay = localStrip
             serverCanComplete = true
             return
         }
@@ -309,13 +335,13 @@ final class TalkStore {
             if selectedCategoryId == nil || !categories.contains(where: { $0.id == selectedCategoryId }) {
                 selectedCategoryId = categories.first?.id
             }
-            stripDisplay = response.stripState.display ?? sentenceText
+            stripDisplay = localStrip
             validNext = response.stripState.validNext
             serverCanComplete = response.stripState.canComplete
         } catch {
             // Keep the board populated (don't wipe suggestions) and still allow
             // speaking what's built. Only surface the reason in debug.
-            stripDisplay = sentenceText
+            stripDisplay = localStrip
             serverCanComplete = true
             #if DEBUG
             errorMessage = "next: \(error.localizedDescription)"
@@ -326,7 +352,7 @@ final class TalkStore {
     }
 
     private func refreshVocabularyIfPossible() async {
-        guard !isOfflineFallback else { return }
+        guard !isOffline else { return }
         do {
             let response = try await apiClient.vocabulary(locale: locale, category: nil, pos: nil, sessionToken: sessionToken)
             mergeCategories(response.categories)
@@ -341,7 +367,7 @@ final class TalkStore {
     }
 
     private func refreshSavedPhrasesIfPossible() async {
-        guard let userId, !isOfflineFallback else { return }
+        guard let userId, !isOffline else { return }
         do {
             let response = try await apiClient.phrases(locale: locale, userId: userId, sessionToken: sessionToken)
             savedPhrases = response.phrases
@@ -377,7 +403,17 @@ final class TalkStore {
         }.deduplicatedById()
     }
 
+    /// Every word this app can name in this language: what is on the board, plus
+    /// the whole pack — which is on the device whether or not the server answered.
     private func allKnownWords() -> [TalkWordTile] {
-        (visibleWords + suggestions + TalkOfflineFallback.words).deduplicatedById()
+        (visibleWords + suggestions + baselineWords + packWords()).deduplicatedById()
+    }
+
+    /// The pack for the current language, read once per language.
+    private func packWords() -> [TalkWordTile] {
+        if let cached = cachedPackWords[locale] { return cached }
+        let words = TalkLocalBoard.startResponse(locale: locale)?.initialWords ?? []
+        cachedPackWords[locale] = words
+        return words
     }
 }

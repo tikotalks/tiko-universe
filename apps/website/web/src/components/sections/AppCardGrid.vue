@@ -22,11 +22,23 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
       :style="{ '--card-bg': app.color, '--card-fg': app.colorText }"
     >
       <div :class="bemm('icon-wrap')">
-        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="lazy" />
+        <img :src="app.iconUrl" :alt="app.name" :class="bemm('icon')" loading="eager" />
       </div>
       <div :class="bemm('label')">
         <h3 :class="bemm('name')">{{ app.name }}</h3>
-        <span :class="bemm('status')">{{ app.statusLabel }}</span>
+        <!--
+          Where you can actually get it, rather than a bare "Available". Gated
+          on status, not on the presence of a URL: Cards, Sequence and Timer
+          carry an appUrl while still being `planned`, so keying off the URL
+          alone advertised a web app for three apps that have not shipped.
+          These are plain text, not links — the whole card is already a link to
+          the detail page, and nesting an anchor inside one is invalid.
+        -->
+        <span v-if="app.status === 'available'" :class="bemm('platforms')">
+          <span v-if="app.appUrl" :class="bemm('platform')">Web</span>
+          <span v-if="app.appStoreUrl" :class="bemm('platform')">App Store</span>
+        </span>
+        <span v-else :class="bemm('status')">{{ app.statusLabel }}</span>
       </div>
     </RouterLink>
   </div>
@@ -45,16 +57,16 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     gap: 0.75rem;
     padding: clamp(1.25rem, 2.5vw, 1.75rem);
     border-radius: 28px;
-    border: none;
+    // Talk's brand colour is near-black; without an edge its card disappears into
+    // the dark page entirely.
+    border: 1px solid var(--surface-hairline);
     background: var(--card-bg);
     color: var(--card-fg);
     text-decoration: none;
-    box-shadow: 0 20px 44px -28px color-mix(in srgb, var(--card-bg), #000 55%);
-    transition: transform 0.22s var(--ease-out), box-shadow 0.22s var(--ease-out);
+    transition: transform 0.22s var(--ease-out);
 
     &:hover {
       transform: translateY(-5px);
-      box-shadow: 0 30px 56px -26px color-mix(in srgb, var(--card-bg), #000 48%);
     }
   }
 
@@ -87,7 +99,9 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     color: inherit;
   }
 
-  &__status {
+  &__status,
+  &__platform {
+    font-family: var(--font-family-heading);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -95,6 +109,13 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
     border-radius: 999px;
     background: color-mix(in srgb, var(--card-fg), transparent 84%);
     color: inherit;
+  }
+
+  &__platforms {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem;
   }
 }
 </style>

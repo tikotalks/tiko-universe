@@ -5,8 +5,11 @@ import { Button } from '@sil/ui'
 import ImageCreateForm from '../components/images/ImageCreateForm.vue'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 import ImageGenerationQueue from '../components/images/ImageGenerationQueue.vue'
+import MediaFilterBar from '../components/media/MediaFilterBar.vue'
+import MediaDetailsModal from '../components/media/MediaDetailsModal.vue'
+import type { MediaDetails } from '../components/media/mediaTypes'
 import type { EditInput, GenerateInput, UpscaleInput } from '../components/images/imageGenerationQueueTypes'
-import { useImageGeneration, type ImageGalleryItem } from '../composables/useImageGeneration'
+import { EMPTY_IMAGE_FACETS, useImageGeneration, type ImageFacets, type ImageGalleryItem } from '../composables/useImageGeneration'
 import { useJobQueue } from '../composables/useJobQueue'
 import { useToast } from '../composables/useToast'
 import { useAdminAuth } from '../composables/useAdminAuth'
@@ -16,7 +19,7 @@ type Tab = 'library' | 'drafts' | 'create'
 const page = useBemm('image-page', { return: 'string', includeBaseClass: true })
 const card = useBemm('image-card', { return: 'string', includeBaseClass: true })
 
-const { listImages, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, deleteJob, imageSrc } = useImageGeneration()
+const { listImages, listImageFacets, updateImageMeta, promoteImage, pushToMedia, deleteImage, enrichImage, enqueueJobs, deleteJob, imageSrc } = useImageGeneration()
 const toast = useToast()
 const { jobs, activeCount, hasActiveJobs, refresh: refreshJobs, startPolling } = useJobQueue()
 const { config } = useAdminAuth()
@@ -26,8 +29,22 @@ const queueOpen = ref(false)
 
 const libraryItems = ref<ImageGalleryItem[]>([])
 const draftItems = ref<ImageGalleryItem[]>([])
+const libraryTotal = ref(0)
+const draftTotal = ref(0)
 const galleryLoading = ref(false)
 const galleryError = ref<string | null>(null)
+
+const GALLERY_LIMIT = 60
+
+// Library and Drafts are separate collections, so each keeps its own filters.
+const filters = ref<Record<Exclude<Tab, 'create'>, { search: string; category: string; tag: string }>>({
+  library: { search: '', category: '', tag: '' },
+  drafts: { search: '', category: '', tag: '' },
+})
+const facets = ref<Record<Exclude<Tab, 'create'>, ImageFacets>>({
+  library: EMPTY_IMAGE_FACETS,
+  drafts: EMPTY_IMAGE_FACETS,
+})
 
 const pushingToMediaIds = ref<Set<string>>(new Set())
 const enrichingIds = ref<Set<string>>(new Set())
@@ -39,13 +56,26 @@ const upscalingIds = computed(() => new Set(
 ))
 
 const editItem = ref<ImageGalleryItem | null>(null)
+const detailsItem = ref<ImageGalleryItem | null>(null)
+const detailsList = ref<Exclude<Tab, 'create'>>('library')
+const savingDetails = ref(false)
+
+const detailsDraft = computed<MediaDetails>(() => ({
+  title: detailsItem.value?.title ?? '',
+  description: detailsItem.value?.description ?? '',
+  category: detailsItem.value?.category ?? '',
+  tags: detailsItem.value?.tags ?? [],
+}))
+
+const activeFacets = computed(() => facets.value[detailsList.value])
 
 async function loadLibrary() {
   galleryLoading.value = true
   galleryError.value = null
   try {
-    const result = await listImages('promoted', 1, 60)
+    const result = await listImages('promoted', 1, GALLERY_LIMIT, filters.value.library)
     libraryItems.value = result.data
+    libraryTotal.value = result.meta.total
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not load library.'
   } finally {
@@ -57,12 +87,21 @@ async function loadDrafts() {
   galleryLoading.value = true
   galleryError.value = null
   try {
-    const result = await listImages('draft', 1, 60)
+    const result = await listImages('draft', 1, GALLERY_LIMIT, filters.value.drafts)
     draftItems.value = result.data
+    draftTotal.value = result.meta.total
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not load drafts.'
   } finally {
     galleryLoading.value = false
+  }
+}
+
+async function loadFacets(tab: Exclude<Tab, 'create'>) {
+  try {
+    facets.value[tab] = await listImageFacets(tab === 'library' ? 'promoted' : 'draft')
+  } catch {
+    // Filter options are a convenience; the gallery still works without them.
   }
 }
 
@@ -75,6 +114,8 @@ async function onPromote(item: ImageGalleryItem) {
   try {
     await promoteImage(item.id, item)
     draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+    draftTotal.value = Math.max(0, draftTotal.value - 1)
+    libraryTotal.value += 1
     toast.success(`Promoted "${item.title || item.id}" to library`)
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not promote image.'
@@ -171,8 +212,13 @@ async function onDelete(item: ImageGalleryItem, list: 'library' | 'drafts') {
   if (!confirm(`Delete "${item.title || item.id}"? This cannot be undone.`)) return
   try {
     await deleteImage(item.id)
-    if (list === 'library') libraryItems.value = libraryItems.value.filter(i => i.id !== item.id)
-    else draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+    if (list === 'library') {
+      libraryItems.value = libraryItems.value.filter(i => i.id !== item.id)
+      libraryTotal.value = Math.max(0, libraryTotal.value - 1)
+    } else {
+      draftItems.value = draftItems.value.filter(i => i.id !== item.id)
+      draftTotal.value = Math.max(0, draftTotal.value - 1)
+    }
     toast.success('Image deleted')
   } catch (e) {
     galleryError.value = e instanceof Error ? e.message : 'Could not delete image.'
@@ -186,6 +232,42 @@ function openEdit(item: ImageGalleryItem) {
 
 function closeEdit() {
   editItem.value = null
+}
+
+function openDetails(item: ImageGalleryItem, list: Exclude<Tab, 'create'>) {
+  detailsItem.value = item
+  detailsList.value = list
+}
+
+async function onSaveDetails(details: MediaDetails) {
+  const item = detailsItem.value
+  if (!item) return
+  savingDetails.value = true
+  try {
+    const updated = await updateImageMeta(item.id, {
+      title: details.title,
+      description: details.description,
+      category: details.category,
+      tags: details.tags,
+    })
+    const collection = detailsList.value === 'library' ? libraryItems : draftItems
+    collection.value = collection.value.map(existing => existing.id === item.id
+      ? {
+          ...existing,
+          title: updated.title ?? null,
+          description: updated.description ?? null,
+          category: updated.category ?? existing.category,
+          tags: updated.tags ?? existing.tags,
+        }
+      : existing)
+    detailsItem.value = null
+    toast.success('Details saved')
+    void loadFacets(detailsList.value)
+  } catch (e) {
+    toast.error(e instanceof Error ? e.message : 'Could not save details.')
+  } finally {
+    savingDetails.value = false
+  }
 }
 
 async function onSubmitEdit(input: { sourceId: string; prompt: string; maskBase64?: string; size: '1024x1024' | '1024x1792' | '1792x1024' }) {
@@ -236,7 +318,10 @@ function viewDrafts() {
   activeTab.value = 'drafts'
 }
 
-watch(activeTab, () => { void refreshGallery() })
+watch(activeTab, (tab) => {
+  void refreshGallery()
+  if (tab !== 'create') void loadFacets(tab)
+})
 
 watch(hasActiveJobs, (active) => {
   if (!active && draftItems.value.length >= 0) {
@@ -263,6 +348,7 @@ async function checkOpenAIStatus() {
 
 onMounted(async () => {
   void checkOpenAIStatus()
+  void loadFacets('library')
   await loadLibrary()
 })
 </script>
@@ -307,11 +393,11 @@ onMounted(async () => {
     <nav :class="page('tabs')" aria-label="Image sections">
       <button type="button" :class="page('tab', { active: activeTab === 'library' })" @click="activeTab = 'library'">
         <span>Library</span>
-        <span :class="page('tab-count')">{{ libraryItems.length }}</span>
+        <span :class="page('tab-count')">{{ libraryTotal }}</span>
       </button>
       <button type="button" :class="page('tab', { active: activeTab === 'drafts' })" @click="activeTab = 'drafts'">
         <span>Drafts</span>
-        <span :class="page('tab-count')">{{ draftItems.length }}</span>
+        <span :class="page('tab-count')">{{ draftTotal }}</span>
       </button>
       <button type="button" :class="page('tab', { active: activeTab === 'create' })" @click="activeTab = 'create'">
         Create
@@ -329,7 +415,23 @@ onMounted(async () => {
         <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadLibrary">Reload</Button>
       </header>
 
+      <MediaFilterBar
+        v-model:search="filters.library.search"
+        v-model:category="filters.library.category"
+        v-model:tag="filters.library.tag"
+        :categories="facets.library.categories"
+        :tags="facets.library.tags"
+        :category-meta="facets.library.meta.categories"
+        :tag-meta="facets.library.meta.tags"
+        :loading="galleryLoading"
+        :total="libraryTotal"
+        @apply="loadLibrary"
+      />
+
       <div v-if="galleryLoading && libraryItems.length === 0" :class="page('empty')">Loading library…</div>
+      <div v-else-if="libraryItems.length === 0 && (filters.library.search || filters.library.category || filters.library.tag)" :class="page('empty')">
+        No images match these filters.
+      </div>
       <div v-else-if="libraryItems.length === 0" :class="page('empty')">
         No images promoted yet. Generate one in <button type="button" :class="page('inline-link')" @click="viewDrafts">Drafts</button>.
       </div>
@@ -346,7 +448,8 @@ onMounted(async () => {
             <div :class="card('actions')">
               <Button v-if="!item.mediaId" size="small" :loading="pushingToMediaIds.has(item.id)" :disabled="pushingToMediaIds.has(item.id)" @click="onPushToMedia(item)">Send to Tiko Media</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'library')">Enrich</Button>
-              <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
+              <Button size="small" variant="outline" @click="openDetails(item, 'library')">Edit details</Button>
+              <Button size="small" variant="outline" @click="openEdit(item)">Edit image</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'library')">Delete</Button>
             </div>
@@ -364,7 +467,23 @@ onMounted(async () => {
         <Button variant="outline" :loading="galleryLoading" :disabled="galleryLoading" @click="loadDrafts">Reload</Button>
       </header>
 
+      <MediaFilterBar
+        v-model:search="filters.drafts.search"
+        v-model:category="filters.drafts.category"
+        v-model:tag="filters.drafts.tag"
+        :categories="facets.drafts.categories"
+        :tags="facets.drafts.tags"
+        :category-meta="facets.drafts.meta.categories"
+        :tag-meta="facets.drafts.meta.tags"
+        :loading="galleryLoading"
+        :total="draftTotal"
+        @apply="loadDrafts"
+      />
+
       <div v-if="galleryLoading && draftItems.length === 0" :class="page('empty')">Loading drafts…</div>
+      <div v-else-if="draftItems.length === 0 && (filters.drafts.search || filters.drafts.category || filters.drafts.tag)" :class="page('empty')">
+        No drafts match these filters.
+      </div>
       <div v-else-if="draftItems.length === 0" :class="page('empty')">
         No drafts yet. <button type="button" :class="page('inline-link')" @click="activeTab = 'create'">Create one</button>.
       </div>
@@ -383,7 +502,8 @@ onMounted(async () => {
               <Button v-if="!item.isPreview" size="small" @click="onPromote(item)">Promote</Button>
               <Button v-if="item.isPreview" size="small" variant="outline" :loading="upscalingIds.has(item.id)" @click="onUpscale(item)">Enhance</Button>
               <Button size="small" variant="outline" :loading="enrichingIds.has(item.id)" @click="onEnrich(item, 'drafts')">Enrich</Button>
-              <Button size="small" variant="outline" @click="openEdit(item)">Edit</Button>
+              <Button size="small" variant="outline" @click="openDetails(item, 'drafts')">Edit details</Button>
+              <Button size="small" variant="outline" @click="openEdit(item)">Edit image</Button>
               <Button variant="ghost" size="small" :href="imageSrc(item)" target="_blank" rel="noreferrer">Open</Button>
               <Button variant="ghost" size="small" @click="onDelete(item, 'drafts')">Delete</Button>
             </div>
@@ -409,6 +529,20 @@ onMounted(async () => {
 
   <div v-if="queueOpen" class="queue-popover-backdrop" @click="queueOpen = false" />
 
+  <!-- Metadata editor — title, description, category, tags -->
+  <MediaDetailsModal
+    v-if="detailsItem"
+    :name="detailsItem.title || detailsItem.prompt"
+    :preview-src="imageSrc(detailsItem)"
+    :details="detailsDraft"
+    :category-suggestions="activeFacets.categories.map(facet => facet.value)"
+    :tag-suggestions="activeFacets.tags.map(facet => facet.value)"
+    :saving="savingDetails"
+    @close="detailsItem = null"
+    @save="onSaveDetails"
+  />
+
+  <!-- AI image editor — regenerates the picture itself -->
   <ImageEditModal
     v-if="editItem"
     :item="editItem"
