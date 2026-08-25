@@ -9,8 +9,8 @@ in for a sea turtle tells a child something false, and they have no way to know.
 A **landmark** with no picture is still on the globe, drawn with its glyph. The
 place is real either way; only the artwork is missing.
 
-At the time of writing: **332 animals**,
-**1412 of 1432 landmarks** and
+At the time of writing: **256 animals**,
+**176 of 1432 landmarks** and
 **213 people** have no picture.
 
 ## Animals
@@ -21,13 +21,7 @@ zoom — then by how many countries are waiting on it.
 | Animal | Species | Importance | Wanted by |
 | --- | --- | --- | --- |
 | Bengal tiger | Panthera tigris tigris | 1 | Bangladesh, India, Nepal |
-| Cyprus mouflon | Ovis gmelini ophion | 1 | Turkish Republic of Northern Cyprus, Cyprus |
-| Giant panda | Ailuropoda melanoleuca | 1 | People's Republic of China |
-| Kagu | Rhynochetos jubatus | 1 | New Caledonia |
-| Kiwi | Apteryx | 1 | New Zealand |
 | Komodo dragon | Varanus komodoensis | 1 | Indonesia |
-| Maltese wall lizard | Podarcis filfolensis | 1 | Malta |
-| Sea turtle | Cheloniidae | 2 | Aruba, Anguilla, United Arab Emirates, American Samoa, Antigua and Barbuda, Bahrain +78 more |
 | African forest elephant | Loxodonta cyclotis | 2 | Central African Republic, Ivory Coast, Cameroon, Democratic Republic of the Congo, Republic of the Congo, Gabon +2 more |
 | Dromedary camel | Camelus dromedarius | 2 | Algeria, Egypt, Libya, Morocco, Mauritania, Oman +2 more |
 | Indian elephant | Elephas maximus indicus | 2 | India, Cambodia, Laos, Myanmar, Thailand |
@@ -36,7 +30,6 @@ zoom — then by how many countries are waiting on it.
 | Black rhinoceros | Diceros bicornis | 2 | Cameroon, Kenya, Namibia, Tanzania |
 | European bison | Bison bonasus | 2 | Germany, Poland, Romania |
 | Red-crowned crane | Grus japonensis | 2 | Japan, South Korea, North Korea |
-| Vicuña | Vicugna vicugna | 2 | Bolivia, Chile, Peru |
 | Western lowland gorilla | Gorilla gorilla gorilla | 2 | Central African Republic, Republic of the Congo, Gabon |
 | White rhinoceros | Ceratotherium simum | 2 | Eswatini, South Africa, Zimbabwe |
 | African savanna elephant | Loxodonta africana | 2 | Ethiopia, Sudan |
@@ -44,55 +37,40 @@ zoom — then by how many countries are waiting on it.
 | Bird-of-paradise | Paradisaeidae | 2 | Indonesia, Papua New Guinea |
 | Bornean orangutan | Pongo pygmaeus | 2 | Indonesia, Malaysia |
 | Capybara | Hydrochoerus hydrochaeris | 2 | Argentina, Brazil |
-| Guanaco | Lama guanicoe | 2 | Argentina, Chile |
 | Indian rhinoceros | Rhinoceros unicornis | 2 | India, Nepal |
 | Indochinese tiger | Panthera tigris corbetti | 2 | Thailand, Vietnam |
 | Markhor | Capra falconeri | 2 | Afghanistan, Pakistan |
 | Masai giraffe | Giraffa camelopardalis tippelskirchi | 2 | Kenya, Tanzania |
 | Mountain gorilla | Gorilla beringei beringei | 2 | Rwanda, Uganda |
 | Przewalski's horse | Equus ferus przewalskii | 2 | Kazakhstan, Mongolia |
-| Reindeer | Rangifer tarandus | 2 | Norway, Sweden |
-| Saola | Pseudoryx nghetinhensis | 2 | Laos, Vietnam |
-| Wildebeest | Connochaetes taurinus | 2 | Kenya, Tanzania |
 | Alpaca | Vicugna pacos | 2 | Peru |
 | American alligator | Alligator mississippiensis | 2 | United States of America |
 | Asiatic cheetah | Acinonyx jubatus venaticus | 2 | Iran |
-| Axolotl | Ambystoma mexicanum | 2 | Mexico |
 | Bactrian camel | Camelus bactrianus | 2 | Mongolia |
-| Blue whale | Balaenoptera musculus | 2 | Sri Lanka |
 | Bonobo | Pan paniscus | 2 | Democratic Republic of the Congo |
 | Eastern lowland gorilla | Gorilla beringei graueri | 2 | Democratic Republic of the Congo |
-| Echidna | Tachyglossus aculeatus | 2 | Australia |
 | Giant anteater | Myrmecophaga tridactyla | 2 | Brazil |
 | Giant sable antelope | Hippotragus niger variani | 2 | Angola |
-| Giraffe | Giraffa camelopardalis | 2 | South Sudan |
 | Hyacinth macaw | Anodorhynchus hyacinthinus | 2 | Brazil |
 | Iberian lynx | Lynx pardinus | 2 | Spain |
 | Icelandic horse | Equus ferus caballus | 2 | Iceland |
 | Kākāpō | Strigops habroptilus | 2 | New Zealand |
 | Kea | Nestor notabilis | 2 | New Zealand |
-| Lion | Panthera leo | 2 | South Sudan |
 | Malayan tapir | Tapirus indicus | 2 | Malaysia |
 | Malayan tiger | Panthera tigris jacksoni | 2 | Malaysia |
 | Mediterranean monk seal | Monachus monachus | 2 | Greece |
 | Monarch butterfly | Danaus plexippus | 2 | Mexico |
 | Philippine tarsier | Carlito syrichta | 2 | Philippines |
 | Ring-tailed lemur | Lemur catta | 2 | Madagascar |
-| Smooth-coated otter | Lutrogale perspicillata | 2 | Singapore |
 | Sri Lankan elephant | Elephas maximus maximus | 2 | Sri Lanka |
 | Sri Lankan leopard | Panthera pardus kotiya | 2 | Sri Lanka |
 | Sumatran tiger | Panthera tigris sumatrae | 2 | Indonesia |
 | Takin | Budorcas taxicolor | 2 | Bhutan |
-| Tasmanian devil | Sarcophilus harrisii | 2 | Australia |
-| Tuatara | Sphenodon punctatus | 2 | New Zealand |
 | West African giraffe | Giraffa camelopardalis peralta | 2 | Niger |
-| Wild Bactrian camel | Camelus ferus | 2 | Mongolia |
 | Nile crocodile | Crocodylus niloticus | 3 | Angola, Burundi, Ivory Coast, Egypt, Ghana, Mali +10 more |
-| Hippopotamus | Hippopotamus amphibius | 3 | Angola, Botswana, Republic of the Congo, Gabon, Ghana, Sudan +3 more |
 | Addax | Addax nasomaculatus | 3 | Algeria, Libya, Mali, Niger, Chad |
 | African buffalo | Syncerus caffer | 3 | Kenya, Rwanda, South Sudan, Senegal, Tanzania |
 | Chamois | Rupicapra rupicapra | 3 | Austria, Switzerland, France, Italy, Romania |
-| Loggerhead sea turtle | Caretta caretta | 3 | Greece, Italy, Malta, Tunisia, Turkey |
 | Sun bear | Helarctos malayanus | 3 | Cambodia, Laos, Myanmar, Malaysia, Vietnam |
 | Eastern chimpanzee | Pan troglodytes schweinfurthii | 3 | Burundi, Rwanda, Tanzania, Uganda |
 | Grey seal | Halichoerus grypus | 3 | Belgium, United Kingdom, Ireland, Netherlands |
@@ -100,20 +78,14 @@ zoom — then by how many countries are waiting on it.
 | African wild dog | Lycaon pictus | 3 | Botswana, Zambia, Zimbabwe |
 | Arabian leopard | Panthera pardus nimr | 3 | Oman, Saudi Arabia, Yemen |
 | Dugong | Dugong dugon | 3 | Egypt, Mozambique, Philippines |
-| Humpback whale | Megaptera novaeangliae | 3 | Bermuda, Iceland, Oman |
 | Irrawaddy dolphin | Orcaella brevirostris | 3 | Cambodia, Laos, Myanmar |
 | Springbok | Antidorcas marsupialis | 3 | Botswana, Namibia, South Africa |
 | Whale shark | Rhincodon typus | 3 | Mozambique, Philippines, Thailand |
 | Alpine marmot | Marmota marmota | 3 | Austria, Switzerland |
 | Cape fur seal | Arctocephalus pusillus | 3 | Angola, Namibia |
-| Cheetah | Acinonyx jubatus | 3 | Sudan, Somalia |
-| Eurasian otter | Lutra lutra | 3 | Ireland, Netherlands |
 | Gemsbok | Oryx gazella | 3 | Botswana, Namibia |
 | Giant otter | Pteronura brasiliensis | 3 | Brazil, Peru |
-| Golden eagle | Aquila chrysaetos | 3 | Mongolia, North Korea |
 | King cobra | Ophiophagus hannah | 3 | India, Thailand |
-| Moose | Alces alces | 3 | Norway, United States of America |
-| Ostrich | Struthio camelus | 3 | Niger, Chad |
 | Puma | Puma concolor | 3 | Argentina, Chile |
 | Shoebill | Balaeniceps rex | 3 | South Sudan, Uganda |
 | Southern right whale | Eubalaena australis | 3 | Argentina, South Africa |
@@ -121,14 +93,11 @@ zoom — then by how many countries are waiting on it.
 | Western chimpanzee | Pan troglodytes verus | 3 | Ivory Coast, Ghana |
 | Yak | Bos grunniens | 3 | People's Republic of China, Nepal |
 | Anatolian leopard | Panthera pardus tulliana | 3 | Turkey |
-| Arctic fox | Vulpes lagopus | 3 | Norway |
 | Asiatic black bear | Ursus thibetanus | 3 | North Korea |
 | Asiatic lion | Panthera leo persica | 3 | India |
 | Aye-aye | Daubentonia madagascariensis | 3 | Madagascar |
 | Barbary macaque | Macaca sylvanus | 3 | Morocco |
-| Basking shark | Cetorhinus maximus | 3 | Ireland |
 | Black-necked crane | Grus nigricollis | 3 | Bhutan |
-| Blue rock-thrush | Monticola solitarius | 3 | Malta |
 | Camargue horse | Equus ferus caballus | 3 | France |
 | Canada lynx | Lynx canadensis | 3 | Canada |
 | Cape buffalo | Syncerus caffer caffer | 3 | South Africa |
@@ -140,7 +109,6 @@ zoom — then by how many countries are waiting on it.
 | Dalmatian pelican | Pelecanus crispus | 3 | Romania |
 | Ethiopian wolf | Canis simensis | 3 | Ethiopia |
 | Ezo brown bear | Ursus arctos yesoensis | 3 | Japan |
-| Fennec fox | Vulpes zerda | 3 | Libya |
 | Fossa | Cryptoprocta ferox | 3 | Madagascar |
 | Ganges river dolphin | Platanista gangetica | 3 | Bangladesh |
 | Gelada | Theropithecus gelada | 3 | Ethiopia |
@@ -163,12 +131,10 @@ zoom — then by how many countries are waiting on it.
 | Killer whale | Orcinus orca | 3 | Norway |
 | Kordofan giraffe | Giraffa camelopardalis antiquorum | 3 | Chad |
 | Leatherback sea turtle | Dermochelys coriacea | 3 | Gabon |
-| Manatee | Trichechus manatus | 3 | United States of America |
 | Marco Polo sheep | Ovis ammon polii | 3 | Afghanistan |
 | Marsican brown bear | Ursus arctos marsicanus | 3 | Italy |
 | Monk seal | Monachus monachus | 3 | Mauritania |
 | Muskox | Ovibos moschatus | 3 | Norway |
-| New Caledonian crow | Corvus moneduloides | 3 | New Caledonia |
 | Nigeria-Cameroon chimpanzee | Pan troglodytes ellioti | 3 | Nigeria |
 | Pallas's cat | Otocolobus manul | 3 | Mongolia |
 | Panther chameleon | Furcifer pardalis | 3 | Madagascar |
@@ -183,11 +149,9 @@ zoom — then by how many countries are waiting on it.
 | Red-shanked douc | Pygathrix nemaeus | 3 | Vietnam |
 | Rhinoceros hornbill | Buceros rhinoceros | 3 | Malaysia |
 | Rothschild's giraffe | Giraffa camelopardalis rothschildi | 3 | Uganda |
-| Saiga antelope | Saiga tatarica | 3 | Uzbekistan |
 | Saimaa ringed seal | Pusa hispida saimensis | 3 | Finland |
 | Scimitar-horned oryx | Oryx dammah | 3 | Chad |
 | Siberian tiger | Panthera tigris altaica | 3 | North Korea |
-| Snow leopard | Panthera uncia | 3 | Bhutan |
 | Somali wild ass | Equus africanus somaliensis | 3 | Somalia |
 | Spanish imperial eagle | Aquila adalberti | 3 | Spain |
 | Sumatran elephant | Elephas maximus sumatranus | 3 | Indonesia |
@@ -199,38 +163,26 @@ zoom — then by how many countries are waiting on it.
 | White stork | Ciconia ciconia | 3 | Germany |
 | White-eared kob | Kobus kob leucotis | 3 | South Sudan |
 | Yellow-eyed penguin | Megadyptes antipodes | 3 | New Zealand |
-| White tern | Gygis alba | 4 | American Samoa, Cook Islands, Guam, Kiribati, Marshall Islands, Northern Mariana Islands +6 more |
-| African grey parrot | Psittacus erithacus | 4 | Ivory Coast, Cameroon, Republic of the Congo, Gabon, Ghana, Nigeria |
 | Dorcas gazelle | Gazella dorcas | 4 | Algeria, Libya, Mali, Mauritania, Sudan, Tunisia |
-| Warthog | Phacochoerus africanus | 4 | Mali, Niger, Nigeria, Senegal, Somalia |
 | Barbary sheep | Ammotragus lervia | 4 | Algeria, Libya, Niger, Tunisia |
 | Hamadryas baboon | Papio hamadryas | 4 | Ethiopia, Saudi Arabia, Somalia, Yemen |
 | Sable antelope | Hippotragus niger | 4 | Mozambique, Malawi, Zambia, Zimbabwe |
 | Sand cat | Felis margarita | 4 | Algeria, Libya, Mauritania, Saudi Arabia |
-| Striped hyena | Hyaena hyaena | 4 | Iraq, Sudan, Somalia, Tunisia |
-| Eurasian lynx | Lynx lynx | 4 | Switzerland, Germany, Poland |
-| European badger | Meles meles | 4 | Belgium, United Kingdom, Netherlands |
 | Goitered gazelle | Gazella subgutturosa | 4 | Iran, Iraq, Uzbekistan |
 | Spotted hyena | Crocuta crocuta | 4 | Ethiopia, Kenya, Tanzania |
 | Water buffalo | Bubalus bubalis | 4 | Iraq, Laos, Vietnam |
 | Arabian wolf | Canis lupus arabs | 4 | Saudi Arabia, Yemen |
-| Bearded vulture | Gypaetus barbatus | 4 | Austria, France |
 | Bongo | Tragelaphus eurycerus | 4 | Central African Republic, Ivory Coast |
-| Brown bear | Ursus arctos | 4 | Spain, France |
-| Drill | Mandrillus leucophaeus | 4 | Cameroon, Nigeria |
 | Gaur | Bos gaurus | 4 | Myanmar, Thailand |
 | Giant eland | Taurotragus derbianus | 4 | Central African Republic, Cameroon |
 | Grey crowned crane | Balearica regulorum | 4 | Burundi, Rwanda |
 | Himalayan brown bear | Ursus arctos isabellinus | 4 | Afghanistan, Pakistan |
 | Hoolock gibbon | Hoolock hoolock | 4 | Bangladesh, Myanmar |
-| Moorish gecko | Tarentola mauritanica | 4 | Morocco, Malta |
 | Nubian ibex | Capra nubiana | 4 | Egypt, Sudan |
 | Sloth bear | Melursus ursinus | 4 | India, Sri Lanka |
 | Water deer | Hydropotes inermis | 4 | South Korea, North Korea |
 | West African manatee | Trichechus senegalensis | 4 | Nigeria, Senegal |
-| Wild boar | Sus scrofa | 4 | Belgium, Iran |
 | Arabian tahr | Arabitragus jayakari | 4 | Oman |
-| Bald eagle | Haliaeetus leucocephalus | 4 | United States of America |
 | Blue wildebeest | Connochaetes taurinus | 4 | Eswatini |
 | Bukhara deer | Cervus hanglu bactrianus | 4 | Uzbekistan |
 | Burmese python | Python bivittatus | 4 | Myanmar |
@@ -251,8 +203,6 @@ zoom — then by how many countries are waiting on it.
 | Greater flamingo | Phoenicopterus roseus | 4 | Iran |
 | Griffon vulture | Gyps fulvus | 4 | Greece |
 | Gyrfalcon | Falco rusticolus | 4 | Iceland |
-| Harbour seal | Phoca vitulina | 4 | Iceland |
-| Irish hare | Lepus timidus hibernicus | 4 | Ireland |
 | Korean magpie | Pica serica | 4 | South Korea |
 | Lesser flamingo | Phoeniconaias minor | 4 | Kenya |
 | Mongolian gazelle | Procapra gutturosa | 4 | Mongolia |
@@ -265,8 +215,6 @@ zoom — then by how many countries are waiting on it.
 | Purple-faced langur | Semnopithecus vetulus | 4 | Sri Lanka |
 | Rattlesnake | Crotalus | 4 | United States of America |
 | Roadrunner | Geococcyx californianus | 4 | United States of America |
-| Roe deer | Capreolus capreolus | 4 | Belgium |
-| Saltwater crocodile | Crocodylus porosus | 4 | Bangladesh |
 | Scottish wildcat | Felis silvestris silvestris | 4 | United Kingdom |
 | Siamese crocodile | Crocodylus siamensis | 4 | Cambodia |
 | Spanish ibex | Capra pyrenaica | 4 | Spain |
@@ -290,7 +238,6 @@ zoom — then by how many countries are waiting on it.
 | Chacma baboon | Papio ursinus | 5 | South Africa |
 | Chinkara | Gazella bennettii | 5 | Pakistan |
 | Coati | Nasua narica | 5 | Mexico |
-| Common buzzard | Buteo buteo | 5 | Netherlands |
 | Common genet | Genetta genetta | 5 | Morocco |
 | Dibatag | Ammodorcas clarkei | 5 | Somalia |
 | Douc langur | Pygathrix | 5 | Laos |
@@ -304,7 +251,6 @@ zoom — then by how many countries are waiting on it.
 | Mugger crocodile | Crocodylus palustris | 5 | Sri Lanka |
 | Palawan peacock-pheasant | Polyplectron napoleonis | 5 | Philippines |
 | Pileated gibbon | Hylobates pileatus | 5 | Cambodia |
-| Pine marten | Martes martes | 5 | Ireland |
 | Roan antelope | Hippotragus equinus | 5 | Senegal |
 | Rock hyrax | Procavia capensis | 5 | Lesotho |
 | Sacred ibis | Threskiornis aethiopicus | 5 | Egypt |
@@ -325,33 +271,11 @@ zoom — then by how many countries are waiting on it.
 | Black woodpecker | Dryocopus martius | 6 | Belgium |
 | Euphrates softshell turtle | Rafetus euphraticus | 6 | Iraq |
 | Grey rhebok | Pelea capreolus | 6 | Lesotho |
-| Heron | Ardeidae | 6 | Malta |
-| Least weasel | Mustela nivalis | 6 | Malta |
-| Marbled polecat | Vormela peregusna | 6 | Uzbekistan |
 | Olive colobus | Procolobus verus | 6 | Ivory Coast |
 | Red-tailed monkey | Cercopithecus ascanius | 6 | Angola |
 | Socotra starling | Onychognathus frater | 6 | Yemen |
-| Buzzard | — | 6 | its world range |
-| Grass Snake | — | 6 | its world range |
-| Hoopoe | — | 6 | its world range |
-| Llama | — | 6 | its world range |
-| Mole | — | 6 | its world range |
-| Orangutan | Pongo | 6 | its world range |
-| Stoat | — | 6 | its world range |
-| Weasel | — | 6 | its world range |
 | Madagascar hissing cockroach | Gromphadorhina portentosa | 7 | Madagascar |
-| Octopus | Octopoda | 7 | Malta |
-| Shrew | Soricidae | 7 | Malta |
-| Bat | Chiroptera | 8 | Malta |
-| Common moorhen | Gallinula chloropus | 8 | Malta |
-| Sicilian shrew | Crocidura sicula | 8 | Malta |
-| Sparrow | Passeridae | 8 | Malta |
-| Swift | Apodidae | 8 | Malta |
 | Welwitschia beetle | Ochryonota | 8 | Namibia |
-| Bee-eater | Meropidae | 9 | Malta |
-| Egret | Ardeidae | 9 | Malta |
-| Kingfisher | Alcedinidae | 9 | Malta |
-| Ocellated skink | Chalcides ocellatus | 10 | Malta |
 
 ## Landmarks — the famous ones
 
@@ -359,318 +283,34 @@ Visible from the whole-Earth view. These are the ones a child goes looking for.
 
 | Landmark | Country |
 | --- | --- |
-| Aconcagua | Argentina |
-| Acropolis of Athens | Greece |
-| Ajanta Caves | India |
-| Al-Masjid Al-Haram | Saudi Arabia |
 | Amazon River | Brazil |
-| Angkor | Cambodia |
-| Antigua | Antigua and Barbuda |
-| Auschwitz concentration camp | Poland |
-| Baekdu Mountain | North Korea |
-| Bagan | Myanmar |
-| Bali Island | Indonesia |
-| Brandenburg Gate | Germany |
-| British Museum | United Kingdom |
-| Buddhas of Bamiyan | Afghanistan |
-| Byblos | Lebanon |
-| Chichén Itzá | Mexico |
-| Chimborazo | Ecuador |
-| Christ the Redeemer | Brazil |
-| Crete | Greece |
-| Cyrene | Libya |
-| Easter Island | Chile |
-| Eyjafjallajökull | Iceland |
-| Ferghana Valley | Tajikistan |
-| Forbidden City | People's Republic of China |
-| Fushimi Inari Shrine | Japan |
-| Grand Canyon | United States of America |
-| Great Barrier Reef | Australia |
-| Great Pyramid of Giza | Egypt |
-| Great Sphinx | Egypt |
-| Great Wall of China | People's Republic of China |
-| Iguaçu Falls | Brazil |
-| Issyk-Kul | Kyrgyzstan |
-| Jan Mayen | Norway |
-| Jeju Island | South Korea |
-| Kanchenjunga | Nepal |
-| Laacher See | Germany |
-| Lake Albert | Democratic Republic of the Congo |
-| Lake Balaton | Hungary |
-| Lake Balkhash | Kazakhstan |
-| Lake Chad | Nigeria |
-| Lake Maggiore | Switzerland |
-| Lake Malawi | Mozambique |
-| Lake Maracaibo | Venezuela |
-| Lake Nicaragua | Nicaragua |
-| Lake Sevan | Armenia |
-| Lake Turkana | Ethiopia |
-| Louvre | France |
-| Mallorca | Spain |
-| Matterhorn | Switzerland |
-| Moai of Rapa Nui | Chile |
-| Mode Gakuen Cocoon Tower | Japan |
-| Mohenjo-daro | Pakistan |
-| Mount Elbrus | Russia |
-| Mount Etna | Italy |
-| Mount Everest | Nepal |
-| Mount Fuji | Japan |
-| Mount Kilimanjaro | Tanzania |
-| Mount Kosciuszko | Australia |
-| Mount Logan | Canada |
-| Neuschwanstein Castle | Germany |
-| Niagara Falls | Canada |
-| Nineveh | Iraq |
-| Notre-Dame de Paris | France |
-| Palmyra | Syria |
-| Popocatépetl | Mexico |
-| Pyramids of Giza | Egypt |
-| Red Square | Russia |
-| Saaremaa | Estonia |
-| Saimaa | Finland |
-| Saint Basil's Cathedral | Russia |
-| Saint Martin | Sint Maarten |
-| Sark | Guernsey |
-| Sea of Galilee | Israel |
-| Socotra | Yemen |
 | Son Doong Cave | Vietnam |
-| South Pole | Antarctica |
-| St Peter's Basilica | Vatican City |
-| Stonehenge | United Kingdom |
-| Table Mountain | South Africa |
-| The Kremlin | Russia |
-| Three Gorges Dam | People's Republic of China |
-| Titicaca | Bolivia |
-| Trinidad | Trinidad and Tobago |
-| Troy | Turkey |
-| Uluru | Australia |
-| Urmia Lake | Iran |
-| Vänern | Sweden |
-| Victoria Falls | Zimbabwe |
-| Western Wall | Israel |
-| Zealand | Denmark |
-| Adam's Peak | Sri Lanka |
-| Ajloun | Jordan |
-| Alderney | Guernsey |
-| Alexander Nevsky Cathedral | Bulgaria |
-| Alexander von Humboldt National Park | Cuba |
-| Annobón Island | Equatorial Guinea |
-| Aswan Dam | Egypt |
-| Babeldaob | Palau |
-| Bahla Fort | Oman |
-| Banaba Island | Kiribati |
-| Banc d'Arguin National Park | Mauritania |
 | Basilica and Expiatory Church of the Holy Family | Spain |
-| Belize Barrier Reef | Belize |
-| Beqaa Valley | Lebanon |
-| Białowieża Forest | Belarus |
-| Bibi-Khanym Mosque | Uzbekistan |
-| Blue Mosque | Turkey |
-| Bouvet Island | Norway |
-| Brú na Bóinne | Ireland |
-| Burkhan Khaldun | Mongolia |
-| Caral | Peru |
-| Chan Chan | Peru |
-| Changdeokgung | South Korea |
-| Chobe National Park | Botswana |
-| Church of Saint Sava | Serbia |
-| Citlaltepetl | Mexico |
-| Coiba | Panama |
-| Coma Pedrosa | Andorra |
-| Comoé National Park | Ivory Coast |
-| Cotopaxi volcano | Ecuador |
-| Crimean Bridge | Ukraine |
-| Damavand | Iran |
-| Darién National Park | Panama |
 | Delphi | Greece |
-| Dja Faunal Reserve | Cameroon |
-| Djoudj National Bird Sanctuary | Senegal |
-| Dojran Lake | North Macedonia |
-| Dougga | Tunisia |
-| Efate | Vanuatu |
-| Emi Koussi | Chad |
-| Espiritu Santo | Vanuatu |
-| Etosha National Park | Namibia |
-| Europa Island | Madagascar |
-| Freedom Monument | Latvia |
-| Funen | Denmark |
-| Galeras | Colombia |
-| Gangkhar Puensum | Bhutan |
 | Geghard | Armenia |
-| Gelati Monastery | Georgia |
-| Gerlachovský štít | Slovakia |
-| Gunnbjørn Fjeld | Greenland |
-| Gur-e Amir | Uzbekistan |
-| Heaven Lake | North Korea |
-| Hiiumaa | Estonia |
-| Hill of Crosses | Lithuania |
 | Hiroshima Peace Memorial | Japan |
-| Horezu monastery | Romania |
 | Hortobágy National Park | Hungary |
 | Hunga Tonga–Hunga Haʻapai | Tonga |
 | Hvar | Croatia |
-| Iguaçu Falls | Argentina |
-| Inle Lake | Myanmar |
-| Iron Gate | Serbia |
-| Isla de la Juventud | Cuba |
-| Ismoil Somoni Peak | Tajikistan |
-| Israel Museum | Israel |
-| Itaipu Dam | Paraguay |
-| Jbel Toubkal | Morocco |
-| Jebel Barkal | Sudan |
-| Jerónimos Monastery | Portugal |
 | Jungfraujoch | Switzerland |
-| Kasubi Tombs | Uganda |
-| Kerkouane | Tunisia |
-| Khan Tengri | Kyrgyzstan |
-| Khirokitia | Cyprus |
-| Khövsgöl Lake | Mongolia |
-| Kinabalu Park | Malaysia |
-| Kiyomizu-dera Temple | Japan |
-| Ko Samui | Thailand |
 | Komodo National Park | Indonesia |
-| Köpet Dag | Turkmenistan |
-| Krakatoa | Indonesia |
-| Krk | Croatia |
-| Lake Abbe | Djibouti |
-| Lake Bangweulu | Zambia |
-| Lake Chilwa | Malawi |
-| Lake Constance | Germany |
-| Lake Inari | Finland |
-| Lake Kariba | Zimbabwe |
-| Lake Kivu | Democratic Republic of the Congo |
-| Lake Kyoga | Uganda |
-| Lake Ladoga | Russia |
 | Lake Louise | Canada |
-| Lake Lugano | Switzerland |
-| Lake Managua | Nicaragua |
-| Lake Nakuru | Kenya |
-| Lake Nasser | Sudan |
-| Lake Natron | Tanzania |
-| Lake Nyos | Cameroon |
-| Lake Ohrid | Albania |
-| Lake Prespa | Albania |
-| Lake Skadar | Montenegro |
-| Lake Tana | Ethiopia |
-| Lake Taupō | New Zealand |
-| Lake Titicaca | Peru |
-| Lake Volta | Ghana |
-| Lake Winnipeg | Canada |
-| Lake Zaysan | Kazakhstan |
-| Lala Mustafa Pasha Mosque | Cyprus |
 | Loch Ness | United Kingdom |
-| Lord Howe Island | Australia |
 | Luxor Temple | Egypt |
-| Maglić | Bosnia and Herzegovina |
-| Maiden Tower | Azerbaijan |
-| Malaita | Solomon Islands |
-| Mana Pools National Park | Zimbabwe |
-| Manaslu | Nepal |
-| Manovo-Gounda St. Floris National Park | Central African Republic |
-| Margarita Island | Venezuela |
-| Mayon Volcano | Philippines |
-| Mehmed Paša Sokolović Bridge | Bosnia and Herzegovina |
-| Merv | Turkmenistan |
-| Minaret of Jam | Afghanistan |
-| Mineirão | Brazil |
-| moai | Chile |
 | Mont Blanc | France |
-| Monte Titano | San Marino |
-| Mount Ararat | Turkey |
-| Mount Kailash | People's Republic of China |
-| Mount Karisimbi | Rwanda |
-| Mount Kota Kinabalu | Malaysia |
-| Mount Roraima | Guyana |
-| Mount Wilhelm | Papua New Guinea |
-| Musala | Bulgaria |
-| Nairobi National Park | Kenya |
-| Nanga Parbat | Pakistan |
-| Nesvizh Castle | Belarus |
-| Nevado del Ruiz | Colombia |
-| Newgrange | Ireland |
 | Ngorongoro Crater | Tanzania |
-| Niagara Falls | United States of America |
-| Niokolo-Koba National Park | Senegal |
-| Northeast Greenland National Park | Greenland |
-| Onze-Lieve-Vrouwekathedraal | Belgium |
-| Palace of the Shirvanshahs | Azerbaijan |
 | Pantanal | Brazil |
 | Pantheon | Italy |
-| Paro Taktsang | Bhutan |
-| Parthenon | Greece |
-| Pendjari National Park | Benin |
-| Phú Quốc | Vietnam |
-| Pinatubo | Philippines |
-| Plain of Jars | Laos |
-| Pohnpei | Federated States of Micronesia |
 | Pompeii | Italy |
-| Postojna Cave | Slovenia |
-| Praslin | Seychelles |
 | Preikestolen | Norway |
 | Qal’at al Bahrain | Bahrain |
-| Qasr Amra | Jordan |
-| Quba Mosque | Saudi Arabia |
-| Quiriguá | Guatemala |
-| Red Fort | India |
-| Riga Cathedral | Latvia |
-| Río Plátano Biosphere Reserve | Honduras |
 | Robben Island | South Africa |
 | Roman Forum | Italy |
-| Rukwa Lake | Tanzania |
-| Saint Vincent | Saint Vincent and the Grenadines |
-| Sal | Cape Verde |
-| Santiago | Cape Verde |
 | Santorini caldera | Greece |
-| São Paulo Museum of Art | Brazil |
-| Savai'i | Samoa |
-| Shkhara | Georgia |
-| Singapore Botanic Gardens | Singapore |
-| Sinharaja Forest Reserve | Sri Lanka |
-| Snake Island | Ukraine |
-| Sněžka | Czech Republic |
-| Somapura Mahavihara | Bangladesh |
-| Spiš Castle | Slovakia |
-| St. Stephen's Cathedral | Austria |
-| St. Vitus Cathedral | Czech Republic |
-| Stećak | Montenegro |
-| Stewart Island/Rakiura | New Zealand |
-| Stone spheres of Costa Rica | Costa Rica |
-| Surtsey | Iceland |
-| Tadrart Acacus | Libya |
-| Taï National Park | Ivory Coast |
-| Tassili n'Ajjer | Algeria |
-| Timgad | Algeria |
-| Tiwanaku | Bolivia |
-| Tobago | Trinidad and Tobago |
-| Tomb of Askia | Mali |
-| Tongatapu | Tonga |
-| Tonlé Sap | Cambodia |
-| Tournai Cathedral | Belgium |
-| Tower of Belém | Portugal |
 | Tower of London | United Kingdom |
-| Triglav | Slovenia |
-| Tsingy de Bemaraha Strict Nature Reserve | Madagascar |
-| Tsodilo | Botswana |
-| Tugela Falls | South Africa |
-| Umayyad Mosque | Syria |
-| Upolu | Samoa |
-| Ur | Iraq |
 | Valley of the Kings | Egypt |
-| Vanua Levu | Fiji |
-| Vasco da Gama Bridge | Portugal |
-| Vat Phou | Laos |
 | Vatican Museums | Italy |
-| Vättern | Sweden |
-| Venus of Willendorf | Austria |
-| Vieques | Puerto Rico |
-| Volcán de Fuego | Guatemala |
-| Volubilis | Morocco |
-| Vredefort crater | South Africa |
-| W National Park | Niger |
-| Wat Phra Kaew | Thailand |
 | Westminster Abbey | United Kingdom |
-| Wikipedia Monument | Poland |
-| Zubarah | Qatar |
 
 ## Landmarks — well known
 
@@ -678,882 +318,152 @@ Visible once a child is looking at a region.
 
 | Landmark | Country |
 | --- | --- |
-| Aachen Cathedral | Germany |
 | Abraj Al Bait | Saudi Arabia |
 | Aletsch Glacier | Switzerland |
-| Alexander Nevsky Cathedral | Estonia |
 | Amber Fort | India |
 | Amboseli | Kenya |
-| Angkor Thom | Cambodia |
-| Apollonia | Albania |
-| Apostolic Palace | Vatican City |
 | Astronomical Clock | Czech Republic |
 | Ayutthaya | Thailand |
-| Bagrati Cathedral | Georgia |
-| Baku TV Tower | Azerbaijan |
-| Ban Chiang | Thailand |
-| Batu Caves | Malaysia |
 | Bay of Fundy | Canada |
-| Beerenberg | Norway |
-| Belvedere | Austria |
 | Berlin Wall Memorial | Germany |
-| Birka | Sweden |
 | Black Forest | Germany |
-| Blue Mosque | Afghanistan |
 | Blue Mountains | Australia |
-| Bojnice Castle | Slovakia |
-| Boyana Church | Bulgaria |
-| Brest Fortress | Belarus |
-| Buda Castle | Hungary |
-| Capernaum | Israel |
 | Carcassonne | France |
 | Český Krumlov | Czech Republic |
 | Champs-Élysées | France |
-| Chersonesus | Ukraine |
-| Chillon Castle | Switzerland |
-| Chogha Zanbil | Iran |
 | Church of the Savior on Blood | Russia |
 | Copacabana | Brazil |
 | Copper Canyon | Mexico |
-| Diocletian's Palace | Croatia |
 | Douro Valley | Portugal |
 | Drakensberg | South Africa |
-| Drottningholm Palace | Sweden |
 | Egyptian Museum | Egypt |
-| Ellora Caves | India |
-| Ephesus | Turkey |
-| Erebuni Fortress | Armenia |
-| Erta Ale | Ethiopia |
-| Etchmiadzin Cathedral | Armenia |
-| Fasil Ghebbi | Ethiopia |
 | Fitz Roy | Argentina |
 | Gamla Stan | Sweden |
 | Grand Canal | Italy |
-| Great Manmade River | Libya |
-| Great Mosque of Aleppo | Syria |
-| Great Mosque of Kairouan | Tunisia |
 | Great Rift Valley | Kenya |
 | Grossglockner | Austria |
 | Hadrian's Wall | United Kingdom |
-| Hallasan | South Korea |
 | Hallstatt Lake | Austria |
-| Harappa | Pakistan |
-| Hekla | Iceland |
-| Hel Peninsula | Poland |
-| Helsinki Cathedral | Finland |
-| Hkakabo Razi | Myanmar |
 | Hofburg | Austria |
-| Ichkeul National Park | Tunisia |
-| Ilha da Queimada Grande | Brazil |
-| Imam Ali Mosque | Iraq |
-| Isabela Island | Ecuador |
-| Ishtar Gate | Iraq |
 | Kakadu National Park | Australia |
-| Karakul | Tajikistan |
-| Karlštejn Castle | Czech Republic |
 | Keukenhof | Netherlands |
-| Khao Yai National Park | Thailand |
-| Khone Phapheng Falls | Laos |
-| Khyber Pass | Pakistan |
 | Knossos | Greece |
-| Koutoubia Mosque | Morocco |
 | Kraków Old Town | Poland |
-| Kyiv Pechersk Lavra | Ukraine |
-| L'Anse aux Meadows | Canada |
-| Lago de Atitlán | Guatemala |
-| Lake Bohinj | Slovenia |
 | Lake Geneva | Switzerland |
-| Lake Ritsa | Georgia |
 | Lake Toba | Indonesia |
-| Lake Van | Turkey |
-| Laki | Iceland |
 | Lençóis Maranhenses | Brazil |
 | Leshan Giant Buddha | People's Republic of China |
 | Li River | People's Republic of China |
-| Lighthouse of Alexandria | Egypt |
-| Llullaillaco | Argentina |
 | Lofoten | Norway |
-| Lombok Island | Indonesia |
-| Mactan | Philippines |
-| Madeira Island | Portugal |
-| Mari | Syria |
-| Mausoleum of Khoja Ahmed Yasawi | Kazakhstan |
-| Merapi | Indonesia |
-| Mexico City Metropolitan Cathedral | Mexico |
 | Mezquita of Córdoba | Spain |
 | Milan Cathedral | Italy |
-| Monastery of Saint John of Rila | Bulgaria |
 | Monument Valley | United States of America |
-| Mount Arafat | Saudi Arabia |
-| Mount Elgon | Uganda |
 | Mount Nemrut | Turkey |
-| Mount Nimba Strict Nature Reserve | Ivory Coast |
-| Mount Nyiragongo | Democratic Republic of the Congo |
-| Mount Olympus | Greece |
-| Mount Olympus | Cyprus |
-| Mount Pico | Portugal |
-| Mount Ruapehu | New Zealand |
-| Mount Tahat | Algeria |
-| Mỹ Sơn | Vietnam |
-| Napata | Sudan |
-| National Art Museum of Azerbaijan | Azerbaijan |
-| Nisa | Turkmenistan |
-| Norak Dam | Tajikistan |
 | North Cape | Norway |
-| Nyamuragira | Democratic Republic of the Congo |
-| Ojos del Salado | Argentina |
 | Old Quebec | Canada |
 | Olympia | Greece |
-| Øresund Bridge | Denmark |
-| Osorno | Chile |
-| Parinacota | Bolivia |
 | Parliament Hill | Canada |
-| Pashupatinath Temple | Nepal |
-| Petäjävesi Old Church | Finland |
 | Phi Phi Islands | Thailand |
-| Phou Bia | Laos |
-| Pico Cristóbal Colón | Colombia |
-| Pico do Fogo | Cape Verde |
-| Poopó Lake | Bolivia |
 | Prado Museum | Spain |
-| Prague Astronomical Clock | Czech Republic |
-| Puerto Princesa Subterranean River National Park | Philippines |
-| Qal'at Bani Hammad | Algeria |
 | Raja Ampat | Indonesia |
 | Reichstag | Germany |
-| Rhine Falls | Switzerland |
-| Riga Castle | Latvia |
-| Robinson Crusoe Island | Chile |
-| Roskilde Cathedral | Denmark |
 | Rotorua geysers | New Zealand |
-| Rügen | Germany |
-| Rwenzori Mountains National Park | Uganda |
-| Salamis | Cyprus |
-| Sangay National Park | Ecuador |
 | Santiago de Compostela Cathedral | Spain |
-| Sarygamysh Lake | Turkmenistan |
 | Senso-ji | Japan |
-| Seokguram | South Korea |
-| Sirmium | Serbia |
-| Sistine Chapel | Vatican City |
 | Skellig Michael | Ireland |
-| Škocjan Caves | Slovenia |
-| Sparta | Greece |
 | St Paul's Cathedral | United Kingdom |
-| Studenica monastery | Serbia |
 | Suez Canal | Egypt |
 | Summer Palace | People's Republic of China |
-| Susa | Iran |
-| Széchenyi Chain Bridge | Hungary |
-| Tamgaly | Kazakhstan |
 | Tanah Lot | Indonesia |
 | Tatra Mountains | Poland |
-| Tatra National Park | Slovakia |
-| Teide | Spain |
 | Temple of Heaven | People's Republic of China |
-| Thien Duong Cave | Vietnam |
-| Times Square | United States of America |
 | Todai-ji | Japan |
 | Tongariro Crossing | New Zealand |
-| Tongariro National Park | New Zealand |
-| Toompea Castle | Estonia |
 | Topkapi Palace | Turkey |
 | Trans-Siberian Railway | Russia |
 | Tulum | Mexico |
-| Tuol Sleng torture center | Cambodia |
-| Umm ar-Rasas | Jordan |
-| Urnes Stave Church | Norway |
-| Uxmal | Mexico |
 | Valdés Peninsula | Argentina |
 | Van Gogh Museum | Netherlands |
 | Varanasi Ghats | India |
-| Vis (island) | Croatia |
-| Wachau | Austria |
 | Wadden Sea | Netherlands |
 | Wat Pho | Thailand |
-| Wawel Cathedral | Poland |
 | White Temple | Thailand |
 | Wieliczka Salt Mine | Poland |
-| Winter Palace | Russia |
-| Yad Vashem | Israel |
 | Zhangjiajie | People's Republic of China |
-| Zorkul | Afghanistan |
 | Zugspitze | Germany |
 | Abisko National Park | Sweden |
-| Abu Simbel | Egypt |
-| Abuja National Mosque | Nigeria |
-| Abuko Nature Reserve | The Gambia |
-| Achill Island | Ireland |
-| Actun Tunichil Muknal | Belize |
-| Ada Kaleh | Romania |
-| Adulis | Eritrea |
-| African Renaissance Monument | Senegal |
 | Afsluitdijk | Netherlands |
-| Aïr and Ténéré National Nature Reserve | Niger |
-| Akosombo Dam | Ghana |
-| Al Fateh Grand Mosque | Bahrain |
-| Al-Askari Shrine | Iraq |
 | Alcatraz | United States of America |
-| Alcázar de Colón | Dominican Republic |
-| Alhambra | Spain |
-| Alpamayo | Peru |
-| Amazon Rainforest | Brazil |
-| Amber Mountain National Park | Madagascar |
-| Ananda Temple | Myanmar |
-| Angel Falls | Venezuela |
 | Angel of Independence | Mexico |
-| Ankaratra | Madagascar |
-| Aoudaghost | Mauritania |
-| Aranuka | Kiribati |
-| Arc de Triomphe | France |
-| Arch of Neutrality | Turkmenistan |
-| Arch of Triumph | North Korea |
-| Ardoukoba | Djibouti |
-| Arguin | Mauritania |
-| Arli National Park | Burkina Faso |
-| Arno Atoll | Marshall Islands |
-| Atauro | East Timor |
-| Atiu | Cook Islands |
-| Atomium | Belgium |
-| Augrabies Falls | South Africa |
-| Aukštojas Hill | Lithuania |
-| Avenue of the Baobabs | Madagascar |
-| Avukana Buddha statue | Sri Lanka |
-| Aydar Lake | Uzbekistan |
 | Backwaters of Kerala | India |
-| Badshahi Mosque | Pakistan |
-| Baitul Mukarram National Mosque | Bangladesh |
-| Bălănești Hill | Moldova |
-| Balasagun | Kyrgyzstan |
-| Banff National Park | Canada |
-| Bangladesh National Museum | Bangladesh |
-| Bardo National Museum | Tunisia |
-| Basílica Catedral Metropolitana Santa María de la Encarnación | Dominican Republic |
-| Basilica di San Marino | San Marino |
-| Bat, Al-Khutm and Al-Ayn archaeological sites | Oman |
-| Batalha Monastery | Portugal |
-| Bayterek | Kazakhstan |
-| Belarusian National Arts Museum | Belarus |
-| Belém Tower | Portugal |
-| Bequia | Saint Vincent and the Grenadines |
-| Berg Castle | Luxembourg |
 | Bern Old Town | Switzerland |
 | Binnenhof | Netherlands |
 | Blarney Castle | Ireland |
-| Blue and John Crow Mountains National Park | Jamaica |
-| Blue Mountain Peak | Jamaica |
 | Blyde River Canyon | South Africa |
-| Bolaven Plateau | Laos |
 | Bom Jesus do Monte | Portugal |
 | Bondi Beach | Australia |
-| Bora Bora | French Polynesia |
-| Borobudur | Indonesia |
-| Bosnian pyramid claims | Bosnia and Herzegovina |
-| Botanical Garden of Mérida | Venezuela |
 | Boulders Beach | South Africa |
-| Boyoma Falls | Democratic Republic of the Congo |
-| Bran Castle | Romania |
-| Brandberg | Namibia |
-| Brattahlíð | Greenland |
-| Bridge of the Americas | Panama |
-| Bridge of the Slovak National Uprising | Slovakia |
-| Brokopondo Reservoir | Suriname |
-| Buckingham Palace | United Kingdom |
-| Buddha Dordenma statue | Bhutan |
 | Cabo da Roca | Portugal |
-| Calf of Man | Isle of Man |
-| Capanda Dam | Angola |
-| Cape of Good Hope | South Africa |
-| Cappadocia | Turkey |
-| Căpriana monastery | Moldova |
-| Caracol | Belize |
 | Castel Sant'Angelo | Italy |
-| Castillo de San Pedro de la Roca | Cuba |
-| Cathedral of Our Lady of the Assumption | Haiti |
-| Cayman Brac | Cayman Islands |
 | Cenote Ik Kil | Mexico |
-| Central Island | Kenya |
-| Central Suriname Nature Reserve | Suriname |
-| Cerro Chirripó | Costa Rica |
-| Cerro El Pital | El Salvador |
 | Chambord | France |
-| Charles Bridge | Czech Republic |
-| Che Guevara Mausoleum | Cuba |
-| Chiang Kai-shek Memorial Hall | Taiwan |
-| Chinguetti Mosque | Mauritania |
-| Chongoni Rock Art Area | Malawi |
-| Christoffelberg | Curaçao |
-| Church of Cristo Obrero y Nuestra Señora de Lourdes | Uruguay |
-| Church of Saint George | Ethiopia |
-| Church of Saints Simon and Helena | Belarus |
-| Church of the Nativity | Palestine |
-| Citadel of Salah Ed-Din | Syria |
-| Cliffs of Moher | Ireland |
 | Colca Canyon | Peru |
-| Cologne Cathedral | Germany |
-| Concepción | Nicaragua |
-| Corisco | Equatorial Guinea |
-| Coropuna | Peru |
-| Corvin Castle | Romania |
-| Dambulla cave temple | Sri Lanka |
-| Dasht-e Lut | Iran |
-| Day Forest National Park | Djibouti |
-| Dettifoss | Iceland |
-| Dharahara | Nepal |
 | Diani Beach | Kenya |
 | Djamaa El Kebir of Algiers | Algeria |
-| Djinguereber Mosque | Mali |
-| Dublin Castle | Ireland |
-| Dubrovnik Old Town | Croatia |
-| Ducie Island | Pitcairn Islands |
-| Duomo of Florence | Italy |
-| East Rennell | Solomon Islands |
-| Ébrié Lagoon | Ivory Coast |
-| Edinburgh Castle | United Kingdom |
-| El Fuerte de Samaipata | Bolivia |
-| Eleuthera | The Bahamas |
-| Elmina Castle | Ghana |
-| Elobey Chico | Equatorial Guinea |
-| Elobey Grande | Equatorial Guinea |
-| Emlembe | Eswatini |
-| Epupa Falls | Namibia |
-| Et'hem Bey Mosque | Albania |
-| Faisal Mosque | Pakistan |
 | Fakr ad-Din Mosque | Somalia |
-| Falknis | Liechtenstein |
-| Fansipan | Vietnam |
-| Ferrari World Abu Dhabi | United Arab Emirates |
 | First Thai–Lao Friendship Bridge | Thailand |
-| Fort Zeelandia | Taiwan |
-| Fort Zeelandia | Suriname |
-| Fortaleza Ozama | Dominican Republic |
 | Franz Josef Glacier | New Zealand |
-| Friendship Bridge | Paraguay |
-| Fuvahmulah | Maldives |
-| Galápagos Islands | Ecuador |
-| Gandantegchinlen Monastery | Mongolia |
-| Ganghwa Island | South Korea |
-| Gardens by the Bay | Singapore |
-| Garni Temple | Armenia |
-| Gate of Dawn | Lithuania |
-| Gateway of India | India |
-| Gauḍa | Bangladesh |
-| Gauja National Park | Latvia |
-| Gazi Husrev-beg Mosque | Bosnia and Herzegovina |
-| Gediminas' Tower | Lithuania |
-| Geirangerfjord | Norway |
-| General Rafael Urdaneta Bridge | Venezuela |
-| Genghis Khan Equestrian Statue | Mongolia |
-| Geysir | Iceland |
-| Goguryeo tombs | North Korea |
-| Golden Temple | India |
-| Gonâve Island | Haiti |
-| Grand Cayman | Cayman Islands |
-| Grand Ducal Palace | Luxembourg |
-| Grand Erg Oriental | Libya |
-| Grand Ethiopian Renaissance Dam | Ethiopia |
-| Grand Harbour | Malta |
-| Grand Mosque | Kuwait |
-| Grand Palace | Thailand |
-| Grand-Place of Brussels | Belgium |
-| Grande de Buba River | Guinea-Bissau |
-| Great Mosque of Agadez | Niger |
-| Great Mosque of Asmara | Eritrea |
-| Great Mosque of Djenné | Mali |
-| Great Mosque of Sana'a | Yemen |
-| Great Sand Sea | Libya |
-| Guaíra Falls | Paraguay |
 | Guggenheim Bilbao | Spain |
-| Gurgi Mosque | Libya |
-| Guri Dam | Venezuela |
-| Gyeongbokgung Palace | South Korea |
-| Ha Long Bay | Vietnam |
-| Hanish Islands | Yemen |
-| Hassan II Mosque | Morocco |
-| Hassan Tower | Morocco |
-| Havana Cathedral | Cuba |
-| Hegra | Saudi Arabia |
 | Heidelberg Castle | Germany |
-| Hermann Castle | Estonia |
-| Hermitage Museum | Russia |
-| Himeji Castle | Japan |
-| Hobbiton | New Zealand |
-| Hoverla | Ukraine |
-| Hungarian Parliament | Hungary |
-| Iguazú Falls | Argentina |
-| Île à Vache | Haiti |
-| Ilheu Bom Bom | São Tomé and Príncipe |
-| Ilulissat Icefjord | Greenland |
-| Imam Muhammad ibn Abd al-Wahhab Mosque | Qatar |
-| Inagua | The Bahamas |
-| Inga Falls | Democratic Republic of the Congo |
-| Ingapirca | Ecuador |
-| Irazú Volcano | Costa Rica |
-| Islet of Rolas | São Tomé and Príncipe |
-| Istana Nurul Iman | Brunei |
-| Itsukushima Shrine | Japan |
-| Izalco | El Salvador |
-| Jabal al-Tair Island | Yemen |
-| Jabat Island | Marshall Islands |
-| Jame 'Asr Hassanil Bolkiah Mosque | Brunei |
-| Jamia Mosque | Hong Kong |
-| Jebel Uweinat | Sudan |
-| Jeita Grotto | Lebanon |
-| Jellyfish Lake | Palau |
-| Jemaa el-Fnaa | Morocco |
-| Jesús de Tavarangüé | Paraguay |
-| Jordan Valley | Jordan |
-| K2 | Pakistan |
-| Kadisha Valley | Lebanon |
-| Kainji Dam | Nigeria |
-| Kainji Lake | Nigeria |
-| Kalambo Falls | Zambia |
-| Kalyan Minaret | Uzbekistan |
-| Kao | Tonga |
-| Kaohsiung Mosque | Taiwan |
-| Kapellbrücke | Switzerland |
-| Karfiguéla waterfalls | Burkina Faso |
-| Kariba Dam | Zimbabwe |
-| Karnak Temple | Egypt |
-| Katse Dam | Lesotho |
-| Kavachi | Solomon Islands |
-| Kazungula Bridge | Botswana |
-| Ketchaoua Mosque | Algeria |
-| Khami | Zimbabwe |
-| Kili Island | Marshall Islands |
 | Konark Sun Temple | India |
-| Kondoa Rock Art Sites | Tanzania |
-| Kossou Dam | Ivory Coast |
-| Koutammakou | Benin |
-| Krubera Cave | Georgia |
-| Kruger National Park | South Africa |
-| Kuang Si Falls | Laos |
-| Kuk Swamp | Papua New Guinea |
-| Kula Kangri | Bhutan |
-| Kumsusan Palace of the Sun | North Korea |
-| Kuwae | Vanuatu |
-| Kyaiktiyo Pagoda | Myanmar |
-| La Santísima Trinidad del Paraná | Paraguay |
-| Laetoli | Tanzania |
-| Laguna Garzón Bridge | Uruguay |
-| Lake Baikal | Russia |
-| Lake Bosumtwi | Ghana |
-| Lake Débo | Mali |
-| Lake Enriquillo | Dominican Republic |
-| Lake Fitri | Chad |
-| Lake Ilopango | El Salvador |
-| Lake Izabal | Guatemala |
-| Lake Kossou | Ivory Coast |
-| Lake Malombe | Malawi |
-| Lake Monoun | Cameroon |
-| Lake Mweru Wantipa | Zambia |
-| Lake Nokoué | Benin |
-| Lake Togo | Togo |
-| Lake Tritriva | Madagascar |
-| Lake Yoa | Chad |
-| Lake Yojoa | Honduras |
-| Lalbagh Fort | Bangladesh |
-| Larabanga Mosque | Ghana |
-| Las Lajas Sanctuary | Colombia |
-| Laykyun Sekkya | Myanmar |
-| León Cathedral | Nicaragua |
-| Les Dirouilles | Jersey |
-| Lib Island | Marshall Islands |
-| Licancabur | Bolivia |
-| Livingstone Falls | Republic of the Congo |
-| Longwood House | Saint Helena |
-| Lovćen | Montenegro |
-| Maasai Mara | Kenya |
-| Madonna of Bruges | Belgium |
-| Magnus Cathedral | Faroe Islands |
-| Maho Beach | Sint Maarten |
-| Majlis al Jinn | Oman |
-| Makgadikgadi Pans | Botswana |
-| Malacañang Palace | Philippines |
-| Manantali Dam | Mali |
-| Manuae | Cook Islands |
-| Manuel Antonio National Park | Costa Rica |
 | Maracanã | Brazil |
-| Margat | Syria |
-| Marib Dam | Yemen |
-| Mariinskyi Palace | Ukraine |
-| Marina Bay Sands | Singapore |
-| Masirah Island | Oman |
-| Mauritius Island | Mauritius |
-| Mavrovo National Park | North Macedonia |
-| Mbamu | Republic of the Congo |
 | Melk Abbey | Austria |
-| Merelava | Vanuatu |
-| Merowe Dam | Sudan |
-| Meteora | Greece |
-| Metropolitan Basilica Cathedral of the Immaculate Conception and San Felipe and Santiago | Uruguay |
-| Milford Sound | New Zealand |
-| Misti | Peru |
-| Mogadishu Cathedral | Somalia |
-| Monastery of Saint Naum | North Macedonia |
-| Mont Saint-Michel | France |
 | Monte Albán | Mexico |
-| Monte Binga | Mozambique |
 | Moraine Lake | Canada |
-| Morne Diablotins | Dominica |
-| Morne Trois Pitons National Park | Dominica |
-| Mosi-oa-Tunya | Zambia |
-| Mosque Keizerstraat | Suriname |
-| Mosque of Islamic Solidarity | Somalia |
-| Mosque of Sheikh Ibrahim Al-Ibrahim | Venezuela |
-| Mosque of the Companions, Massawa | Eritrea |
-| Moucha Island | Djibouti |
 | Mount Athos | Greece |
-| Mount Balbi | Papua New Guinea |
-| Mount Jamanota | Aruba |
-| Mount Liamuiga | Saint Kitts and Nevis |
-| Mount Longonot | Kenya |
-| Mount Manengouba | Cameroon |
-| Mount Moco | Angola |
-| Mount Muhabura | Rwanda |
-| Mount Obama | Antigua and Barbuda |
-| Mount Rushmore | United States of America |
-| Mount Sabyinyo | Uganda |
-| Mount Saint Catherine | Grenada |
-| Mount Tenakourou | Burkina Faso |
-| Mount Vesuvius | Italy |
-| Mousa Ali | Eritrea |
-| Murchison Falls | Uganda |
 | Musée d'Orsay | France |
-| Musée océanographique de Monaco | Monaco |
 | Museum Island | Germany |
-| Museum of the Revolution | Cuba |
-| Mutarazi Falls | Zimbabwe |
-| Nabro Volcano | Eritrea |
-| Namdrik Atoll | Marshall Islands |
-| Nanumanga | Tuvalu |
-| Naqsh-e Jahan Square | Iran |
-| Narač | Belarus |
-| National Mosque of Malaysia | Malaysia |
-| National Museum of Afghanistan | Afghanistan |
-| National Museum of History of Azerbaijan | Azerbaijan |
-| National Museum of Qatar | Qatar |
-| National Palace | Haiti |
-| Nativity of Christ Cathedral | Moldova |
-| Nazca Lines | Peru |
-| Nevado del Huila | Colombia |
-| New Hanover Island | Papua New Guinea |
-| Ngonye Falls | Zambia |
-| Niah National Park | Malaysia |
-| Nidaros Cathedral | Norway |
-| Niuatoputapu | Tonga |
-| Niulakita | Tuvalu |
-| Nordostrundingen | Greenland |
-| Notre-Dame Cathedral | Luxembourg |
-| Nuuk Cathedral | Greenland |
-| Nyungwe Forest | Rwanda |
-| Okavango Delta | Botswana |
 | Olduvai Gorge | Tanzania |
-| Orchid Island | Taiwan |
-| Ordu-Baliq | Mongolia |
-| Ostrog monastery | Montenegro |
-| Osu Castle | Ghana |
-| Osun-Osogbo Grove | Nigeria |
-| Otrar | Kazakhstan |
-| Ouagadougou Cathedral | Burkina Faso |
 | Ouro Preto | Brazil |
-| Palace of Versailles | France |
-| Palm Jebel Ali | United Arab Emirates |
-| Palm Jumeirah | United Arab Emirates |
-| Panama Canal | Panama |
-| Panamá Viejo | Panama |
-| Panjshir Valley | Afghanistan |
 | Peace Palace | Netherlands |
-| Peleș Castle | Romania |
-| Perim | Yemen |
-| Perito Moreno Glacier | Argentina |
-| Persepolis | Iran |
-| Petite Martinique | Grenada |
-| Phnom Aural | Cambodia |
-| Pico Basilé | Equatorial Guinea |
-| Pico de São Tomé | São Tomé and Príncipe |
-| Pierres de Lecq | Jersey |
-| Pitons | Saint Lucia |
 | Plantin–Moretus Museum | Belgium |
-| Poás Volcano | Costa Rica |
-| Port d'Envalira | Andorra |
-| Potala Palace | People's Republic of China |
-| Prague Castle | Czech Republic |
-| Prambanan Temple | Indonesia |
-| Prince's Palace | Monaco |
-| Punakha Dzong | Bhutan |
-| Qacha's Nek | Lesotho |
-| Qilakitsoq | Greenland |
 | Quebrada de Humahuaca | Argentina |
-| Quissama National Park | Angola |
 | Railay Beach | Thailand |
 | Rainbow Mountain | Peru |
-| Registan | Uzbekistan |
 | Rhine Valley | Germany |
-| Rijksmuseum | Netherlands |
 | Ring of Kerry | Ireland |
-| Rock-Hewn Churches of Lalibela | Ethiopia |
-| Rogun Dam | Tajikistan |
-| Roman amphitheatre of Durrës | Albania |
-| Rongerik Atoll | Marshall Islands |
-| Roseires Dam | Sudan |
-| Rova of Antananarivo | Madagascar |
 | Royal Palace of Madrid | Spain |
-| Royal Palaces of Abomey | Benin |
-| Ruacana Falls | Namibia |
-| Rusumo Falls | Rwanda |
-| Ruvubu National Park | Burundi |
 | Sacré-Cœur | France |
 | Sacsayhuamán | Peru |
 | Sainte-Chapelle | France |
-| Salar de Uyuni | Bolivia |
 | Salzburg Old Town | Austria |
-| Samanid Mausoleum | Uzbekistan |
-| Sankore Madrasah | Mali |
-| Sans-Souci Palace | Haiti |
-| Santa Ana Volcano | El Salvador |
-| Santorini | Greece |
 | São João Baptista d’Ajudá | Benin |
-| Saona Island | Dominican Republic |
-| Sarazm | Tajikistan |
-| Šarena Mosque | North Macedonia |
-| Satawal | Federated States of Micronesia |
-| Schönbrunn Palace | Austria |
 | Segovia Aqueduct | Spain |
 | Selous Game Reserve | Tanzania |
-| Serengeti | Tanzania |
-| Shaheed Minar | Bangladesh |
-| Shanidar Cave | Iraq |
-| Sheikh Zayed Mosque | United Arab Emirates |
-| Sherbro Island | Sierra Leone |
 | Shibuya Crossing | Japan |
-| Shimbiris | Somalia |
-| Shwedagon Pagoda | Myanmar |
-| Sigiriya | Sri Lanka |
-| Silhouette Island | Seychelles |
-| Sino-Korean Friendship Bridge | North Korea |
 | Siwa Oasis | Egypt |
-| Snaefell | Isle of Man |
-| Śniardwy | Poland |
 | Snowdon | United Kingdom |
-| Sofala | Mozambique |
-| Soroca Fort | Moldova |
 | Sørvágsvatn | Faroe Islands |
-| Sossusvlei | Namibia |
-| South Aral Sea | Uzbekistan |
 | Spanish Steps | Italy |
-| Srebarna Nature Reserve | Bulgaria |
-| St John's Co-Cathedral | Malta |
-| St Mark's Square | Italy |
-| St. Peter's Church | Latvia |
-| Stari Ras | Serbia |
-| Sterkfontein | South Africa |
-| Stockholm Palace | Sweden |
-| Sugarloaf Mountain | Brazil |
 | Sukhothai | Thailand |
-| Sultan Abdul Samad Jamek Mosque | Malaysia |
-| Sultan Qaboos Grand Mosque | Oman |
-| Sun Moon Lake | Taiwan |
-| Sutjeska National Park | Bosnia and Herzegovina |
-| Suyab | Kyrgyzstan |
-| Swayambhunath | Nepal |
-| Sydney Harbour Bridge | Australia |
-| Taipei 101 | Taiwan |
-| Takalik Abaj | Guatemala |
-| Tarso Toussidé | Chad |
-| Tatamailau | East Timor |
-| Taveuni | Fiji |
 | Temple of Poseidon | Greece |
-| Temple of the Tooth | Sri Lanka |
-| Teotihuacan | Mexico |
-| Terracotta Army | People's Republic of China |
-| Thabana Ntlenyana | Lesotho |
-| The Cathedral of Bissau | Guinea-Bissau |
-| The Dubai Fountain | United Arab Emirates |
-| The Little Mermaid | Denmark |
-| The Pearl Island | Qatar |
-| Thimlich Ohinga | Kenya |
-| Tiger Island | Honduras |
-| Tiger's Nest | Bhutan |
-| Tikal | Guatemala |
-| Tokyo Tower | Japan |
-| Torres del Paine | Chile |
-| Tórshavn Cathedral | Faroe Islands |
-| Transfăgărășan | Romania |
-| Trevi Fountain | Italy |
 | Trinity College Library | Ireland |
-| Triumphal Arch, Chișinău | Moldova |
-| Türkmenbaşy Mosque | Turkmenistan |
-| Turku Castle | Finland |
-| Twyfelfontein | Namibia |
-| Ulawun | Papua New Guinea |
-| Vaduz Cathedral | Liechtenstein |
 | Valley of Geysers | Russia |
-| Verla | Finland |
-| Victoria Peak | Hong Kong |
-| Vilnius Cathedral | Lithuania |
 | Visby city wall | Sweden |
-| Volcan Baru | Panama |
-| Volcán Momotombo | Nicaragua |
-| Wadi Rum | Jordan |
-| Warbah Island | Kuwait |
 | Warsaw Old Town | Poland |
-| Wat Arun | Thailand |
-| White House | United States of America |
-| Windmills of Kinderdijk | Netherlands |
 | Windsor Castle | United Kingdom |
-| Xunantunich | Belize |
-| Yellowstone | United States of America |
-| Ypacaraí Lake | Paraguay |
 | Zaanse Schans | Netherlands |
 | Afri-Ski | Lesotho |
-| An-Nur Mosque | East Timor |
-| Arba'a Rukun Mosque | Somalia |
-| Aruba Natural Bridge | Aruba |
-| Assumption Cathedral, Kingstown | Saint Vincent and the Grenadines |
-| Belau National Museum | Palau |
-| Bermuda Aquarium, Museum and Zoo | Bermuda |
-| Beveridge Reef | Niue |
-| Blue Beach Military Cemetery at San Carlos | Falkland Islands |
-| Bobo Dioulasso Grand Mosque | Burkina Faso |
 | Bohemian Switzerland | Czech Republic |
-| Booby Island | Saint Kitts and Nevis |
-| Boubou Hama National Museum | Niger |
-| Brazzaville Zoo | Republic of the Congo |
-| Brickdam Cathedral | Guyana |
-| Cacheu Mangroves Natural Park | Guinea-Bissau |
-| Cahora Bassa Dam | Mozambique |
 | Caminito | Argentina |
-| Cathedral of Our Lady, N'Djamena | Chad |
-| Cathedral of Saints Peter and Paul, Douala | Cameroon |
-| Cathedral of the Immaculate Conception, Port of Spain | Trinidad and Tobago |
 | Cathédrale du Sacré-Coeur, Port Vila | Vanuatu |
-| Cathédrale Notre-Dame | Central African Republic |
-| Cathedrale Sainte-Marie | Guinea |
-| Catholic Belltower | Federated States of Micronesia |
-| Chapel of Nossa Senhora de Baluarte | Mozambique |
-| Christ Church Cathedral | Falkland Islands |
-| Christ the King Cathedral | Burundi |
-| Church of Our Lady of Remedies | Angola |
 | Chutes de la Kagera | Burundi |
 | Circus Maximus | Italy |
 | Colosseum Arch of Constantine | Italy |
-| Cultural & Museum Centre Karonga | Malawi |
-| Curaçao synagogue | Curaçao |
-| Dabous Giraffes | Niger |
-| Dean's Blue Hole | The Bahamas |
-| Diama Dam | Senegal |
-| Dimonika Biosphere Reserve | Republic of the Congo |
-| Dog Island | Anguilla |
-| Dona Ana Bridge | Mozambique |
-| Edea Hydroelectric Power Station | Cameroon |
 | Eisriesenwelt | Austria |
-| El Cajón Dam | Honduras |
-| Etpison Museum | Palau |
-| Farol de D. Maria Pia | Cape Verde |
-| Fazao Mafakassa National Park | Togo |
-| Fiji Museum | Fiji |
-| Fort Montagu | The Bahamas |
-| Fort Real de São Filipe | Cape Verde |
-| Fort Zeelandia | Guyana |
-| Fortress of São Miguel | Angola |
-| Gaborone Dam | Botswana |
-| Gorriti Island | Uruguay |
-| Great Mosque of Touba | Senegal |
-| Guyana Zoo | Guyana |
-| Hawulti | Eritrea |
-| Holy Cross Cathedral | Solomon Islands |
-| Holy Spirit Cathedral, Kpalimé | Togo |
-| Horse Block | Falkland Islands |
-| Ibn Abbas Mosque | Mauritania |
-| IFAN Museum of African Arts | Senegal |
-| Ilha de Luanda | Angola |
-| Immaculate Conception Cathedral | East Timor |
-| Isla Zacate Grande | Honduras |
-| Itezhi-Tezhi Dam | Zambia |
-| Jama Mosque | Barbados |
-| James Bond Beach | Jamaica |
-| Kafue Gorge Dam | Zambia |
-| Kapichira Falls | Malawi |
-| Kennedy Bridge | Niger |
-| Kgale Hill | Botswana |
-| Kidney Island | Falkland Islands |
-| Kongou Falls | Gabon |
-| Kubbar Island | Kuwait |
-| La Grille | Comoros |
-| Lagune Ndogo | Gabon |
-| Lake Piso | Liberia |
-| Lake Sonfon | Sierra Leone |
-| Leluh | Federated States of Micronesia |
-| Liotard Glacier | Antarctica |
 | Livingstone–Stanley Monument | Burundi |
-| Louisa Reef | Brunei |
-| Maguga Dam | Eswatini |
-| Manas Ordo | Kyrgyzstan |
-| Minor Basilica of the Virgin of Montserrat | Puerto Rico |
-| Monument du 22 Novembre 1970 | Guinea |
-| Mount Hodson | South Georgia and the South Sandwich Islands |
-| Mount Holdgate | South Georgia and the South Sandwich Islands |
-| Mount Larsen | South Georgia and the South Sandwich Islands |
-| Museum of Saint Helena | Saint Helena |
-| N'Djamena Grand Mosque | Chad |
-| Nabukelevu | Fiji |
-| Nadir crater | Guinea |
-| Nam Van Lake | Macau |
-| Nangbeto Dam | Togo |
-| Nassau Public Library | The Bahamas |
-| National Museum and Art Gallery | Trinidad and Tobago |
-| Nauru Museum | Nauru |
-| Nidhe Israel Synagogue | Barbados |
-| Nugaal | Somalia |
-| Obelisk of Montevideo | Uruguay |
 | Óbidos | Portugal |
-| Outamba-Kilimi National Park | Sierra Leone |
-| Papua New Guinea National Museum and Art Gallery | Papua New Guinea |
-| Pecixe | Guinea-Bissau |
-| Peter Island | British Virgin Islands |
-| Pine Cay | Turks and Caicos Islands |
-| Pipeline Mosque | The Gambia |
-| Po Toi Lighthouse | Hong Kong |
-| Puerto Rico Museum of Art | Puerto Rico |
-| Pulemelei Mound | Samoa |
-| Qaruh Island | Kuwait |
-| Qualibou | Saint Lucia |
-| Qurm Nature Reserve | Oman |
-| Ras Nouadhibou lighthouse | Mauritania |
-| River Gambia National Park | The Gambia |
-| Roxa | Guinea-Bissau |
-| Sacred Heart Cathedral | Togo |
-| Sacred Heart Cathedral | Kiribati |
-| Sacred Heart Cathedral, Brazzaville | Republic of the Congo |
-| Sacred Heart Cathedral, Suva | Fiji |
-| Sacred Heart Church | Fiji |
-| Saint Peter and Paul Cathedral | Suriname |
-| Santa Teresa National Park | Uruguay |
-| São Sebastião Museum | São Tomé and Príncipe |
-| Senegambia bridge | The Gambia |
-| Sierra Leone National Museum | Sierra Leone |
-| Sir Seewoosagur Ramgoolam Botanical Garden | Mauritius |
-| Sombrero Lighthouse | Anguilla |
-| St. Francis Xavier Cathedral, Nassau | The Bahamas |
-| St. George's Cathedral | Guyana |
-| St. George's Cathedral, Freetown | Sierra Leone |
-| St. Peter Claver Cathedral, Bangassou | Central African Republic |
-| Statue of Bruce Lee | Hong Kong |
-| Sultan Haji Omar Ali Saifuddien Bridge | Brunei |
-| Symposium de sculpture sur granit de Laongo | Burkina Faso |
-| Takutu River Bridge | Guyana |
-| Te Umanibong | Kiribati |
-| Tet el Bad Stone Coffin | Palau |
-| Tinkisso Falls | Guinea |
-| Toktogul Dam | Kyrgyzstan |
-| Tombo Island | Guinea |
-| Trou aux Cerfs | Mauritius |
 | Verdon Gorge | France |
-| West Caicos | Turks and Caicos Islands |
-| Whelk Point Fort | British Virgin Islands |
-| White Witch of Rose Hall | Jamaica |
-| Ziama Strict Nature Reserve | Guinea |
 
 ## Landmarks — at country zoom
 
@@ -1561,230 +471,8 @@ Often the only landmark that country has.
 
 | Landmark | Country |
 | --- | --- |
-| Aït Benhaddou | Morocco |
-| Al-Ula | Saudi Arabia |
-| Anne Frank House | Netherlands |
-| Arenal Volcano | Costa Rica |
-| Ashmore Reef | Ashmore and Cartier Islands |
-| Asmara Old Town | Eritrea |
-| Atacama Desert | Chile |
-| Baalbek | Lebanon |
-| Bahrain Fort | Bahrain |
-| Baiterek Tower | Kazakhstan |
-| Banaue Rice Terraces | Philippines |
-| Band-e Amir | Afghanistan |
-| Basílica de Mongomo | Equatorial Guinea |
-| Basilica of Our Lady of Peace | Ivory Coast |
-| Basilique Sainte-Anne | Republic of the Congo |
-| Bay of Kotor | Montenegro |
-| Belgrade Fortress | Serbia |
-| Bijagós Islands | Guinea-Bissau |
-| Bikini Atoll | Marshall Islands |
-| Blue Grotto | Malta |
-| Blue Holes of Andros | The Bahamas |
-| Blue Lagoon of Comino | Malta |
-| Boali Falls | Central African Republic |
-| Boiling Lake | Dominica |
-| Boma National Park | South Sudan |
-| Boudhanath Stupa | Nepal |
-| Bounty Bay | Pitcairn Islands |
-| Bratislava Castle | Slovakia |
-| Brimstone Hill Fortress | Saint Kitts and Nevis |
-| Bryggen | Norway |
-| Buada Lagoon | Nauru |
-| Bulguksa Temple | South Korea |
-| Burana Tower | Kyrgyzstan |
-| Butrint | Albania |
-| Bwindi Forest | Uganda |
-| California Lighthouse | Aruba |
-| Cape Coast Castle | Ghana |
-| Cartagena Old Town | Colombia |
-| Carthage | Tunisia |
-| Casa de la Vall | Andorra |
-| Casbah of Algiers | Algeria |
-| Castle Cornet | Guernsey |
-| Central Suriname Reserve | Suriname |
 | Chapel Bridge | Switzerland |
-| Château Frontenac | Canada |
-| Chocolate Hills | Philippines |
-| Christmas Island | Kiribati |
-| Christmas Island Crabs | Australian Indian Ocean Territories |
-| Cidade Velha | Cape Verde |
-| Citadelle Laferrière | Haiti |
-| Cittadella of Gozo | Malta |
-| Colonia del Sacramento | Uruguay |
-| Copán | Honduras |
-| Cotton Tree | Sierra Leone |
-| Cristo Rei of Dili | East Timor |
-| Darvaza Gas Crater | Turkmenistan |
-| Delta Works | Netherlands |
-| Diego Garcia | British Indian Ocean Territory |
-| Dingli Cliffs | Malta |
-| Dunn's River Falls | Jamaica |
-| El Djem Amphitheatre | Tunisia |
-| El Morro | Puerto Rico |
-| Ennedi Massif | Chad |
-| Erdene Zuu Monastery | Mongolia |
-| Fish River Canyon | Namibia |
-| Fisherman's Bastion | Hungary |
-| Flame Towers | Azerbaijan |
-| Fort Amsterdam | Sint Maarten |
-| Fort Louis | Saint Martin |
-| Fort St Angelo | Malta |
-| Funafuti Lagoon | Tuvalu |
-| Ganvie | Benin |
-| Genghis Khan Statue | Mongolia |
-| Gergeti Trinity Church | Georgia |
-| Ġgantija Temples | Malta |
-| Giant's Causeway | United Kingdom |
-| Gorée Island | Senegal |
-| Gracanica Monastery | Kosovo |
-| Grace Bay | Turks and Caicos Islands |
-| Grand Anse Beach | Grenada |
-| Grand Mosque of Agadez | Niger |
-| Great Blue Hole | Belize |
-| Great Zimbabwe | Zimbabwe |
-| Grytviken | South Georgia and the South Sandwich Islands |
-| Guaita Tower | San Marino |
-| Gullfoss | Iceland |
-| Gustavia Harbour | Saint Barthélemy |
-| Ħaġar Qim | Malta |
 | Haʻamonga ʻa Maui | Tonga |
-| Hallstatt | Austria |
-| Harrison's Cave | Barbados |
-| Hawa Mahal | India |
-| Heart of Voh | New Caledonia |
-| Hoi An Old Town | Vietnam |
-| Icehotel | Sweden |
-| Île aux Marins | Saint Pierre and Miquelon |
-| Iskanderkul | Tajikistan |
-| Island of Mozambique | Mozambique |
-| Jacob's Ladder | Saint Helena |
-| Jesuit Ruins of Trinidad | Paraguay |
-| Joya de Cerén | El Salvador |
-| Juche Tower | North Korea |
-| Kaieteur Falls | Guyana |
-| Kalandula Falls | Angola |
-| Karera Falls | Burundi |
-| Kastelholm Castle | Åland |
-| Khor Virap | Armenia |
-| Kingston | Norfolk Island |
-| Kokoda Track | Papua New Guinea |
-| Koutammakou | Togo |
-| Krak des Chevaliers | Syria |
-| Kronborg Castle | Denmark |
-| Kunta Kinteh Island | The Gambia |
-| Kuwait Towers | Kuwait |
-| Kyrenia Castle | Turkish Republic of Northern Cyprus |
-| La Soufrière | Saint Vincent and the Grenadines |
-| Laas Geel Caves | Somaliland |
-| Laayoune | Western Sahara |
-| Lake Assal | Djibouti |
-| Lake Bled | Slovenia |
-| Lake Lalolalo | Wallis and Futuna |
-| Lake Malawi | Malawi |
-| Le Morne Brabant | Mauritius |
-| Leptis Magna | Libya |
-| Loango National Park | Gabon |
-| Lost City | Colombia |
-| Luxembourg Old Town | Luxembourg |
-| Malbork Castle | Poland |
-| Malé Fish Market | Maldives |
-| Malé Friday Mosque | Maldives |
-| Maletsunyane Falls | Lesotho |
-| Managaha Island | Northern Mariana Islands |
-| Marovo Lagoon | Solomon Islands |
-| Marsaxlokk | Malta |
-| Masada | Israel |
-| Masaya Volcano | Nicaragua |
-| Mawson Peak | Heard Island and McDonald Islands |
-| Mdina | Malta |
-| Mir Castle | Belarus |
-| Mitad del Mundo | Ecuador |
-| Mlilwane Sanctuary | Eswatini |
-| Mogadishu Lighthouse | Somalia |
-| Mont Orgueil | Jersey |
-| Monte Carlo Casino | Monaco |
-| Mosta Rotunda | Malta |
-| Mount Bromo | Indonesia |
-| Mount Cameroon | Cameroon |
-| Mount Karthala | Comoros |
-| Mount Kenya | Kenya |
-| Mount Nimba | Guinea |
-| Mount Yasur | Vanuatu |
-| Muri Lagoon | Cook Islands |
-| Museum of Islamic Art | Qatar |
-| Nan Madol | Federated States of Micronesia |
-| Nelson's Dockyard | Antigua and Barbuda |
-| Obelisco | Argentina |
-| Ohrid | North Macedonia |
-| Old City of Sana'a | Yemen |
-| Old Havana | Cuba |
-| Olumo Rock | Nigeria |
-| Omar Ali Saifuddien Mosque | Brunei |
-| Orheiul Vechi | Moldova |
-| Palace of the Parliament | Romania |
-| Palenque | Mexico |
-| Pamukkale | Turkey |
-| Park Güell | Spain |
-| Peel Castle | Isle of Man |
-| Pena Palace | Portugal |
-| Pha That Luang | Laos |
-| Pico Cão Grande | São Tomé and Príncipe |
-| Pitch Lake | Trinidad and Tobago |
-| Plitvice Lakes | Croatia |
-| Pola Island | American Samoa |
-| Pont du Gard | France |
-| Popeye Village | Malta |
-| Port-aux-Français | French Southern and Antarctic Lands |
-| Providence Island | Liberia |
-| Pyramids of Meroë | Sudan |
-| Queen Emma Bridge | Curaçao |
-| Richat Structure | Mauritania |
-| Riga Old Town | Latvia |
-| Rila Monastery | Bulgaria |
-| Rock Islands | Palau |
-| Rock of Cashel | Ireland |
-| Royal Naval Dockyard | Bermuda |
-| Ruins of Loropéni | Burkina Faso |
-| Ruins of St Paul's | Macau |
-| Saint Sophia Cathedral | Ukraine |
-| Saksun | Faroe Islands |
-| Seville Cathedral | Spain |
-| Shoal Bay | Anguilla |
-| Siachen Glacier | Siachen Glacier |
-| Sixty Dome Mosque | Bangladesh |
-| Sky Tower | New Zealand |
-| Soufrière Hills | Montserrat |
-| Sri Siva Subramaniya Temple | Fiji |
-| Stari Most | Bosnia and Herzegovina |
-| Stingray City | Cayman Islands |
-| Stone Town | Tanzania |
-| Sultan Qaboos Mosque | Oman |
-| Suomenlinna | Finland |
-| Talava Arches | Niue |
-| Tallinn Old Town | Estonia |
-| Tarxien Temples | Malta |
-| The Baths | British Virgin Islands |
-| The Bund | People's Republic of China |
-| The Pitons | Saint Lucia |
-| Timbuktu | Mali |
-| To Sua Ocean Trench | Samoa |
-| Tombs of the Kings | Cyprus |
-| Trakai Island Castle | Lithuania |
-| Trunk Bay | United States Virgin Islands |
-| Twelve Apostles | Australia |
-| Two Lovers Point | Guam |
-| Vaduz Castle | Liechtenstein |
-| Vallée de Mai | Seychelles |
-| Vasa Museum | Sweden |
-| Virunga National Park | Democratic Republic of the Congo |
-| Volcanoes National Park | Rwanda |
-| Volunteer Point | Falkland Islands |
-| Wawel Castle | Poland |
-| Ziggurat of Ur | Iraq |
-| Zona Colonial | Dominican Republic |
-| Zuma Rock | Nigeria |
 
 ## People
 

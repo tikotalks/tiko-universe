@@ -52,7 +52,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 12.6,
           "lon": -70.06,
           "locationSource": {
@@ -366,7 +366,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": -10.912,
           "lon": 19.875,
           "locationSource": {
@@ -466,7 +466,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.245,
           "lon": -63.076,
           "locationSource": {
@@ -878,7 +878,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 25.334,
           "lon": 56.239,
           "locationSource": {
@@ -996,7 +996,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "guanaco",
           "lat": -32.011,
           "lon": -63.97,
           "locationSource": {
@@ -1201,7 +1201,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -14.454,
           "lon": -168.139,
           "locationSource": {
@@ -1237,7 +1237,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -14.269,
           "lon": -170.651,
           "locationSource": {
@@ -1548,7 +1548,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.139,
           "lon": -61.694,
           "locationSource": {
@@ -1687,7 +1687,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "echidna",
           "lat": -24.683,
           "lon": 135.584,
           "locationSource": {
@@ -1721,7 +1721,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "tasmanian-devil",
           "lat": -23.995,
           "lon": 136.508,
           "locationSource": {
@@ -1945,7 +1945,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "bearded-vulture",
           "lat": 47.485,
           "lon": 13.653,
           "locationSource": {
@@ -2322,7 +2322,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "roe-deer",
           "lat": 50.996,
           "lon": 4.6,
           "locationSource": {
@@ -2339,7 +2339,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "wild-boar",
           "lat": 50.92,
           "lon": 5.127,
           "locationSource": {
@@ -2356,7 +2356,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "european-badger",
           "lat": 51.03,
           "lon": 4.76,
           "locationSource": {
@@ -2766,7 +2766,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "saltwater-crocodile",
           "lat": 24.772,
           "lon": 90.709,
           "locationSource": {
@@ -2970,7 +2970,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 26.5,
           "lon": 50.5,
           "locationSource": {
@@ -3037,7 +3037,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 25.112,
           "lon": -77.257,
           "locationSource": {
@@ -3225,7 +3225,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.892,
           "lon": -62.915,
           "locationSource": {
@@ -3477,7 +3477,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.813,
           "lon": -87.915,
           "locationSource": {
@@ -3518,7 +3518,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 32.375,
           "lon": -64.813,
           "locationSource": {
@@ -3572,7 +3572,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "humpback-whale",
           "lat": 32.225,
           "lon": -64.848,
           "locationSource": {
@@ -3613,7 +3613,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "vicuna",
           "lat": -18.145,
           "lon": -68.777,
           "locationSource": {
@@ -3923,7 +3923,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 13.15,
           "lon": -59.67,
           "locationSource": {
@@ -4070,7 +4070,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 5.48,
           "lon": 114.438,
           "locationSource": {
@@ -4153,7 +4153,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "snow-leopard",
           "lat": 27.407,
           "lon": 90.213,
           "locationSource": {
@@ -4386,7 +4386,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": -21.488,
           "lon": 25.882,
           "locationSource": {
@@ -4900,7 +4900,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "eurasian-lynx",
           "lat": 46.627,
           "lon": 7.139,
           "locationSource": {
@@ -4983,7 +4983,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "guanaco",
           "lat": -51.256,
           "lon": -72.344,
           "locationSource": {
@@ -5088,7 +5088,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "vicuna",
           "lat": -40.398,
           "lon": -72.15,
           "locationSource": {
@@ -5171,7 +5171,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "giant-panda",
           "lat": 31,
           "lon": 103,
           "locationSource": {
@@ -5462,7 +5462,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": 6.933,
           "lon": -6.63,
           "locationSource": {
@@ -5631,7 +5631,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": 5.656,
           "lon": 10.617,
           "locationSource": {
@@ -5666,7 +5666,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "drill",
           "lat": 3.768,
           "lon": 13.642,
           "locationSource": {
@@ -5971,7 +5971,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": 1.407,
           "lon": 16.925,
           "locationSource": {
@@ -6005,7 +6005,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 1.693,
           "lon": 15.408,
           "locationSource": {
@@ -6088,7 +6088,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -21.238,
           "lon": -159.748,
           "locationSource": {
@@ -6106,7 +6106,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -21.207,
           "lon": -159.774,
           "locationSource": {
@@ -6371,7 +6371,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -12.291,
           "lon": 43.644,
           "locationSource": {
@@ -6428,7 +6428,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 16.535,
           "lon": -22.954,
           "locationSource": {
@@ -6565,7 +6565,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 8.769,
           "lon": -83.9,
           "locationSource": {
@@ -6624,7 +6624,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 19.818,
           "lon": -75.281,
           "locationSource": {
@@ -6719,7 +6719,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 12.234,
           "lon": -69.049,
           "locationSource": {
@@ -6796,7 +6796,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 19.344,
           "lon": -81.32,
           "locationSource": {
@@ -6891,7 +6891,7 @@
           "taxonRank": "subspecies",
           "status": "native",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "cyprus-mouflon",
           "lat": 35.299,
           "lon": 33.002,
           "locationSource": {
@@ -6965,7 +6965,7 @@
           "taxonRank": "subspecies",
           "status": "native",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "cyprus-mouflon",
           "lat": 34.93,
           "lon": 32.7,
           "locationSource": {
@@ -7000,7 +7000,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 35.039,
           "lon": 33.371,
           "locationSource": {
@@ -7239,7 +7239,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "eurasian-lynx",
           "lat": 50.604,
           "lon": 8.255,
           "locationSource": {
@@ -7418,7 +7418,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 15.355,
           "lon": -61.3,
           "locationSource": {
@@ -7634,7 +7634,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.5,
           "lon": -69.5,
           "locationSource": {
@@ -8405,7 +8405,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "brown-bear",
           "lat": 40.648,
           "lon": -0.591,
           "locationSource": {
@@ -8924,7 +8924,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -17.384,
           "lon": 178.23,
           "locationSource": {
@@ -9183,7 +9183,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "bearded-vulture",
           "lat": 45.378,
           "lon": 1.532,
           "locationSource": {
@@ -9200,7 +9200,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "brown-bear",
           "lat": 47.079,
           "lon": 0.423,
           "locationSource": {
@@ -9385,7 +9385,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 7.463,
           "lon": 151.678,
           "locationSource": {
@@ -9549,7 +9549,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": -0.448,
           "lon": 12.61,
           "locationSource": {
@@ -9566,7 +9566,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 0.588,
           "lon": 12.381,
           "locationSource": {
@@ -9712,7 +9712,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "european-badger",
           "lat": 55.753,
           "lon": -2.103,
           "locationSource": {
@@ -10043,7 +10043,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": 7.682,
           "lon": -2.247,
           "locationSource": {
@@ -10078,7 +10078,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 8.601,
           "lon": -1.857,
           "locationSource": {
@@ -10560,7 +10560,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 3.22,
           "lon": 8.62,
           "locationSource": {
@@ -10643,7 +10643,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "loggerhead-sea-turtle",
           "lat": 39.056,
           "lon": 20.787,
           "locationSource": {
@@ -10694,7 +10694,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 37.788,
           "lon": 20.925,
           "locationSource": {
@@ -10761,7 +10761,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 12.11,
           "lon": -61.719,
           "locationSource": {
@@ -11006,7 +11006,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 13.522,
           "lon": 144.797,
           "locationSource": {
@@ -11024,7 +11024,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": 13.482,
           "lon": 144.769,
           "locationSource": {
@@ -11240,7 +11240,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 22.503,
           "lon": 114.286,
           "locationSource": {
@@ -11448,7 +11448,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 16.299,
           "lon": -86.58,
           "locationSource": {
@@ -11610,7 +11610,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.802,
           "lon": -74.028,
           "locationSource": {
@@ -12308,7 +12308,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -7.392,
           "lon": 72.514,
           "locationSource": {
@@ -12401,7 +12401,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "basking-shark",
           "lat": 53.562,
           "lon": -7.731,
           "locationSource": {
@@ -12453,7 +12453,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "eurasian-otter",
           "lat": 53.483,
           "lon": -7.348,
           "locationSource": {
@@ -12470,7 +12470,7 @@
           "taxonRank": "subspecies",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "irish-hare",
           "lat": 53.413,
           "lon": -8.244,
           "locationSource": {
@@ -12506,7 +12506,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "pine-marten",
           "lat": 53.433,
           "lon": -8.355,
           "locationSource": {
@@ -12676,7 +12676,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "wild-boar",
           "lat": 31.02,
           "lon": 53.803,
           "locationSource": {
@@ -12803,7 +12803,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "striped-hyena",
           "lat": 33.244,
           "lon": 42.034,
           "locationSource": {
@@ -12974,7 +12974,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "humpback-whale",
           "lat": 65.03,
           "lon": -17.969,
           "locationSource": {
@@ -13008,7 +13008,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "harbour-seal",
           "lat": 65.14,
           "lon": -18.323,
           "locationSource": {
@@ -13274,7 +13274,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "loggerhead-sea-turtle",
           "lat": 43.611,
           "lon": 11.979,
           "locationSource": {
@@ -13357,7 +13357,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.804,
           "lon": -76.931,
           "locationSource": {
@@ -13698,7 +13698,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 26.446,
           "lon": 127.764,
           "locationSource": {
@@ -14052,7 +14052,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "wildebeest",
           "lat": -1.293,
           "lon": 38.393,
           "locationSource": {
@@ -14433,7 +14433,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 1.834,
           "lon": -157.528,
           "locationSource": {
@@ -14451,7 +14451,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": 1.985,
           "lon": -157.348,
           "locationSource": {
@@ -14545,7 +14545,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 17.377,
           "lon": -62.729,
           "locationSource": {
@@ -14752,7 +14752,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 33.433,
           "lon": 126.917,
           "locationSource": {
@@ -14931,7 +14931,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 29.216,
           "lon": 47.576,
           "locationSource": {
@@ -15024,7 +15024,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "saola",
           "lat": 19.214,
           "lon": 101.423,
           "locationSource": {
@@ -15345,7 +15345,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "fennec-fox",
           "lat": 27.58,
           "lon": 16.693,
           "locationSource": {
@@ -15533,7 +15533,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 13.858,
           "lon": -61.026,
           "locationSource": {
@@ -15721,7 +15721,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "blue-whale",
           "lat": 8.278,
           "lon": 80.51,
           "locationSource": {
@@ -15859,7 +15859,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 5.996,
           "lon": 80.427,
           "locationSource": {
@@ -16410,7 +16410,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.105,
           "lon": -62.991,
           "locationSource": {
@@ -16643,7 +16643,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "moorish-gecko",
           "lat": 30.221,
           "lon": -6.662,
           "locationSource": {
@@ -16709,7 +16709,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 43.545,
           "lon": 7.505,
           "locationSource": {
@@ -17008,7 +17008,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -13.399,
           "lon": 48.207,
           "locationSource": {
@@ -17074,7 +17074,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 4.406,
           "lon": 73.348,
           "locationSource": {
@@ -17159,7 +17159,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "axolotl",
           "lat": 23.495,
           "lon": -103.858,
           "locationSource": {
@@ -17298,7 +17298,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 15.978,
           "lon": -97.026,
           "locationSource": {
@@ -17357,7 +17357,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 9.051,
           "lon": 167.707,
           "locationSource": {
@@ -17375,7 +17375,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": 7.139,
           "lon": 171.204,
           "locationSource": {
@@ -17712,7 +17712,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "warthog",
           "lat": 18.383,
           "lon": -0.492,
           "locationSource": {
@@ -17769,7 +17769,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "maltese-wall-lizard",
           "lat": 35.816,
           "lon": 14.515,
           "locationSource": {
@@ -17803,7 +17803,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "blue-rock-thrush",
           "lat": 35.829,
           "lon": 14.447,
           "locationSource": {
@@ -17854,7 +17854,7 @@
           "taxonRank": "species",
           "status": "marine",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "loggerhead-sea-turtle",
           "lat": 35.827,
           "lon": 14.16,
           "locationSource": {
@@ -17871,7 +17871,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "moorish-gecko",
           "lat": 35.884,
           "lon": 14.398,
           "locationSource": {
@@ -17888,7 +17888,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "least-weasel",
           "lat": 35.886,
           "lon": 14.395,
           "locationSource": {
@@ -17973,7 +17973,7 @@
           "taxonRank": "order",
           "status": "wild",
           "importance": 7,
-          "mediaId": null,
+          "mediaId": "octopus",
           "lat": 36.017,
           "lon": 14.28,
           "locationSource": {
@@ -18008,7 +18008,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 7,
-          "mediaId": null,
+          "mediaId": "shrew",
           "lat": 35.884,
           "lon": 14.397,
           "locationSource": {
@@ -18043,7 +18043,7 @@
           "taxonRank": "order",
           "status": "native",
           "importance": 8,
-          "mediaId": null,
+          "mediaId": "bat",
           "lat": 35.904,
           "lon": 14.501,
           "locationSource": {
@@ -18061,7 +18061,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 8,
-          "mediaId": null,
+          "mediaId": "common-moorhen",
           "lat": 35.97,
           "lon": 14.349,
           "locationSource": {
@@ -18079,7 +18079,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 8,
-          "mediaId": null,
+          "mediaId": "sicilian-shrew",
           "lat": 36.044,
           "lon": 14.251,
           "locationSource": {
@@ -18096,7 +18096,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 8,
-          "mediaId": null,
+          "mediaId": "sparrow",
           "lat": 35.945,
           "lon": 14.419,
           "locationSource": {
@@ -18114,7 +18114,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 8,
-          "mediaId": null,
+          "mediaId": "swift",
           "lat": 35.96,
           "lon": 14.363,
           "locationSource": {
@@ -18132,7 +18132,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 9,
-          "mediaId": null,
+          "mediaId": "bee-eater",
           "lat": 35.948,
           "lon": 14.388,
           "locationSource": {
@@ -18150,7 +18150,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 9,
-          "mediaId": null,
+          "mediaId": "egret",
           "lat": 35.946,
           "lon": 14.422,
           "locationSource": {
@@ -18168,7 +18168,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 9,
-          "mediaId": null,
+          "mediaId": "heron",
           "lat": 35.946,
           "lon": 14.422,
           "locationSource": {
@@ -18186,7 +18186,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 9,
-          "mediaId": null,
+          "mediaId": "kingfisher",
           "lat": 35.946,
           "lon": 14.382,
           "locationSource": {
@@ -18204,7 +18204,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 10,
-          "mediaId": null,
+          "mediaId": "ocellated-skink",
           "lat": 35.9,
           "lon": 14.416,
           "locationSource": {
@@ -18569,7 +18569,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "wild-bactrian-camel",
           "lat": 43.6,
           "lon": 97,
           "locationSource": {
@@ -18586,7 +18586,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "golden-eagle",
           "lat": 44.786,
           "lon": 104.867,
           "locationSource": {
@@ -18704,7 +18704,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 15.188,
           "lon": 145.701,
           "locationSource": {
@@ -18722,7 +18722,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": 15.213,
           "lon": 145.722,
           "locationSource": {
@@ -19122,7 +19122,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 16.645,
           "lon": -62.257,
           "locationSource": {
@@ -19187,7 +19187,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -20.405,
           "lon": 57.751,
           "locationSource": {
@@ -19800,7 +19800,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "kagu",
           "lat": -21.61,
           "lon": 165.77,
           "locationSource": {
@@ -19817,7 +19817,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -22.264,
           "lon": 166.475,
           "locationSource": {
@@ -19835,7 +19835,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "new-caledonian-crow",
           "lat": -21.653,
           "lon": 165.776,
           "locationSource": {
@@ -19954,7 +19954,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "ostrich",
           "lat": 15.262,
           "lon": 9.133,
           "locationSource": {
@@ -20040,7 +20040,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "warthog",
           "lat": 15.608,
           "lon": 8.224,
           "locationSource": {
@@ -20098,7 +20098,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -29.06,
           "lon": 167.961,
           "locationSource": {
@@ -20225,7 +20225,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "african-grey-parrot",
           "lat": 10.361,
           "lon": 5.935,
           "locationSource": {
@@ -20260,7 +20260,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "drill",
           "lat": 8.399,
           "lon": 8.102,
           "locationSource": {
@@ -20329,7 +20329,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "warthog",
           "lat": 11.235,
           "lon": 7.581,
           "locationSource": {
@@ -20431,7 +20431,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 11.862,
           "lon": -86.531,
           "locationSource": {
@@ -20472,7 +20472,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -19.093,
           "lon": -169.864,
           "locationSource": {
@@ -20490,7 +20490,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -19.054,
           "lon": -169.918,
           "locationSource": {
@@ -20575,7 +20575,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "eurasian-otter",
           "lat": 52.003,
           "lon": 4.601,
           "locationSource": {
@@ -20644,7 +20644,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "european-badger",
           "lat": 51.674,
           "lon": 5.52,
           "locationSource": {
@@ -20679,7 +20679,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "common-buzzard",
           "lat": 50.927,
           "lon": 5.795,
           "locationSource": {
@@ -20780,7 +20780,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "reindeer",
           "lat": 62.855,
           "lon": 9.501,
           "locationSource": {
@@ -20815,7 +20815,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "arctic-fox",
           "lat": 61.751,
           "lon": 6.622,
           "locationSource": {
@@ -20849,7 +20849,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "moose",
           "lat": 60.889,
           "lon": 6.751,
           "locationSource": {
@@ -21119,7 +21119,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -0.54,
           "lon": 166.947,
           "locationSource": {
@@ -21194,7 +21194,7 @@
           "taxonRank": "genus",
           "status": "native",
           "importance": 1,
-          "mediaId": null,
+          "mediaId": "kiwi",
           "lat": -39.28,
           "lon": 175.57,
           "locationSource": {
@@ -21263,7 +21263,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "tuatara",
           "lat": -41.2,
           "lon": 174.87,
           "locationSource": {
@@ -21366,7 +21366,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -36.387,
           "lon": 174.699,
           "locationSource": {
@@ -21535,7 +21535,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "humpback-whale",
           "lat": 22.356,
           "lon": 59.286,
           "locationSource": {
@@ -21552,7 +21552,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 20.558,
           "lon": 57.909,
           "locationSource": {
@@ -21844,7 +21844,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 7.695,
           "lon": -81.685,
           "locationSource": {
@@ -21875,7 +21875,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -24.346,
           "lon": -128.312,
           "locationSource": {
@@ -21984,7 +21984,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "vicuna",
           "lat": -15.92,
           "lon": -71.488,
           "locationSource": {
@@ -22224,7 +22224,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 9.979,
           "lon": 123.266,
           "locationSource": {
@@ -22308,7 +22308,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 7.153,
           "lon": 134.31,
           "locationSource": {
@@ -22498,7 +22498,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -9.159,
           "lon": 149.539,
           "locationSource": {
@@ -22652,7 +22652,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "eurasian-lynx",
           "lat": 52.375,
           "lon": 18.481,
           "locationSource": {
@@ -22735,7 +22735,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.423,
           "lon": -66.069,
           "locationSource": {
@@ -22881,7 +22881,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "golden-eagle",
           "lat": 39.366,
           "lon": 125.922,
           "locationSource": {
@@ -23087,7 +23087,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 32.896,
           "lon": -16.705,
           "locationSource": {
@@ -23278,7 +23278,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -17.511,
           "lon": -149.785,
           "locationSource": {
@@ -23381,7 +23381,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 25.535,
           "lon": 51.661,
           "locationSource": {
@@ -24142,7 +24142,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "cheetah",
           "lat": 14.96,
           "lon": 28.63,
           "locationSource": {
@@ -24159,7 +24159,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 16.95,
           "lon": 27.832,
           "locationSource": {
@@ -24261,7 +24261,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "striped-hyena",
           "lat": 15.022,
           "lon": 30.019,
           "locationSource": {
@@ -24353,7 +24353,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "giraffe",
           "lat": 6.163,
           "lon": 30.178,
           "locationSource": {
@@ -24370,7 +24370,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "lion",
           "lat": 6.506,
           "lon": 31.208,
           "locationSource": {
@@ -24404,7 +24404,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 8.539,
           "lon": 31.377,
           "locationSource": {
@@ -24675,7 +24675,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "warthog",
           "lat": 14.664,
           "lon": -14.506,
           "locationSource": {
@@ -24751,7 +24751,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "smooth-coated-otter",
           "lat": 1.314,
           "lon": 103.851,
           "locationSource": {
@@ -24787,7 +24787,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 1.343,
           "lon": 103.756,
           "locationSource": {
@@ -24949,7 +24949,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -7.924,
           "lon": -14.411,
           "locationSource": {
@@ -25034,7 +25034,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -8.716,
           "lon": 158.222,
           "locationSource": {
@@ -25232,7 +25232,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 13.145,
           "lon": -88.934,
           "locationSource": {
@@ -25448,7 +25448,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "cheetah",
           "lat": 4.553,
           "lon": 47.222,
           "locationSource": {
@@ -25516,7 +25516,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "striped-hyena",
           "lat": 3.475,
           "lon": 46.692,
           "locationSource": {
@@ -25533,7 +25533,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "warthog",
           "lat": 5.569,
           "lon": 46.227,
           "locationSource": {
@@ -25818,7 +25818,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 0.301,
           "lon": 6.679,
           "locationSource": {
@@ -25957,7 +25957,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 5.954,
           "lon": -55.165,
           "locationSource": {
@@ -26240,7 +26240,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "reindeer",
           "lat": 65.291,
           "lon": 17.846,
           "locationSource": {
@@ -26393,7 +26393,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": -26.693,
           "lon": 31.592,
           "locationSource": {
@@ -26493,7 +26493,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.04,
           "lon": -63.077,
           "locationSource": {
@@ -26596,7 +26596,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -4.661,
           "lon": 55.345,
           "locationSource": {
@@ -26766,7 +26766,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 21.727,
           "lon": -72.201,
           "locationSource": {
@@ -26902,7 +26902,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "hippopotamus",
           "lat": 13.87,
           "lon": 19.462,
           "locationSource": {
@@ -26937,7 +26937,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "ostrich",
           "lat": 16.247,
           "lon": 20.687,
           "locationSource": {
@@ -27444,7 +27444,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -10.863,
           "lon": 126.457,
           "locationSource": {
@@ -27511,7 +27511,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -19.698,
           "lon": -174.379,
           "locationSource": {
@@ -27529,7 +27529,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -18.721,
           "lon": -174.101,
           "locationSource": {
@@ -27614,7 +27614,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 10.7,
           "lon": -61.029,
           "locationSource": {
@@ -27761,7 +27761,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "loggerhead-sea-turtle",
           "lat": 32.903,
           "lon": 8.515,
           "locationSource": {
@@ -27813,7 +27813,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 5,
-          "mediaId": null,
+          "mediaId": "striped-hyena",
           "lat": 34.271,
           "lon": 8.2,
           "locationSource": {
@@ -27942,7 +27942,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "loggerhead-sea-turtle",
           "lat": 38.738,
           "lon": 33.877,
           "locationSource": {
@@ -28043,7 +28043,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -8.407,
           "lon": 179.036,
           "locationSource": {
@@ -28061,7 +28061,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -8.491,
           "lon": 179.061,
           "locationSource": {
@@ -28164,7 +28164,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 22.195,
           "lon": 120.61,
           "locationSource": {
@@ -28276,7 +28276,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "wildebeest",
           "lat": -6.584,
           "lon": 36.197,
           "locationSource": {
@@ -28839,7 +28839,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "manatee",
           "lat": 38.975,
           "lon": -95.695,
           "locationSource": {
@@ -28856,7 +28856,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "moose",
           "lat": 40.591,
           "lon": -98.89,
           "locationSource": {
@@ -28907,7 +28907,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "bald-eagle",
           "lat": 40.421,
           "lon": -86.899,
           "locationSource": {
@@ -29018,7 +29018,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "saiga-antelope",
           "lat": 42.023,
           "lon": 64.553,
           "locationSource": {
@@ -29121,7 +29121,7 @@
           "taxonRank": "species",
           "status": "wild",
           "importance": 6,
-          "mediaId": null,
+          "mediaId": "marbled-polecat",
           "lat": 42.663,
           "lon": 64.54,
           "locationSource": {
@@ -29259,7 +29259,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 3,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 12.751,
           "lon": -61.314,
           "locationSource": {
@@ -29431,7 +29431,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.52,
           "lon": -64.434,
           "locationSource": {
@@ -29526,7 +29526,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": 18.235,
           "lon": -64.833,
           "locationSource": {
@@ -29629,7 +29629,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "saola",
           "lat": 17.95,
           "lon": 105.98,
           "locationSource": {
@@ -29780,7 +29780,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -16.774,
           "lon": 168.114,
           "locationSource": {
@@ -29847,7 +29847,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -13.242,
           "lon": -176.249,
           "locationSource": {
@@ -29883,7 +29883,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -13.65,
           "lon": -177.084,
           "locationSource": {
@@ -29942,7 +29942,7 @@
           "taxonRank": "family",
           "status": "wild",
           "importance": 2,
-          "mediaId": null,
+          "mediaId": "sea-turtle",
           "lat": -13.896,
           "lon": -171.909,
           "locationSource": {
@@ -29960,7 +29960,7 @@
           "taxonRank": "species",
           "status": "native",
           "importance": 4,
-          "mediaId": null,
+          "mediaId": "white-tern",
           "lat": -13.865,
           "lon": -171.765,
           "locationSource": {

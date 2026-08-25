@@ -1938,8 +1938,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "axolotl",
+      "image": "images/axolotl.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -2232,8 +2232,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "bald-eagle",
+      "image": "images/bald-eagle.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -2636,8 +2636,8 @@
           "importance": 8
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "bat",
+      "image": "images/bat.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -2887,8 +2887,8 @@
           "importance": 9
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "bee-eater",
+      "image": "images/bee-eater.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -3494,8 +3494,8 @@
           "importance": 3
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "blue-rock-thrush",
+      "image": "images/blue-rock-thrush.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -5754,8 +5754,8 @@
           "importance": 5
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "common-buzzard",
+      "image": "images/common-buzzard.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -5872,8 +5872,8 @@
           "importance": 8
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "common-moorhen",
+      "image": "images/common-moorhen.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -6538,8 +6538,8 @@
           "importance": 1
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "cyprus-mouflon",
+      "image": "images/cyprus-mouflon.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -6940,8 +6940,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "drill",
+      "image": "images/drill.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -7233,8 +7233,8 @@
           "importance": 9
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "egret",
+      "image": "images/egret.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -9672,8 +9672,8 @@
           "importance": 1
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "giant-panda",
+      "image": "images/giant-panda.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -11287,8 +11287,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "guanaco",
+      "image": "images/guanaco.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -11537,8 +11537,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "harbour-seal",
+      "image": "images/harbour-seal.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -11886,8 +11886,8 @@
           "importance": 9
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "heron",
+      "image": "images/heron.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -12573,8 +12573,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "humpback-whale",
+      "image": "images/humpback-whale.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -13015,8 +13015,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "irish-hare",
+      "image": "images/irish-hare.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -13379,8 +13379,8 @@
           "importance": 1
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "kagu",
+      "image": "images/kagu.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -13617,8 +13617,8 @@
           "importance": 9
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "kingfisher",
+      "image": "images/kingfisher.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -13643,8 +13643,8 @@
           "importance": 1
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "kiwi",
+      "image": "images/kiwi.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -14032,8 +14032,8 @@
           "importance": 6
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "least-weasel",
+      "image": "images/least-weasel.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -14453,8 +14453,8 @@
           "importance": 3
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "loggerhead-sea-turtle",
+      "image": "images/loggerhead-sea-turtle.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -14939,8 +14939,8 @@
           "importance": 1
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "maltese-wall-lizard",
+      "image": "images/maltese-wall-lizard.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -15740,8 +15740,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "moorish-gecko",
+      "image": "images/moorish-gecko.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -16241,8 +16241,8 @@
           "importance": 3
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "new-caledonian-crow",
+      "image": "images/new-caledonian-crow.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -16577,8 +16577,8 @@
           "importance": 10
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "ocellated-skink",
+      "image": "images/ocellated-skink.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -16603,8 +16603,8 @@
           "importance": 7
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "octopus",
+      "image": "images/octopus.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -16730,8 +16730,8 @@
           "district": "borneo-sumatra"
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "orangutan",
+      "image": "images/orangutan.png",
       "review": {
         "state": "draft",
         "source": null
@@ -16861,8 +16861,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "ostrich",
+      "image": "images/ostrich.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -17485,8 +17485,8 @@
           "importance": 5
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "pine-marten",
+      "image": "images/pine-marten.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -19452,8 +19452,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "roe-deer",
+      "image": "images/roe-deer.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -20118,8 +20118,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "saola",
+      "image": "images/saola.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -21671,8 +21671,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "sea-turtle",
+      "image": "images/sea-turtle.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -21934,8 +21934,8 @@
           "importance": 7
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "shrew",
+      "image": "images/shrew.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -22076,8 +22076,8 @@
           "importance": 8
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "sicilian-shrew",
+      "image": "images/sicilian-shrew.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -22277,8 +22277,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "smooth-coated-otter",
+      "image": "images/smooth-coated-otter.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -22829,8 +22829,8 @@
           "importance": 8
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "sparrow",
+      "image": "images/sparrow.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -23747,8 +23747,8 @@
           "importance": 8
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "swift",
+      "image": "images/swift.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -25001,8 +25001,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "tuatara",
+      "image": "images/tuatara.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -25317,8 +25317,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "vicuna",
+      "image": "images/vicuna.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -25497,8 +25497,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "warthog",
+      "image": "images/warthog.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -26230,8 +26230,8 @@
           "importance": 4
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "white-tern",
+      "image": "images/white-tern.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -26334,8 +26334,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "wild-bactrian-camel",
+      "image": "images/wild-bactrian-camel.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"
@@ -26765,8 +26765,8 @@
           "importance": 2
         }
       ],
-      "mediaId": null,
-      "image": null,
+      "mediaId": "wildebeest",
+      "image": "images/wildebeest.png",
       "review": {
         "state": "reviewed",
         "source": "openai-geography-final-wildlife"

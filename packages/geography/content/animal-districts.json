@@ -411,8 +411,8 @@
       ],
       "markers": [
         {
-          "lat": 33.0,
-          "lon": -112.0,
+          "lat": 33,
+          "lon": -112,
           "districtId": "north-america-desert"
         },
         {
@@ -1549,7 +1549,7 @@
       "i18nKey": "geography.animals.buzzard",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "buzzard",
       "districtIds": [
         "europe-west",
         "europe-east"
@@ -3394,7 +3394,7 @@
           "districtId": "antarctic"
         },
         {
-          "lat": -67.0,
+          "lat": -67,
           "lon": 155.227,
           "districtId": "antarctic"
         }
@@ -3435,7 +3435,7 @@
       "i18nKey": "geography.animals.giant-panda",
       "scientificName": "Ailuropoda melanoleuca",
       "taxonRank": "species",
-      "mediaId": null,
+      "mediaId": "giant-panda",
       "districtIds": [
         "china-forest"
       ],
@@ -3623,7 +3623,7 @@
       "i18nKey": "geography.animals.grass-snake",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "grass-snake",
       "districtIds": [
         "europe-west"
       ],
@@ -3977,7 +3977,7 @@
       "i18nKey": "geography.animals.harbour-seal",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "harbour-seal",
       "districtIds": [
         "europe-west",
         "arctic"
@@ -4149,7 +4149,7 @@
       "i18nKey": "geography.animals.heron",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "heron",
       "districtIds": [
         "europe-west",
         "rivers-lakes"
@@ -4217,7 +4217,7 @@
       "i18nKey": "geography.animals.hoopoe",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "hoopoe",
       "districtIds": [
         "mediterranean"
       ],
@@ -4650,7 +4650,7 @@
       "i18nKey": "geography.animals.llama",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "llama",
       "districtIds": [
         "andes"
       ],
@@ -5240,7 +5240,7 @@
       "i18nKey": "geography.animals.mole",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "mole",
       "districtIds": [
         "europe-west",
         "europe-east"
@@ -5616,14 +5616,14 @@
       "i18nKey": "geography.animals.orangutan",
       "scientificName": "Pongo",
       "taxonRank": "genus",
-      "mediaId": null,
+      "mediaId": "orangutan",
       "districtIds": [
         "borneo-sumatra"
       ],
       "markers": [
         {
-          "lat": 1.0,
-          "lon": 114.0,
+          "lat": 1,
+          "lon": 114,
           "districtId": "borneo-sumatra"
         },
         {
@@ -5857,7 +5857,7 @@
           "districtId": "coral-reef"
         },
         {
-          "lat": 19.0,
+          "lat": 19,
           "lon": -82.563,
           "districtId": "coral-reef"
         }
@@ -5950,7 +5950,7 @@
       "i18nKey": "geography.animals.pine-marten",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "pine-marten",
       "districtIds": [
         "europe-west",
         "europe-north"
@@ -6610,7 +6610,7 @@
       "i18nKey": "geography.animals.roe-deer",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "roe-deer",
       "districtIds": [
         "europe-west",
         "europe-east"
@@ -7716,7 +7716,7 @@
       "i18nKey": "geography.animals.stoat",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "stoat",
       "districtIds": [
         "europe-west",
         "europe-north"
@@ -8712,7 +8712,7 @@
       "i18nKey": "geography.animals.weasel",
       "scientificName": null,
       "taxonRank": "concept",
-      "mediaId": null,
+      "mediaId": "weasel",
       "districtIds": [
         "europe-west",
         "europe-east"
