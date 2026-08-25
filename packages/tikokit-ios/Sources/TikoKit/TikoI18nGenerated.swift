@@ -11552,6 +11552,334 @@ extension TikoLocalTranslations {
         "write.action.next": "შემდეგი",
     ]
 
+    static let globe_nl: [String: String] = [
+        "globe.mode.animals": "Dieren",
+        "globe.action.sayAgain": "Zeg het nog eens",
+        "globe.list.search": "Zoeken",
+        "common.done": "Klaar",
+        "common.settings": "Instellingen",
+    ]
+
+    static let globe_de: [String: String] = [
+        "globe.mode.animals": "Tiere",
+        "globe.action.sayAgain": "Sag es nochmal",
+        "globe.list.search": "Suchen",
+        "common.done": "Fertig",
+        "common.settings": "Einstellungen",
+    ]
+
+    static let globe_fr: [String: String] = [
+        "globe.mode.animals": "Animaux",
+        "globe.action.sayAgain": "Répète-le",
+        "globe.list.search": "Rechercher",
+        "common.done": "Terminé",
+        "common.settings": "Paramètres",
+    ]
+
+    static let globe_es: [String: String] = [
+        "globe.mode.animals": "Animales",
+        "globe.action.sayAgain": "Dilo otra vez",
+        "globe.list.search": "Buscar",
+        "common.done": "Hecho",
+        "common.settings": "Ajustes",
+    ]
+
+    static let globe_pt: [String: String] = [
+        "globe.list.search": "Procurar",
+        "common.done": "Concluído",
+        "common.settings": "Definições",
+    ]
+
+    static let globe_it: [String: String] = [
+        "globe.list.search": "Cerca",
+        "common.done": "Fatto",
+        "common.settings": "Impostazioni",
+    ]
+
+    static let globe_mt: [String: String] = [
+        "globe.mode.animals": "Annimali",
+        "globe.action.sayAgain": "Erġa' għidha",
+        "globe.list.search": "Fittex",
+        "common.done": "Lest",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
+    static let globe_ja: [String: String] = [
+        "globe.list.search": "検索",
+        "common.done": "完了",
+        "common.settings": "設定",
+    ]
+
+    static let globe_zh: [String: String] = [
+        "globe.list.search": "搜索",
+        "common.done": "完成",
+        "common.settings": "设置",
+    ]
+
+    static let globe_ko: [String: String] = [
+        "globe.list.search": "검색",
+        "common.done": "완료",
+        "common.settings": "설정",
+    ]
+
+    static let globe_ar: [String: String] = [
+        "globe.list.search": "بحث",
+        "common.done": "تم",
+        "common.settings": "الإعدادات",
+    ]
+
+    static let globe_hy: [String: String] = [
+        "globe.list.search": "Որոնել",
+        "common.done": "Պատրաստ է",
+        "common.settings": "Կարգավորումներ",
+    ]
+
+    static let globe_id: [String: String] = [
+        "globe.list.search": "Cari",
+        "common.done": "Selesai",
+        "common.settings": "Pengaturan",
+    ]
+
+    static let globe_ms: [String: String] = [
+        "globe.list.search": "Cari",
+        "common.done": "Selesai",
+        "common.settings": "Tetapan",
+    ]
+
+    static let globe_vi: [String: String] = [
+        "globe.list.search": "Tìm kiếm",
+        "common.done": "Xong",
+        "common.settings": "Cài đặt",
+    ]
+
+    static let globe_af: [String: String] = [
+        "globe.list.search": "Soek",
+        "common.done": "Klaar",
+        "common.settings": "Instellings",
+    ]
+
+    static let globe_sv: [String: String] = [
+        "globe.list.search": "Sök",
+        "common.done": "Klar",
+        "common.settings": "Inställningar",
+    ]
+
+    static let globe_da: [String: String] = [
+        "globe.list.search": "Søg",
+        "common.done": "Færdig",
+        "common.settings": "Indstillinger",
+    ]
+
+    static let globe_nb: [String: String] = [
+        "globe.list.search": "Søk",
+        "common.done": "Ferdig",
+        "common.settings": "Innstillinger",
+    ]
+
+    static let globe_is: [String: String] = [
+        "globe.list.search": "Leita",
+        "common.done": "Búið",
+        "common.settings": "Stillingar",
+    ]
+
+    static let globe_fy: [String: String] = [
+        "globe.list.search": "Sykje",
+        "common.done": "Klear",
+        "common.settings": "Ynstellings",
+    ]
+
+    static let globe_lb: [String: String] = [
+        "globe.list.search": "Sichen",
+        "common.done": "Fäerdeg",
+        "common.settings": "Astellungen",
+    ]
+
+    static let globe_ca: [String: String] = [
+        "globe.list.search": "Cerca",
+        "common.done": "Fet",
+        "common.settings": "Configuració",
+    ]
+
+    static let globe_gl: [String: String] = [
+        "globe.list.search": "Buscar",
+        "common.done": "Feito",
+        "common.settings": "Axustes",
+    ]
+
+    static let globe_ro: [String: String] = [
+        "globe.list.search": "Caută",
+        "common.done": "Gata",
+        "common.settings": "Setări",
+    ]
+
+    static let globe_pap: [String: String] = [
+        "globe.list.search": "Buska",
+        "common.done": "Klar",
+        "common.settings": "Konfigurashon",
+    ]
+
+    static let globe_ru: [String: String] = [
+        "globe.list.search": "Поиск",
+        "common.done": "Готово",
+        "common.settings": "Настройки",
+    ]
+
+    static let globe_uk: [String: String] = [
+        "globe.list.search": "Пошук",
+        "common.done": "Готово",
+        "common.settings": "Налаштування",
+    ]
+
+    static let globe_be: [String: String] = [
+        "globe.list.search": "Пошук",
+        "common.done": "Гатова",
+        "common.settings": "Налады",
+    ]
+
+    static let globe_pl: [String: String] = [
+        "globe.list.search": "Szukaj",
+        "common.done": "Gotowe",
+        "common.settings": "Ustawienia",
+    ]
+
+    static let globe_cs: [String: String] = [
+        "globe.list.search": "Hledat",
+        "common.done": "Hotovo",
+        "common.settings": "Nastavení",
+    ]
+
+    static let globe_sk: [String: String] = [
+        "globe.list.search": "Hľadať",
+        "common.done": "Hotovo",
+        "common.settings": "Nastavenia",
+    ]
+
+    static let globe_sl: [String: String] = [
+        "globe.list.search": "Iskanje",
+        "common.done": "Končano",
+        "common.settings": "Nastavitve",
+    ]
+
+    static let globe_hr: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_sr: [String: String] = [
+        "globe.list.search": "Тражи",
+        "common.done": "Готово",
+        "common.settings": "Подешавања",
+    ]
+
+    static let globe_bs: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_cnr: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_bg: [String: String] = [
+        "globe.list.search": "Търсене",
+        "common.done": "Готово",
+        "common.settings": "Настройки",
+    ]
+
+    static let globe_mk: [String: String] = [
+        "globe.list.search": "Барај",
+        "common.done": "Готово",
+        "common.settings": "Поставки",
+    ]
+
+    static let globe_lt: [String: String] = [
+        "globe.list.search": "Paieška",
+        "common.done": "Baigta",
+        "common.settings": "Nustatymai",
+    ]
+
+    static let globe_lv: [String: String] = [
+        "globe.list.search": "Meklēt",
+        "common.done": "Gatavs",
+        "common.settings": "Iestatījumi",
+    ]
+
+    static let globe_fi: [String: String] = [
+        "globe.list.search": "Etsi",
+        "common.done": "Valmis",
+        "common.settings": "Asetukset",
+    ]
+
+    static let globe_et: [String: String] = [
+        "globe.list.search": "Otsi",
+        "common.done": "Valmis",
+        "common.settings": "Seaded",
+    ]
+
+    static let globe_hu: [String: String] = [
+        "globe.list.search": "Keresés",
+        "common.done": "Kész",
+        "common.settings": "Beállítások",
+    ]
+
+    static let globe_cy: [String: String] = [
+        "globe.list.search": "Chwilio",
+        "common.done": "Wedi gorffen",
+        "common.settings": "Gosodiadau",
+    ]
+
+    static let globe_ga: [String: String] = [
+        "globe.list.search": "Cuardaigh",
+        "common.done": "Déanta",
+        "common.settings": "Socruithe",
+    ]
+
+    static let globe_bn: [String: String] = [
+        "globe.list.search": "খুঁজুন",
+        "common.done": "সম্পন্ন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let globe_hi: [String: String] = [
+        "globe.list.search": "खोजें",
+        "common.done": "पूरा हुआ",
+        "common.settings": "सेटिंग्स",
+    ]
+
+    static let globe_el: [String: String] = [
+        "globe.list.search": "Αναζήτηση",
+        "common.done": "Έτοιμο",
+        "common.settings": "Ρυθμίσεις",
+    ]
+
+    static let globe_sq: [String: String] = [
+        "globe.list.search": "Kërko",
+        "common.done": "U krye",
+        "common.settings": "Cilësimet",
+    ]
+
+    static let globe_tr: [String: String] = [
+        "globe.list.search": "Ara",
+        "common.done": "Tamam",
+        "common.settings": "Ayarlar",
+    ]
+
+    static let globe_eu: [String: String] = [
+        "globe.list.search": "Bilatu",
+        "common.done": "Eginda",
+        "common.settings": "Ezarpenak",
+    ]
+
+    static let globe_ka: [String: String] = [
+        "globe.list.search": "ძებნა",
+        "common.done": "დასრულდა",
+        "common.settings": "პარამეტრები",
+    ]
+
     /// The generated bundles for one app, in locale order.
     static func generatedBundles(for app: TikoAppKey) -> [(String, [String: String])] {
         switch app {
@@ -11566,6 +11894,7 @@ extension TikoLocalTranslations {
         case .sum: return [("nl", sum_nl), ("de", sum_de), ("fr", sum_fr), ("es", sum_es), ("pt", sum_pt), ("it", sum_it), ("mt", sum_mt), ("ja", sum_ja), ("zh", sum_zh), ("ko", sum_ko), ("ar", sum_ar), ("hy", sum_hy), ("id", sum_id), ("ms", sum_ms), ("vi", sum_vi), ("af", sum_af), ("sv", sum_sv), ("da", sum_da), ("nb", sum_nb), ("is", sum_is), ("fy", sum_fy), ("lb", sum_lb), ("ca", sum_ca), ("gl", sum_gl), ("ro", sum_ro), ("pap", sum_pap), ("ru", sum_ru), ("uk", sum_uk), ("be", sum_be), ("pl", sum_pl), ("cs", sum_cs), ("sk", sum_sk), ("sl", sum_sl), ("hr", sum_hr), ("sr", sum_sr), ("bs", sum_bs), ("cnr", sum_cnr), ("bg", sum_bg), ("mk", sum_mk), ("lt", sum_lt), ("lv", sum_lv), ("fi", sum_fi), ("et", sum_et), ("hu", sum_hu), ("cy", sum_cy), ("ga", sum_ga), ("bn", sum_bn), ("hi", sum_hi), ("el", sum_el), ("sq", sum_sq), ("tr", sum_tr), ("eu", sum_eu), ("ka", sum_ka)]
         case .first: return [("nl", first_nl), ("de", first_de), ("fr", first_fr), ("es", first_es), ("pt", first_pt), ("it", first_it), ("mt", first_mt), ("ja", first_ja), ("zh", first_zh), ("ko", first_ko), ("ar", first_ar), ("hy", first_hy), ("id", first_id), ("ms", first_ms), ("vi", first_vi), ("af", first_af), ("sv", first_sv), ("da", first_da), ("nb", first_nb), ("is", first_is), ("fy", first_fy), ("lb", first_lb), ("ca", first_ca), ("gl", first_gl), ("ro", first_ro), ("pap", first_pap), ("ru", first_ru), ("uk", first_uk), ("be", first_be), ("pl", first_pl), ("cs", first_cs), ("sk", first_sk), ("sl", first_sl), ("hr", first_hr), ("sr", first_sr), ("bs", first_bs), ("cnr", first_cnr), ("bg", first_bg), ("mk", first_mk), ("lt", first_lt), ("lv", first_lv), ("fi", first_fi), ("et", first_et), ("hu", first_hu), ("cy", first_cy), ("ga", first_ga), ("bn", first_bn), ("hi", first_hi), ("el", first_el), ("sq", first_sq), ("tr", first_tr), ("eu", first_eu), ("ka", first_ka)]
         case .write: return [("nl", write_nl), ("de", write_de), ("fr", write_fr), ("es", write_es), ("pt", write_pt), ("it", write_it), ("mt", write_mt), ("ja", write_ja), ("zh", write_zh), ("ko", write_ko), ("ar", write_ar), ("hy", write_hy), ("id", write_id), ("ms", write_ms), ("vi", write_vi), ("af", write_af), ("sv", write_sv), ("da", write_da), ("nb", write_nb), ("is", write_is), ("fy", write_fy), ("lb", write_lb), ("ca", write_ca), ("gl", write_gl), ("ro", write_ro), ("pap", write_pap), ("ru", write_ru), ("uk", write_uk), ("be", write_be), ("pl", write_pl), ("cs", write_cs), ("sk", write_sk), ("sl", write_sl), ("hr", write_hr), ("sr", write_sr), ("bs", write_bs), ("cnr", write_cnr), ("bg", write_bg), ("mk", write_mk), ("lt", write_lt), ("lv", write_lv), ("fi", write_fi), ("et", write_et), ("hu", write_hu), ("cy", write_cy), ("ga", write_ga), ("bn", write_bn), ("hi", write_hi), ("el", write_el), ("sq", write_sq), ("tr", write_tr), ("eu", write_eu), ("ka", write_ka)]
+        case .globe: return [("nl", globe_nl), ("de", globe_de), ("fr", globe_fr), ("es", globe_es), ("pt", globe_pt), ("it", globe_it), ("mt", globe_mt), ("ja", globe_ja), ("zh", globe_zh), ("ko", globe_ko), ("ar", globe_ar), ("hy", globe_hy), ("id", globe_id), ("ms", globe_ms), ("vi", globe_vi), ("af", globe_af), ("sv", globe_sv), ("da", globe_da), ("nb", globe_nb), ("is", globe_is), ("fy", globe_fy), ("lb", globe_lb), ("ca", globe_ca), ("gl", globe_gl), ("ro", globe_ro), ("pap", globe_pap), ("ru", globe_ru), ("uk", globe_uk), ("be", globe_be), ("pl", globe_pl), ("cs", globe_cs), ("sk", globe_sk), ("sl", globe_sl), ("hr", globe_hr), ("sr", globe_sr), ("bs", globe_bs), ("cnr", globe_cnr), ("bg", globe_bg), ("mk", globe_mk), ("lt", globe_lt), ("lv", globe_lv), ("fi", globe_fi), ("et", globe_et), ("hu", globe_hu), ("cy", globe_cy), ("ga", globe_ga), ("bn", globe_bn), ("hi", globe_hi), ("el", globe_el), ("sq", globe_sq), ("tr", globe_tr), ("eu", globe_eu), ("ka", globe_ka)]
         }
     }
 }

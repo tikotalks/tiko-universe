@@ -196,6 +196,10 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     private let settingsContent: SettingsContent
 
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
+    // The user's own answer to "how light is light" and "how dark is dark".
+    // Empty means they have not chosen, so the app's own values stand.
+    @AppStorage(TikoSurfaceStorage.lightKey) private var lightBackgroundHex = ""
+    @AppStorage(TikoSurfaceStorage.darkKey) private var darkBackgroundHex = ""
     @Environment(\.colorScheme) private var deviceScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage("tiko.userName") private var userName = ""
@@ -207,13 +211,34 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     @State private var showingProfileMenu = false
     @State private var showingParentCodeEntry = false
     @State private var showingCreateParentCode = false
-    @State private var showingChildModeVerifyPrompt = false
+    /// Set by Settings → Delete account, so the account sheet opens on the
+    /// confirmation step instead of the profile.
+    @State private var accountOpensOnDelete = false
+    /// Mirrors `TikoParentGate.isLocalChildModeActive` so SwiftUI re-renders
+    /// when a device without a verified email enters or leaves child mode.
+    @State private var localChildMode = TikoParentGate.isLocalChildModeActive
     @State private var fetchedIconURL: URL? = nil
     @State private var fetchedAvatarURL: URL? = nil
     @State private var splashVisible = true
 
-    /// Derived from API-backed runtime — parent mode means NOT in child mode.
-    private var parentMode: Bool { !(identityBundle?.isChildMode ?? false) }
+    /// Parent mode means NOT in child mode — either the API-backed runtime or,
+    /// for a device with no verified email, the local gate.
+    private var parentMode: Bool { !(localChildMode || (identityBundle?.isChildMode ?? false)) }
+
+    /// Precedence: what the user chose, then what the app passed in, then the
+    /// Tiko defaults.
+    private var surfaces: TikoSurfaces {
+        TikoSurfaceResolver.surfaces(
+            lightHex: lightBackgroundHex,
+            darkHex: darkBackgroundHex,
+            appLight: backgroundColor,
+            appDark: darkBackgroundColor
+        )
+    }
+
+    private var activeBackground: Color {
+        surfaces.background(for: selectedColorScheme)
+    }
 
 
     public init(
@@ -286,7 +311,7 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
     public var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+            .background(activeBackground)
             .preferredColorScheme(preferredColorSchemeValue)
             .safeAreaInset(edge: .top, spacing: 0) {
                 TikoAppHeader(
@@ -311,12 +336,19 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
                         }
                     }
                 )
-                .background(selectedColorScheme == .dark ? darkBackgroundColor : backgroundColor)
+                .background(activeBackground)
             }
-        .tikoSettingsPopup(isPresented: $showingSettings, appColor: appColor) {
+        .tikoSettingsPopup(
+            isPresented: $showingSettings,
+            appColor: appColor,
+            accountEmail: signedInEmail,
+            onChildMode: { closeSettings(then: { handleChildModeRequest() }) },
+            onAccount: { closeSettings(then: { accountOpensOnDelete = false; showingAccount = true }) },
+            onDeleteAccount: { closeSettings(then: { accountOpensOnDelete = true; showingAccount = true }) }
+        ) {
             settingsContent
         }
-        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, onIdentityChanged: {
+        .tikoAccountPopup(isPresented: $showingAccount, appName: appName, appColor: appColor, profilePrefs: profilePrefs, startInDeleteFlow: accountOpensOnDelete, onIdentityChanged: {
             Task { @MainActor in
                 let bundle = await refreshIdentityBundle()
                 identityBundle = bundle
@@ -356,7 +388,8 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             TikoParentCodeEntrySheet(
                 appColor: appColor,
                 onParentMode: { bundle in
-                    identityBundle = bundle
+                    if let bundle { identityBundle = bundle }
+                    localChildMode = TikoParentGate.isLocalChildModeActive
                     showingParentCodeEntry = false
                 },
                 onClose: { showingParentCodeEntry = false }
@@ -366,48 +399,12 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             TikoCreateParentCodeSheet(
                 appColor: appColor,
                 onChildMode: { bundle in
-                    identityBundle = bundle
+                    if let bundle { identityBundle = bundle }
+                    localChildMode = TikoParentGate.isLocalChildModeActive
                     showingCreateParentCode = false
                 },
                 onClose: { showingCreateParentCode = false }
             )
-        }
-        .tikoPopup(isPresented: $showingChildModeVerifyPrompt) {
-            TikoPopupCard(
-                title: "Verify your email",
-                subtitle: "Child mode needs a verified email so you can recover your account if you forget your PIN.",
-                icon: "envelope.fill",
-                appColor: appColor,
-                onClose: { showingChildModeVerifyPrompt = false }
-            ) {
-                VStack(spacing: 14) {
-                    Button {
-                        showingChildModeVerifyPrompt = false
-                        Task { @MainActor in
-                            try? await Task.sleep(nanoseconds: 300_000_000)
-                            showingAccount = true
-                        }
-                    } label: {
-                        Text("Add email")
-                            .font(.system(size: 17, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 15)
-                            .background(appColor.palette.primary)
-                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    }
-                    .buttonStyle(.plain)
-
-                    Button {
-                        showingChildModeVerifyPrompt = false
-                    } label: {
-                        Text("Not now")
-                            .font(.system(size: 15, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
         }
         .overlay {
             if splashVisible {
@@ -428,8 +425,20 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
         .tikoUpdateNotice(accent: appColor.palette.primary)
         .task {
+            if TikoScreenshotMode.isActive {
+                // Deterministic, offline launch for screenshots/promo video: every
+                // call below is network-bound, and on a cold simulator they hang
+                // until URLSession times out — long past the capture window, so
+                // the splash is all that gets photographed. Drop straight to the
+                // app content instead.
+                splashVisible = false
+                // The "settings" scene is shell-level, so every app gets it here.
+                if TikoScreenshotMode.scene == "settings" { showingSettings = true }
+                return
+            }
             // Hold the splash long enough for the wordmark to finish drawing
-            // itself, however quickly the identity work happens to return.
+            // itself, however quickly the identity work happens to return. Below
+            // the screenshot check, which returns before this is ever awaited.
             async let markFinished: Void = Task.sleep(nanoseconds: reduceMotion ? 400_000_000 : 1_300_000_000)
 
             await fetchIconIfNeeded()
@@ -477,6 +486,25 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
         }
     }
 
+    /// The signed-in address, or nil for a guest — what Settings shows on the
+    /// account row, and what decides whether it can offer deletion.
+    private var signedInEmail: String? {
+        guard let account = identityBundle?.account, account.emailVerified == true else { return nil }
+        return account.email
+    }
+
+    /// One popup at a time: PopupView will not swap a presented card for a new
+    /// one in the same update, so every settings route closes first and opens
+    /// the next after the dismissal animation — the same 250ms the profile
+    /// menu already uses.
+    private func closeSettings(then open: @escaping () -> Void) {
+        showingSettings = false
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 250_000_000)
+            open()
+        }
+    }
+
     private func handleChildModeRequest() {
         showingProfileMenu = false
         Task { @MainActor in
@@ -484,14 +512,19 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             let storedBundle = (try? TikoDeviceSessionStore().load()) ?? identityBundle
             // If device is already in child mode (stored state may differ from in-memory),
             // show the PIN entry to EXIT child mode rather than trying to enter again.
-            if storedBundle?.isChildMode == true {
+            if TikoParentGate.isLocalChildModeActive || storedBundle?.isChildMode == true {
                 showingParentCodeEntry = true
                 return
             }
-            // Child mode requires a verified email so the account can be recovered
-            // if the parent forgets their PIN.
-            if storedBundle?.account?.emailVerified != true {
-                showingChildModeVerifyPrompt = true
+            // Without a verified email the server refuses to hold a PIN, so the
+            // device keeps its own gate rather than refusing child mode outright.
+            if TikoParentGate.usesLocalGate(storedBundle) {
+                if TikoParentGate.isLocalPinConfigured {
+                    TikoParentGate.enterLocalChildMode()
+                    localChildMode = true
+                } else {
+                    showingCreateParentCode = true
+                }
                 return
             }
             if storedBundle?.isPinConfigured == true {
@@ -590,6 +623,13 @@ public struct TikoAppShell<Content: View, SettingsContent: View>: View {
             fetchedAvatarURL = resolved
             return
         }
+        // A device with no account keeps the person glyph. The header button is
+        // the way into the account and the parental control, and a random
+        // picture from the media library on it reads as decoration — which is
+        // how two App Review passes missed both (2.3.6 on Talk and Timer,
+        // 5.1.1(v) on Radio). A signed-in user who has not picked an avatar
+        // still gets one, and can change it in the profile.
+        guard signedInEmail != nil else { return }
         // Pick a random avatar and store its media ID
         if let mediaId = await fetchRandomMediaId() {
             profilePrefs.setAvatarURL(mediaId)

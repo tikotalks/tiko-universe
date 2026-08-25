@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,6 +16,7 @@
 		676CC2F80A9C9C523991024B /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 46BBB23D8755875035E57897 /* TikoKit */; };
 		6A4B14D0B5A456E7C99F9962 /* RadioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D554990F8B6D5214203045EF /* RadioView.swift */; };
 		795955A8BBCF0D6FBF9E276E /* RadioLibraryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */; };
+		7A1A77A91E949D4853779E5B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4A2D4E6E1C34637F063DAB0D /* PrivacyInfo.xcprivacy */; };
 		7E8CCD072CB513BCC46CF3A1 /* RadioPlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79EE4617893EC2DA91D30CC /* RadioPlaybackService.swift */; };
 		8FA44C8F5278E6B7304ACCCF /* TikoRadioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10F4D15A1B9E163D45B6C7E /* TikoRadioTests.swift */; };
 		966B76A43408EAB631586B41 /* RadioQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854A3DFC586080EA41233273 /* RadioQueue.swift */; };
@@ -46,6 +47,7 @@
 		2D8DE4E3971AE54756A07782 /* TikoRadio.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoRadio.entitlements; sourceTree = "<group>"; };
 		2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioLibraryStore.swift; sourceTree = "<group>"; };
 		3F8B67EBA4AAB2F3AF4067C6 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		4A2D4E6E1C34637F063DAB0D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		59529CBA793A9109D0A98D4C /* RadioSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioSupportViews.swift; sourceTree = "<group>"; };
 		750A303A548F74195B314679 /* TikoRadioUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoRadioUITests.swift; sourceTree = "<group>"; };
 		75E41645927137FAEBA203E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			children = (
 				75E41645927137FAEBA203E8 /* Assets.xcassets */,
 				7F3786B8F2D3DF95A603F404 /* Info.plist */,
+				4A2D4E6E1C34637F063DAB0D /* PrivacyInfo.xcprivacy */,
 				B17B677C7C8F49D6E855D8E7 /* RadioAppConfig.swift */,
 				2DC2F0CE35E3A79F4815DE3D /* RadioLibraryStore.swift */,
 				F03EEB0E43F08257135FD2ED /* RadioModels.swift */,
@@ -229,6 +232,7 @@
 				};
 			};
 			buildConfigurationList = C3F8ED7C018EA6BAA682B946 /* Build configuration list for PBXProject "TikoRadio" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -240,8 +244,7 @@
 			packageReferences = (
 				2F4FFCBAF8A8ECE55D923CD6 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
 			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = 33686173E62ED79ABC7F801D /* Products */;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E791C15BEC079CF6FC7E59E /* Assets.xcassets in Resources */,
+				7A1A77A91E949D4853779E5B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -512,7 +516,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -531,7 +535,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoRadio.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 5;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

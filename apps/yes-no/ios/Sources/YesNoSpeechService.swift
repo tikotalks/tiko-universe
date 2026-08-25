@@ -5,20 +5,21 @@ enum YesNoSpeechPlaybackState {
     case idle
     case generating
     case playing
+    case unsupportedLanguage
 }
 
 @MainActor
 final class YesNoSpeechService {
-    private let speechService = TikoAtlasSpeechService(app: "yes-no", purpose: "speech-playback")
+    private let voice = TikoVoiceService()
 
     func speak(_ text: String, languageCode: String = "en", onStateChange: ((YesNoSpeechPlaybackState) -> Void)? = nil) {
-        speechService.speak(text, languageCode: languageCode) { state in
+        voice.speakDetached(text, languageCode: languageCode) { state in
             onStateChange?(YesNoSpeechPlaybackState(state))
         }
     }
 
     func stop() {
-        speechService.stop()
+        voice.stop()
     }
 }
 
@@ -28,6 +29,7 @@ private extension YesNoSpeechPlaybackState {
         case .idle: self = .idle
         case .generating: self = .generating
         case .playing: self = .playing
+        case .unsupportedLanguage: self = .unsupportedLanguage
         }
     }
 }

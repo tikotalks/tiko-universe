@@ -54,6 +54,21 @@ struct CardsView: View {
         localizedCollections = store.collections
     }
 
+    /// Renders the fixed state named by `--screenshot <scene>`. Without this the
+    /// "card" scene captures the same collections grid as "grid".
+    private func applyScreenshotScene() {
+        switch TikoScreenshotMode.scene {
+        case "card":
+            // Open the first collection that has cards, so the shot shows the
+            // picture cards themselves — the thing the app is actually for.
+            if let collection = visibleCollections.first(where: { !$0.cards.isEmpty }) {
+                collectionStack = [collection]
+            }
+        default:
+            break
+        }
+    }
+
     private var labelFont: Font {
         switch labelSizeIndex {
         case 0: return Font.system(.caption2, design: .rounded).weight(.heavy)
@@ -246,7 +261,7 @@ struct CardsView: View {
                                             }
                                             .contentShape(Rectangle())
                                             .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                                let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                                let isChild = TikoParentGate.isChildModeActive
                                                 guard !isChild else { return }
                                                 refreshAdminStateFromStoredSession()
                                                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
@@ -294,14 +309,20 @@ struct CardsView: View {
             .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
             .task {
                 if TikoScreenshotMode.isActive {
-                    // Deterministic launch for UI tests / screenshots: the grid
-                    // comes from the built-in defaults rather than the account.
+                    // Deterministic, offline launch for UI tests / screenshots:
+                    // populate the grid from the built-in defaults with no network.
                     store.loadOfflineDefaults()
                     syncCollectionsFromStore()
-                    // Artwork still comes from Tiko Media. Skipping it made every
-                    // captured card a flat colour block, which is not what the
-                    // app looks like in a child's hands.
-                    await store.hydrateRootThumbnails()
+                    applyScreenshotScene()
+                    // Content stays deterministic (built-in defaults), but the
+                    // artwork still has to load: Cards is a picture-card app, so
+                    // store screenshots showing bare colour tiles misrepresent it.
+                    // hydrateMedia degrades silently if the API is unreachable.
+                    if let openCollectionID = currentCollection?.id {
+                        await store.hydrateMedia(for: openCollectionID)
+                    } else {
+                        await store.hydrateRootThumbnails()
+                    }
                     syncCollectionsFromStore()
                     return
                 }
@@ -704,7 +725,7 @@ private struct CollectionDetailView: View {
                                     }
                                     .contentShape(Rectangle())
                                     .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                        let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                        let isChild = TikoParentGate.isChildModeActive
                                         guard !isChild else { return }
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                         onStartEditing()
@@ -772,7 +793,7 @@ private struct CollectionDetailView: View {
                                     }
                                     .contentShape(Rectangle())
                                     .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                        let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                                        let isChild = TikoParentGate.isChildModeActive
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                         if isChild {
                                             fullscreenCard = card

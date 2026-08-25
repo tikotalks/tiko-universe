@@ -1,0 +1,14 @@
+{
+  "name": "@tiko-tools/geography",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Build-time pipeline turning Natural Earth into Tiko Globe runtime assets.",
+  "scripts": {
+    "build": "node build-geography.mjs",
+    "check": "node build-geography.mjs --check"
+  },
+  "dependencies": {
+    "earcut": "^3.0.1"
+  }
+}

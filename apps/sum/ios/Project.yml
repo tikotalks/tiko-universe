@@ -26,6 +26,20 @@ targets:
         script: |
           set -euo pipefail
           REPO_ROOT="${SRCROOT}/../../.."
+          # Xcode runs build phases with a minimal PATH that does not include the
+          # login shell's, so a node installed by homebrew, nvm, volta, fnm or
+          # into ~/.local is invisible here even though `node -v` works in a
+          # terminal. Look where it actually lives before giving up.
+          PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+          if ! command -v node >/dev/null 2>&1; then
+            for candidate in "$HOME"/.nvm/versions/node/*/bin "$HOME/.volta/bin" "$HOME"/.fnm/node-versions/*/installation/bin; do
+              if [ -x "$candidate/node" ]; then
+                PATH="$candidate:$PATH"
+                break
+              fi
+            done
+          fi
+          export PATH
           if ! command -v node >/dev/null 2>&1; then
             echo "error: node is required to generate Tiko app configs from admin before iOS build."
             exit 1
@@ -35,8 +49,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.sum
         INFOPLIST_FILE: Sources/Info.plist
-        MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "1.1"
+        CURRENT_PROJECT_VERSION: "2"
         CODE_SIGN_ENTITLEMENTS: Sources/TikoSum.entitlements
   TikoSumTests:
     type: bundle.unit-test

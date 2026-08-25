@@ -18,11 +18,15 @@ struct TikoYesNoApp: App {
             ] {
                 defaults.removeObject(forKey: key)
             }
+            // Child Mode is shell-level, so its key sits outside this list;
+            // a test that locks the app would otherwise leak into the next one.
+            TikoParentGate.clearLocalPin()
         }
 
         TikoDeviceDefaults.register()
         TikoI18n.translationsBaseURL = "https://translations.tikoapi.org"
         TikoIdentityClient.identityBaseURL = "https://identity.tikoapi.org/v1"
+        TikoVoiceService.appName = "yes-no"
     }
 
     var body: some Scene {

@@ -1,12 +1,12 @@
 {
   "name": "Tiko Radio",
-  "subtitle": "Listening, made simple",
-  "promotional_text": "A calm, ad-free audio player for children. Curated stations and stories, with simple controls anyone can use.",
-  "description": "Tiko Radio is a calm, simple audio player for children. Browse curated stations and stories, then play with one tap — big controls, no clutter, no ads.\n\nDesigned so even very young children can listen independently.\n\n- One-tap play and stop\n- Curated, child-friendly audio\n- Big, friendly controls\n- Works the moment it opens\n\nPart of Tiko, a child-first universe of small, focused AAC tools.",
-  "keywords": "audio,radio,stories,children,kids,music,player,calm,simple,education",
+  "subtitle": "Calm music, simply played",
+  "promotional_text": "A calm, clutter-free music player. Big artwork, simple controls and songs you choose — nothing to get lost in.",
+  "description": "Tiko Radio is a calm, clutter-free music player made for little hands. Big artwork, three simple controls and nothing to get lost in.\n\nEverything is built around large, tappable tiles. Songs are grouped into colourful collections, so a child can find their favourites and press play without a maze of menus.\n\nGrown-ups set up the library and keep it just right. Add the songs you want, sort them into collections, and let your child take it from there.\n\n• Large, tappable song and collection tiles\n• Simple play, pause and skip controls\n• Organise songs into colourful collections\n• Add your own songs and build collections\n• Shuffle and repeat\n• A calm, distraction-free layout designed for children\n\nTiko Radio opens straight to the music, keeping the focus on listening — not on figuring out the app.",
+  "keywords": "music,kids,player,songs,playlist,radio,toddler,calm,child,audio,music player,special needs",
   "release_notes": "Initial release.",
-  "support_url": "https://tikoapps.org/support",
-  "privacy_url": "https://tikoapps.org/privacy",
-  "marketing_url": "https://tikoapps.org/radio",
+  "support_url": "https://tiko.mt/support",
+  "privacy_url": "https://tiko.mt/privacy-policy",
+  "marketing_url": "https://tiko.mt/apps/radio",
   "copyright": "© 2026 Tiko"
 }

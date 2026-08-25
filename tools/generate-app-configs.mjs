@@ -24,11 +24,15 @@ const fallbackConfigs = {
   sum: { id: 'sum', title: 'Sum', appColor: 'sum', appIcon: 'ui/calculator', appIconMediaCategory: 'numbers', appIconImageUrl: 'https://data.tikocdn.org/uploads/1755105954065-calculator.png', themeColor: '#dd8966', iosIcon: 'plus.forwardslash.minus' },
   write: { id: 'write', title: 'Write', appColor: 'write', appIcon: 'ui/pencil', appIconMediaCategory: 'letters', appIconImageUrl: 'https://data.tikocdn.org/uploads/1756901709154-boy-saying-hi-disney-pixar-style-1.png', themeColor: '#22c55e', iosIcon: 'pencil.and.outline' },
   coloring: { id: 'coloring', title: 'Coloring', appColor: 'coloring', appIcon: 'ui/paint-brush', appIconMediaCategory: 'art', themeColor: '#f2802b', iosIcon: 'paintbrush.pointed.fill' },
+  // No media category or icon image yet: without one the shell would pull a
+  // random illustration into the header, so Globe wears its SF Symbol until it
+  // has an icon of its own.
+  globe: { id: 'globe', title: 'Globe', appColor: 'globe', appIcon: 'ui/globe', themeColor: '#0ea5e9', iosIcon: 'globe.europe.africa.fill' },
   first: { id: 'first', title: 'First', appColor: 'first', appIcon: 'ui/check-list', appIconMediaCategory: 'routines', appIconImageUrl: 'https://data.tikocdn.org/uploads/1754413862502-todo.png', themeColor: '#06b6d4', iosIcon: 'checklist' },
 }
 
 const webApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'todo', 'talk']
-const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first', 'write', 'coloring']
+const iosSharedApps = ['yes-no', 'type', 'cards', 'sequence', 'timer', 'radio', 'talk', 'tiko', 'say', 'sum', 'first', 'write', 'coloring', 'globe']
 const iosApps = {
   'yes-no': 'YesNoAppConfig.swift',
   type: 'TypeAppConfig.swift',

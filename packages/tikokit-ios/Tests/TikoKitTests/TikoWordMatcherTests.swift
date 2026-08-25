@@ -48,8 +48,12 @@ final class TikoWordMatcherTests: XCTestCase {
         XCTAssertEqual(fr.match(transcript: "un chien", listenFor: ["chien"]), .approvedPhrase)
     }
 
-    func testArticleFromWrongLanguageDoesNotMatch() {
-        XCTAssertNil(en.match(transcript: "de dog", listenFor: ["dog"]))
+    func testForeignArticleWithCorrectWordStillMatches() {
+        // The child said the target word ("dog"); a stray foreign article in the
+        // transcript does not make that wrong. Whole-word containment accepts it.
+        XCTAssertEqual(en.match(transcript: "de dog", listenFor: ["dog"]), .exact)
+        // …but a foreign article with the WRONG word is still rejected.
+        XCTAssertNil(en.match(transcript: "de kat", listenFor: ["dog"]))
     }
 
     // MARK: - Empty input
@@ -67,10 +71,52 @@ final class TikoWordMatcherTests: XCTestCase {
     // MARK: - Short-word safety (no fuzzy under 4 characters)
 
     func testShortWordsRejectNearbyWords() {
+        // A different short word is never a match under the standard matcher…
         XCTAssertNil(en.match(transcript: "dot", listenFor: ["dog"]))
         XCTAssertNil(en.match(transcript: "hat", listenFor: ["cat"]))
         XCTAssertNil(en.match(transcript: "card", listenFor: ["car"]))
-        XCTAssertNil(en.match(transcript: "bus stop", listenFor: ["bus"]))
+        // …but "bus stop" actually contains the exact target word "bus", so a
+        // child who said it has said the word — whole-word containment accepts.
+        XCTAssertEqual(en.match(transcript: "bus stop", listenFor: ["bus"]), .exact)
+    }
+
+    // MARK: - Whole-word containment (target spoken among extra words)
+
+    func testTargetWordAmongExtraWordsMatches() {
+        XCTAssertEqual(en.match(transcript: "dog dog", listenFor: ["dog"]), .exact)
+        XCTAssertEqual(en.match(transcript: "i see a dog", listenFor: ["dog"]), .exact)
+        XCTAssertEqual(en.match(transcript: "the doggy is big", listenFor: ["dog", "doggy"]), .alternative)
+    }
+
+    func testMultiWordTargetSpanMatches() {
+        XCTAssertEqual(en.match(transcript: "i want ice cream please", listenFor: ["ice cream"]), .exact)
+        // A broken-up span is not the phrase.
+        XCTAssertNil(en.match(transcript: "ice and cream", listenFor: ["ice cream"]))
+    }
+
+    func testContainmentStillRejectsAbsentWord() {
+        XCTAssertNil(en.match(transcript: "big red truck", listenFor: ["dog"]))
+    }
+
+    // MARK: - Forgiving tier (late attempts)
+
+    func testForgivingTierAllowsShortWordSingleEdit() {
+        let forgiving = TikoWordMatcher(languageCode: "en", config: .forgiving)
+        // A single-edit near-miss on a short word is accepted once forgiving…
+        XCTAssertEqual(forgiving.match(transcript: "dob", listenFor: ["dog"]), .fuzzy)
+        // …while the standard matcher still rejects it.
+        XCTAssertNil(en.match(transcript: "dob", listenFor: ["dog"]))
+    }
+
+    func testForgivingTierMatchesMispronouncedWordInFiller() {
+        let forgiving = TikoWordMatcher(languageCode: "en", config: .forgiving)
+        XCTAssertEqual(forgiving.match(transcript: "um wabbit", listenFor: ["rabbit"]), .fuzzy)
+    }
+
+    func testForgivingTierStillRejectsDifferentWords() {
+        let forgiving = TikoWordMatcher(languageCode: "en", config: .forgiving)
+        XCTAssertNil(forgiving.match(transcript: "cat", listenFor: ["dog"]))
+        XCTAssertNil(forgiving.match(transcript: "melon", listenFor: ["milk"]))
     }
 
     // MARK: - Fuzzy boundaries

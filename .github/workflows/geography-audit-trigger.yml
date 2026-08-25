@@ -1,0 +1,214 @@
+name: Geography ranked landmark enrichment trigger
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  enrich:
+    if: github.event.issue.title == '[tiko-geography-landmarks-ranked-20260824]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enrich authored landmark data from ranked CC0 places
+        shell: bash
+        run: |
+          git checkout feat/tiko-globe-app
+          python3 <<'PY'
+          import csv
+          import io
+          import json
+          import re
+          import unicodedata
+          import urllib.request
+          from pathlib import Path
+
+          TODAY='2026-08-24'
+          PATH=Path('packages/geography/content/country-landmarks.json')
+          GEN=Path('packages/geography/generated/countries.json')
+          DATA_URL='https://raw.githubusercontent.com/Flightmussy/detourmap-places/main/data/places.csv'
+
+          def load(p): return json.loads(p.read_text(encoding='utf-8'))
+          def save(p,d): p.write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          def slug(v):
+              v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]+','-',v).strip('-')
+          def norm(v):
+              v=unicodedata.normalize('NFKD',str(v)).encode('ascii','ignore').decode().lower()
+              return re.sub(r'[^a-z0-9]','',v)
+          def fetch_text(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'TikoGlobeLandmarks/1.0 (github.com/tikotalks/tiko-universe)'})
+              with urllib.request.urlopen(req,timeout=120) as f:
+                  return f.read().decode('utf-8')
+
+          data=load(PATH); generated=load(GEN)
+          meta={c['id']:c for c in generated.get('countries',[]) if isinstance(c,dict) and c.get('id')}
+          iso2_to_id={str(c.get('iso2','')).upper():cc for cc,c in meta.items() if c.get('iso2')}
+
+          raw=fetch_text(DATA_URL)
+          reader=csv.DictReader(io.StringIO(raw))
+          allowed={'ancient','monument','sacred','beach','waterfall','cave','volcanic','natural','tower','structure','castle','museum','garden','leisure'}
+          by_country={}
+          for row in reader:
+              iso=str(row.get('iso') or '').upper().strip()
+              cc=iso2_to_id.get(iso)
+              if not cc: continue
+              kind=str(row.get('kind') or '').strip()
+              if kind not in allowed: continue
+              name=(row.get('name') or '').strip()
+              qid=(row.get('qid') or '').strip()
+              if not name or not qid: continue
+              try:
+                  lat=float(row.get('latitude')); lon=float(row.get('longitude'))
+                  fame=int(float(row.get('fame_rank') or 999999999))
+              except Exception:
+                  continue
+              if not(-90<=lat<=90 and -180<=lon<=180): continue
+              by_country.setdefault(cc,[]).append({
+                  'qid':qid,'name':name,'kind':kind,'lat':round(lat,6),'lon':round(lon,6),
+                  'fameRank':fame,'fameTier':(row.get('fame_tier') or '').strip(),
+                  'description':(row.get('description') or '').strip()
+              })
+          for items in by_country.values():
+              items.sort(key=lambda x:(x['fameRank'],x['name']))
+
+          def glyph(kind):
+              return {
+                  'ancient':'🏺','monument':'🏛️','sacred':'⛪','beach':'🏖️','waterfall':'💧','cave':'🪨',
+                  'volcanic':'🌋','natural':'🌿','tower':'🗼','structure':'🏛️','castle':'🏰','museum':'🏛️',
+                  'garden':'🌳','leisure':'🎡'
+              }.get(kind,'📍')
+
+          def target_for(cc):
+              c=meta.get(cc,{})
+              bbox=c.get('bbox') or []
+              target=7
+              if len(bbox)==4:
+                  west,south,east,north=map(float,bbox)
+                  lonspan=abs(east-west)
+                  latspan=abs(north-south)
+                  area=lonspan*latspan
+                  if area<0.15:return 3
+                  if area<1:return 4
+                  if area<5:return 5
+                  if area<25:return 6
+              return target
+
+          def duplicate(existing_names,cand_name):
+              n=norm(cand_name)
+              if not n:return True
+              for e in existing_names:
+                  if n==e:return True
+                  if min(len(n),len(e))>=7 and (n in e or e in n):return True
+              return False
+
+          added=0
+          enriched=0
+          before_total=sum(len(c.get('landmarks',[])) for c in data.get('countries',{}).values())
+          below=[]
+          source_counts={}
+
+          for cc,country in data.get('countries',{}).items():
+              items=list(country.get('landmarks',[]))
+              target=target_for(cc)
+              existing_ids={x.get('id') for x in items}
+              existing_names={norm((x.get('names') or {}).get('en','')) for x in items if (x.get('names') or {}).get('en')}
+              before=len(items)
+              candidates=by_country.get(cc,[])
+              local_rank=0
+              for cand in candidates:
+                  if len(items)>=target:break
+                  nid=slug(cand['name'])
+                  if not nid or nid in existing_ids or duplicate(existing_names,cand['name']):continue
+                  # Prevent generic country/capital pages from slipping through as POIs.
+                  if norm(cand['name']) in {norm((meta.get(cc) or {}).get('name','')),norm(((meta.get(cc) or {}).get('capital') or {}).get('name',''))}:continue
+                  # Prefer broad variety: after two entries of one category, deprioritize repeats while richer choices remain.
+                  kind_count=sum(1 for x in items if (x.get('source') or {}).get('kind')==cand['kind'])
+                  if kind_count>=2 and len(candidates)>target*2:continue
+                  if local_rank==0:importance=2
+                  elif local_rank==1:importance=3
+                  elif local_rank<=3:importance=4
+                  elif local_rank<=5:importance=5
+                  else:importance=6
+                  # Never make a newly-added minor place more important than its fame tier warrants.
+                  if cand['fameTier']=='gem':importance=max(importance,6)
+                  elif cand['fameTier']=='notable':importance=max(importance,5)
+                  elif cand['fameTier']=='renowned':importance=max(importance,3)
+                  item={
+                      'id':nid,
+                      'names':{'en':cand['name']},
+                      'i18nKey':'geography.landmarks.'+nid,
+                      'lat':cand['lat'],'lon':cand['lon'],
+                      'importance':importance,
+                      'glyph':glyph(cand['kind']),
+                      'mediaId':None,
+                      'source':{
+                          'source':'detourmap-wikidata-cc0','qid':cand['qid'],'kind':cand['kind'],
+                          'fameRank':cand['fameRank'],'fameTier':cand['fameTier']
+                      }
+                  }
+                  if cand['description']:
+                      item['note']=cand['description']
+                  items.append(item)
+                  existing_ids.add(nid);existing_names.add(norm(cand['name']))
+                  source_counts[cand['kind']]=source_counts.get(cand['kind'],0)+1
+                  local_rank+=1;added+=1
+              if len(items)>before:enriched+=1
+              if len(items)<target:
+                  below.append({'countryId':cc,'target':target,'count':len(items),'availableRankedCandidates':len(candidates)})
+              country['landmarks']=sorted(items,key=lambda x:(x.get('importance',10),x.get('id','')))
+              country['review']={
+                  'state':'reviewed' if len(items)>=min(target,3) else 'draft',
+                  'by':'openai-geography-landmark-enrichment','at':TODAY
+              }
+
+          after_total=sum(len(c.get('landmarks',[])) for c in data.get('countries',{}).values())
+          audit=data.setdefault('landmarkAudit',{})
+          audit.update({
+              'at':TODAY,
+              'source':'Detourmap Places CC0 / Wikidata, fame-ranked',
+              'sourceUrl':'https://github.com/Flightmussy/detourmap-places',
+              'countriesEnriched':enriched,
+              'landmarksBefore':before_total,
+              'landmarksAdded':added,
+              'landmarksAfter':after_total,
+              'addedByKind':source_counts,
+              'countriesBelowTarget':below
+          })
+
+          for cc,country in data.get('countries',{}).items():
+              assert country.get('landmarks'),cc
+              ids=[]
+              for lm in country['landmarks']:
+                  ids.append(lm['id'])
+                  assert lm.get('names',{}).get('en')
+                  assert 1<=int(lm.get('importance',0))<=10
+                  assert -90<=float(lm['lat'])<=90 and -180<=float(lm['lon'])<=180
+              assert len(ids)==len(set(ids)),f'{cc}: duplicate ids'
+          save(PATH,data)
+          print(json.dumps(audit,ensure_ascii=False))
+          PY
+
+          git diff --exit-code -- packages/geography/generated packages/geography/content/animals.json packages/geography/content/landmarks.json packages/geography/content/country-animals.json
+          git config user.name "Tiko Geography Audit"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- packages/geography/content/country-landmarks.json
+          if git diff --cached --quiet; then
+            echo "No landmark changes"
+          else
+            git commit -m "data(geography): enrich landmarks with ranked real places"
+            git push origin HEAD:feat/tiko-globe-app
+          fi
+
+      - name: Close trigger issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue close "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --comment "Ranked landmark enrichment finished."

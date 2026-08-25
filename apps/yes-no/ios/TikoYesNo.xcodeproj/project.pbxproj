@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -214,6 +214,7 @@
 				};
 			};
 			buildConfigurationList = 676F314800A5D68895D75953 /* Build configuration list for PBXProject "TikoYesNo" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -225,8 +226,7 @@
 			packageReferences = (
 				E0F946F340B00437C6A255AA /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
 			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = D161094920912CD4DE1A244F /* Products */;
+			preferredProjectObjectVersion = 54;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

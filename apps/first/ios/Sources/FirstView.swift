@@ -183,7 +183,7 @@ struct FirstHomeView: View {
         .accessibilityValue(i18n.t("first.routine.progress", ["step": String(done), "total": String(total)]))
         .simultaneousGesture(
             LongPressGesture(minimumDuration: 0.6).onEnded { _ in
-                let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                let isChild = TikoParentGate.isChildModeActive
                 guard !isChild else { return }
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 onEdit(routine)

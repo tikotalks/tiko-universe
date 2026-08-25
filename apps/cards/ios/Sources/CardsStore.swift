@@ -69,7 +69,13 @@ final class CardsStore: ObservableObject {
         defer { loadingCollectionIDs.remove(collectionID) }
 
         do {
-            let mediaItems = try await mediaClient.fetchMedia(for: categories)
+            // Passing the card titles lets the client stop paging as soon as every
+            // card has a candidate image, instead of walking the whole category.
+            let wantedTitles = Set(collection.cards.map(\.title))
+            let mediaItems = try await mediaClient.fetchMedia(
+                for: categories,
+                wantedTitles: wantedTitles
+            )
             guard let index = collections.firstIndex(where: { $0.id == collectionID }) else { return }
             let match = CardsMediaMatcher.match(collection: collections[index], mediaItems: mediaItems)
             cardImages.merge(match.cardImages) { _, new in new }

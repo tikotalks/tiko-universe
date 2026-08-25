@@ -1,0 +1,756 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		094AAC5FC8D7FA4F30242468 /* GlobeSeas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5614E2D52B9B3D980E632516 /* GlobeSeas.swift */; };
+		0959C493F16F426CCB882D0A /* GlobeCountryNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */; };
+		0CC33F14CC37A1572054EEF4 /* mode-people.png in Resources */ = {isa = PBXBuildFile; fileRef = 80FF77B02510742CB5842370 /* mode-people.png */; };
+		1AF18118B91520EC77D3AFDE /* GlobeMomentumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */; };
+		1C968C601B629A11084A173F /* GlobeDetailPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */; };
+		205AD9431DD7D2E3C64EF0C8 /* GlobeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */; };
+		23013F064DDE0657085F23ED /* GlobeGeography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E848A064642605763CB8D3 /* GlobeGeography.swift */; };
+		2D4614B42BF8C19E67B45DFA /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10DEE2F1A059932E1A55EB7A /* TikoKit */; };
+		31804001BDE889FF191469F3 /* mode-capitals.png in Resources */ = {isa = PBXBuildFile; fileRef = 0EDA4289462845E736B7DBFF /* mode-capitals.png */; };
+		35194819D658C1CD18214E7D /* GeographyContent in Resources */ = {isa = PBXBuildFile; fileRef = 0E348D4764D805D8C3AF5084 /* GeographyContent */; };
+		365245812BBD8BC406F0E880 /* GlobeNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9CFF8C7DD288CC33EF9BD94 /* GlobeNaming.swift */; };
+		37021294967523035372768B /* GlobeSurfaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20705001102714B73B9D6D0D /* GlobeSurfaceView.swift */; };
+		384B83750F4692E443D96AB2 /* GlobeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F50F0DEF7E3EFE99B4974EAF /* GlobeView.swift */; };
+		38A58A4219139B9EC408BC65 /* GlobeHitTestingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A8BA15F036328692FAD53 /* GlobeHitTestingTests.swift */; };
+		392D444EBD1B960337607337 /* GlobeShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */; };
+		571F95A46713C8BAE23F641F /* mode-countries.png in Resources */ = {isa = PBXBuildFile; fileRef = 98C8953DF39609607B929F38 /* mode-countries.png */; };
+		5D6EB2563E334055DEEE4E5E /* GlobeHitTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D04293C93969B8E06766BD6 /* GlobeHitTesting.swift */; };
+		5ED1B38DBC982DF8873AEF55 /* GlobeCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */; };
+		6BA18B4C3A22708816D5EE3F /* GlobeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F665DA205640BE306B9C70 /* GlobeController.swift */; };
+		6DC59DCDFD924CA381C107B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 17464052BCC73051B8D2900D /* Assets.xcassets */; };
+		70B39B72189002882FDF5A0D /* GlobeMarkerImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18977981E4A3D345CC3DB9FF /* GlobeMarkerImage.swift */; };
+		8399FAC0297D6ABFC4E3E0FD /* GlobeMathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22188E2DD5E056F1040AA522 /* GlobeMathTests.swift */; };
+		8F57146F5E4D8B19DFF03897 /* GlobeAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43EE9F3970A722D07ED97B5C /* GlobeAppConfig.swift */; };
+		930F0C17494500DE855CE519 /* TikoGlobeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EA05844521B77D95653AEC3 /* TikoGlobeApp.swift */; };
+		B24A873AB3E0EE5AB027135B /* mode-landmarks.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C678A15648BBE26561A2E70 /* mode-landmarks.png */; };
+		B3353E4A0BAAAADAC4C0D9B7 /* GlobeContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */; };
+		B656E56930ED301B90A2D39A /* GlobeCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */; };
+		BCFB5825328B93123492A674 /* GlobeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430A2D66EA2E11C77432EBFD /* GlobeContent.swift */; };
+		C687C56A38F935034F80CCB7 /* GlobeSubdivisions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */; };
+		D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738B434CE752431B9D1DC059 /* GlobeCountryList.swift */; };
+		D7CEBD46F962A7F1B3A747D7 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7C7A205FB2FCEC1447AD619F /* TikoKit */; };
+		D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 404C639172C12A5CC9251A0E /* GlobeWater.swift */; };
+		DC5CE39442514A33F6A3F94B /* GlobeFlagImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */; };
+		DCF30D52D0BBFB33187CCEAC /* mode-animals.png in Resources */ = {isa = PBXBuildFile; fileRef = 69424DF8CBD6A225DEF38B86 /* mode-animals.png */; };
+		E4B55DF5B4EBAF534CAE4785 /* GlobeMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B48B8253D08F9048D3CD01 /* GlobeMath.swift */; };
+		E6C2494BD43A6E010C57317E /* Geography in Resources */ = {isa = PBXBuildFile; fileRef = F3DD7D1C84834BD71805E0C3 /* Geography */; };
+		E9E84BFC67DAB8BEAA66857E /* GlobeAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */; };
+		EA10028A4E0824BCE372411C /* GlobeMiniMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18B513C64AD268F1F1BC951 /* GlobeMiniMap.swift */; };
+		F1A40637D0343131D5EB93A5 /* TikoGlobeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B87E9B8878B9CE10B46FD0D0 /* TikoGlobeUITests.swift */; };
+		FCEC4974902F1FFD4C9E3087 /* GlobeGeographyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F19CEF753B50A4E7B66BE47D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B71ABC60E98436313484CA4E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 349278C88FC57C247D210901;
+			remoteInfo = TikoGlobe;
+		};
+		FDD161F3F54ED7AC9B0192BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B71ABC60E98436313484CA4E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 349278C88FC57C247D210901;
+			remoteInfo = TikoGlobe;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0E348D4764D805D8C3AF5084 /* GeographyContent */ = {isa = PBXFileReference; lastKnownFileType = folder; name = GeographyContent; path = ../../../packages/geography/content; sourceTree = SOURCE_ROOT; };
+		0EDA4289462845E736B7DBFF /* mode-capitals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-capitals.png"; sourceTree = "<group>"; };
+		10B48B8253D08F9048D3CD01 /* GlobeMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMath.swift; sourceTree = "<group>"; };
+		16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCountryNaming.swift; sourceTree = "<group>"; };
+		17464052BCC73051B8D2900D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		18977981E4A3D345CC3DB9FF /* GlobeMarkerImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMarkerImage.swift; sourceTree = "<group>"; };
+		1EA05844521B77D95653AEC3 /* TikoGlobeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoGlobeApp.swift; sourceTree = "<group>"; };
+		20705001102714B73B9D6D0D /* GlobeSurfaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeSurfaceView.swift; sourceTree = "<group>"; };
+		22188E2DD5E056F1040AA522 /* GlobeMathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMathTests.swift; sourceTree = "<group>"; };
+		3D04293C93969B8E06766BD6 /* GlobeHitTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeHitTesting.swift; sourceTree = "<group>"; };
+		404C639172C12A5CC9251A0E /* GlobeWater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeWater.swift; sourceTree = "<group>"; };
+		430A2D66EA2E11C77432EBFD /* GlobeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeContent.swift; sourceTree = "<group>"; };
+		43EE9F3970A722D07ED97B5C /* GlobeAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeAppConfig.swift; sourceTree = "<group>"; };
+		532A8BA15F036328692FAD53 /* GlobeHitTestingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeHitTestingTests.swift; sourceTree = "<group>"; };
+		5614E2D52B9B3D980E632516 /* GlobeSeas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeSeas.swift; sourceTree = "<group>"; };
+		56E848A064642605763CB8D3 /* GlobeGeography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeography.swift; sourceTree = "<group>"; };
+		5C678A15648BBE26561A2E70 /* mode-landmarks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-landmarks.png"; sourceTree = "<group>"; };
+		5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCameraTests.swift; sourceTree = "<group>"; };
+		65CEB617343B35B84A803598 /* TikoGlobe.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoGlobe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69424DF8CBD6A225DEF38B86 /* mode-animals.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-animals.png"; sourceTree = "<group>"; };
+		71157EB169D449CC0B4820D1 /* TikoGlobeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		738B434CE752431B9D1DC059 /* GlobeCountryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCountryList.swift; sourceTree = "<group>"; };
+		80FF77B02510742CB5842370 /* mode-people.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-people.png"; sourceTree = "<group>"; };
+		87C00B4E3BE21ED67AFC5A81 /* TikoGlobeUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoGlobeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeGeographyTests.swift; sourceTree = "<group>"; };
+		8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeCamera.swift; sourceTree = "<group>"; };
+		92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeContentTests.swift; sourceTree = "<group>"; };
+		945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeFlagImage.swift; sourceTree = "<group>"; };
+		98C8953DF39609607B929F38 /* mode-countries.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mode-countries.png"; sourceTree = "<group>"; };
+		99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeAppearance.swift; sourceTree = "<group>"; };
+		A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMomentumTests.swift; sourceTree = "<group>"; };
+		A9AA8AD6765C5936F0A9F9A8 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
+		AA47C70F6D97B312B36AA6E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B87E9B8878B9CE10B46FD0D0 /* TikoGlobeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoGlobeUITests.swift; sourceTree = "<group>"; };
+		B9CFF8C7DD288CC33EF9BD94 /* GlobeNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeNaming.swift; sourceTree = "<group>"; };
+		C49FEA29EDBDFA0BD92A7B54 /* TikoGlobe.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoGlobe.entitlements; sourceTree = "<group>"; };
+		CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeSubdivisions.swift; sourceTree = "<group>"; };
+		DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GlobeShaders.metal; sourceTree = "<group>"; };
+		DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeDetailPanel.swift; sourceTree = "<group>"; };
+		E18B513C64AD268F1F1BC951 /* GlobeMiniMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeMiniMap.swift; sourceTree = "<group>"; };
+		EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeRenderer.swift; sourceTree = "<group>"; };
+		F2F665DA205640BE306B9C70 /* GlobeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeController.swift; sourceTree = "<group>"; };
+		F3DD7D1C84834BD71805E0C3 /* Geography */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Geography; path = ../../../packages/geography/generated; sourceTree = SOURCE_ROOT; };
+		F50F0DEF7E3EFE99B4974EAF /* GlobeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobeView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A627CA41DE3E80CB5BC13853 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7CEBD46F962A7F1B3A747D7 /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B81E5E53BC3A9B93B632C923 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D4614B42BF8C19E67B45DFA /* TikoKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		47261B0505C3CF8B15B167BD /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				17464052BCC73051B8D2900D /* Assets.xcassets */,
+				43EE9F3970A722D07ED97B5C /* GlobeAppConfig.swift */,
+				99A5D2EC3B97CFEEBACCDA29 /* GlobeAppearance.swift */,
+				8FCCC25347EF7D7EC0BFAD8C /* GlobeCamera.swift */,
+				430A2D66EA2E11C77432EBFD /* GlobeContent.swift */,
+				F2F665DA205640BE306B9C70 /* GlobeController.swift */,
+				738B434CE752431B9D1DC059 /* GlobeCountryList.swift */,
+				16C5C9FB73DB202871C255F8 /* GlobeCountryNaming.swift */,
+				DED0582C9DF5715B44F20705 /* GlobeDetailPanel.swift */,
+				945660D2CD0952940BD3BD98 /* GlobeFlagImage.swift */,
+				56E848A064642605763CB8D3 /* GlobeGeography.swift */,
+				3D04293C93969B8E06766BD6 /* GlobeHitTesting.swift */,
+				18977981E4A3D345CC3DB9FF /* GlobeMarkerImage.swift */,
+				10B48B8253D08F9048D3CD01 /* GlobeMath.swift */,
+				E18B513C64AD268F1F1BC951 /* GlobeMiniMap.swift */,
+				B9CFF8C7DD288CC33EF9BD94 /* GlobeNaming.swift */,
+				EB5817FE9CB206142E0E190A /* GlobeRenderer.swift */,
+				5614E2D52B9B3D980E632516 /* GlobeSeas.swift */,
+				DA2356E1D5A220503F5AA55E /* GlobeShaders.metal */,
+				CF5B3757A89CB0232E1428A2 /* GlobeSubdivisions.swift */,
+				20705001102714B73B9D6D0D /* GlobeSurfaceView.swift */,
+				F50F0DEF7E3EFE99B4974EAF /* GlobeView.swift */,
+				404C639172C12A5CC9251A0E /* GlobeWater.swift */,
+				AA47C70F6D97B312B36AA6E4 /* Info.plist */,
+				C49FEA29EDBDFA0BD92A7B54 /* TikoGlobe.entitlements */,
+				1EA05844521B77D95653AEC3 /* TikoGlobeApp.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		73EBD20FFF556BE8687CDEE2 /* Media */ = {
+			isa = PBXGroup;
+			children = (
+				69424DF8CBD6A225DEF38B86 /* mode-animals.png */,
+				0EDA4289462845E736B7DBFF /* mode-capitals.png */,
+				98C8953DF39609607B929F38 /* mode-countries.png */,
+				5C678A15648BBE26561A2E70 /* mode-landmarks.png */,
+				80FF77B02510742CB5842370 /* mode-people.png */,
+			);
+			path = Media;
+			sourceTree = "<group>";
+		};
+		998C5E7120073929A1174185 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				5EC0B2A8D27BA99990E4D016 /* GlobeCameraTests.swift */,
+				92E19F1AF4BC369C8C0CF224 /* GlobeContentTests.swift */,
+				8B6E6719B618F79E43089B8B /* GlobeGeographyTests.swift */,
+				532A8BA15F036328692FAD53 /* GlobeHitTestingTests.swift */,
+				22188E2DD5E056F1040AA522 /* GlobeMathTests.swift */,
+				A1444C44E2B828FD14560D86 /* GlobeMomentumTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		9AB167199A0EC67970AD36F4 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A9AA8AD6765C5936F0A9F9A8 /* tikokit-ios */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		C041C24A0969A3FAB88E49D0 = {
+			isa = PBXGroup;
+			children = (
+				F3DD7D1C84834BD71805E0C3 /* Geography */,
+				0E348D4764D805D8C3AF5084 /* GeographyContent */,
+				73EBD20FFF556BE8687CDEE2 /* Media */,
+				9AB167199A0EC67970AD36F4 /* Packages */,
+				47261B0505C3CF8B15B167BD /* Sources */,
+				998C5E7120073929A1174185 /* Tests */,
+				EF6CE742328CCA2D56BB5047 /* UITests */,
+				F362890D10F55B7CEA696253 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EF6CE742328CCA2D56BB5047 /* UITests */ = {
+			isa = PBXGroup;
+			children = (
+				B87E9B8878B9CE10B46FD0D0 /* TikoGlobeUITests.swift */,
+			);
+			path = UITests;
+			sourceTree = "<group>";
+		};
+		F362890D10F55B7CEA696253 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				65CEB617343B35B84A803598 /* TikoGlobe.app */,
+				71157EB169D449CC0B4820D1 /* TikoGlobeTests.xctest */,
+				87C00B4E3BE21ED67AFC5A81 /* TikoGlobeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		29A59216EFE84D1CB526E981 /* TikoGlobeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B39FAE3686D94529FB84BD2F /* Build configuration list for PBXNativeTarget "TikoGlobeTests" */;
+			buildPhases = (
+				FBB0D9063381D55965683AA8 /* Sources */,
+				B81E5E53BC3A9B93B632C923 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				439E8778B17508AF56C98D50 /* PBXTargetDependency */,
+			);
+			name = TikoGlobeTests;
+			packageProductDependencies = (
+				10DEE2F1A059932E1A55EB7A /* TikoKit */,
+			);
+			productName = TikoGlobeTests;
+			productReference = 71157EB169D449CC0B4820D1 /* TikoGlobeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		349278C88FC57C247D210901 /* TikoGlobe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8DE42A675662EE0E33C612E9 /* Build configuration list for PBXNativeTarget "TikoGlobe" */;
+			buildPhases = (
+				ADBCFC6F1577B7D76F306A52 /* Generate Tiko app config */,
+				921C082D75E756346725479A /* Check the bundled geography */,
+				8451A4C7C10356A1AE8EF9B3 /* Sources */,
+				26E377B5D958E95A65055CF1 /* Resources */,
+				A627CA41DE3E80CB5BC13853 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TikoGlobe;
+			packageProductDependencies = (
+				7C7A205FB2FCEC1447AD619F /* TikoKit */,
+			);
+			productName = TikoGlobe;
+			productReference = 65CEB617343B35B84A803598 /* TikoGlobe.app */;
+			productType = "com.apple.product-type.application";
+		};
+		56205DAD3FFDF7266AC626A8 /* TikoGlobeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64FA07FD54AD31AD5906AEC6 /* Build configuration list for PBXNativeTarget "TikoGlobeUITests" */;
+			buildPhases = (
+				6FFBC79F1E0A59AE336EFE22 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AAE01FBEAF66DE1F368106A9 /* PBXTargetDependency */,
+			);
+			name = TikoGlobeUITests;
+			packageProductDependencies = (
+			);
+			productName = TikoGlobeUITests;
+			productReference = 87C00B4E3BE21ED67AFC5A81 /* TikoGlobeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B71ABC60E98436313484CA4E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					29A59216EFE84D1CB526E981 = {
+						DevelopmentTeam = 38MGF83L2L;
+					};
+					349278C88FC57C247D210901 = {
+						DevelopmentTeam = 38MGF83L2L;
+					};
+					56205DAD3FFDF7266AC626A8 = {
+						DevelopmentTeam = 38MGF83L2L;
+						TestTargetID = 349278C88FC57C247D210901;
+					};
+				};
+			};
+			buildConfigurationList = 4A165772E0824102A8820E7B /* Build configuration list for PBXProject "TikoGlobe" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C041C24A0969A3FAB88E49D0;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				50B31AF48B87E82331D0E1D0 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
+			);
+			preferredProjectObjectVersion = 54;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				349278C88FC57C247D210901 /* TikoGlobe */,
+				29A59216EFE84D1CB526E981 /* TikoGlobeTests */,
+				56205DAD3FFDF7266AC626A8 /* TikoGlobeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		26E377B5D958E95A65055CF1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DC59DCDFD924CA381C107B1 /* Assets.xcassets in Resources */,
+				35194819D658C1CD18214E7D /* GeographyContent in Resources */,
+				E6C2494BD43A6E010C57317E /* Geography in Resources */,
+				DCF30D52D0BBFB33187CCEAC /* mode-animals.png in Resources */,
+				31804001BDE889FF191469F3 /* mode-capitals.png in Resources */,
+				571F95A46713C8BAE23F641F /* mode-countries.png in Resources */,
+				B24A873AB3E0EE5AB027135B /* mode-landmarks.png in Resources */,
+				0CC33F14CC37A1572054EEF4 /* mode-people.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		921C082D75E756346725479A /* Check the bundled geography */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check the bundled geography";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  for candidate in /opt/homebrew/bin /usr/local/bin \"$HOME/.local/bin\" \"$HOME/.volta/bin\"; do\n    if [ -x \"$candidate/node\" ]; then export PATH=\"$candidate:$PATH\"; break; fi\n  done\nfi\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to validate the bundled geography before an iOS build.\"\n  exit 1\nfi\nnode \"${REPO_ROOT}/tools/geography/build-geography.mjs\" --check\n";
+		};
+		ADBCFC6F1577B7D76F306A52 /* Generate Tiko app config */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Tiko app config";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -euo pipefail\nREPO_ROOT=\"${SRCROOT}/../../..\"\nif ! command -v node >/dev/null 2>&1; then\n  for candidate in /opt/homebrew/bin /usr/local/bin \"$HOME/.local/bin\" \"$HOME/.volta/bin\"; do\n    if [ -x \"$candidate/node\" ]; then export PATH=\"$candidate:$PATH\"; break; fi\n  done\nfi\nif ! command -v node >/dev/null 2>&1; then\n  echo \"error: node is required to generate Tiko app configs before an iOS build.\"\n  exit 1\nfi\nTIKO_APP_CONFIG_STRICT=1 node \"${REPO_ROOT}/tools/generate-app-configs.mjs\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6FFBC79F1E0A59AE336EFE22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F1A40637D0343131D5EB93A5 /* TikoGlobeUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8451A4C7C10356A1AE8EF9B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F57146F5E4D8B19DFF03897 /* GlobeAppConfig.swift in Sources */,
+				E9E84BFC67DAB8BEAA66857E /* GlobeAppearance.swift in Sources */,
+				5ED1B38DBC982DF8873AEF55 /* GlobeCamera.swift in Sources */,
+				BCFB5825328B93123492A674 /* GlobeContent.swift in Sources */,
+				6BA18B4C3A22708816D5EE3F /* GlobeController.swift in Sources */,
+				D6A33B6270E413A5935D811A /* GlobeCountryList.swift in Sources */,
+				0959C493F16F426CCB882D0A /* GlobeCountryNaming.swift in Sources */,
+				1C968C601B629A11084A173F /* GlobeDetailPanel.swift in Sources */,
+				DC5CE39442514A33F6A3F94B /* GlobeFlagImage.swift in Sources */,
+				23013F064DDE0657085F23ED /* GlobeGeography.swift in Sources */,
+				5D6EB2563E334055DEEE4E5E /* GlobeHitTesting.swift in Sources */,
+				70B39B72189002882FDF5A0D /* GlobeMarkerImage.swift in Sources */,
+				E4B55DF5B4EBAF534CAE4785 /* GlobeMath.swift in Sources */,
+				EA10028A4E0824BCE372411C /* GlobeMiniMap.swift in Sources */,
+				365245812BBD8BC406F0E880 /* GlobeNaming.swift in Sources */,
+				205AD9431DD7D2E3C64EF0C8 /* GlobeRenderer.swift in Sources */,
+				094AAC5FC8D7FA4F30242468 /* GlobeSeas.swift in Sources */,
+				392D444EBD1B960337607337 /* GlobeShaders.metal in Sources */,
+				C687C56A38F935034F80CCB7 /* GlobeSubdivisions.swift in Sources */,
+				37021294967523035372768B /* GlobeSurfaceView.swift in Sources */,
+				384B83750F4692E443D96AB2 /* GlobeView.swift in Sources */,
+				D96CD0FF5517A7DF8E1BF2ED /* GlobeWater.swift in Sources */,
+				930F0C17494500DE855CE519 /* TikoGlobeApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBB0D9063381D55965683AA8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B656E56930ED301B90A2D39A /* GlobeCameraTests.swift in Sources */,
+				B3353E4A0BAAAADAC4C0D9B7 /* GlobeContentTests.swift in Sources */,
+				FCEC4974902F1FFD4C9E3087 /* GlobeGeographyTests.swift in Sources */,
+				38A58A4219139B9EC408BC65 /* GlobeHitTestingTests.swift in Sources */,
+				8399FAC0297D6ABFC4E3E0FD /* GlobeMathTests.swift in Sources */,
+				1AF18118B91520EC77D3AFDE /* GlobeMomentumTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		439E8778B17508AF56C98D50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 349278C88FC57C247D210901 /* TikoGlobe */;
+			targetProxy = F19CEF753B50A4E7B66BE47D /* PBXContainerItemProxy */;
+		};
+		AAE01FBEAF66DE1F368106A9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 349278C88FC57C247D210901 /* TikoGlobe */;
+			targetProxy = FDD161F3F54ED7AC9B0192BD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		148FC93CCA40B2479D0BC090 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoGlobeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoGlobe;
+			};
+			name = Debug;
+		};
+		24DBED54FCB578282C468A12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoGlobeTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoGlobe.app/TikoGlobe";
+			};
+			name = Debug;
+		};
+		3E1C8B29ACE3AA0450F10DBC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoGlobeUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TikoGlobe;
+			};
+			name = Release;
+		};
+		44BF2DE85EC70BC356BDCB60 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 38MGF83L2L;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		603E6E598457FB916A46510D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.TikoGlobeTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TikoGlobe.app/TikoGlobe";
+			};
+			name = Release;
+		};
+		6988E19B473B616C7553A83E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 38MGF83L2L;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		9364D68E6718872D22747008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoGlobe.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.globe;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		9F8148F94B53A61348D76DE6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/TikoGlobe.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Sources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.globe;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4A165772E0824102A8820E7B /* Build configuration list for PBXProject "TikoGlobe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6988E19B473B616C7553A83E /* Debug */,
+				44BF2DE85EC70BC356BDCB60 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		64FA07FD54AD31AD5906AEC6 /* Build configuration list for PBXNativeTarget "TikoGlobeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				148FC93CCA40B2479D0BC090 /* Debug */,
+				3E1C8B29ACE3AA0450F10DBC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8DE42A675662EE0E33C612E9 /* Build configuration list for PBXNativeTarget "TikoGlobe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F8148F94B53A61348D76DE6 /* Debug */,
+				9364D68E6718872D22747008 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B39FAE3686D94529FB84BD2F /* Build configuration list for PBXNativeTarget "TikoGlobeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24DBED54FCB578282C468A12 /* Debug */,
+				603E6E598457FB916A46510D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		50B31AF48B87E82331D0E1D0 /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../packages/tikokit-ios";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		10DEE2F1A059932E1A55EB7A /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+		7C7A205FB2FCEC1447AD619F /* TikoKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = B71ABC60E98436313484CA4E /* Project object */;
+}

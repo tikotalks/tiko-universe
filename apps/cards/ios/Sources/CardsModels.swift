@@ -76,28 +76,8 @@ private func cardsColorName(_ value: String, fallback: String) -> String {
     TikoColors.named(value) != nil ? value : fallback
 }
 
-struct TikoMediaListResponse: Decodable, Sendable {
-    let data: [TikoMediaItem]
-}
-
-struct TikoMediaItem: Decodable, Identifiable, Sendable {
-    let id: String
-    let fileName: String
-    let title: String
-    let folder: String?
-    let tags: [String]
-    let originalURL: URL
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case fileName = "file_name"
-        case title
-        case folder
-        case tags
-        case originalURL = "original_url"
-    }
-
-    var name: String {
-        fileName.replacingOccurrences(of: #"\.[^.]+$"#, with: "", options: .regularExpression)
-    }
-}
+// The media wire models live in TikoKit (`TikoMediaListResponse`,
+// `TikoMediaItem`). Cards used to redeclare them here with the same names, which
+// compiled inside the app module — the local type shadowed the package one — but
+// made every use ambiguous in the test target, which imports both. The local
+// copy's only difference was a `folder` field nothing ever read.

@@ -1,12 +1,12 @@
 {
   "name": "Tiko Cards",
   "subtitle": "Picture cards that speak",
-  "promotional_text": "A visual AAC card library for children. Tap a card, hear it spoken. Build vocabulary, one picture at a time.",
-  "description": "Tiko Cards is a picture-card communication tool for children and non-verbal users. Tap a card and it speaks — building vocabulary and a voice, one picture at a time.\n\nOrganize cards into folders, browse by category, and let children explore language visually. Works offline and opens ready to use.\n\n- Tap any card to hear it spoken aloud\n- Browse and organize a personal card library\n- No ads, no clutter, no account required to start\n- Child mode keeps the focus on communication\n\nPart of Tiko, a child-first universe of small, focused AAC tools.",
-  "keywords": "aac,speech,communication,nonverbal,pictures,cards,vocabulary,autism,special needs,accessibility",
+  "promotional_text": "Tap a picture card and Tiko speaks the word out loud — warm, instant and easy for early learners and AAC users.",
+  "description": "Tiko Cards is a gentle picture-communication app that gives every child a voice. Tap a picture card and Tiko speaks the word out loud — clear, immediate and calm.\n\nDesigned for early learners and for children who use AAC (augmentative and alternative communication), Cards keeps everything within easy reach. Words live in colourful collections you browse one tap at a time, so a child is never overwhelmed by choice.\n\nGrown-ups can shape the board around the child. Add your own cards and categories with photos, colours and the exact words you want spoken, then arrange them however works best.\n\n• Tap any picture card to hear it spoken aloud\n• Colourful collections and sub-collections to organise words\n• Add your own cards and categories with images, colours and custom speech\n• Adjustable card and label sizes for easy reach and reading\n• Speaks in multiple languages\n• Child mode opens cards full-screen and keeps editing safely out of reach\n\nTiko Cards opens straight into the board — no login wall, no clutter — so communication can start the moment you need it.",
+  "keywords": "aac,communication,picture cards,speech,nonverbal,autism,special needs,pecs,symbols,tts,kids,talk",
   "release_notes": "Initial release.",
-  "support_url": "https://tikoapps.org/support",
-  "privacy_url": "https://tikoapps.org/privacy",
-  "marketing_url": "https://tikoapps.org/cards",
+  "support_url": "https://tiko.mt/support",
+  "privacy_url": "https://tiko.mt/privacy-policy",
+  "marketing_url": "https://tiko.mt/apps/cards",
   "copyright": "© 2026 Tiko"
 }

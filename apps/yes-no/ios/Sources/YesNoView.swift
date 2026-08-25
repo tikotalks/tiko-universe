@@ -271,6 +271,10 @@ struct YesNoView: View {
             return Color(hex: 0x0b5a7a)
         case .playing:
             return Color(hex: 0x006c67)
+        case .unsupportedLanguage:
+            // Nothing could speak this language — a muted button, never the
+            // green "go" one, so the tap does not read as having worked.
+            return Color(hex: 0x5a6b73)
         }
     }
 
@@ -287,6 +291,10 @@ struct YesNoView: View {
                 .foregroundStyle(.white)
         case .idle:
             Image(systemName: "speaker.wave.2.fill")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+        case .unsupportedLanguage:
+            Image(systemName: "speaker.slash.fill")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
         }
