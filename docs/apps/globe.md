@@ -582,6 +582,28 @@ focused and appropriate to its purpose.
 11. Content scale-up to launch targets.
 12. Offline/device/performance QA.
 
+## Implementation status
+
+Steps 1–4 of the order above are built and live in `apps/globe/ios` (see its
+[README](../../apps/globe/ios/README.md)): the native renderer, the Natural
+Earth pipeline (`tools/geography` → `packages/geography/generated`), the
+Countries vertical slice, and the shared country schema with its validation.
+
+Three decisions differ from the plan above and are deliberate:
+
+- **Country names come from the system**, not from Tiko localization keys.
+  `Locale.localizedString(forRegionCode:)` covers every ISO country in every
+  language iOS ships — including Maltese and Armenian, which the source data
+  does not carry — offline and without adding 240 names per locale to the
+  bundle. Territories and unrecognized units fall back to the source's own
+  localized names. Tiko keys still cover the interface.
+- **Flags are regional-indicator emoji** rather than bundled SVGs, and only
+  units that *are* an ISO country fly one. Bundled flag art becomes worthwhile
+  when Tiko Flags needs it; until then the emoji are correct, sized by Dynamic
+  Type and cost nothing.
+- **The mode selector is not built yet.** Countries is the only implemented
+  mode, so the app shows no selector rather than three buttons that do nothing.
+
 ## Testing strategy
 
 ### Shared/data tests

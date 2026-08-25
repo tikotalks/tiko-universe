@@ -6,14 +6,20 @@ public struct TikoPopupCard<Content: View>: View {
     private let subtitle: String?
     private let icon: String
     private let appColor: TikoAppColor
+    private let opaque: Bool
     private let onClose: () -> Void
     private let content: Content
 
+    /// `opaque` puts a solid surface behind the card instead of the frosted
+    /// one. Over a plain screen the two look the same; over something busy —
+    /// Globe's Earth, say — the frost picks up whatever is behind it and the
+    /// card stops looking like a card.
     public init(
         title: String,
         subtitle: String? = nil,
         icon: String = "slider.horizontal.3",
         appColor: TikoAppColor,
+        opaque: Bool = false,
         onClose: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
@@ -21,6 +27,7 @@ public struct TikoPopupCard<Content: View>: View {
         self.subtitle = subtitle
         self.icon = icon
         self.appColor = appColor
+        self.opaque = opaque
         self.onClose = onClose
         self.content = content()
     }
@@ -71,7 +78,7 @@ public struct TikoPopupCard<Content: View>: View {
         .padding(.top, 12)
         .padding(.bottom, 22)
         .frame(maxWidth: 390, alignment: .top)
-        .background(.regularMaterial)
+        .background(opaque ? AnyShapeStyle(Color(.systemBackground)) : AnyShapeStyle(.regularMaterial))
         .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
         .shadow(color: .black.opacity(0.12), radius: 28, x: 0, y: 16)
         .padding(.horizontal, 18)
