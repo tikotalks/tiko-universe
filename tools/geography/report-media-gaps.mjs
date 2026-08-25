@@ -38,6 +38,7 @@ const wanted = new Map()
 function want(entry, countryId) {
   if (hasArtwork(entry.mediaId)) return
   const existing = wanted.get(entry.id) ?? {
+    id: entry.id,
     name: englishName(entry),
     importance: entry.importance ?? 10,
     countries: [],
@@ -62,7 +63,15 @@ const landmarks = []
 for (const [countryId, entry] of Object.entries(landmarkSource.countries)) {
   for (const landmark of entry.landmarks ?? []) {
     if (hasArtwork(landmark.mediaId)) continue
-    landmarks.push({ name: englishName(landmark), country: countryId, importance: landmark.importance })
+    landmarks.push({
+      id: landmark.id,
+      name: englishName(landmark),
+      country: countryId,
+      importance: landmark.importance,
+      lat: landmark.lat ?? null,
+      lon: landmark.lon ?? null,
+      glyph: landmark.glyph ?? null,
+    })
   }
 }
 landmarks.sort((a, b) => a.importance - b.importance || a.name.localeCompare(b.name))
@@ -155,6 +164,12 @@ const flagGaps = countries
 await writeFile(GAPS_FILE, `${JSON.stringify({
   schemaVersion: 1,
   note: 'Built by tools/geography/report-media-gaps.mjs. Everything Globe would show a picture of and cannot. Ordered by importance, 1 being what a child sees from space.',
+  howToUse: {
+    title: 'Publish each picture to the Tiko media library under exactly the `expectedTitle` given here.',
+    then: 'Run `node tools/geography/link-media.mjs --write` (animals and landmarks) or `node tools/geography/build-people.mjs --write` (people). Both match on the exact title, download a copy into packages/geography/content/images/<id>.png, and write the link into the authored data.',
+    matching: 'Exact title only. A near match is deliberately refused: Globe shows the glyph perfectly well without a picture, and a wrong picture on a child\'s card is worse than none.',
+    flags: 'Flags are not looked up by title — drop the file at `expectedFile`, named by the ISO3 code.',
+  },
   summary: {
     animals: { missing: missingAnimals.length },
     landmarks: { missing: landmarks.length, of: totalLandmarks },
@@ -163,23 +178,38 @@ await writeFile(GAPS_FILE, `${JSON.stringify({
     flags: { missing: flagGaps.length, of: countries.length },
   },
   animals: missingAnimals.map((animal) => ({
+    id: animal.id,
+    // The title the picture has to carry in the media library for the next
+    // link-media run to find it. It is the English name, exactly.
+    expectedTitle: animal.name,
     name: animal.name,
     scientificName: animal.scientificName,
     importance: animal.importance,
     wantedBy: animal.countries,
+    wantedByNames: animal.countries.map(named),
   })),
   landmarks: landmarks.map((landmark) => ({
+    id: landmark.id,
+    expectedTitle: landmark.name,
     name: landmark.name,
     country: landmark.country,
     countryName: named(landmark.country),
     importance: landmark.importance,
+    lat: landmark.lat,
+    lon: landmark.lon,
+    glyph: landmark.glyph,
   })),
-  cities: cityGaps,
+  cities: cityGaps.map((city) => ({ ...city, expectedTitle: city.name })),
   people: peopleGaps.map((person) => ({
     ...person,
+    // People are filed under a bare slug, so the picture is looked up by the
+    // person's name and by "<Name> Person", which is the shape the library
+    // already uses for Sami Person, Inuit Person and the rest.
+    expectedTitle: person.name,
+    alsoAccepted: [`${person.name} Person`],
     countryNames: person.countries.map(named),
   })),
-  flags: flagGaps,
+  flags: flagGaps.map((flag) => ({ ...flag, expectedFile: `content/flags/${flag.id}.png` })),
 }, null, 2)}\n`)
 
 lines.push(
