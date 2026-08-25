@@ -22,7 +22,7 @@ import { hy } from './copy/hy'
 
 export type SiteCopyOverride = DeepPartial<SiteCopy>
 
-const overrides: Record<string, SiteCopyOverride> = { nl, de, fr, es, pt, it, mt, hy }
+export const overrides: Record<string, SiteCopyOverride> = { nl, de, fr, es, pt, it, mt, hy }
 
 /**
  * The English base, widened. `en` itself is `as const`, which keeps its keys

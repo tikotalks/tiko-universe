@@ -1,0 +1,273 @@
+import type { SiteCopy } from '../..'
+
+/** De `/apps`-pagina, de detailpagina van een app en de 404. */
+export const nlAppsPage: SiteCopy['appsPage'] = {
+  intro: {
+    eyebrow: 'Het app-universum',
+    title: 'Kleine apps. Elk één duidelijke taak.',
+    lede: 'Tiko is niet één grote app. Het is een set kleine, gerichte apps die meteen openen en één ding goed doen. Kies degene die bij het moment past.',
+  },
+  media: {
+    eyebrow: 'Uit de Tiko-bibliotheek',
+    title: 'Duizenden heldere, kleurrijke afbeeldingen.',
+  },
+  onTheWay: {
+    eyebrow: 'Onderweg',
+    title: 'Er komen meer kleine apps aan.',
+    lede: 'Cards, Sequence en Timer zijn gebouwd op dezelfde kindgerichte uitgangspunten als de apps hierboven. Elk opent snel en doet maar één ding.',
+    ctaTitle: 'Gebouwd op dezelfde afspraken.',
+    ctaBody: 'Elke Tiko-app houdt zich aan dezelfde kindgerichte beloftes — snel open, één taak, elke taal.',
+    ctaLabel: 'Lees de architectuurdocumentatie',
+  },
+}
+
+export const nlAppDetail: SiteCopy['appDetail'] = {
+  notFound: {
+    eyebrow: 'Niet gevonden',
+    title: 'App niet gevonden.',
+    body: 'Er is geen Tiko-app met die naam.',
+    backLabel: 'Terug naar alle apps',
+  },
+  hero: {
+    brandPrefix: 'Tiko',
+    openLabel: '{app} openen',
+    comingSoon: 'Binnenkort',
+    iconAlt: 'App-icoon van {app}',
+  },
+  features: {
+    eyebrow: 'Wat het doet',
+    title: 'Gemaakt voor één duidelijke taak.',
+  },
+  screenshots: {
+    eyebrow: 'Op het toestel',
+    title: '{app}, op een echt scherm.',
+    lede: 'Vastgelegd op een iPhone, in lichte en donkere modus. Niets hier is een mockup.',
+  },
+  moment: {
+    eyebrow: 'Het menselijke moment',
+    imageAlt: 'Een rustig moment met {app}',
+    whySmallTitle: 'Waarom het klein blijft',
+    calmTitle: 'Hoe het rustig blijft',
+  },
+  useWhen: {
+    eyebrow: 'Wanneer gebruik je het',
+    title: 'Wanneer je naar {app} grijpt',
+  },
+  cta: {
+    openWeb: 'Nu te openen op het web.',
+    onAppStore: 'Nu in de App Store.',
+    comingSoon: 'Binnenkort.',
+    allAppsLabel: 'Alle apps',
+  },
+  mediaLibrary: {
+    eyebrow: 'Ingebouwde afbeeldingsbibliotheek',
+    title: 'Tiko Media-afbeeldingen, klaar voor Cards.',
+    lede: 'Cards kan beginnen met heldere, herkenbare afbeeldingen uit Tiko Media. Blader door de openbare bibliotheek of gebruik ze direct in kaartensets.',
+    browseLabel: 'Bekijk Tiko Media',
+    fallbackImageTitle: 'Tiko Media-afbeelding',
+  },
+  downloadLabel: 'Download {app} in de App Store',
+}
+
+export const nlNotFound: SiteCopy['notFound'] = {
+  eyebrow: 'Pagina niet gevonden',
+  title: 'Deze pagina is hier niet.',
+  lede: 'De link is misschien oud, of de pagina is verplaatst. Elke Tiko-app staat hieronder, op één tik afstand.',
+  primaryLabel: 'Bekijk de apps',
+  secondaryLabel: 'Terug naar de homepage',
+  appsEyebrow: 'Nu te openen',
+  appsTitle: 'Apps die je vandaag kunt gebruiken.',
+}
+
+/** Per app, op slug. Namen van apps worden niet vertaald. */
+export const nlApps: SiteCopy['apps'] = {
+  'yes-no': {
+    shortSummary: 'Twee enorme knoppen. Eén duidelijk antwoord. Meteen.',
+    headline: 'Eén duidelijke vraag. Eén duidelijk antwoord.',
+    description: 'Yes No geeft kinderen twee enorme, onmisbare keuzes op één scherm. Geen rommel, geen scrollen, geen account. Openen, de vraag zien, het antwoord tikken.',
+    platformNotes: 'Nu te openen op het web, en in de App Store voor iPhone en iPad. Android houdt dezelfde eenvoudige vorm met twee keuzes.',
+    useWhen: [
+      'een kind snel moet kunnen antwoorden',
+      'een verzorger een eenvoudige vraag wil stellen',
+      'spreken of tikken moet kunnen zonder ingewikkeld scherm',
+    ],
+    moment: 'Het eenvoudigst denkbare moment — één vraag, twee enorme keuzes, en niets tussen het kind en het antwoord.',
+    whySmall: 'Yes No blijft klein omdat twee keuzes het hele punt zijn. Het moet geen vragenlijst, bedieningspaneel of gedragsregistratie worden.',
+    calmDetail: 'Grote knoppen, sterk contrast, gesproken uitvoer en geen accountstap houden het antwoordmoment bij het kind.',
+    features: [
+      { title: 'Twee enorme knoppen', body: 'Ja en Nee vullen het scherm. Niet te missen, makkelijk te tikken.' },
+      { title: 'Gesproken uitvoer', body: 'Elk antwoord wordt hardop uitgesproken, zodat iedereen in de kamer het hoort.' },
+      { title: 'Antwoordgeschiedenis', body: 'Verzorgers kunnen recente antwoorden teruglezen zonder het kind te storen.' },
+      { title: 'Werkt offline', body: 'Geen netwerk nodig voor het basisgebruik. Openen en tikken, meer niet.' },
+    ],
+    captions: [],
+  },
+  type: {
+    shortSummary: 'Typ een gedachte en hoor hem meteen hardop.',
+    headline: 'Typ een gedachte. Hoor hem uitgesproken.',
+    description: 'Type is een tekstveld zonder afleiding, voor momenten waarop een kind schriftelijk wil communiceren. Elk bericht kan met één tik hardop worden uitgesproken.',
+    platformNotes: 'Nu te openen op het web, en in de App Store voor iPhone en iPad. Android volgt met dezelfde rustige, gerichte ervaring.',
+    useWhen: [
+      'een kind een bericht wil typen',
+      'opgeslagen zinnen zouden helpen',
+      'gesproken uitvoer eenvoudig en snel bereikbaar moet blijven',
+    ],
+    moment: 'Sommige gedachten typen makkelijker dan ze uitspreken — en sommige getypte gedachten verdienen een stem in de kamer.',
+    whySmall: 'Type houdt schrijven en spreken op één rustige plek in plaats van uit te groeien tot een tekstverwerker of berichtenapp.',
+    calmDetail: 'De app maakt tekst invoeren vanzelfsprekend, houdt spraak op één tik afstand en vermijdt knoppen die met de zin concurreren.',
+    features: [
+      { title: 'Helder tekstveld', body: 'Eén veld, één knop. Typ een bericht en spreek het uit, zonder menu’s.' },
+      { title: 'Zinnenbibliotheek', body: 'Bewaar zinnen die vaak terugkomen, zodat ze op één tik klaarstaan.' },
+      { title: 'Stemkeuze', body: 'Kies een stem die past bij het kind en bij het moment.' },
+      { title: 'Fijn met elk toetsenbord', body: 'Werkt met schermtoetsenborden en met los toetsenbord.' },
+    ],
+    captions: [],
+  },
+  cards: {
+    shortSummary: 'Mooie prentkaarten. Tik er één aan en hoor hem spreken.',
+    headline: 'Plaatjes die voor zichzelf spreken.',
+    description: 'Cards toont vertrouwde afbeeldingen in een eenvoudig raster. Tik een kaart aan om de naam te horen. Kies uit ingebouwde categorieën of stel een eigen set samen voor elke routine of situatie.',
+    platformNotes: 'Komt eraan als een gerichte kaartervaring — mooie afbeeldingen, één tik om te spreken.',
+    useWhen: [
+      'plaatjes sneller communiceren dan tekst',
+      'keuzes zichtbaar en makkelijk aan te tikken moeten zijn',
+      'een kant-en-klare beeldbibliotheek voorbereidingstijd scheelt',
+    ],
+    moment: 'Een vertrouwd plaatje maakt een keuze makkelijk. Aantikken, horen, verder.',
+    whySmall: 'Cards richt zich op zichtbare keuzes, niet op een ingewikkeld beheersysteem voor het kind.',
+    calmDetail: 'Vierkante kaarten, duidelijke labels en herkenbare afbeeldingen maken kijken en tikken voorspelbaar.',
+    features: [
+      { title: 'Beeldkaarten', body: 'Tik een kaart aan om de naam te horen. Afbeeldingen maken keuzes sneller herkenbaar.' },
+      { title: 'Ingebouwde categorieën', body: 'Dieren, eten, emoties, lichaam, vormen, kleuren, vervoer, cijfers en letters staan klaar.' },
+      { title: 'Eigen kaarten', body: 'Voeg kaarten toe met een naam, afbeelding en eigen spraak voor elk woord of elke zin.' },
+      { title: 'Offline eerst', body: 'Kaarten en afbeeldingen komen uit lokale opslag, zodat de app bruikbaar blijft zonder netwerk.' },
+    ],
+    captions: [],
+  },
+  sequence: {
+    shortSummary: 'Routines stap voor stap. Altijd helder, altijd vooruit.',
+    headline: 'Eén stap tegelijk, altijd helder.',
+    description: 'Sequence maakt van elke routine een duidelijke lijst met stappen. De huidige stap staat altijd groot in beeld. Tik om verder te gaan. Nooit gissen wat er nu komt.',
+    platformNotes: 'Komt eraan voor web en native — de volgende stap altijd zichtbaar, altijd één tik verder.',
+    useWhen: [
+      'een routine een duidelijke volgorde nodig heeft',
+      'de volgende stap altijd zichtbaar moet zijn',
+      'voorspelbaarheid overgangen makkelijker maakt',
+    ],
+    moment: 'Elke routine wordt makkelijker als de volgende stap al zichtbaar is in plaats van in iemands hoofd te zitten.',
+    whySmall: 'Sequence is geen projectplanner. Het toont de huidige stap, de volgende beweging, en net genoeg voortgang om je te oriënteren.',
+    calmDetail: 'Eén stap blijft centraal, voortgang blijft eenvoudig, en afbeeldingen kunnen de routine herkenbaarder maken.',
+    features: [
+      { title: 'Eén stap, schermvullend', body: 'De huidige stap is altijd het grootste op het scherm.' },
+      { title: 'Voortgangsbalk', body: 'Een eenvoudige balk laat zien hoe ver de routine is.' },
+      { title: 'Eigen routines', body: 'Bouw elke reeks: ochtendroutine, wisseling in de klas, aankleden.' },
+      { title: 'Afbeelding per stap', body: 'Elke stap kan een afbeelding krijgen, zodat hij meteen herkenbaar is.' },
+    ],
+    captions: [],
+  },
+  timer: {
+    shortSummary: 'Een grote, duidelijke aftelling. Zie precies hoeveel tijd er over is.',
+    headline: 'Tijd die je echt kunt zien.',
+    description: 'Timer maakt het verstrijken van tijd zichtbaar en rustig. Een grote aftelling laat zien hoeveel er nog over is. Geen schrikkende piepjes, alleen een rustig visueel einde.',
+    platformNotes: 'Komt eraan als één gericht scherm — één ding, mooi gedaan, op web, iOS en Android.',
+    useWhen: [
+      'overgangen een zichtbaar eindpunt nodig hebben',
+      'wachten minder abstract voelt als de tijd in beeld staat',
+      'het scherm maar één ding mag doen',
+    ],
+    moment: 'Tijd voelt echt als je hem kleiner ziet worden.',
+    whySmall: 'Timer blijft bij het aftellen in plaats van een agenda, wekkerpakket of productiviteitsapp te worden.',
+    calmDetail: 'Een groot getal, zichtbare voortgang en een zacht einde houden tijd concreet zonder spanning toe te voegen.',
+    features: [
+      { title: 'Grote aftelling', body: 'De tijd vult het scherm. Geen kleine cijfers, geen verborgen klokjes.' },
+      { title: 'Zichtbare voortgang', body: 'Een ring of balk krimpt terwijl de tijd verstrijkt, zodat tijd concreet wordt.' },
+      { title: 'Zacht eindsignaal', body: 'Een rustig beeld en een optioneel zacht geluid geven aan dat de tijd om is.' },
+      { title: 'Snelle voorkeuzes', body: 'Zet veelgebruikte tijden als 5, 10 of 15 minuten met één tik.' },
+    ],
+    captions: [],
+  },
+  talk: {
+    shortSummary: 'Tik woorden aan, bouw een zin en hoor hem uitgesproken.',
+    headline: 'Bouw zinnen. Vind je stem.',
+    description: 'Talk is een rustige communicatie-app, woord voor woord. Tik woorden aan om een zin op een heldere strook te bouwen en spreek hem daarna uit. Gemaakt voor kinderen die hun stem aan het vinden zijn — één woord tegelijk.',
+    platformNotes: 'Nu te openen op het web. iOS en Android volgen met dezelfde rustige, gerichte ervaring.',
+    useWhen: [
+      'een kind taal opbouwt, woord voor woord',
+      'een hele zin uitspreken een paar tikken mag kosten, geen toetsenbord',
+      'een rustig, voorspelbaar woordraster meer helpt dan een druk scherm',
+    ],
+    moment: 'Elk woord dat een kind kiest, is een kleine daad van zeggen wie het is. Talk houdt de weg van gedachte naar stem zo kort en zacht mogelijk.',
+    whySmall: 'Talk blijft bij het bouwen en uitspreken van één zin. Het is geen chat-app, geen tijdlijn en geen algemene tablet.',
+    calmDetail: 'Een voorspelbaar woordraster, een duidelijke zinsstrook en één spreekknop houden de aandacht bij de stem van het kind — niet bij de interface.',
+    features: [
+      { title: 'Woordraster', body: 'Tik woorden aan om ze aan de zinsstrook toe te voegen. Categorieën houden verwante woorden bij elkaar.' },
+      { title: 'Zinsstrook', body: 'Zie de zin woord voor woord ontstaan voordat je hem uitspreekt.' },
+      { title: 'Hardop spreken', body: 'Eén knop spreekt de hele zin uit met een heldere stem.' },
+      { title: 'Werkt offline', body: 'De belangrijkste woordpakketten staan lokaal, zodat Talk werkt zonder netwerk.' },
+    ],
+    captions: [],
+  },
+  say: {
+    shortSummary: 'Zie een kaart, hoor het woord, zeg het na, feest.',
+    headline: 'Rustig oefenen met spreken, één woord tegelijk.',
+    description: 'Say is een app om spreken te oefenen. Kies een categorie, zie één grote vriendelijke kaart, hoor het woord en zeg het na. Een goed woord levert een vrolijke viering op en de volgende kaart verschijnt vanzelf.',
+    platformNotes: 'Nu in de App Store voor iPhone en iPad. Android en web volgen met dezelfde rustige, gerichte ervaring.',
+    useWhen: [
+      'een kind zijn eerste woorden oefent',
+      'een gemist woord een nieuwe rustige poging betekent, geen zoemer',
+      'een vertrouwd plaatje het woord makkelijker bereikbaar maakt',
+    ],
+    moment: 'Een woord oefenen moet voelen alsof je wordt aangemoedigd, nooit alsof je wordt getoetst.',
+    whySmall: 'Say oefent woorden. Het is geen therapieprogramma, geen voortgangsdashboard en geen scoresysteem — er is geen foutzoemer, geen rood kruis en nergens een score.',
+    calmDetail: 'Eén grote kaart tegelijk, het woord in een vriendelijke stem, en Overslaan altijd binnen bereik zodat geen kind vastloopt.',
+    features: [
+      { title: 'Zes beeldcategorieën', body: 'Dieren, eten, voertuigen, lichaam, kleuren en cijfers staan klaar om te oefenen.' },
+      { title: 'Elke kaart aanpasbaar', body: 'Wat er te zien is, wat er gezegd wordt en welke woorden goed rekenen, bepaal je zelf.' },
+      { title: 'Luisteren op het toestel', body: 'Spraakherkenning draait op het toestel waar dat kan. Opnames worden nooit bewaard of verstuurd.' },
+      { title: 'Zes gesproken talen', body: 'Spreekt en luistert in het Engels, Nederlands, Frans, Spaans, Duits en Maltees.' },
+    ],
+    captions: ['Kies een categorie', 'Eén kaart, één woord'],
+  },
+  sum: {
+    shortSummary: 'Rekenen dat praat — en nooit "fout" zegt.',
+    headline: 'Elk getal uitgesproken. Elk antwoord een keuze.',
+    description: 'Sum is een pratende rekenapp voor kinderen, en het is geen rekenmachine: de uitkomst wordt nooit getoond. Elke toets wordt hardop uitgesproken en het antwoord is altijd een keuze uit drie grote tegels.',
+    platformNotes: 'Nu in de App Store voor iPhone en iPad. Android en web volgen met dezelfde rustige, gerichte ervaring.',
+    useWhen: [
+      'tellen en sommen gehoord moeten worden, niet alleen gezien',
+      'een verkeerde tik betekent dat de som opnieuw klinkt, geen zoemer',
+      'een ouder wil kunnen begrenzen hoe groot de getallen worden',
+    ],
+    moment: 'Een som onthoud je makkelijker als je hem kunt horen — "drie… plus… vijf…" — in plaats van hem van een scherm te lezen.',
+    whySmall: 'Sum leert één som tegelijk. Het is geen lesmethode, geen reeksenteller en geen rapport.',
+    calmDetail: 'Kies je de goede tegel, dan viert het scherm mee; kies je een andere, dan zegt Sum gewoon de som opnieuw. Geen zoemer, geen rood kruis, geen druk.',
+    features: [
+      { title: 'Een pratend toetsenblok', body: 'Elk cijfer en elk teken wordt voorgelezen in de taal van het kind.' },
+      { title: 'Het antwoord is een keuze', body: 'Drie tegels — één goede en twee slimme bijna-goede. Nooit een leeg vakje om in te falen.' },
+      { title: 'Alle vier de bewerkingen', body: 'Plus, min, keer en gedeeld door, met een maximum dat een ouder kan instellen.' },
+      { title: 'Drie manieren om te antwoorden', body: 'Kies een tegel, typ het getal of zeg het hardop. Alleen dat laatste gebruikt de microfoon.' },
+    ],
+    captions: ['Kies een niveau', 'Drie tegels, één goede', 'Het pratende toetsenblok'],
+  },
+  first: {
+    shortSummary: 'Eerst, dan, klaar. Een prentroutine die praat.',
+    headline: 'Eén stap tegelijk, hardop uitgesproken.',
+    description: 'First maakt van een routine plaatjes die een kind zelf kan volgen. Jij bouwt de stappen; je kind ziet één grote afbeelding tegelijk, hoort hem uitgesproken en tikt hem af.',
+    platformNotes: 'Nu in de App Store voor iPhone en iPad. Android en web volgen met dezelfde rustige, gerichte ervaring.',
+    useWhen: [
+      'een routine gevolgd moet worden zonder dat een volwassene meepraat',
+      'een kind moet zien wat er nu gebeurt en wat er hierna komt',
+      'je helemaal geen microfoon, camera of toestemmingsvraag wilt',
+    ],
+    moment: 'Een routine houdt op een onderhandeling te zijn zodra de volgende stap al op het scherm staat in plaats van in iemands hoofd.',
+    whySmall: 'First toont de stap waar een kind is. Het is geen planner, geen klok en geen beloningskaart — er zijn geen timers en geen scores.',
+    calmDetail: 'Stappen worden op volgorde afgevinkt, vooruit tikken spreekt die stap alleen uit, en het laatste vinkje kan altijd ongedaan worden gemaakt.',
+    features: [
+      { title: 'Eén grote stap tegelijk', body: 'Een afbeelding, een korte titel, uitgesproken in de taal van het kind zodra hij aan de beurt is.' },
+      { title: 'Acht kant-en-klare routines', body: 'Ochtend, bedtijd, weggaan, eten, in bad, opruimen, schooldag en een eerst/dan-bord.' },
+      { title: 'Jouw woorden, jouw foto’s', body: 'Elke routine en stap is aan te passen — inclusief foto’s van de eigen schoenen of tas van het kind.' },
+      { title: 'Helemaal geen toestemmingen', body: 'Geen microfoon, geen camera, geen advertenties, geen accounts. Werkt offline na het eerste gebruik.' },
+    ],
+    captions: ['Kies een routine', 'Eén stap, schermvullend', 'De routine afmaken'],
+  },
+}

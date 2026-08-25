@@ -3,10 +3,12 @@ import { RouterLink, useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { useBemm } from 'bemm'
 import { docsPages, getDocsPage } from '../docsContent'
+import { useCopy } from '../i18n'
 
 const bemm = useBemm('docs-page', { return: 'string', includeBaseClass: true })
 
 const route = useRoute()
+const copy = useCopy()
 
 const currentPath = computed(() => {
   const section = route.params.section as string | undefined
@@ -14,18 +16,30 @@ const currentPath = computed(() => {
   return '/docs'
 })
 
-const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0])
+/**
+ * `docsPages` owns the order and the routes; the words come from the locale
+ * bundle keyed by page id. A translated path would break every link into the
+ * docs, so paths never travel with the prose.
+ */
+const docs = computed(() => copy.value.docs)
+const pages = computed(() =>
+  docsPages.map((page) => ({ id: page.id, path: page.path, ...docs.value.pages[page.id] })),
+)
+const currentId = computed(() => (getDocsPage(currentPath.value) ?? docsPages[0]).id)
+const currentPage = computed(
+  () => pages.value.find((page) => page.id === currentId.value) ?? pages.value[0],
+)
 </script>
 
 <template>
   <div :class="[bemm(''), 'section']">
     <div class="container">
       <div class="docs-layout">
-        <aside class="docs-sidebar" aria-label="Documentation pages">
-          <p class="eyebrow">Docs</p>
+        <aside class="docs-sidebar" :aria-label="docs.navAriaLabel">
+          <p class="eyebrow">{{ docs.sidebarLabel }}</p>
           <nav class="docs-sidebar__nav">
             <RouterLink
-              v-for="page in docsPages"
+              v-for="page in pages"
               :key="page.id"
               :to="page.path"
               class="docs-sidebar__link"
@@ -40,7 +54,7 @@ const currentPage = computed(() => getDocsPage(currentPath.value) ?? docsPages[0
 
         <article class="docs-article" :key="currentPage.id">
           <header class="docs-article__header">
-            <p class="eyebrow">Tiko platform docs</p>
+            <p class="eyebrow">{{ docs.articleEyebrow }}</p>
             <h1 class="display-2 docs-article__title">{{ currentPage.title }}</h1>
             <p class="body-lg">{{ currentPage.lede }}</p>
           </header>

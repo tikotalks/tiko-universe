@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { tikoWebsiteAppUniverse, type TikoWebsiteAppMetadata } from './appUniverse'
-import { faqs, trustPrinciples } from '../content'
+import { en } from '../i18n/copy/en'
+import type { ContentPage } from '../i18n'
 
 // `as const satisfies` keeps the narrow literal type per entry, which drops the
 // optional fields from members that omit them. Read through the interface instead.
 const apps: readonly TikoWebsiteAppMetadata[] = tikoWebsiteAppUniverse
 
-const allCopy = [
+// What the app cards and detail pages say about each app, plus the trust
+// principles on the home page.
+const appCopy = [
   ...apps.flatMap((app) => [
     app.appName,
     app.shortSummary,
@@ -14,9 +17,23 @@ const allCopy = [
     app.platformNotes,
     ...app.useWhen
   ]),
-  ...trustPrinciples,
-  ...faqs.flatMap((item) => [item.question, item.answer])
+  ...en.home.caregivers.principles
 ].join(' ')
+
+// The long-form explainer pages. Held to a different guard than the app copy:
+// they discuss what Tiko deliberately is not, so words like "dashboard" appear
+// inside a negation rather than as a promise.
+const pageCopy = (Object.values(en.pages) as readonly ContentPage[]).flatMap((page) => [
+  page.title,
+  page.lede,
+  ...page.sections.flatMap((section) => [
+    section.title,
+    ...(section.body ?? []),
+    ...(section.points ?? []).flatMap((point) => [point.title, point.body]),
+    ...(section.steps ?? []).flatMap((step) => [step.title, step.body]),
+    ...(section.questions ?? []).flatMap((qa) => [qa.question, qa.answer])
+  ])
+]).join(' ')
 
 describe('TikoTalks website app universe metadata', () => {
   it('keeps one local static entry for each v1 app', () => {
@@ -93,12 +110,17 @@ describe('TikoTalks website app universe metadata', () => {
     }
   })
 
-  it('keeps copy child-first without adult SaaS, login-wall, or medical framing', () => {
-    expect(allCopy).not.toMatch(/free trial|book a demo|talk to sales|enterprise|dashboard|workspace|clinical outcome|patient/i)
-    expect(allCopy).toContain('does not diagnose, treat, or promise outcomes')
-    expect(allCopy).not.toMatch(/guarantee|guaranteed progress/i)
-    expect(allCopy).not.toMatch(/create an account|sign in|log in|passwords are required/i)
-    expect(allCopy).toContain('No login walls before use.')
-    expect(allCopy).toContain('No passwords.')
+  it('keeps app copy child-first without adult SaaS, login-wall, or medical framing', () => {
+    expect(appCopy).not.toMatch(/free trial|book a demo|talk to sales|enterprise|dashboard|workspace|clinical outcome|patient/i)
+    expect(appCopy).not.toMatch(/guarantee|guaranteed progress/i)
+    expect(appCopy).not.toMatch(/create an account|sign in|log in|passwords are required/i)
+    expect(appCopy).toContain('No login walls before use.')
+    expect(appCopy).toContain('No passwords.')
+  })
+
+  it('keeps the explainer pages honest about what Tiko is not', () => {
+    expect(pageCopy).toContain('does not diagnose, treat, or promise outcomes')
+    expect(pageCopy).not.toMatch(/free trial|book a demo|talk to sales|clinical outcome/i)
+    expect(pageCopy).not.toMatch(/guaranteed progress/i)
   })
 })

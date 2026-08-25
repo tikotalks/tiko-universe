@@ -2,8 +2,9 @@
 import { RouterLink, useRoute } from 'vue-router'
 import { computed, ref, watch, onMounted } from 'vue'
 import { tikoImageUrl } from '@tiko/ui'
-import { getAppBySlug } from '../content/appUniverse'
+import { useApp } from '../content/useApps'
 import { mediaImage } from '../content/mediaImages'
+import { useCopy } from '../i18n'
 import PageSection from '../components/sections/PageSection.vue'
 import CardGrid from '../components/sections/CardGrid.vue'
 import ColorCard from '../components/sections/ColorCard.vue'
@@ -12,8 +13,15 @@ import CtaBanner from '../components/sections/CtaBanner.vue'
 import AppStoreButton from '../components/AppStoreButton.vue'
 
 const route = useRoute()
+const copy = useCopy()
 const slug = computed(() => route.params.slug as string)
-const app = computed(() => getAppBySlug(slug.value))
+const app = useApp(() => slug.value)
+const t = computed(() => copy.value.appDetail)
+
+/** `{app}` in a label stands for the app's own name, which is never translated. */
+function withApp(template: string): string {
+  return template.replace('{app}', app.value?.name ?? '')
+}
 
 /** Available on the web — Say, Sum and First have shipped, but on iOS only. */
 const hasWebApp = computed(() => Boolean(app.value?.appUrl) && app.value?.status === 'available')
@@ -21,9 +29,9 @@ const hasWebApp = computed(() => Boolean(app.value?.appUrl) && app.value?.status
 const isReleased = computed(() => app.value?.status === 'available')
 
 const ctaTitle = computed(() => {
-  if (hasWebApp.value) return 'Open now on the web.'
-  if (isReleased.value) return 'On the App Store now.'
-  return 'Coming soon.'
+  if (hasWebApp.value) return t.value.cta.openWeb
+  if (isReleased.value) return t.value.cta.onAppStore
+  return t.value.cta.comingSoon
 })
 
 interface MediaImage {
@@ -38,13 +46,6 @@ interface MediaApiResponse {
   data?: MediaImage[]
 }
 
-interface MediaSectionConfig {
-  category: string
-  eyebrow: string
-  heading: string
-  lede: string
-}
-
 const mediaImages = ref<MediaImage[]>([])
 const mediaLoading = ref(false)
 
@@ -52,13 +53,13 @@ const MEDIA_API_BASE = 'https://media.tikoapi.org/v1'
 const MEDIA_SITE_URL = 'https://media.tikoapps.org'
 const CDN_ORIGIN = 'data.tikocdn.org'
 
-const APP_MEDIA_SECTION: Partial<Record<string, MediaSectionConfig>> = {
-  cards: {
-    category: 'animals',
-    eyebrow: 'Built-in image library',
-    heading: 'Tiko Media images, ready for Cards.',
-    lede: 'Cards can start with clear, recognizable images from Tiko Media. Browse the public library or use them directly inside card sets.',
-  },
+/**
+ * Apps that show a slice of the Tiko media library, and the category they pull
+ * from. The section's own words live in the copy bundle — only the category is
+ * an address rather than text.
+ */
+const APP_MEDIA_CATEGORY: Partial<Record<string, string>> = {
+  cards: 'animals',
 }
 
 const FALLBACK_CARD_MEDIA: MediaImage[] = [
@@ -73,8 +74,7 @@ const FALLBACK_CARD_MEDIA: MediaImage[] = [
   { id: '0d29c4fe-161f-4628-9425-1cd8e6374953', title: 'Tadpole', original_url: 'https://data.tikocdn.org/uploads/1756291773294-tadpole.png' },
 ]
 
-const mediaSection = computed(() => APP_MEDIA_SECTION[slug.value])
-const hasMediaSection = computed(() => Boolean(mediaSection.value))
+const hasMediaSection = computed(() => Boolean(APP_MEDIA_CATEGORY[slug.value]))
 const visibleMediaImages = computed(() => mediaImages.value.length ? mediaImages.value : FALLBACK_CARD_MEDIA)
 // The "human moment" panel used to show the first of the animal fallback list, so
 // every app illustrated its most human section with a frog. Each app names its own.
@@ -95,7 +95,7 @@ function normalizeMediaImages(items: MediaImage[]): MediaImage[] {
       if (!originalUrl) return null
       return {
         ...item,
-        title: item.title || 'Tiko Media image',
+        title: item.title || copy.value.appDetail.mediaLibrary.fallbackImageTitle,
         original_url: originalUrl,
       }
     })
@@ -103,16 +103,16 @@ function normalizeMediaImages(items: MediaImage[]): MediaImage[] {
 }
 
 async function loadMedia(appSlug: string) {
-  const config = APP_MEDIA_SECTION[appSlug]
+  const category = APP_MEDIA_CATEGORY[appSlug]
   mediaImages.value = []
-  if (!config) {
+  if (!category) {
     mediaLoading.value = false
     return
   }
 
   mediaLoading.value = true
   try {
-    const res = await fetch(`${MEDIA_API_BASE}/media?category=${config.category}&limit=9&type=image`)
+    const res = await fetch(`${MEDIA_API_BASE}/media?category=${category}&limit=9&type=image`)
     if (res.ok) {
       const json = await res.json() as MediaApiResponse | MediaImage[]
       const items = Array.isArray(json) ? json : (json.data ?? [])
@@ -136,10 +136,10 @@ watch(slug, (newSlug) => {
 
 <template>
   <PageSection v-if="!app" width="narrow">
-    <p class="eyebrow">Not found</p>
-    <h1 class="display-2">App not found.</h1>
-    <p class="body-lg">There is no Tiko app with that name.</p>
-    <RouterLink to="/apps" class="btn btn--ghost">Back to all apps</RouterLink>
+    <p class="eyebrow">{{ t.notFound.eyebrow }}</p>
+    <h1 class="display-2">{{ t.notFound.title }}</h1>
+    <p class="body-lg">{{ t.notFound.body }}</p>
+    <RouterLink to="/apps" class="btn btn--ghost">{{ t.notFound.backLabel }}</RouterLink>
   </PageSection>
 
   <div v-else class="app-detail" :style="{ '--app-color': app.color, '--app-color-text': app.colorText }">
@@ -147,12 +147,12 @@ watch(slug, (newSlug) => {
     <PageSection :tone="app.id" class="app-detail__hero">
       <SplitMedia
         :image="app.iconUrl"
-        :image-alt="`${app.name} app icon`"
+        :image-alt="withApp(t.hero.iconAlt)"
         media-side="right"
         :frame="false"
       >
-        <RouterLink to="/apps" class="app-detail__back">All apps</RouterLink>
-        <p class="app-detail__eyebrow">Tiko · {{ app.statusLabel }}</p>
+        <RouterLink to="/apps" class="app-detail__back">{{ t.cta.allAppsLabel }}</RouterLink>
+        <p class="app-detail__eyebrow">{{ t.hero.brandPrefix }} · {{ app.statusLabel }}</p>
         <h1 class="app-detail__name">{{ app.name }}</h1>
         <p class="app-detail__headline">{{ app.headline }}</p>
         <p class="app-detail__desc">{{ app.description }}</p>
@@ -164,9 +164,9 @@ watch(slug, (newSlug) => {
             target="_blank"
             rel="noopener"
           >
-            Open {{ app.name }}
+            {{ withApp(t.hero.openLabel) }}
           </a>
-          <span v-else-if="!isReleased" class="btn btn--ghost-light">Coming soon</span>
+          <span v-else-if="!isReleased" class="btn btn--ghost-light">{{ t.hero.comingSoon }}</span>
           <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
         </div>
       </SplitMedia>
@@ -174,8 +174,8 @@ watch(slug, (newSlug) => {
 
     <!-- Features -->
     <PageSection
-      eyebrow="What it does"
-      title="Built for one clear job."
+      :eyebrow="t.features.eyebrow"
+      :title="t.features.title"
     >
       <CardGrid min="240px">
         <ColorCard
@@ -191,9 +191,9 @@ watch(slug, (newSlug) => {
     <!-- Real device screenshots (apps with a capture run in release/ios.json) -->
     <PageSection
       v-if="app.screenshots.length"
-      eyebrow="On the device"
-      :title="`${app.name}, on a real screen.`"
-      intro="Captured on an iPhone, in both light and dark mode. Nothing here is a mockup."
+      :eyebrow="t.screenshots.eyebrow"
+      :title="withApp(t.screenshots.title)"
+      :intro="t.screenshots.lede"
     >
       <ul class="app-detail__shots">
         <li v-for="shot in app.screenshots" :key="shot.light" class="app-detail__shot">
@@ -221,14 +221,14 @@ watch(slug, (newSlug) => {
 
     <!-- Media images (apps with a configured Tiko Media category) -->
     <PageSection
-      v-if="hasMediaSection && mediaSection"
-      :eyebrow="mediaSection.eyebrow"
-      :title="mediaSection.heading"
-      :intro="mediaSection.lede"
+      v-if="hasMediaSection"
+      :eyebrow="t.mediaLibrary.eyebrow"
+      :title="t.mediaLibrary.title"
+      :intro="t.mediaLibrary.lede"
     >
       <template #actions>
         <a :href="MEDIA_SITE_URL" class="btn btn--primary" target="_blank" rel="noopener">
-          Browse Tiko Media
+          {{ t.mediaLibrary.browseLabel }}
         </a>
       </template>
       <div v-if="mediaLoading && !visibleMediaImages.length" class="app-detail__media-grid">
@@ -255,22 +255,22 @@ watch(slug, (newSlug) => {
     <PageSection tone="dark">
       <SplitMedia
         :image="momentImage"
-        :image-alt="`A calm ${app.name} moment`"
+        :image-alt="withApp(t.moment.imageAlt)"
         media-side="left"
       >
-        <p class="app-detail__eyebrow">The human moment</p>
+        <p class="app-detail__eyebrow">{{ t.moment.eyebrow }}</p>
         <h2 class="app-detail__moment-title">{{ app.moment }}</h2>
       </SplitMedia>
       <CardGrid min="280px" gap="1.5rem">
-        <ColorCard title="Why it stays small" :body="app.whySmall" />
-        <ColorCard title="How it stays calm" :body="app.calmDetail" />
+        <ColorCard :title="t.moment.whySmallTitle" :body="app.whySmall" />
+        <ColorCard :title="t.moment.calmTitle" :body="app.calmDetail" />
       </CardGrid>
     </PageSection>
 
     <!-- Use when -->
     <PageSection
-      eyebrow="Use cases"
-      :title="`When to reach for ${app.name}`"
+      :eyebrow="t.useWhen.eyebrow"
+      :title="withApp(t.useWhen.title)"
     >
       <CardGrid min="260px">
         <ColorCard
@@ -297,10 +297,10 @@ watch(slug, (newSlug) => {
             target="_blank"
             rel="noopener"
           >
-            Open {{ app.name }}
+            {{ withApp(t.hero.openLabel) }}
           </a>
           <AppStoreButton v-if="app.appStoreUrl" :href="app.appStoreUrl" />
-          <RouterLink to="/apps" class="btn btn--ghost-light">All apps</RouterLink>
+          <RouterLink to="/apps" class="btn btn--ghost-light">{{ t.cta.allAppsLabel }}</RouterLink>
         </template>
       </CtaBanner>
     </PageSection>
@@ -386,7 +386,12 @@ watch(slug, (newSlug) => {
 :root[data-color-mode='dark'] .app-detail {
   &__shot-img--light { display: none; }
   &__shot-img--dark { display: block; }
+}
 
+// The hero and moment styles below were trapped inside the dark-mode block by a
+// misplaced brace, so the app name, headline and media grid only picked up their
+// styling when the site was in dark mode.
+.app-detail {
   &__eyebrow {
     font-size: 0.75rem;
     font-weight: 700;
