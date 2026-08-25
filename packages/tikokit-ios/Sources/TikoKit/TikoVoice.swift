@@ -23,6 +23,8 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
     private var playbackContinuation: CheckedContinuation<Void, Never>?
     private let cacheDirectory: URL
 
+    private var stateHandler: ((TikoSpeechPlaybackState) -> Void)?
+
     public private(set) var isSpeaking = false
 
     override public init() {
@@ -38,21 +40,54 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
 
     /// Speaks and returns when playback finishes. Cached audio → Atlas fetch
     /// (cached for next time) → on-device synthesizer fallback.
-    public func speak(_ text: String, languageCode: String) async {
+    ///
+    /// Ends on `.unsupportedLanguage` when none of the three could produce
+    /// speech — no cached audio, no network, and no system voice for the
+    /// language. That is the normal offline state for Maltese and Armenian,
+    /// and the UI has to say so rather than go quiet.
+    public func speak(
+        _ text: String,
+        languageCode: String,
+        onStateChange: ((TikoSpeechPlaybackState) -> Void)? = nil
+    ) async {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         stop()
+        stateHandler = onStateChange
         TikoSpeech.configurePlaybackSession()
         isSpeaking = true
-        defer { isSpeaking = false }
+        defer { isSpeaking = false; stateHandler = nil }
 
         let locale = TikoSpeech.languageCode(for: languageCode)
         var data = cachedAudio(text: trimmed, locale: locale)
         if data == nil {
+            notify(.generating)
             data = try? await fetchAndCache(text: trimmed, locale: locale)
         }
-        if let data, await play(data: data) { return }
-        await speakWithSynthesizer(trimmed, locale: locale)
+        if let data {
+            notify(.playing)
+            if await play(data: data) {
+                notify(.idle)
+                return
+            }
+        }
+        notify(.playing)
+        if await speakWithSynthesizer(trimmed, locale: locale) {
+            notify(.idle)
+            return
+        }
+        notify(.unsupportedLanguage)
+    }
+
+    /// Fire-and-forget playback, for call sites that are not `async`. The
+    /// returned task is cancellable; `stop()` covers the common case.
+    @discardableResult
+    public func speakDetached(
+        _ text: String,
+        languageCode: String,
+        onStateChange: ((TikoSpeechPlaybackState) -> Void)? = nil
+    ) -> Task<Void, Never> {
+        Task { await speak(text, languageCode: languageCode, onStateChange: onStateChange) }
     }
 
     /// Quietly downloads and caches audio so later sessions work offline.
@@ -73,6 +108,11 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         }
         resumePlayback()
         isSpeaking = false
+        notify(.idle)
+    }
+
+    private func notify(_ state: TikoSpeechPlaybackState) {
+        stateHandler?(state)
     }
 
     // MARK: - Cache
@@ -87,17 +127,38 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         try? Data(contentsOf: cacheURL(text: text, locale: locale))
     }
 
-    private func fetchAndCache(text: String, locale: String) async throws -> Data {
+    /// "speech-playback" is the one purpose the Atlas capability registry
+    /// allows for every app. A per-app purpose gets a 403 and silently drops
+    /// the app back to the device voice, so it is not a knob worth having.
+    static let atlasPurpose = "speech-playback"
+
+    static func makeAtlasSpeechRequest(
+        text: String,
+        locale: String,
+        app: String,
+        atlasSpeechURL: URL,
+        accessToken: String?
+    ) throws -> URLRequest {
         var request = URLRequest(url: atlasSpeechURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let token = try? TikoDeviceSessionStore().load()?.accessToken, !token.isEmpty {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if let accessToken, !accessToken.isEmpty {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         }
-        // "speech-playback" is the purpose the Atlas registry allows for all apps.
         request.httpBody = try JSONEncoder().encode(AtlasSpeechRequest(
-            app: Self.appName, purpose: "speech-playback", text: text, language: locale
+            app: app, purpose: atlasPurpose, text: text, locale: locale
         ))
+        return request
+    }
+
+    private func fetchAndCache(text: String, locale: String) async throws -> Data {
+        let request = try Self.makeAtlasSpeechRequest(
+            text: text,
+            locale: locale,
+            app: Self.appName,
+            atlasSpeechURL: atlasSpeechURL,
+            accessToken: try? TikoDeviceSessionStore().load()?.accessToken
+        )
 
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
@@ -139,18 +200,25 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         return true
     }
 
-    private func speakWithSynthesizer(_ text: String, locale: String) async {
+    /// Returns `false` when this device has no voice for the language, which
+    /// is the truth for Maltese and Armenian on every iOS release to date.
+    /// Speaking anyway would read the text in whatever voice the synthesizer
+    /// defaults to, so the caller has to surface it instead.
+    @discardableResult
+    private func speakWithSynthesizer(_ text: String, locale: String) async -> Bool {
+        guard let voice = TikoSpeech.systemVoice(for: locale) else { return false }
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
         await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
             playbackContinuation = continuation
             let utterance = AVSpeechUtterance(string: text)
-            utterance.voice = AVSpeechSynthesisVoice(language: locale)
+            utterance.voice = voice
             utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
             utterance.pitchMultiplier = 1.04
             synthesizer.speak(utterance)
         }
+        return true
     }
 
     private func resumePlayback() {
@@ -183,7 +251,7 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         let app: String
         let purpose: String
         let text: String
-        let language: String
+        let locale: String
     }
 
     private struct AtlasSpeechResponse: Decodable {
