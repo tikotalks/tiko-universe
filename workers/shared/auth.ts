@@ -141,7 +141,12 @@ function getBearer(request: Request): string | null {
 /**
  * Load active API keys from D1 and refresh the in-memory cache.
  */
-async function hashApiKey(token: string, env: AuthEnv): Promise<string | null> {
+/**
+ * Hash a raw API key using the same peppered format used by authentication.
+ * Only server-side callers may use this to create a database record; raw keys
+ * must never be stored after their one-time issuance response.
+ */
+export async function hashApiKey(token: string, env: AuthEnv): Promise<string | null> {
   const pepper = await resolvePepper(env)
   if (!pepper) return null
   const material = `tiko:api-key:${pepper}:${token}`

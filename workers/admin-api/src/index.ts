@@ -1,4 +1,4 @@
-import { loadIdentityRoles, requireSession, resolvePepper, type AuthEnv } from '../../shared/auth'
+import { hashApiKey, loadIdentityRoles, requireSession, resolvePepper, type AuthEnv } from '../../shared/auth'
 import { DEFAULT_ATLAS_SPEECH_CONFIG, DEFAULT_NARAKEET_VOICE_BY_LOCALE, normalizeSpeechServiceConfig, type AtlasSpeechServiceConfig } from '../../shared/atlas-speech-config'
 import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 
@@ -88,6 +88,30 @@ interface AdminUserListItem {
   displayName: string | null
   avatarUrl: string | null
   color: string | null
+}
+
+interface AdminApiKeyRow {
+  id: string
+  name: string
+  key_prefix: string
+  scopes_json: string
+  created_at: string
+  expires_at: string | null
+  last_used_at: string | null
+}
+
+interface AdminApiKey {
+  id: string
+  name: string
+  prefix: string
+  scopes: string[]
+  createdAt: string
+  expiresAt: string | null
+  lastUsedAt: string | null
+}
+
+interface CreatedAdminApiKey extends AdminApiKey {
+  key: string
 }
 
 const ADMIN_EMAIL = 'me@sil.mt'
@@ -193,6 +217,19 @@ async function handleAdminRequest(request: Request, env: Env): Promise<Response>
       return json({ data: { users, meta: { total, page, limit, totalPages: Math.max(1, Math.ceil(total / limit)) } } })
     }
 
+    if (path === '/v1/admin/api-keys' && request.method === 'GET') {
+      return listApiKeys(env.AUTH_DB)
+    }
+
+    if (path === '/v1/admin/api-keys' && request.method === 'POST') {
+      return createApiKey(request, env, admin)
+    }
+
+    const apiKeyMatch = path.match(/^\/v1\/admin\/api-keys\/([^/]+)$/)
+    if (apiKeyMatch && request.method === 'DELETE') {
+      return revokeApiKey(env.AUTH_DB, decodeURIComponent(apiKeyMatch[1]))
+    }
+
     const assignRoleMatch = path.match(/^\/v1\/admin\/users\/([^/]+)\/roles$/)
     if (assignRoleMatch && request.method === 'PUT') {
       return setUserRoles(request, env.AUTH_DB, admin, decodeURIComponent(assignRoleMatch[1]))
@@ -212,6 +249,127 @@ async function handleAdminRequest(request: Request, env: Env): Promise<Response>
     }
 
     return apiError('not_found', 'Route not found.', 404)
+}
+
+const MEDIA_UPLOAD_SCOPE = 'media:write'
+const DEFAULT_API_KEY_EXPIRY_DAYS = 90
+const MAX_API_KEY_EXPIRY_DAYS = 365
+
+function apiKeyFromRow(row: AdminApiKeyRow): AdminApiKey {
+  return {
+    id: row.id,
+    name: row.name,
+    prefix: row.key_prefix,
+    scopes: parseApiKeyScopes(row.scopes_json),
+    createdAt: row.created_at,
+    expiresAt: row.expires_at,
+    lastUsedAt: row.last_used_at,
+  }
+}
+
+function parseApiKeyScopes(value: string): string[] {
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) ? parsed.filter((scope): scope is string => typeof scope === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function generateMediaUploadKey(): { key: string, prefix: string } {
+  const bytes = crypto.getRandomValues(new Uint8Array(32))
+  const secret = Array.from(bytes).map(byte => byte.toString(16).padStart(2, '0')).join('')
+  return {
+    key: `tiko_media_${secret}`,
+    prefix: `tiko_media_${secret.slice(0, 8)}`,
+  }
+}
+
+function apiKeyExpiry(days: number): string {
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString()
+}
+
+function validApiKeyName(value: unknown): string | null {
+  if (typeof value !== 'string') return null
+  const name = value.trim()
+  return name.length >= 3 && name.length <= 80 ? name : null
+}
+
+function apiKeyExpiryDays(value: unknown): number | null {
+  if (value === undefined) return DEFAULT_API_KEY_EXPIRY_DAYS
+  return typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= MAX_API_KEY_EXPIRY_DAYS
+    ? value
+    : null
+}
+
+async function listApiKeys(db: D1Database): Promise<Response> {
+  const { results } = await db.prepare(
+    `SELECT id, name, key_prefix, scopes_json, created_at, expires_at, last_used_at
+     FROM identity_api_keys
+     WHERE product = ? AND revoked_at IS NULL
+     ORDER BY created_at DESC`,
+  ).bind(PRODUCT).all<AdminApiKeyRow>()
+  return json({ data: { keys: results.map(apiKeyFromRow) } })
+}
+
+async function createApiKey(request: Request, env: Env, admin: AdminSession): Promise<Response> {
+  const body = await readJson<{ name?: unknown, expiresInDays?: unknown }>(request)
+  const name = validApiKeyName(body.name)
+  if (!name) return apiError('invalid_key_name', 'Key name must be between 3 and 80 characters.', 400)
+
+  const expiresInDays = apiKeyExpiryDays(body.expiresInDays)
+  if (expiresInDays === null) {
+    return apiError('invalid_key_expiry', `Key expiry must be between 1 and ${MAX_API_KEY_EXPIRY_DAYS} days.`, 400)
+  }
+
+  const generated = generateMediaUploadKey()
+  const keyHash = await hashApiKey(generated.key, env)
+  if (!keyHash) return apiError('key_issuer_unavailable', 'API key creation is unavailable because the token pepper is not configured.', 503)
+
+  const id = crypto.randomUUID()
+  const createdAt = new Date().toISOString()
+  const expiresAt = apiKeyExpiry(expiresInDays)
+  const scopes = [MEDIA_UPLOAD_SCOPE]
+  await env.AUTH_DB.prepare(
+    `INSERT INTO identity_api_keys (
+      id, subject_id, product, name, key_hash, key_prefix, scopes_json,
+      created_at, expires_at, last_used_at, revoked_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(
+    id,
+    admin.userId,
+    PRODUCT,
+    name,
+    keyHash,
+    generated.prefix,
+    JSON.stringify(scopes),
+    createdAt,
+    expiresAt,
+    null,
+    null,
+  ).run()
+
+  return json({
+    data: {
+      id,
+      name,
+      prefix: generated.prefix,
+      scopes,
+      createdAt,
+      expiresAt,
+      lastUsedAt: null,
+      key: generated.key,
+    } satisfies CreatedAdminApiKey,
+  }, 201)
+}
+
+async function revokeApiKey(db: D1Database, id: string): Promise<Response> {
+  const result = await db.prepare(
+    'UPDATE identity_api_keys SET revoked_at = ? WHERE id = ? AND product = ? AND revoked_at IS NULL',
+  ).bind(new Date().toISOString(), id, PRODUCT).run()
+  const changed = Number((result as { meta?: { changes?: number } }).meta?.changes ?? 0)
+  if (changed === 0) return apiError('api_key_not_found', 'API key not found or already revoked.', 404)
+  return json({ data: { id, revoked: true } })
 }
 
 
