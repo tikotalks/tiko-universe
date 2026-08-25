@@ -17,6 +17,7 @@
     "geography:gaps": "node tools/geography/report-media-gaps.mjs && node tools/geography/check-coverage.mjs --write",
     "geography:content": "node tools/geography/build-animals.mjs --write && node tools/geography/build-landmarks.mjs --write && node tools/geography/report-media-gaps.mjs",
     "geography:build": "npm --prefix tools/geography install --no-audit --no-fund && node tools/geography/build-geography.mjs && node tools/geography/build-water.mjs && node tools/geography/build-places.mjs && node tools/geography/build-cities.mjs && node tools/geography/build-subdivisions.mjs && node tools/geography/build-people.mjs --write && node tools/geography/build-bathymetry.mjs",
+    "geography:people-art": "node tools/geography/generate-people-art.mjs",
     "generate:app-configs": "node tools/generate-app-configs.mjs",
     "generate:colors": "node tools/generate-tiko-colors.mjs",
     "generate:talk-seeds": "node tools/generate-talk-seeds.mjs",

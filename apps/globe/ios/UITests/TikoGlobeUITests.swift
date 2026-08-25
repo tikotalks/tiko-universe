@@ -156,7 +156,7 @@ final class TikoGlobeUITests: XCTestCase {
         let app = launchApp()
         XCTAssertTrue(app.otherElements["globe-surface"].waitForExistence(timeout: 20))
 
-        for mode in ["countries", "capitals", "animals", "landmarks"] {
+        for mode in ["countries", "capitals", "animals", "landmarks", "people"] {
             let button = app.buttons["globe-mode-\(mode)"]
             XCTAssertTrue(button.waitForExistence(timeout: 10), "\(mode) should be one tap away")
             button.tap()
@@ -197,6 +197,27 @@ final class TikoGlobeUITests: XCTestCase {
 
         let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         shot.name = "landmarks-mode"
+        shot.lifetime = .keepAlways
+        add(shot)
+    }
+
+    func testPeopleModeHasSomebodyInEveryPartOfTheWorld() {
+        let app = launchApp()
+        XCTAssertTrue(app.otherElements["globe-surface"].waitForExistence(timeout: 20))
+        app.buttons["globe-mode-people"].tap()
+        openCountryList(app)
+        let listed = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'globe-list-person.'"))
+        XCTAssertTrue(listed.firstMatch.waitForExistence(timeout: 10), "people should be reachable from the list")
+        // How many there are is the pack's business, and
+        // testEveryCountryHasSomebodyLivingInIt checks it: a scroll view only
+        // renders the handful of rows that fit on screen.
+        let name = listed.firstMatch.label
+        listed.firstMatch.tap()
+        XCTAssertTrue(app.otherElements["globe-selection-card"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts[name].waitForExistence(timeout: 5), "picking \(name) should open \(name)")
+
+        let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
+        shot.name = "people-mode"
         shot.lifetime = .keepAlways
         add(shot)
     }

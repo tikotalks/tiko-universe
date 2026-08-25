@@ -22,7 +22,12 @@ const CDN = 'https://data.tikocdn.org/cdn-cgi/image'
 const WRITE = process.argv.includes('--write')
 const SCHEMA_VERSION = 1
 
-/** id → the media title that pictures it, where the library already has one. */
+/**
+ * id → the media title that pictures it, where the library's own title does not
+ * follow from the name. Anything not listed here is looked up by its name, and
+ * by the couple of shapes the library tends to use — so a picture published as
+ * "Dogon Person" is found the day it appears, without editing this file.
+ */
 const ARTWORK = {
   viking: 'Viking Person',
   sami: 'Sami Person',
@@ -37,6 +42,18 @@ const ARTWORK = {
   'aboriginal-australians': 'Aboriginal Person',
   pharaoh: 'Egyptian Pharaoh',
   cossack: 'Russian Person',
+  zulu: 'Zulu Person',
+  'ancient-greek': 'Greek Person',
+  'roman-legionary': 'Roman Person',
+  'mongol-horseman': 'Mongol Warrior',
+  inca: 'Inca Person',
+  aztec: 'Aztec Person',
+  celt: 'Celtic Person',
+  volendam: 'Dutch Woman',
+  pirate: 'Pirate',
+  'joan-of-arc': 'Joan of Arc',
+  'genghis-khan': 'Genghis Khan',
+  alexander: 'Alexander the Great',
 }
 
 const slug = (value) => value.toLowerCase()
@@ -48,6 +65,29 @@ async function findPicture(title) {
   if (!response.ok) return null
   const data = (await response.json()).data ?? []
   return data.find((item) => (item.title ?? '').toLowerCase() === title.toLowerCase()) ?? null
+}
+
+/**
+ * The titles a picture of this person could plausibly carry. Tried in order,
+ * first exact match wins: the mapped title if there is one, then the name
+ * itself, then the two patterns the library already uses elsewhere.
+ */
+function titlesFor(id, name) {
+  const titles = []
+  if (ARTWORK[id]) titles.push(ARTWORK[id])
+  titles.push(name)
+  if (!/\bperson\b/i.test(name)) titles.push(`${name} Person`)
+  titles.push(id.replace(/-/g, ' '))
+  return [...new Set(titles)]
+}
+
+/** The first of those titles the library actually has a picture under. */
+async function findAnyPicture(id, name) {
+  for (const title of titlesFor(id, name)) {
+    const found = await findPicture(title)
+    if (found) return found
+  }
+  return null
 }
 
 async function download(item, id) {
@@ -89,7 +129,10 @@ for (const [countryId, entry] of Object.entries(source.countries)) {
     people.set(id, {
       id: `person.${id}`,
       name: person.name,
-      glyph: person.era === 'historical' ? '🛡️' : '🧑',
+      // Its own glyph where the entry gives one: two hundred identical figures
+      // is a worse map than a drum, a canoe and a pair of skates. The era's
+      // default only covers what has not been given one.
+      glyph: person.glyph ?? (person.era === 'historical' ? '🛡️' : '🧑'),
       importance: person.importance,
       era: person.era,
       note: person.note ?? null,
@@ -107,10 +150,18 @@ if (problems.length > 0) {
 }
 
 let withArt = 0
+let alreadyHere = 0
 for (const [id, item] of people) {
-  const title = ARTWORK[id]
-  if (!title) continue
-  const picture = WRITE ? await findPicture(title) : null
+  // A file already on disk is the picture: it was downloaded on an earlier run,
+  // or drawn and dropped in by hand. No need to ask the library again.
+  if (existsSync(join(IMAGE_DIR, `${id}.png`))) {
+    item.mediaId = id
+    item.image = `images/${id}.png`
+    withArt += 1
+    alreadyHere += 1
+    continue
+  }
+  const picture = WRITE ? await findAnyPicture(id, item.name) : null
   if (!picture) continue
   const image = await download(picture, id)
   if (!image) continue
@@ -132,5 +183,6 @@ if (WRITE) {
 const living = items.filter((item) => item.era === 'living').length
 process.stdout.write(
   `people ok: ${items.length} (${living} living, ${items.length - living} from history) ` +
-  `in ${Object.keys(source.countries).length} countries, ${withArt} with a picture\n`
+  `in ${Object.keys(source.countries).length} countries, ${withArt} with a picture ` +
+  `(${alreadyHere} already on disk, ${withArt - alreadyHere} fetched)\n`
 )

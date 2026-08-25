@@ -6,119 +6,3445 @@
     "care": "Name a people or a tradition, never a costume for a modern nationality. Historical figures are named as history: a Viking is a Viking, not a Norwegian."
   },
   "countries": {
-    "NOR": { "people": [
-      { "id": "viking", "name": "Viking", "era": "historical", "importance": 2, "lat": 60.39, "lon": 5.32,
-        "note": "Seafarers and traders of the Norse world, a thousand years ago." }
-    ] },
-    "SWE": { "people": [
-      { "id": "sami", "name": "Sámi", "era": "living", "importance": 3, "lat": 67.86, "lon": 20.23,
-        "note": "The indigenous people of the far north, herders of reindeer." }
-    ] },
-    "FIN": { "people": [
-      { "id": "sami", "name": "Sámi", "era": "living", "importance": 3, "lat": 68.9, "lon": 27.0,
-        "note": "The indigenous people of the far north, herders of reindeer." }
-    ] },
-    "ISL": { "people": [
-      { "id": "viking", "name": "Viking", "era": "historical", "importance": 3, "lat": 64.14, "lon": -21.94,
-        "note": "Iceland was settled by Norse families who sailed west." }
-    ] },
-    "DNK": { "people": [
-      { "id": "viking", "name": "Viking", "era": "historical", "importance": 3, "lat": 55.68, "lon": 12.57,
-        "note": "Seafarers and traders of the Norse world, a thousand years ago." }
-    ] },
-    "USA": { "people": [
-      { "id": "native-american", "name": "Native American peoples", "era": "living", "importance": 2, "lat": 36.0, "lon": -109.0,
-        "note": "The many nations who lived here long before anybody sailed in." },
-      { "id": "cowboy", "name": "Cowboy", "era": "historical", "importance": 3, "lat": 32.78, "lon": -99.5,
-        "note": "Riders who drove cattle across the western plains." }
-    ] },
-    "CAN": { "people": [
-      { "id": "inuit", "name": "Inuit", "era": "living", "importance": 2, "lat": 68.0, "lon": -85.0,
-        "note": "People of the Arctic, at home where the sea freezes." }
-    ] },
-    "GRL": { "people": [
-      { "id": "inuit", "name": "Inuit", "era": "living", "importance": 2, "lat": 69.22, "lon": -51.1,
-        "note": "People of the Arctic, at home where the sea freezes." }
-    ] },
-    "JPN": { "people": [
-      { "id": "samurai", "name": "Samurai", "era": "historical", "importance": 2, "lat": 34.99, "lon": 135.78,
-        "note": "Warriors who served Japan's lords for seven hundred years." },
-      { "id": "geisha", "name": "Geisha", "era": "living", "importance": 4, "lat": 35.0, "lon": 135.77,
-        "note": "Artists of dance, music and conversation, trained for years." }
-    ] },
-    "MEX": { "people": [
-      { "id": "maya", "name": "Maya", "era": "living", "importance": 2, "lat": 20.68, "lon": -88.57,
-        "note": "Builders of cities and astronomers — and still here, millions strong." }
-    ] },
-    "GTM": { "people": [
-      { "id": "maya", "name": "Maya", "era": "living", "importance": 2, "lat": 14.83, "lon": -91.52,
-        "note": "Builders of cities and astronomers — and still here, millions strong." }
-    ] },
-    "EGY": { "people": [
-      { "id": "pharaoh", "name": "Pharaoh", "era": "historical", "importance": 2, "lat": 25.72, "lon": 32.61,
-        "note": "The rulers of ancient Egypt, buried under mountains of stone." }
-    ] },
-    "KEN": { "people": [
-      { "id": "maasai", "name": "Maasai", "era": "living", "importance": 2, "lat": -1.5, "lon": 35.8,
-        "note": "Herders of the Rift Valley, known for their red shukas." }
-    ] },
-    "TZA": { "people": [
-      { "id": "maasai", "name": "Maasai", "era": "living", "importance": 2, "lat": -3.4, "lon": 35.9,
-        "note": "Herders of the Rift Valley, known for their red shukas." }
-    ] },
-    "NZL": { "people": [
-      { "id": "maori", "name": "Māori", "era": "living", "importance": 2, "lat": -38.14, "lon": 176.25,
-        "note": "The first people of Aotearoa, who navigated here by stars and swell." }
-    ] },
-    "AUS": { "people": [
-      { "id": "aboriginal-australians", "name": "Aboriginal Australians", "era": "living", "importance": 2, "lat": -25.34, "lon": 131.03,
-        "note": "The oldest continuing cultures on Earth, here for 60,000 years." }
-    ] },
-    "PER": { "people": [
-      { "id": "quechua", "name": "Quechua", "era": "living", "importance": 2, "lat": -13.53, "lon": -71.97,
-        "note": "Speakers of the language of the Inca, farming the high Andes." }
-    ] },
-    "BOL": { "people": [
-      { "id": "aymara", "name": "Aymara", "era": "living", "importance": 3, "lat": -16.5, "lon": -68.15,
-        "note": "People of the high plateau around Lake Titicaca." }
-    ] },
-    "RUS": { "people": [
-      { "id": "cossack", "name": "Cossack", "era": "historical", "importance": 4, "lat": 47.23, "lon": 39.72,
-        "note": "Horsemen of the southern steppe." }
-    ] },
-    "MNG": { "people": [
-      { "id": "mongol-horseman", "name": "Mongol horseman", "era": "historical", "importance": 2, "lat": 47.92, "lon": 106.92,
-        "note": "Riders of the steppe, who once crossed a continent on horseback." }
-    ] },
-    "CHN": { "people": [
-      { "id": "terracotta-warrior", "name": "Terracotta warrior", "era": "historical", "importance": 3, "lat": 34.38, "lon": 109.28,
-        "note": "An army of clay, buried to guard an emperor." }
-    ] },
-    "GRC": { "people": [
-      { "id": "ancient-greek", "name": "Ancient Greek", "era": "historical", "importance": 2, "lat": 37.97, "lon": 23.73,
-        "note": "Philosophers, playwrights and the first Olympians." }
-    ] },
-    "ITA": { "people": [
-      { "id": "roman-legionary", "name": "Roman legionary", "era": "historical", "importance": 2, "lat": 41.89, "lon": 12.49,
-        "note": "The soldiers of an empire that reached from Britain to Egypt." },
-      { "id": "gondolier", "name": "Gondolier", "era": "living", "importance": 5, "lat": 45.44, "lon": 12.34,
-        "note": "Rowers who steer Venice's boats standing up." }
-    ] },
-    "ESP": { "people": [
-      { "id": "flamenco-dancer", "name": "Flamenco dancer", "era": "living", "importance": 3, "lat": 37.39, "lon": -5.99,
-        "note": "Dance, song and guitar from Andalusia." }
-    ] },
-    "IND": { "people": [
-      { "id": "mahout", "name": "Mahout", "era": "living", "importance": 4, "lat": 26.28, "lon": 91.66,
-        "note": "Keepers who live and work alongside elephants." }
-    ] },
-    "ARG": { "people": [
-      { "id": "gaucho", "name": "Gaucho", "era": "living", "importance": 3, "lat": -34.0, "lon": -60.0,
-        "note": "Horsemen of the pampas." }
-    ] },
-    "SAU": { "people": [
-      { "id": "bedouin", "name": "Bedouin", "era": "living", "importance": 3, "lat": 24.0, "lon": 45.0,
-        "note": "Desert people who move with their herds." }
-    ] }
+    "ABW": {
+      "people": [
+        {
+          "id": "dande-singer",
+          "name": "Dande singer",
+          "era": "living",
+          "importance": 6,
+          "lat": 12.52,
+          "lon": -70.03,
+          "note": "At New Year a band goes house to house and sings your luck for you.",
+          "glyph": "🎻"
+        }
+      ]
+    },
+    "AFG": {
+      "people": [
+        {
+          "id": "buzkashi-rider",
+          "name": "Buzkashi rider",
+          "era": "living",
+          "importance": 3,
+          "lat": 36.7,
+          "lon": 67.1,
+          "note": "A game of horsemen, played across a whole field with no ball.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "AGO": {
+      "people": [
+        {
+          "id": "ovimbundu",
+          "name": "Ovimbundu",
+          "era": "living",
+          "importance": 4,
+          "lat": -12.78,
+          "lon": 15.74,
+          "note": "The largest of Angola's peoples, farmers and traders of the high plateau.",
+          "glyph": "🧑🏿"
+        }
+      ]
+    },
+    "AIA": {
+      "people": [
+        {
+          "id": "anguilla-boat-racer",
+          "name": "Anguillian boat racer",
+          "era": "living",
+          "importance": 5,
+          "lat": 18.22,
+          "lon": -63.05,
+          "note": "The national sport is sailing wooden boats built on the beach.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "ALB": {
+      "people": [
+        {
+          "id": "iso-polyphony",
+          "name": "Iso-polyphony singer",
+          "era": "living",
+          "importance": 4,
+          "lat": 40.07,
+          "lon": 20.14,
+          "note": "Four voices, one of them holding a single note underneath.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "ALD": {
+      "people": [
+        {
+          "id": "aland-sailor",
+          "name": "Åland windjammer sailor",
+          "era": "historical",
+          "importance": 4,
+          "lat": 60.1,
+          "lon": 19.94,
+          "note": "The last great sailing ships in the world worked from here.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "AND": {
+      "people": [
+        {
+          "id": "pyrenean-shepherd",
+          "name": "Pyrenean shepherd",
+          "era": "living",
+          "importance": 5,
+          "lat": 42.55,
+          "lon": 1.6,
+          "note": "Up the mountain in summer, down again before the snow.",
+          "glyph": "🐑"
+        }
+      ]
+    },
+    "ARE": {
+      "people": [
+        {
+          "id": "falconer",
+          "name": "Falconer",
+          "era": "living",
+          "importance": 3,
+          "lat": 24.45,
+          "lon": 54.38,
+          "note": "A hunting bird that sits on your glove and comes back to it.",
+          "glyph": "🦅"
+        }
+      ]
+    },
+    "ARG": {
+      "people": [
+        {
+          "id": "gaucho",
+          "name": "Gaucho",
+          "era": "living",
+          "importance": 3,
+          "lat": -34,
+          "lon": -60,
+          "note": "Horsemen of the pampas."
+        }
+      ]
+    },
+    "ARM": {
+      "people": [
+        {
+          "id": "khachkar-carver",
+          "name": "Khachkar carver",
+          "era": "living",
+          "importance": 4,
+          "lat": 40.18,
+          "lon": 44.51,
+          "note": "Cross-stones cut in lace, no two of them the same.",
+          "glyph": "🪨"
+        }
+      ]
+    },
+    "ASM": {
+      "people": [
+        {
+          "id": "matai",
+          "name": "Matai",
+          "era": "living",
+          "importance": 4,
+          "lat": -14.28,
+          "lon": -170.7,
+          "note": "A village chief and speaker, chosen by the family to talk for it.",
+          "glyph": "🗣️"
+        }
+      ]
+    },
+    "ATA": {
+      "people": [
+        {
+          "id": "polar-explorer",
+          "name": "Polar explorer",
+          "era": "historical",
+          "importance": 2,
+          "lat": -77.85,
+          "lon": 166.67,
+          "note": "Wooden huts, sledges and dogs — and a race for the South Pole.",
+          "glyph": "🧭"
+        }
+      ]
+    },
+    "ATC": {
+      "people": [
+        {
+          "id": "rote-fisherman",
+          "name": "Rote fisherman",
+          "era": "living",
+          "importance": 6,
+          "lat": -12.25,
+          "lon": 123.05,
+          "note": "Sailors from Rote have fished these reefs for three hundred years.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "ATF": {
+      "people": [
+        {
+          "id": "kerguelen-sealer",
+          "name": "Kerguelen sealer",
+          "era": "historical",
+          "importance": 5,
+          "lat": -49.35,
+          "lon": 70.22,
+          "note": "Men left for a year on the islands of desolation.",
+          "glyph": "⚓"
+        }
+      ]
+    },
+    "ATG": {
+      "people": [
+        {
+          "id": "dockyard-sailor",
+          "name": "Sailor of Nelson's Dockyard",
+          "era": "historical",
+          "importance": 5,
+          "lat": 17,
+          "lon": -61.76,
+          "note": "A harbour hidden in a bay, where whole fleets were repaired.",
+          "glyph": "⚓"
+        }
+      ]
+    },
+    "AUS": {
+      "people": [
+        {
+          "id": "aboriginal-australians",
+          "name": "Aboriginal Australians",
+          "era": "living",
+          "importance": 2,
+          "lat": -25.34,
+          "lon": 131.03,
+          "note": "The oldest continuing cultures on Earth, here for 60,000 years."
+        }
+      ]
+    },
+    "AUT": {
+      "people": [
+        {
+          "id": "alpine-cowherd",
+          "name": "Alpine cowherd",
+          "era": "living",
+          "importance": 4,
+          "lat": 47.27,
+          "lon": 11.4,
+          "note": "In autumn the cows come down wearing flowers and enormous bells.",
+          "glyph": "🐄"
+        }
+      ]
+    },
+    "AZE": {
+      "people": [
+        {
+          "id": "ashik",
+          "name": "Ashik",
+          "era": "living",
+          "importance": 4,
+          "lat": 40.68,
+          "lon": 46.36,
+          "note": "A travelling singer who carries the news and the old stories.",
+          "glyph": "🪕"
+        }
+      ]
+    },
+    "BDI": {
+      "people": [
+        {
+          "id": "burundi-drummer",
+          "name": "Royal drummer of Burundi",
+          "era": "living",
+          "importance": 3,
+          "lat": -3.43,
+          "lon": 29.93,
+          "note": "Drums carried on the head, played by whole teams at once.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "BEL": {
+      "people": [
+        {
+          "id": "gilles-de-binche",
+          "name": "Gille of Binche",
+          "era": "living",
+          "importance": 3,
+          "lat": 50.41,
+          "lon": 4.17,
+          "note": "Wax masks, ostrich feathers, and oranges thrown to the crowd.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "BEN": {
+      "people": [
+        {
+          "id": "agojie",
+          "name": "Agojie",
+          "era": "historical",
+          "importance": 2,
+          "lat": 7.18,
+          "lon": 1.99,
+          "note": "The women soldiers of the kingdom of Dahomey.",
+          "glyph": "🛡️"
+        }
+      ]
+    },
+    "BFA": {
+      "people": [
+        {
+          "id": "mossi",
+          "name": "Mossi",
+          "era": "living",
+          "importance": 4,
+          "lat": 12.37,
+          "lon": -1.53,
+          "note": "Horse riders who built kingdoms on the bend of the Volta.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "BGD": {
+      "people": [
+        {
+          "id": "baul",
+          "name": "Baul singer",
+          "era": "living",
+          "importance": 3,
+          "lat": 23.9,
+          "lon": 89.12,
+          "note": "Wandering minstrels who own almost nothing but their songs.",
+          "glyph": "🪕"
+        }
+      ]
+    },
+    "BGR": {
+      "people": [
+        {
+          "id": "kukeri",
+          "name": "Kukeri",
+          "era": "living",
+          "importance": 3,
+          "lat": 42.6,
+          "lon": 23.03,
+          "note": "Hairy monsters hung with cowbells, chasing winter away.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "BHR": {
+      "people": [
+        {
+          "id": "pearl-diver",
+          "name": "Pearl diver",
+          "era": "historical",
+          "importance": 3,
+          "lat": 26.26,
+          "lon": 50.61,
+          "note": "Down on one breath with a stone, up with a basket of oysters.",
+          "glyph": "🦪"
+        }
+      ]
+    },
+    "BHS": {
+      "people": [
+        {
+          "id": "junkanoo",
+          "name": "Junkanoo dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 25.06,
+          "lon": -77.34,
+          "note": "Costumes of crêpe paper, goatskin drums, and a parade before dawn.",
+          "glyph": "🥁"
+        },
+        {
+          "id": "pirate",
+          "name": "Pirate",
+          "era": "historical",
+          "importance": 2,
+          "lat": 25.08,
+          "lon": -77.34,
+          "note": "For a few years Nassau was run by pirates and nobody else.",
+          "glyph": "🏴‍☠️"
+        }
+      ]
+    },
+    "BIH": {
+      "people": [
+        {
+          "id": "sevdah-singer",
+          "name": "Sevdah singer",
+          "era": "living",
+          "importance": 5,
+          "lat": 43.86,
+          "lon": 18.41,
+          "note": "Slow songs of longing, sung in a room too small for them.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "BLM": {
+      "people": [
+        {
+          "id": "saint-barth-weaver",
+          "name": "Saint-Barth straw weaver",
+          "era": "living",
+          "importance": 6,
+          "lat": 17.9,
+          "lon": -62.83,
+          "note": "Hats and baskets plaited from latania palm, and Norman bonnets.",
+          "glyph": "👒"
+        }
+      ]
+    },
+    "BLR": {
+      "people": [
+        {
+          "id": "kalyady",
+          "name": "Kalyady mummer",
+          "era": "living",
+          "importance": 5,
+          "lat": 53.9,
+          "lon": 27.56,
+          "note": "A goat, a star and a song, going house to house in midwinter.",
+          "glyph": "🐐"
+        }
+      ]
+    },
+    "BLZ": {
+      "people": [
+        {
+          "id": "garifuna",
+          "name": "Garifuna",
+          "era": "living",
+          "importance": 3,
+          "lat": 16.97,
+          "lon": -88.22,
+          "note": "Caribbean and African together, with drums that talk in threes.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "BMU": {
+      "people": [
+        {
+          "id": "gombey",
+          "name": "Gombey dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 32.29,
+          "lon": -64.78,
+          "note": "Peacock feathers, mirrors, whistles and a snare drum through the streets.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "BOL": {
+      "people": [
+        {
+          "id": "aymara",
+          "name": "Aymara",
+          "era": "living",
+          "importance": 3,
+          "lat": -16.5,
+          "lon": -68.15,
+          "note": "People of the high plateau around Lake Titicaca."
+        }
+      ]
+    },
+    "BRA": {
+      "people": [
+        {
+          "id": "kayapo",
+          "name": "Kayapó",
+          "era": "living",
+          "importance": 2,
+          "lat": -7.5,
+          "lon": -52,
+          "note": "People of the Xingu, with headdresses like a yellow sunburst.",
+          "glyph": "🪶"
+        }
+      ]
+    },
+    "BRB": {
+      "people": [
+        {
+          "id": "landship",
+          "name": "Landship performer",
+          "era": "living",
+          "importance": 5,
+          "lat": 13.1,
+          "lon": -59.61,
+          "note": "A whole navy on dry land, marching and dancing as a ship.",
+          "glyph": "⚓"
+        }
+      ]
+    },
+    "BRN": {
+      "people": [
+        {
+          "id": "water-village",
+          "name": "Kampong Ayer boatman",
+          "era": "living",
+          "importance": 4,
+          "lat": 4.89,
+          "lon": 114.94,
+          "note": "A whole town on stilts above the river, older than the cars.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "BTN": {
+      "people": [
+        {
+          "id": "cham-dancer",
+          "name": "Cham dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 27.43,
+          "lon": 89.42,
+          "note": "Masked dances that whirl in the courtyard of a mountain fortress.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "BWA": {
+      "people": [
+        {
+          "id": "san",
+          "name": "San",
+          "era": "living",
+          "importance": 2,
+          "lat": -21.5,
+          "lon": 23.5,
+          "note": "Trackers of the Kalahari, who can read a day-old footprint.",
+          "glyph": "🏹"
+        }
+      ]
+    },
+    "CAF": {
+      "people": [
+        {
+          "id": "aka",
+          "name": "Aka",
+          "era": "living",
+          "importance": 3,
+          "lat": 3.9,
+          "lon": 17.5,
+          "note": "Forest people whose singing weaves many voices at once.",
+          "glyph": "🌳"
+        }
+      ]
+    },
+    "CAN": {
+      "people": [
+        {
+          "id": "inuit",
+          "name": "Inuit",
+          "era": "living",
+          "importance": 2,
+          "lat": 68,
+          "lon": -85,
+          "note": "People of the Arctic, at home where the sea freezes."
+        }
+      ]
+    },
+    "CHE": {
+      "people": [
+        {
+          "id": "alphorn-player",
+          "name": "Alphorn player",
+          "era": "living",
+          "importance": 3,
+          "lat": 46.5,
+          "lon": 8,
+          "note": "A horn as long as three people, once used to call across valleys.",
+          "glyph": "🎺"
+        }
+      ]
+    },
+    "CHL": {
+      "people": [
+        {
+          "id": "mapuche",
+          "name": "Mapuche",
+          "era": "living",
+          "importance": 2,
+          "lat": -38.74,
+          "lon": -72.6,
+          "note": "The people of the land, who were never conquered by Spain.",
+          "glyph": "🪙"
+        }
+      ]
+    },
+    "CHN": {
+      "people": [
+        {
+          "id": "terracotta-warrior",
+          "name": "Terracotta warrior",
+          "era": "historical",
+          "importance": 3,
+          "lat": 34.38,
+          "lon": 109.28,
+          "note": "An army of clay, buried to guard an emperor."
+        }
+      ]
+    },
+    "CIV": {
+      "people": [
+        {
+          "id": "senufo",
+          "name": "Senufo",
+          "era": "living",
+          "importance": 4,
+          "lat": 9.45,
+          "lon": -5.63,
+          "note": "Carvers and mask dancers of the northern savanna.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "CMR": {
+      "people": [
+        {
+          "id": "bamileke",
+          "name": "Bamileke",
+          "era": "living",
+          "importance": 4,
+          "lat": 5.48,
+          "lon": 10.42,
+          "note": "People of the grassfields, known for beaded masks and elephant dancers.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "COD": {
+      "people": [
+        {
+          "id": "mbuti",
+          "name": "Mbuti",
+          "era": "living",
+          "importance": 3,
+          "lat": 1.5,
+          "lon": 29,
+          "note": "Hunters of the Ituri forest, at home under the tallest trees.",
+          "glyph": "🌳"
+        }
+      ]
+    },
+    "COG": {
+      "people": [
+        {
+          "id": "kongo",
+          "name": "Kongo",
+          "era": "living",
+          "importance": 4,
+          "lat": -4.27,
+          "lon": 15.28,
+          "note": "People of an old kingdom on both banks of the great river.",
+          "glyph": "🧑🏿"
+        }
+      ]
+    },
+    "COK": {
+      "people": [
+        {
+          "id": "ura-dancer",
+          "name": "Ura dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": -21.23,
+          "lon": -159.78,
+          "note": "Hips that keep the drum's time exactly, and nothing else moving.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "COL": {
+      "people": [
+        {
+          "id": "wayuu",
+          "name": "Wayuu",
+          "era": "living",
+          "importance": 3,
+          "lat": 11.5,
+          "lon": -72.5,
+          "note": "Desert people of La Guajira, and bags crocheted with their own signs.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "COM": {
+      "people": [
+        {
+          "id": "grand-mariage",
+          "name": "Grand Mariage dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": -11.7,
+          "lon": 43.26,
+          "note": "A wedding that lasts days and makes a man an elder.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "CPV": {
+      "people": [
+        {
+          "id": "morna-singer",
+          "name": "Morna singer",
+          "era": "living",
+          "importance": 4,
+          "lat": 16.88,
+          "lon": -24.98,
+          "note": "Songs of the sea and of missing home, sung with a guitar.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "CRI": {
+      "people": [
+        {
+          "id": "boyero",
+          "name": "Boyero",
+          "era": "living",
+          "importance": 3,
+          "lat": 10.09,
+          "lon": -84.35,
+          "note": "Oxcarts painted like flowers, each one with its own creak.",
+          "glyph": "🐂"
+        }
+      ]
+    },
+    "CUB": {
+      "people": [
+        {
+          "id": "son-musician",
+          "name": "Son musician",
+          "era": "living",
+          "importance": 3,
+          "lat": 20.02,
+          "lon": -75.83,
+          "note": "A tres guitar, a bongo and a chorus, on a porch in Santiago.",
+          "glyph": "🎺"
+        }
+      ]
+    },
+    "CUW": {
+      "people": [
+        {
+          "id": "tambu-drummer",
+          "name": "Tambú drummer",
+          "era": "living",
+          "importance": 5,
+          "lat": 12.11,
+          "lon": -68.93,
+          "note": "A drum, a hoe blade for a bell, and songs that say what cannot be said.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "CYM": {
+      "people": [
+        {
+          "id": "catboat-builder",
+          "name": "Catboat builder",
+          "era": "living",
+          "importance": 5,
+          "lat": 19.29,
+          "lon": -81.38,
+          "note": "A small boat built for turtling, shaped entirely by eye.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "CYN": {
+      "people": [
+        {
+          "id": "karagoz",
+          "name": "Karagöz puppeteer",
+          "era": "living",
+          "importance": 5,
+          "lat": 35.19,
+          "lon": 33.36,
+          "note": "Shadow puppets of camel leather, played behind a lit sheet.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "CYP": {
+      "people": [
+        {
+          "id": "lefkara-lace",
+          "name": "Lefkara lace maker",
+          "era": "living",
+          "importance": 4,
+          "lat": 34.87,
+          "lon": 33.35,
+          "note": "A needle, white thread, and a pattern learned from a grandmother.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "CZE": {
+      "people": [
+        {
+          "id": "bohemian-glassblower",
+          "name": "Bohemian glassblower",
+          "era": "living",
+          "importance": 4,
+          "lat": 50.76,
+          "lon": 14.55,
+          "note": "Glass gathered on a pipe, and blown while it is still glowing.",
+          "glyph": "🔥"
+        }
+      ]
+    },
+    "DEU": {
+      "people": [
+        {
+          "id": "sorbs",
+          "name": "Sorbs",
+          "era": "living",
+          "importance": 4,
+          "lat": 51.18,
+          "lon": 14.42,
+          "note": "A Slavic people in eastern Germany, with painted eggs and their own language.",
+          "glyph": "🥚"
+        }
+      ]
+    },
+    "DJI": {
+      "people": [
+        {
+          "id": "afar",
+          "name": "Afar",
+          "era": "living",
+          "importance": 3,
+          "lat": 11.7,
+          "lon": 42.1,
+          "note": "Herders of one of the hottest places on Earth.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "DMA": {
+      "people": [
+        {
+          "id": "kalinago",
+          "name": "Kalinago",
+          "era": "living",
+          "importance": 3,
+          "lat": 15.4,
+          "lon": -61.25,
+          "note": "The last territory of the Caribbean's first islanders, and their canoes.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "DNK": {
+      "people": [
+        {
+          "id": "viking",
+          "name": "Viking",
+          "era": "historical",
+          "importance": 3,
+          "lat": 55.68,
+          "lon": 12.57,
+          "note": "Seafarers and traders of the Norse world, a thousand years ago."
+        }
+      ]
+    },
+    "DOM": {
+      "people": [
+        {
+          "id": "merengue-dancer",
+          "name": "Merengue dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 18.47,
+          "lon": -69.9,
+          "note": "An accordion, a two-headed drum, and feet that never stop.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "DZA": {
+      "people": [
+        {
+          "id": "kabyle",
+          "name": "Kabyle",
+          "era": "living",
+          "importance": 3,
+          "lat": 36.7,
+          "lon": 4.05,
+          "note": "Amazigh people of the mountains, with a language of their own.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "ECU": {
+      "people": [
+        {
+          "id": "otavalo-weaver",
+          "name": "Otavalo weaver",
+          "era": "living",
+          "importance": 3,
+          "lat": 0.23,
+          "lon": -78.26,
+          "note": "Weavers and traders whose market is famous across the continent.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "EGY": {
+      "people": [
+        {
+          "id": "pharaoh",
+          "name": "Pharaoh",
+          "era": "historical",
+          "importance": 2,
+          "lat": 25.72,
+          "lon": 32.61,
+          "note": "The rulers of ancient Egypt, buried under mountains of stone."
+        }
+      ]
+    },
+    "ERI": {
+      "people": [
+        {
+          "id": "rashaida",
+          "name": "Rashaida",
+          "era": "living",
+          "importance": 4,
+          "lat": 15.6,
+          "lon": 39,
+          "note": "Camel herders of the Red Sea coast, in silver and red veils.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "ESP": {
+      "people": [
+        {
+          "id": "flamenco-dancer",
+          "name": "Flamenco dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 37.39,
+          "lon": -5.99,
+          "note": "Dance, song and guitar from Andalusia."
+        }
+      ]
+    },
+    "EST": {
+      "people": [
+        {
+          "id": "kihnu",
+          "name": "Kihnu islander",
+          "era": "living",
+          "importance": 4,
+          "lat": 58.13,
+          "lon": 24,
+          "note": "On this island the women kept the old songs, and the motorbikes.",
+          "glyph": "🧶"
+        }
+      ]
+    },
+    "ETH": {
+      "people": [
+        {
+          "id": "hamar",
+          "name": "Hamar",
+          "era": "living",
+          "importance": 3,
+          "lat": 5.2,
+          "lon": 36.6,
+          "note": "Cattle keepers of the Omo valley, in ochre and beads.",
+          "glyph": "🐄"
+        }
+      ]
+    },
+    "FIN": {
+      "people": [
+        {
+          "id": "sami",
+          "name": "Sámi",
+          "era": "living",
+          "importance": 3,
+          "lat": 68.9,
+          "lon": 27,
+          "note": "The indigenous people of the far north, herders of reindeer."
+        }
+      ]
+    },
+    "FJI": {
+      "people": [
+        {
+          "id": "beqa-firewalker",
+          "name": "Beqa firewalker",
+          "era": "living",
+          "importance": 3,
+          "lat": -18.4,
+          "lon": 178.13,
+          "note": "One island's families walk barefoot over white-hot stones.",
+          "glyph": "🔥"
+        }
+      ]
+    },
+    "FLK": {
+      "people": [
+        {
+          "id": "falklands-shepherd",
+          "name": "Falklands shepherd",
+          "era": "living",
+          "importance": 5,
+          "lat": -51.7,
+          "lon": -57.85,
+          "note": "More sheep than people, and a long ride between the farms.",
+          "glyph": "🐑"
+        }
+      ]
+    },
+    "FRA": {
+      "people": [
+        {
+          "id": "breton",
+          "name": "Breton",
+          "era": "living",
+          "importance": 3,
+          "lat": 47.99,
+          "lon": -4.1,
+          "note": "A Celtic corner of France, with bagpipes and a language of its own.",
+          "glyph": "🎶"
+        },
+        {
+          "id": "joan-of-arc",
+          "name": "Joan of Arc",
+          "era": "historical",
+          "importance": 2,
+          "lat": 47.9,
+          "lon": 1.9,
+          "note": "A farm girl of seventeen who led an army and lifted a siege.",
+          "glyph": "⚔️"
+        }
+      ]
+    },
+    "FRO": {
+      "people": [
+        {
+          "id": "faroese-chain-dancer",
+          "name": "Faroese chain dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": 62.01,
+          "lon": -6.77,
+          "note": "Everyone holds hands in a ring and sings the story as they step.",
+          "glyph": "🔗"
+        }
+      ]
+    },
+    "FSM": {
+      "people": [
+        {
+          "id": "yapese-stone-money",
+          "name": "Yapese stone money carrier",
+          "era": "living",
+          "importance": 3,
+          "lat": 9.53,
+          "lon": 138.13,
+          "note": "Money the size of a door, which stays put when it changes owner.",
+          "glyph": "🪙"
+        }
+      ]
+    },
+    "GAB": {
+      "people": [
+        {
+          "id": "fang",
+          "name": "Fang",
+          "era": "living",
+          "importance": 4,
+          "lat": 0.42,
+          "lon": 9.47,
+          "note": "Carvers of guardian figures that watch over the ancestors.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "GBR": {
+      "people": [
+        {
+          "id": "highland-piper",
+          "name": "Highland piper",
+          "era": "living",
+          "importance": 2,
+          "lat": 56.8,
+          "lon": -5.1,
+          "note": "Bagpipes that can be heard from the far side of a glen.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "GEO": {
+      "people": [
+        {
+          "id": "khevsur",
+          "name": "Khevsur",
+          "era": "historical",
+          "importance": 3,
+          "lat": 42.66,
+          "lon": 45.16,
+          "note": "Mountain villagers who still wore chainmail a century ago.",
+          "glyph": "⚔️"
+        }
+      ]
+    },
+    "GGY": {
+      "people": [
+        {
+          "id": "guernsey-knitter",
+          "name": "Guernsey knitter",
+          "era": "living",
+          "importance": 6,
+          "lat": 49.45,
+          "lon": -2.58,
+          "note": "The fisherman's jumper is named after this island.",
+          "glyph": "🧶"
+        }
+      ]
+    },
+    "GHA": {
+      "people": [
+        {
+          "id": "asante",
+          "name": "Asante",
+          "era": "living",
+          "importance": 2,
+          "lat": 6.69,
+          "lon": -1.62,
+          "note": "The kingdom of the Golden Stool, and of kente cloth.",
+          "glyph": "👑"
+        }
+      ]
+    },
+    "GIN": {
+      "people": [
+        {
+          "id": "fula",
+          "name": "Fula",
+          "era": "living",
+          "importance": 3,
+          "lat": 11.32,
+          "lon": -12.28,
+          "note": "Herders who move across a dozen countries with their cattle.",
+          "glyph": "🐄"
+        }
+      ]
+    },
+    "GMB": {
+      "people": [
+        {
+          "id": "griot",
+          "name": "Griot",
+          "era": "living",
+          "importance": 3,
+          "lat": 13.45,
+          "lon": -16.58,
+          "note": "Keepers of a family's history, who sing it rather than write it.",
+          "glyph": "🪕"
+        }
+      ]
+    },
+    "GNB": {
+      "people": [
+        {
+          "id": "bijago",
+          "name": "Bijagó",
+          "era": "living",
+          "importance": 4,
+          "lat": 11.28,
+          "lon": -15.83,
+          "note": "Islanders of eighty islands, with dances that become animals.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "GNQ": {
+      "people": [
+        {
+          "id": "bubi",
+          "name": "Bubi",
+          "era": "living",
+          "importance": 4,
+          "lat": 3.75,
+          "lon": 8.78,
+          "note": "The first people of the island of Bioko.",
+          "glyph": "🧑🏿"
+        }
+      ]
+    },
+    "GRC": {
+      "people": [
+        {
+          "id": "ancient-greek",
+          "name": "Ancient Greek",
+          "era": "historical",
+          "importance": 2,
+          "lat": 37.97,
+          "lon": 23.73,
+          "note": "Philosophers, playwrights and the first Olympians."
+        },
+        {
+          "id": "alexander",
+          "name": "Alexander the Great",
+          "era": "historical",
+          "importance": 2,
+          "lat": 40.76,
+          "lon": 22.52,
+          "note": "Born at Pella; by thirty he had ridden as far as India.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "GRD": {
+      "people": [
+        {
+          "id": "shortknee",
+          "name": "Shortknee masquerader",
+          "era": "living",
+          "importance": 5,
+          "lat": 12.05,
+          "lon": -61.75,
+          "note": "Wire masks and powder thrown at carnival, in trousers cut short.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "GRL": {
+      "people": [
+        {
+          "id": "inuit",
+          "name": "Inuit",
+          "era": "living",
+          "importance": 2,
+          "lat": 69.22,
+          "lon": -51.1,
+          "note": "People of the Arctic, at home where the sea freezes."
+        }
+      ]
+    },
+    "GTM": {
+      "people": [
+        {
+          "id": "maya",
+          "name": "Maya",
+          "era": "living",
+          "importance": 2,
+          "lat": 14.83,
+          "lon": -91.52,
+          "note": "Builders of cities and astronomers — and still here, millions strong."
+        }
+      ]
+    },
+    "GUM": {
+      "people": [
+        {
+          "id": "chamorro",
+          "name": "CHamoru",
+          "era": "living",
+          "importance": 3,
+          "lat": 13.47,
+          "lon": 144.75,
+          "note": "The first people of the Marianas, and the fastest sailing canoes in the world.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "GUY": {
+      "people": [
+        {
+          "id": "makushi",
+          "name": "Makushi",
+          "era": "living",
+          "importance": 4,
+          "lat": 3.4,
+          "lon": -59.3,
+          "note": "People of the savanna between the forest and the mountains.",
+          "glyph": "🏹"
+        }
+      ]
+    },
+    "HKG": {
+      "people": [
+        {
+          "id": "lion-dancer",
+          "name": "Lion dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 22.32,
+          "lon": 114.17,
+          "note": "Two people inside one lion, dancing it up a pole for luck.",
+          "glyph": "🦁"
+        }
+      ]
+    },
+    "HND": {
+      "people": [
+        {
+          "id": "lenca-potter",
+          "name": "Lenca potter",
+          "era": "living",
+          "importance": 4,
+          "lat": 14.3,
+          "lon": -88.17,
+          "note": "Black-and-white pots, coiled by hand and fired in a garden.",
+          "glyph": "🏺"
+        }
+      ]
+    },
+    "HRV": {
+      "people": [
+        {
+          "id": "klapa-singer",
+          "name": "Klapa singer",
+          "era": "living",
+          "importance": 4,
+          "lat": 43.51,
+          "lon": 16.44,
+          "note": "Men in a stone alley, singing with no instruments at all.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "HTI": {
+      "people": [
+        {
+          "id": "haitian-revolutionary",
+          "name": "Soldier of the Haitian Revolution",
+          "era": "historical",
+          "importance": 3,
+          "lat": 19.76,
+          "lon": -72.2,
+          "note": "The enslaved rose, won, and made the first free Black republic.",
+          "glyph": "⚔️"
+        }
+      ]
+    },
+    "HUN": {
+      "people": [
+        {
+          "id": "csikos",
+          "name": "Csikós",
+          "era": "living",
+          "importance": 2,
+          "lat": 47.58,
+          "lon": 21.15,
+          "note": "Horsemen of the puszta, who ride standing on two horses at once.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "IDN": {
+      "people": [
+        {
+          "id": "balinese-dancer",
+          "name": "Balinese dancer",
+          "era": "living",
+          "importance": 2,
+          "lat": -8.5,
+          "lon": 115.26,
+          "note": "Every finger and every eye moves, and none of it by accident.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "IMN": {
+      "people": [
+        {
+          "id": "manx-singer",
+          "name": "Manx Gaelic singer",
+          "era": "living",
+          "importance": 6,
+          "lat": 54.15,
+          "lon": -4.48,
+          "note": "A language that nearly disappeared, and is being sung back.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "IND": {
+      "people": [
+        {
+          "id": "mahout",
+          "name": "Mahout",
+          "era": "living",
+          "importance": 4,
+          "lat": 26.28,
+          "lon": 91.66,
+          "note": "Keepers who live and work alongside elephants."
+        }
+      ]
+    },
+    "IOA": {
+      "people": [
+        {
+          "id": "cocos-malay",
+          "name": "Cocos Malay",
+          "era": "living",
+          "importance": 6,
+          "lat": -12.13,
+          "lon": 96.87,
+          "note": "Islanders of a ring of coral, halfway to nowhere.",
+          "glyph": "🥥"
+        }
+      ]
+    },
+    "IOT": {
+      "people": [
+        {
+          "id": "chagossian",
+          "name": "Chagossian",
+          "era": "living",
+          "importance": 4,
+          "lat": -7.31,
+          "lon": 72.41,
+          "note": "Islanders of the Chagos, who fished these lagoons for generations.",
+          "glyph": "🥥"
+        }
+      ]
+    },
+    "IRL": {
+      "people": [
+        {
+          "id": "irish-dancer",
+          "name": "Irish dancer",
+          "era": "living",
+          "importance": 2,
+          "lat": 53.35,
+          "lon": -6.26,
+          "note": "Feet like lightning, arms perfectly still.",
+          "glyph": "💃"
+        },
+        {
+          "id": "celt",
+          "name": "Celt",
+          "era": "historical",
+          "importance": 3,
+          "lat": 53.58,
+          "lon": -6.61,
+          "note": "Iron-age people of spirals, torcs and hilltop kings.",
+          "glyph": "🌀"
+        }
+      ]
+    },
+    "IRN": {
+      "people": [
+        {
+          "id": "carpet-weaver",
+          "name": "Persian carpet weaver",
+          "era": "living",
+          "importance": 3,
+          "lat": 32.65,
+          "lon": 51.67,
+          "note": "A garden, drawn in knots, that takes a year to finish.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "IRQ": {
+      "people": [
+        {
+          "id": "marsh-arab",
+          "name": "Marsh Arab",
+          "era": "living",
+          "importance": 3,
+          "lat": 31,
+          "lon": 47,
+          "note": "Houses of reed on islands of reed, in the marshes of two rivers.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "ISL": {
+      "people": [
+        {
+          "id": "viking",
+          "name": "Viking",
+          "era": "historical",
+          "importance": 3,
+          "lat": 64.14,
+          "lon": -21.94,
+          "note": "Iceland was settled by Norse families who sailed west."
+        }
+      ]
+    },
+    "ISR": {
+      "people": [
+        {
+          "id": "klezmer",
+          "name": "Klezmer musician",
+          "era": "living",
+          "importance": 4,
+          "lat": 32.96,
+          "lon": 35.5,
+          "note": "A clarinet that laughs and cries in the same tune.",
+          "glyph": "🎺"
+        }
+      ]
+    },
+    "ITA": {
+      "people": [
+        {
+          "id": "roman-legionary",
+          "name": "Roman legionary",
+          "era": "historical",
+          "importance": 2,
+          "lat": 41.89,
+          "lon": 12.49,
+          "note": "The soldiers of an empire that reached from Britain to Egypt."
+        },
+        {
+          "id": "gondolier",
+          "name": "Gondolier",
+          "era": "living",
+          "importance": 5,
+          "lat": 45.44,
+          "lon": 12.34,
+          "note": "Rowers who steer Venice's boats standing up."
+        }
+      ]
+    },
+    "JAM": {
+      "people": [
+        {
+          "id": "maroon",
+          "name": "Maroon",
+          "era": "living",
+          "importance": 2,
+          "lat": 18.24,
+          "lon": -77.75,
+          "note": "Free towns in the mountains, and an abeng horn to call between them.",
+          "glyph": "🎺"
+        }
+      ]
+    },
+    "JEY": {
+      "people": [
+        {
+          "id": "jersey-oysterman",
+          "name": "Jersey oysterman",
+          "era": "living",
+          "importance": 6,
+          "lat": 49.18,
+          "lon": -2.1,
+          "note": "The tide goes out so far here that the island nearly doubles.",
+          "glyph": "🦪"
+        }
+      ]
+    },
+    "JOR": {
+      "people": [
+        {
+          "id": "bedouin",
+          "name": "Bedouin",
+          "era": "living",
+          "importance": 2,
+          "lat": 29.58,
+          "lon": 35.42,
+          "note": "Black goat-hair tents pitched among the red rocks of Wadi Rum.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "JPN": {
+      "people": [
+        {
+          "id": "samurai",
+          "name": "Samurai",
+          "era": "historical",
+          "importance": 2,
+          "lat": 34.99,
+          "lon": 135.78,
+          "note": "Warriors who served Japan's lords for seven hundred years."
+        },
+        {
+          "id": "geisha",
+          "name": "Geisha",
+          "era": "living",
+          "importance": 4,
+          "lat": 35,
+          "lon": 135.77,
+          "note": "Artists of dance, music and conversation, trained for years."
+        }
+      ]
+    },
+    "KAZ": {
+      "people": [
+        {
+          "id": "eagle-hunter",
+          "name": "Eagle hunter",
+          "era": "living",
+          "importance": 2,
+          "lat": 43.3,
+          "lon": 78.5,
+          "note": "A golden eagle on the arm, trained to hunt across the steppe.",
+          "glyph": "🦅"
+        }
+      ]
+    },
+    "KEN": {
+      "people": [
+        {
+          "id": "maasai",
+          "name": "Maasai",
+          "era": "living",
+          "importance": 2,
+          "lat": -1.5,
+          "lon": 35.8,
+          "note": "Herders of the Rift Valley, known for their red shukas."
+        }
+      ]
+    },
+    "KGZ": {
+      "people": [
+        {
+          "id": "manaschi",
+          "name": "Manaschi",
+          "era": "living",
+          "importance": 4,
+          "lat": 42.52,
+          "lon": 72.24,
+          "note": "Tellers of the Manas: a poem longer than any book, held in the head.",
+          "glyph": "🎤"
+        }
+      ]
+    },
+    "KHM": {
+      "people": [
+        {
+          "id": "apsara-dancer",
+          "name": "Apsara dancer",
+          "era": "living",
+          "importance": 2,
+          "lat": 13.36,
+          "lon": 103.86,
+          "note": "The dancers carved on the walls of Angkor, still dancing.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "KIR": {
+      "people": [
+        {
+          "id": "kiribati-dancer",
+          "name": "Kiribati dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": 1.33,
+          "lon": 172.98,
+          "note": "Arms held out and still, like a frigatebird riding the wind.",
+          "glyph": "🕊️"
+        }
+      ]
+    },
+    "KNA": {
+      "people": [
+        {
+          "id": "kittitian-masquerade",
+          "name": "Kittitian masquerade dancer",
+          "era": "living",
+          "importance": 5,
+          "lat": 17.3,
+          "lon": -62.72,
+          "note": "Peacock feathers and ribbons, dancing between Christmas and New Year.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "KOR": {
+      "people": [
+        {
+          "id": "haenyeo",
+          "name": "Haenyeo",
+          "era": "living",
+          "importance": 2,
+          "lat": 33.4,
+          "lon": 126.55,
+          "note": "The sea women of Jeju, who dive without air tanks, well into old age.",
+          "glyph": "🤿"
+        }
+      ]
+    },
+    "KOS": {
+      "people": [
+        {
+          "id": "rugova-highlander",
+          "name": "Rugova highlander",
+          "era": "living",
+          "importance": 5,
+          "lat": 42.66,
+          "lon": 20.29,
+          "note": "Stone villages up a gorge, and a dance with swords.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "KWT": {
+      "people": [
+        {
+          "id": "dhow-builder",
+          "name": "Dhow builder",
+          "era": "living",
+          "importance": 4,
+          "lat": 29.38,
+          "lon": 47.99,
+          "note": "Ships sewn and pegged together, built by eye without a plan.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "LAO": {
+      "people": [
+        {
+          "id": "hmong",
+          "name": "Hmong",
+          "era": "living",
+          "importance": 3,
+          "lat": 19.45,
+          "lon": 103.2,
+          "note": "Mountain people whose stitched cloth tells whole stories.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "LBN": {
+      "people": [
+        {
+          "id": "phoenician",
+          "name": "Phoenician sailor",
+          "era": "historical",
+          "importance": 2,
+          "lat": 34.12,
+          "lon": 35.65,
+          "note": "Traders who sailed the whole Mediterranean and gave us the alphabet.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "LBR": {
+      "people": [
+        {
+          "id": "kpelle",
+          "name": "Kpelle",
+          "era": "living",
+          "importance": 5,
+          "lat": 7,
+          "lon": -9.47,
+          "note": "Farmers of the forest, with masks that teach as they dance.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "LBY": {
+      "people": [
+        {
+          "id": "tuareg",
+          "name": "Tuareg",
+          "era": "living",
+          "importance": 3,
+          "lat": 30.13,
+          "lon": 9.5,
+          "note": "The blue-veiled people of the Sahara, who cross it by camel.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "LCA": {
+      "people": [
+        {
+          "id": "la-rose",
+          "name": "La Rose society",
+          "era": "living",
+          "importance": 5,
+          "lat": 14.01,
+          "lon": -61,
+          "note": "Half the island is Rose, the other half Marguerite, and each has its feast.",
+          "glyph": "🌹"
+        }
+      ]
+    },
+    "LIE": {
+      "people": [
+        {
+          "id": "alpine-cowherd",
+          "name": "Alpine cowherd",
+          "era": "living",
+          "importance": 6,
+          "lat": 47.16,
+          "lon": 9.55,
+          "note": "In autumn the cows come down wearing flowers and enormous bells.",
+          "glyph": "🐄"
+        }
+      ]
+    },
+    "LKA": {
+      "people": [
+        {
+          "id": "kandyan-dancer",
+          "name": "Kandyan dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 7.29,
+          "lon": 80.63,
+          "note": "Silver headdresses, and drums that answer every step.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "LSO": {
+      "people": [
+        {
+          "id": "basotho-rider",
+          "name": "Basotho horseman",
+          "era": "living",
+          "importance": 2,
+          "lat": -29.5,
+          "lon": 28.6,
+          "note": "A pony, a blanket and a mountain path — how you travel here.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "LTU": {
+      "people": [
+        {
+          "id": "cross-crafter",
+          "name": "Cross crafter",
+          "era": "living",
+          "importance": 5,
+          "lat": 56.02,
+          "lon": 23.42,
+          "note": "Carved wooden crosses, and a hill with a hundred thousand of them.",
+          "glyph": "✝️"
+        }
+      ]
+    },
+    "LUX": {
+      "people": [
+        {
+          "id": "echternach-dancer",
+          "name": "Echternach dancing procession",
+          "era": "living",
+          "importance": 5,
+          "lat": 49.81,
+          "lon": 6.42,
+          "note": "A procession that hops its way through the town every spring.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "LVA": {
+      "people": [
+        {
+          "id": "suiti",
+          "name": "Suiti",
+          "era": "living",
+          "importance": 5,
+          "lat": 56.98,
+          "lon": 21.55,
+          "note": "A small community whose women improvise songs on the spot.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "MAC": {
+      "people": [
+        {
+          "id": "macanese",
+          "name": "Macanese",
+          "era": "living",
+          "importance": 5,
+          "lat": 22.19,
+          "lon": 113.54,
+          "note": "Four hundred years of Portugal and China in one kitchen.",
+          "glyph": "🍲"
+        }
+      ]
+    },
+    "MAF": {
+      "people": [
+        {
+          "id": "saint-martin-salt-raker",
+          "name": "Saint-Martin salt raker",
+          "era": "historical",
+          "importance": 6,
+          "lat": 18.07,
+          "lon": -63.05,
+          "note": "Salt raked from the ponds by hand and carried out in baskets.",
+          "glyph": "🧂"
+        }
+      ]
+    },
+    "MAR": {
+      "people": [
+        {
+          "id": "amazigh",
+          "name": "Amazigh",
+          "era": "living",
+          "importance": 2,
+          "lat": 31.5,
+          "lon": -7.5,
+          "note": "The people of the Atlas, whose name means 'free people'.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "MCO": {
+      "people": [
+        {
+          "id": "grimaldi-knight",
+          "name": "Grimaldi knight",
+          "era": "historical",
+          "importance": 5,
+          "lat": 43.73,
+          "lon": 7.42,
+          "note": "In 1297 a man disguised as a monk took the rock — and never gave it back.",
+          "glyph": "⚔️"
+        }
+      ]
+    },
+    "MDA": {
+      "people": [
+        {
+          "id": "lautar",
+          "name": "Lăutar",
+          "era": "living",
+          "importance": 5,
+          "lat": 47.01,
+          "lon": 28.86,
+          "note": "Wedding fiddlers who can play for two days without a sheet of music.",
+          "glyph": "🎻"
+        }
+      ]
+    },
+    "MDG": {
+      "people": [
+        {
+          "id": "vezo",
+          "name": "Vezo",
+          "era": "living",
+          "importance": 3,
+          "lat": -23.35,
+          "lon": 43.67,
+          "note": "Fishing people of the west coast, who sail outrigger canoes.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "MDV": {
+      "people": [
+        {
+          "id": "bodu-beru",
+          "name": "Bodu beru drummer",
+          "era": "living",
+          "importance": 3,
+          "lat": 4.17,
+          "lon": 73.51,
+          "note": "A big drum, a circle of singers, and a dance that speeds up and up.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "MEX": {
+      "people": [
+        {
+          "id": "maya",
+          "name": "Maya",
+          "era": "living",
+          "importance": 2,
+          "lat": 20.68,
+          "lon": -88.57,
+          "note": "Builders of cities and astronomers — and still here, millions strong."
+        },
+        {
+          "id": "aztec",
+          "name": "Aztec",
+          "era": "historical",
+          "importance": 2,
+          "lat": 19.43,
+          "lon": -99.13,
+          "note": "A city built on a lake, with floating gardens for fields.",
+          "glyph": "🌋"
+        }
+      ]
+    },
+    "MHL": {
+      "people": [
+        {
+          "id": "stick-chart-navigator",
+          "name": "Stick chart navigator",
+          "era": "living",
+          "importance": 3,
+          "lat": 7.09,
+          "lon": 171.38,
+          "note": "A map of sticks and shells that shows where the waves bend.",
+          "glyph": "🧭"
+        }
+      ]
+    },
+    "MKD": {
+      "people": [
+        {
+          "id": "galicnik-wedding",
+          "name": "Galičnik wedding",
+          "era": "living",
+          "importance": 5,
+          "lat": 41.6,
+          "lon": 20.65,
+          "note": "Once a year, one wedding for the whole empty mountain village.",
+          "glyph": "💐"
+        }
+      ]
+    },
+    "MLI": {
+      "people": [
+        {
+          "id": "dogon",
+          "name": "Dogon",
+          "era": "living",
+          "importance": 2,
+          "lat": 14.35,
+          "lon": -3.6,
+          "note": "Cliff dwellers of Bandiagara, with masks as tall as a house.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "MLT": {
+      "people": [
+        {
+          "id": "luzzu-fisherman",
+          "name": "Luzzu fisherman",
+          "era": "living",
+          "importance": 4,
+          "lat": 35.84,
+          "lon": 14.54,
+          "note": "Boats painted with an eye on the bow, to watch the sea for you.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "MMR": {
+      "people": [
+        {
+          "id": "leg-rower",
+          "name": "Inle leg-rower",
+          "era": "living",
+          "importance": 2,
+          "lat": 20.55,
+          "lon": 96.92,
+          "note": "Fishermen who row standing up, with one leg wrapped round the oar.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "MNE": {
+      "people": [
+        {
+          "id": "njegusi-highlander",
+          "name": "Njeguši highlander",
+          "era": "living",
+          "importance": 5,
+          "lat": 42.42,
+          "lon": 18.85,
+          "note": "A village on the black mountain that gave the country its name.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "MNG": {
+      "people": [
+        {
+          "id": "mongol-horseman",
+          "name": "Mongol horseman",
+          "era": "historical",
+          "importance": 2,
+          "lat": 47.92,
+          "lon": 106.92,
+          "note": "Riders of the steppe, who once crossed a continent on horseback."
+        },
+        {
+          "id": "genghis-khan",
+          "name": "Genghis Khan",
+          "era": "historical",
+          "importance": 2,
+          "lat": 48.5,
+          "lon": 109,
+          "note": "From one camp on the steppe to the largest land empire there has been.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "MNP": {
+      "people": [
+        {
+          "id": "carolinian-sailor",
+          "name": "Carolinian canoe sailor",
+          "era": "living",
+          "importance": 4,
+          "lat": 15.19,
+          "lon": 145.75,
+          "note": "Open ocean crossed by the stars, with no instrument at all.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "MOZ": {
+      "people": [
+        {
+          "id": "makonde",
+          "name": "Makonde carver",
+          "era": "living",
+          "importance": 3,
+          "lat": -11.67,
+          "lon": 39.55,
+          "note": "Whole families carved from one piece of blackwood.",
+          "glyph": "🪵"
+        }
+      ]
+    },
+    "MRT": {
+      "people": [
+        {
+          "id": "imraguen",
+          "name": "Imraguen",
+          "era": "living",
+          "importance": 3,
+          "lat": 19.9,
+          "lon": -16.3,
+          "note": "Fishers who wade into the surf, and fish with the help of dolphins.",
+          "glyph": "🎣"
+        }
+      ]
+    },
+    "MSR": {
+      "people": [
+        {
+          "id": "montserrat-masquerade",
+          "name": "Montserrat masquerader",
+          "era": "living",
+          "importance": 6,
+          "lat": 16.75,
+          "lon": -62.2,
+          "note": "Irish and African at once, on an island with shamrocks and a volcano.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "MUS": {
+      "people": [
+        {
+          "id": "sega-dancer",
+          "name": "Séga dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": -20.16,
+          "lon": 57.5,
+          "note": "Feet sliding on sand — in this dance they never leave the ground.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "MWI": {
+      "people": [
+        {
+          "id": "gule-wamkulu",
+          "name": "Gule Wamkulu dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": -13.6,
+          "lon": 33.8,
+          "note": "The great dance of the Chewa, danced by masked spirits.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "MYS": {
+      "people": [
+        {
+          "id": "iban",
+          "name": "Iban",
+          "era": "living",
+          "importance": 3,
+          "lat": 2.3,
+          "lon": 111.8,
+          "note": "Whole villages under one long roof, on the rivers of Borneo.",
+          "glyph": "🏠"
+        }
+      ]
+    },
+    "NAM": {
+      "people": [
+        {
+          "id": "himba",
+          "name": "Himba",
+          "era": "living",
+          "importance": 2,
+          "lat": -18.06,
+          "lon": 13.84,
+          "note": "Cattle herders of the far north, in red ochre and braids.",
+          "glyph": "🐐"
+        }
+      ]
+    },
+    "NCL": {
+      "people": [
+        {
+          "id": "kanak",
+          "name": "Kanak",
+          "era": "living",
+          "importance": 3,
+          "lat": -22.27,
+          "lon": 166.44,
+          "note": "The first people of these islands, and their tall round houses.",
+          "glyph": "🏠"
+        }
+      ]
+    },
+    "NER": {
+      "people": [
+        {
+          "id": "wodaabe",
+          "name": "Wodaabe",
+          "era": "living",
+          "importance": 2,
+          "lat": 16.5,
+          "lon": 8,
+          "note": "Herders whose young men dance a beauty contest at Gerewol.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "NFK": {
+      "people": [
+        {
+          "id": "bounty-descendant",
+          "name": "Bounty descendant",
+          "era": "living",
+          "importance": 5,
+          "lat": -29.05,
+          "lon": 167.96,
+          "note": "Families descended from the mutineers, with a language of their own.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "NGA": {
+      "people": [
+        {
+          "id": "yoruba",
+          "name": "Yoruba",
+          "era": "living",
+          "importance": 2,
+          "lat": 7.47,
+          "lon": 4.56,
+          "note": "People of Ile-Ife, of talking drums and bronze heads.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "NIC": {
+      "people": [
+        {
+          "id": "gueguense",
+          "name": "Güegüense dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": 11.86,
+          "lon": -86.24,
+          "note": "A four-hundred-year-old play where the trickster wins by talking.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "NIU": {
+      "people": [
+        {
+          "id": "hiapo-maker",
+          "name": "Hiapo maker",
+          "era": "living",
+          "importance": 5,
+          "lat": -19.05,
+          "lon": -169.92,
+          "note": "Cloth beaten from bark and painted with fine spidery lines.",
+          "glyph": "🎨"
+        }
+      ]
+    },
+    "NLD": {
+      "people": [
+        {
+          "id": "frisians",
+          "name": "Frisians",
+          "era": "living",
+          "importance": 3,
+          "lat": 53.2,
+          "lon": 5.79,
+          "note": "Their own language, and a skating race past eleven towns in one day.",
+          "glyph": "⛸️"
+        },
+        {
+          "id": "volendam",
+          "name": "Volendam fisherfolk",
+          "era": "living",
+          "importance": 4,
+          "lat": 52.49,
+          "lon": 5.07,
+          "note": "Lace caps, wooden shoes, and a harbour that lost its sea.",
+          "glyph": "👒"
+        }
+      ]
+    },
+    "NOR": {
+      "people": [
+        {
+          "id": "viking",
+          "name": "Viking",
+          "era": "historical",
+          "importance": 2,
+          "lat": 60.39,
+          "lon": 5.32,
+          "note": "Seafarers and traders of the Norse world, a thousand years ago."
+        }
+      ]
+    },
+    "NPL": {
+      "people": [
+        {
+          "id": "sherpa",
+          "name": "Sherpa",
+          "era": "living",
+          "importance": 2,
+          "lat": 27.8,
+          "lon": 86.71,
+          "note": "People of the high valleys, at home where the air is thin.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "NRU": {
+      "people": [
+        {
+          "id": "frigatebird-keeper",
+          "name": "Frigatebird keeper",
+          "era": "living",
+          "importance": 5,
+          "lat": -0.53,
+          "lon": 166.93,
+          "note": "Wild seabirds tamed to fly out and come home again.",
+          "glyph": "🕊️"
+        }
+      ]
+    },
+    "NZL": {
+      "people": [
+        {
+          "id": "maori",
+          "name": "Māori",
+          "era": "living",
+          "importance": 2,
+          "lat": -38.14,
+          "lon": 176.25,
+          "note": "The first people of Aotearoa, who navigated here by stars and swell."
+        }
+      ]
+    },
+    "OMN": {
+      "people": [
+        {
+          "id": "frankincense-harvester",
+          "name": "Frankincense harvester",
+          "era": "living",
+          "importance": 3,
+          "lat": 17.1,
+          "lon": 54.1,
+          "note": "Cut the bark, wait, and collect the tears the tree makes.",
+          "glyph": "🌿"
+        }
+      ]
+    },
+    "PAK": {
+      "people": [
+        {
+          "id": "kalash",
+          "name": "Kalash",
+          "era": "living",
+          "importance": 2,
+          "lat": 35.72,
+          "lon": 71.7,
+          "note": "Three valleys, their own gods, and festivals full of flowers.",
+          "glyph": "🌸"
+        }
+      ]
+    },
+    "PAN": {
+      "people": [
+        {
+          "id": "guna",
+          "name": "Guna",
+          "era": "living",
+          "importance": 2,
+          "lat": 9.55,
+          "lon": -78.8,
+          "note": "Molas: layer on layer of cloth cut away to make a picture.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "PCN": {
+      "people": [
+        {
+          "id": "bounty-descendant",
+          "name": "Bounty descendant",
+          "era": "living",
+          "importance": 4,
+          "lat": -25.07,
+          "lon": -130.1,
+          "note": "Fifty people on one rock, all from the same nine sailors.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "PER": {
+      "people": [
+        {
+          "id": "quechua",
+          "name": "Quechua",
+          "era": "living",
+          "importance": 2,
+          "lat": -13.53,
+          "lon": -71.97,
+          "note": "Speakers of the language of the Inca, farming the high Andes."
+        },
+        {
+          "id": "inca",
+          "name": "Inca",
+          "era": "historical",
+          "importance": 2,
+          "lat": -13.53,
+          "lon": -71.97,
+          "note": "Builders of Cusco and of roads over the whole Andes.",
+          "glyph": "☀️"
+        }
+      ]
+    },
+    "PHL": {
+      "people": [
+        {
+          "id": "ifugao",
+          "name": "Ifugao",
+          "era": "living",
+          "importance": 2,
+          "lat": 16.91,
+          "lon": 121.06,
+          "note": "Rice terraces cut into the mountain two thousand years ago.",
+          "glyph": "🌾"
+        }
+      ]
+    },
+    "PLW": {
+      "people": [
+        {
+          "id": "palauan-carver",
+          "name": "Palauan storyboard carver",
+          "era": "living",
+          "importance": 4,
+          "lat": 7.34,
+          "lon": 134.48,
+          "note": "A whole legend carved along one plank of wood.",
+          "glyph": "🪵"
+        }
+      ]
+    },
+    "PNG": {
+      "people": [
+        {
+          "id": "huli-wigman",
+          "name": "Huli wigman",
+          "era": "living",
+          "importance": 2,
+          "lat": -5.85,
+          "lon": 142.95,
+          "note": "Wigs grown from their own hair and decorated with everlasting daisies.",
+          "glyph": "🪶"
+        }
+      ]
+    },
+    "POL": {
+      "people": [
+        {
+          "id": "gorale",
+          "name": "Górale",
+          "era": "living",
+          "importance": 3,
+          "lat": 49.3,
+          "lon": 19.95,
+          "note": "Highlanders of the Tatras, in felt hats and wooden houses.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "PRI": {
+      "people": [
+        {
+          "id": "vejigante",
+          "name": "Vejigante",
+          "era": "living",
+          "importance": 3,
+          "lat": 18.01,
+          "lon": -66.61,
+          "note": "A carnival demon in a horned mask made of papier-mâché.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "PRK": {
+      "people": [
+        {
+          "id": "korean-drum-dancer",
+          "name": "Korean drum dancer",
+          "era": "living",
+          "importance": 5,
+          "lat": 39.02,
+          "lon": 125.75,
+          "note": "A small drum at the waist, played while spinning.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "PRT": {
+      "people": [
+        {
+          "id": "fado-singer",
+          "name": "Fado singer",
+          "era": "living",
+          "importance": 2,
+          "lat": 38.71,
+          "lon": -9.14,
+          "note": "Songs about missing something you cannot quite name.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "PRY": {
+      "people": [
+        {
+          "id": "nanduti-lacemaker",
+          "name": "Ñandutí lace maker",
+          "era": "living",
+          "importance": 4,
+          "lat": -25.39,
+          "lon": -57.35,
+          "note": "Lace made in circles — the name means 'spider web'.",
+          "glyph": "🕸️"
+        }
+      ]
+    },
+    "PSX": {
+      "people": [
+        {
+          "id": "tatreez",
+          "name": "Tatreez embroiderer",
+          "era": "living",
+          "importance": 3,
+          "lat": 31.9,
+          "lon": 35.2,
+          "note": "Cross-stitch in red thread, where every village has its own pattern.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "PYF": {
+      "people": [
+        {
+          "id": "otea-dancer",
+          "name": "ʻŌteʻa dancer",
+          "era": "living",
+          "importance": 2,
+          "lat": -17.54,
+          "lon": -149.57,
+          "note": "Drums so fast the hips can barely keep up.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "QAT": {
+      "people": [
+        {
+          "id": "falconer",
+          "name": "Falconer",
+          "era": "living",
+          "importance": 4,
+          "lat": 25.29,
+          "lon": 51.53,
+          "note": "A hunting bird that sits on your glove and comes back to it.",
+          "glyph": "🦅"
+        }
+      ]
+    },
+    "ROU": {
+      "people": [
+        {
+          "id": "maramures-carver",
+          "name": "Maramureș woodcarver",
+          "era": "living",
+          "importance": 4,
+          "lat": 47.93,
+          "lon": 23.89,
+          "note": "Gates and churches carved from oak, with spires like needles.",
+          "glyph": "🪵"
+        }
+      ]
+    },
+    "RUS": {
+      "people": [
+        {
+          "id": "cossack",
+          "name": "Cossack",
+          "era": "historical",
+          "importance": 4,
+          "lat": 47.23,
+          "lon": 39.72,
+          "note": "Horsemen of the southern steppe."
+        }
+      ]
+    },
+    "RWA": {
+      "people": [
+        {
+          "id": "intore",
+          "name": "Intore dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": -1.94,
+          "lon": 30.06,
+          "note": "The dance of heroes, with grass headdresses that swing like manes.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "SAH": {
+      "people": [
+        {
+          "id": "sahrawi",
+          "name": "Sahrawi",
+          "era": "living",
+          "importance": 3,
+          "lat": 24.5,
+          "lon": -13,
+          "note": "Desert people of the western Sahara, in indigo and tents.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "SAU": {
+      "people": [
+        {
+          "id": "bedouin",
+          "name": "Bedouin",
+          "era": "living",
+          "importance": 3,
+          "lat": 24,
+          "lon": 45,
+          "note": "Desert people who move with their herds."
+        }
+      ]
+    },
+    "SDN": {
+      "people": [
+        {
+          "id": "nubian",
+          "name": "Nubian",
+          "era": "living",
+          "importance": 3,
+          "lat": 19.17,
+          "lon": 30.48,
+          "note": "People of the Nile with pyramids older than some in Egypt.",
+          "glyph": "🏛️"
+        }
+      ]
+    },
+    "SDS": {
+      "people": [
+        {
+          "id": "dinka",
+          "name": "Dinka",
+          "era": "living",
+          "importance": 3,
+          "lat": 7.5,
+          "lon": 29.5,
+          "note": "Cattle keepers who name themselves after their favourite ox.",
+          "glyph": "🐄"
+        }
+      ]
+    },
+    "SEN": {
+      "people": [
+        {
+          "id": "wolof",
+          "name": "Wolof",
+          "era": "living",
+          "importance": 3,
+          "lat": 14.72,
+          "lon": -17.47,
+          "note": "People of the sabar drum, played with a hand and a stick.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "SGP": {
+      "people": [
+        {
+          "id": "peranakan",
+          "name": "Peranakan",
+          "era": "living",
+          "importance": 3,
+          "lat": 1.3,
+          "lon": 103.85,
+          "note": "Chinese and Malay together for centuries — in the tiles, the beads and the food.",
+          "glyph": "🏮"
+        }
+      ]
+    },
+    "SGS": {
+      "people": [
+        {
+          "id": "south-georgia-whaler",
+          "name": "South Georgia whaler",
+          "era": "historical",
+          "importance": 4,
+          "lat": -54.28,
+          "lon": -36.5,
+          "note": "A rusting station in a bay full of penguins and elephant seals.",
+          "glyph": "⚓"
+        }
+      ]
+    },
+    "SHN": {
+      "people": [
+        {
+          "id": "saint-helena-flax-worker",
+          "name": "Saint Helena flax worker",
+          "era": "historical",
+          "importance": 5,
+          "lat": -15.93,
+          "lon": -5.72,
+          "note": "Rope made from flax on the loneliest island in the Atlantic.",
+          "glyph": "🌿"
+        }
+      ]
+    },
+    "SLB": {
+      "people": [
+        {
+          "id": "shell-money-maker",
+          "name": "Shell money maker",
+          "era": "living",
+          "importance": 4,
+          "lat": -8.6,
+          "lon": 160.75,
+          "note": "Shells ground into beads and strung — still used to buy things.",
+          "glyph": "🐚"
+        }
+      ]
+    },
+    "SLE": {
+      "people": [
+        {
+          "id": "mende",
+          "name": "Mende",
+          "era": "living",
+          "importance": 5,
+          "lat": 7.96,
+          "lon": -11.74,
+          "note": "The only place in Africa where women wear the great masks.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "SLV": {
+      "people": [
+        {
+          "id": "nahua-pipil",
+          "name": "Nahua-Pipil",
+          "era": "living",
+          "importance": 4,
+          "lat": 13.75,
+          "lon": -89.68,
+          "note": "The old people of these volcanoes, and their Nawat language.",
+          "glyph": "🌋"
+        }
+      ]
+    },
+    "SMR": {
+      "people": [
+        {
+          "id": "san-marino-crossbowman",
+          "name": "Crossbowman of San Marino",
+          "era": "living",
+          "importance": 5,
+          "lat": 43.93,
+          "lon": 12.45,
+          "note": "A shooting contest under the towers, in medieval dress, every year.",
+          "glyph": "🏹"
+        }
+      ]
+    },
+    "SOL": {
+      "people": [
+        {
+          "id": "somali-herder",
+          "name": "Somali camel herder",
+          "era": "living",
+          "importance": 3,
+          "lat": 9.56,
+          "lon": 44.06,
+          "note": "More camels here than almost anywhere on Earth.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "SOM": {
+      "people": [
+        {
+          "id": "somali-herder",
+          "name": "Somali camel herder",
+          "era": "living",
+          "importance": 3,
+          "lat": 5,
+          "lon": 46.5,
+          "note": "More camels here than almost anywhere on Earth.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "SPM": {
+      "people": [
+        {
+          "id": "spm-fisherman",
+          "name": "Basque and Breton fisherman",
+          "era": "historical",
+          "importance": 5,
+          "lat": 46.78,
+          "lon": -56.17,
+          "note": "A piece of France off Canada, settled by cod fishermen.",
+          "glyph": "🎣"
+        }
+      ]
+    },
+    "SRB": {
+      "people": [
+        {
+          "id": "gusle-player",
+          "name": "Gusle player",
+          "era": "living",
+          "importance": 5,
+          "lat": 44.82,
+          "lon": 20.46,
+          "note": "One string, a horsehair bow, and a poem that lasts all evening.",
+          "glyph": "🎻"
+        }
+      ]
+    },
+    "STP": {
+      "people": [
+        {
+          "id": "tchiloli",
+          "name": "Tchiloli player",
+          "era": "living",
+          "importance": 4,
+          "lat": 0.34,
+          "lon": 6.73,
+          "note": "A street play five hundred years old, performed in masks.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "SUR": {
+      "people": [
+        {
+          "id": "suriname-maroon",
+          "name": "Maroon of the Suriname River",
+          "era": "living",
+          "importance": 3,
+          "lat": 4.35,
+          "lon": -55.1,
+          "note": "Villages upriver founded by people who freed themselves.",
+          "glyph": "🛶"
+        }
+      ]
+    },
+    "SVK": {
+      "people": [
+        {
+          "id": "fujara-player",
+          "name": "Fujara player",
+          "era": "living",
+          "importance": 4,
+          "lat": 48.56,
+          "lon": 19.42,
+          "note": "A shepherd's flute taller than the shepherd.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "SVN": {
+      "people": [
+        {
+          "id": "kurent",
+          "name": "Kurent",
+          "era": "living",
+          "importance": 4,
+          "lat": 46.42,
+          "lon": 15.87,
+          "note": "A shaggy sheepskin monster with a long red tongue, ringing bells at winter.",
+          "glyph": "🐑"
+        }
+      ]
+    },
+    "SWE": {
+      "people": [
+        {
+          "id": "sami",
+          "name": "Sámi",
+          "era": "living",
+          "importance": 3,
+          "lat": 67.86,
+          "lon": 20.23,
+          "note": "The indigenous people of the far north, herders of reindeer."
+        }
+      ]
+    },
+    "SWZ": {
+      "people": [
+        {
+          "id": "swazi-reed-dance",
+          "name": "Swazi reed dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": -26.45,
+          "lon": 31.2,
+          "note": "Thousands dance to the royal village carrying cut reeds.",
+          "glyph": "🌾"
+        }
+      ]
+    },
+    "SXM": {
+      "people": [
+        {
+          "id": "ponum-dancer",
+          "name": "Ponum dancer",
+          "era": "living",
+          "importance": 6,
+          "lat": 18.02,
+          "lon": -63.05,
+          "note": "A dance that began as a celebration of emancipation.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "SYC": {
+      "people": [
+        {
+          "id": "moutya-dancer",
+          "name": "Moutya dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": -4.62,
+          "lon": 55.45,
+          "note": "A drum warmed over a beach fire, and dancing until it cools.",
+          "glyph": "🔥"
+        }
+      ]
+    },
+    "SYR": {
+      "people": [
+        {
+          "id": "palmyrene",
+          "name": "Palmyrene trader",
+          "era": "historical",
+          "importance": 3,
+          "lat": 34.55,
+          "lon": 38.27,
+          "note": "Caravan merchants of a city of columns in the middle of the desert.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "TCA": {
+      "people": [
+        {
+          "id": "ripsaw",
+          "name": "Ripsaw musician",
+          "era": "living",
+          "importance": 6,
+          "lat": 21.46,
+          "lon": -71.14,
+          "note": "The rhythm is a knife scraped along a carpenter's handsaw.",
+          "glyph": "🪚"
+        }
+      ]
+    },
+    "TCD": {
+      "people": [
+        {
+          "id": "toubou",
+          "name": "Toubou",
+          "era": "living",
+          "importance": 4,
+          "lat": 20.5,
+          "lon": 17.5,
+          "note": "People of the Tibesti mountains, in the middle of the desert.",
+          "glyph": "🏜️"
+        }
+      ]
+    },
+    "TGO": {
+      "people": [
+        {
+          "id": "batammariba",
+          "name": "Batammariba",
+          "era": "living",
+          "importance": 4,
+          "lat": 10.06,
+          "lon": 1.13,
+          "note": "Builders of clay tower-houses that look like little castles.",
+          "glyph": "🏰"
+        }
+      ]
+    },
+    "THA": {
+      "people": [
+        {
+          "id": "khon-dancer",
+          "name": "Khon dancer",
+          "era": "living",
+          "importance": 3,
+          "lat": 13.75,
+          "lon": 100.5,
+          "note": "Masked theatre of monkeys and giants, from an ancient story.",
+          "glyph": "🎭"
+        }
+      ]
+    },
+    "TJK": {
+      "people": [
+        {
+          "id": "pamiri",
+          "name": "Pamiri",
+          "era": "living",
+          "importance": 4,
+          "lat": 37.49,
+          "lon": 71.55,
+          "note": "People of the roof of the world, on the highest road there is.",
+          "glyph": "🏔️"
+        }
+      ]
+    },
+    "TKM": {
+      "people": [
+        {
+          "id": "akhal-teke-rider",
+          "name": "Akhal-Teke rider",
+          "era": "living",
+          "importance": 3,
+          "lat": 37.95,
+          "lon": 58.38,
+          "note": "Desert horses with coats that shine like metal.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "TLS": {
+      "people": [
+        {
+          "id": "tais-weaver",
+          "name": "Tais weaver",
+          "era": "living",
+          "importance": 4,
+          "lat": -8.56,
+          "lon": 125.56,
+          "note": "Cloth woven for welcomes, weddings and goodbyes.",
+          "glyph": "🧵"
+        }
+      ]
+    },
+    "TON": {
+      "people": [
+        {
+          "id": "lakalaka-dancer",
+          "name": "Lakalaka dancer",
+          "era": "living",
+          "importance": 4,
+          "lat": -21.14,
+          "lon": -175.2,
+          "note": "A whole village in a line, dancing a poem with their hands.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "TTO": {
+      "people": [
+        {
+          "id": "steelpan-player",
+          "name": "Steelpan player",
+          "era": "living",
+          "importance": 2,
+          "lat": 10.65,
+          "lon": -61.5,
+          "note": "An oil drum beaten into the only new instrument of the last century.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "TUN": {
+      "people": [
+        {
+          "id": "amazigh",
+          "name": "Amazigh",
+          "era": "living",
+          "importance": 4,
+          "lat": 33.54,
+          "lon": 9.97,
+          "note": "At Matmata they live in houses dug down into the ground.",
+          "glyph": "🏜️"
+        }
+      ]
+    },
+    "TUR": {
+      "people": [
+        {
+          "id": "whirling-dervish",
+          "name": "Whirling dervish",
+          "era": "living",
+          "importance": 2,
+          "lat": 37.87,
+          "lon": 32.49,
+          "note": "One hand up, one hand down, turning for an hour without stopping.",
+          "glyph": "🌀"
+        }
+      ]
+    },
+    "TUV": {
+      "people": [
+        {
+          "id": "fatele-dancer",
+          "name": "Fatele dancer",
+          "era": "living",
+          "importance": 5,
+          "lat": -8.52,
+          "lon": 179.2,
+          "note": "Everyone sings, and the box they drum on is an empty crate.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "TWN": {
+      "people": [
+        {
+          "id": "amis",
+          "name": "Amis",
+          "era": "living",
+          "importance": 3,
+          "lat": 23.99,
+          "lon": 121.6,
+          "note": "The largest of the island's first peoples, and their harvest songs.",
+          "glyph": "🎶"
+        }
+      ]
+    },
+    "TZA": {
+      "people": [
+        {
+          "id": "maasai",
+          "name": "Maasai",
+          "era": "living",
+          "importance": 2,
+          "lat": -3.4,
+          "lon": 35.9,
+          "note": "Herders of the Rift Valley, known for their red shukas."
+        }
+      ]
+    },
+    "UGA": {
+      "people": [
+        {
+          "id": "baganda",
+          "name": "Baganda",
+          "era": "living",
+          "importance": 4,
+          "lat": 0.32,
+          "lon": 32.58,
+          "note": "People of the kingdom of Buganda, on the shore of the great lake.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "UKR": {
+      "people": [
+        {
+          "id": "zaporozhian-cossack",
+          "name": "Zaporozhian Cossack",
+          "era": "historical",
+          "importance": 2,
+          "lat": 47.83,
+          "lon": 35.08,
+          "note": "A free camp of riders on an island in the Dnipro.",
+          "glyph": "⚔️"
+        }
+      ]
+    },
+    "URY": {
+      "people": [
+        {
+          "id": "candombe-drummer",
+          "name": "Candombe drummer",
+          "era": "living",
+          "importance": 3,
+          "lat": -34.9,
+          "lon": -56.19,
+          "note": "Three drums of three different sizes, walking down the street together.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "USA": {
+      "people": [
+        {
+          "id": "native-american",
+          "name": "Native American peoples",
+          "era": "living",
+          "importance": 2,
+          "lat": 36,
+          "lon": -109,
+          "note": "The many nations who lived here long before anybody sailed in."
+        },
+        {
+          "id": "cowboy",
+          "name": "Cowboy",
+          "era": "historical",
+          "importance": 3,
+          "lat": 32.78,
+          "lon": -99.5,
+          "note": "Riders who drove cattle across the western plains."
+        }
+      ]
+    },
+    "UZB": {
+      "people": [
+        {
+          "id": "silk-road-merchant",
+          "name": "Silk Road merchant",
+          "era": "historical",
+          "importance": 2,
+          "lat": 39.65,
+          "lon": 66.96,
+          "note": "Samarkand: where the caravans from China met the ones from Rome.",
+          "glyph": "🐫"
+        }
+      ]
+    },
+    "VAT": {
+      "people": [
+        {
+          "id": "swiss-guard",
+          "name": "Swiss Guard",
+          "era": "living",
+          "importance": 3,
+          "lat": 41.9,
+          "lon": 12.45,
+          "note": "Striped uniforms and a halberd, guarding the smallest country there is.",
+          "glyph": "🛡️"
+        }
+      ]
+    },
+    "VCT": {
+      "people": [
+        {
+          "id": "garifuna",
+          "name": "Garifuna",
+          "era": "living",
+          "importance": 5,
+          "lat": 13.25,
+          "lon": -61.2,
+          "note": "Yurumein, the island where the Garifuna people began.",
+          "glyph": "🥁"
+        }
+      ]
+    },
+    "VEN": {
+      "people": [
+        {
+          "id": "llanero",
+          "name": "Llanero",
+          "era": "living",
+          "importance": 3,
+          "lat": 7.6,
+          "lon": -68.5,
+          "note": "Cattlemen of the flooded plains, who sing to the herd at night.",
+          "glyph": "🐎"
+        }
+      ]
+    },
+    "VGB": {
+      "people": [
+        {
+          "id": "tortola-sloop-sailor",
+          "name": "Tortola sloop sailor",
+          "era": "living",
+          "importance": 6,
+          "lat": 18.42,
+          "lon": -64.62,
+          "note": "Wooden sloops built on the beach and raced between the islands.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "VIR": {
+      "people": [
+        {
+          "id": "quadrille-dancer",
+          "name": "Quadrille dancer",
+          "era": "living",
+          "importance": 6,
+          "lat": 18.34,
+          "lon": -64.93,
+          "note": "A European square dance, taken over and given a new rhythm.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "VNM": {
+      "people": [
+        {
+          "id": "water-puppeteer",
+          "name": "Water puppeteer",
+          "era": "living",
+          "importance": 2,
+          "lat": 21.03,
+          "lon": 105.85,
+          "note": "Puppets danced on a flooded rice field, the poles hidden below.",
+          "glyph": "🐉"
+        }
+      ]
+    },
+    "VUT": {
+      "people": [
+        {
+          "id": "land-diver",
+          "name": "Naghol land diver",
+          "era": "living",
+          "importance": 2,
+          "lat": -15.75,
+          "lon": 168.2,
+          "note": "A tower of sticks, two vines round the ankles, and a dive.",
+          "glyph": "🌴"
+        }
+      ]
+    },
+    "WLF": {
+      "people": [
+        {
+          "id": "wallisian-dancer",
+          "name": "Wallisian dancer",
+          "era": "living",
+          "importance": 5,
+          "lat": -13.28,
+          "lon": -176.17,
+          "note": "Dances for the king, in mats and scented oil.",
+          "glyph": "💃"
+        }
+      ]
+    },
+    "WSM": {
+      "people": [
+        {
+          "id": "tufuga-ta-tatau",
+          "name": "Tufuga tā tatau",
+          "era": "living",
+          "importance": 3,
+          "lat": -13.83,
+          "lon": -171.77,
+          "note": "Tattoo masters who work with a comb of bone and a mallet.",
+          "glyph": "🖋️"
+        }
+      ]
+    },
+    "YEM": {
+      "people": [
+        {
+          "id": "socotri",
+          "name": "Socotri",
+          "era": "living",
+          "importance": 4,
+          "lat": 12.5,
+          "lon": 53.9,
+          "note": "Islanders who live among trees that grow nowhere else on Earth.",
+          "glyph": "🌳"
+        }
+      ]
+    },
+    "ZAF": {
+      "people": [
+        {
+          "id": "zulu",
+          "name": "Zulu",
+          "era": "living",
+          "importance": 2,
+          "lat": -28.7,
+          "lon": 31,
+          "note": "People of the shield and the beaded message, in KwaZulu.",
+          "glyph": "🛡️"
+        }
+      ]
+    },
+    "ZMB": {
+      "people": [
+        {
+          "id": "kuomboka",
+          "name": "Lozi of the Kuomboka",
+          "era": "living",
+          "importance": 3,
+          "lat": -15.25,
+          "lon": 23.13,
+          "note": "When the flood comes, the king moves house by barge.",
+          "glyph": "⛵"
+        }
+      ]
+    },
+    "ZWE": {
+      "people": [
+        {
+          "id": "shona-carver",
+          "name": "Shona stone carver",
+          "era": "living",
+          "importance": 3,
+          "lat": -20.27,
+          "lon": 30.93,
+          "note": "Builders of Great Zimbabwe, and carvers of its birds.",
+          "glyph": "🗿"
+        }
+      ]
+    }
   }
 }

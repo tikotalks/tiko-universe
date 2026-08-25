@@ -58,6 +58,7 @@ const isTiny = (id) => {
 
 const animals = JSON.parse(await readFile(join(CONTENT_DIR, 'animals.json'), 'utf8')).items
 const landmarks = JSON.parse(await readFile(join(CONTENT_DIR, 'landmarks.json'), 'utf8')).items
+const people = JSON.parse(await readFile(join(CONTENT_DIR, 'people.json'), 'utf8')).items
 
 /**
  * Landmarks the 50 m outline cannot contain: reefs, atolls, sandbanks, a bridge
@@ -152,6 +153,22 @@ for (const landmark of landmarks) {
   }
 }
 
+// People stand where their people are — a Sámi marker in Portugal would be a
+// mistake of exactly the kind this file exists to catch.
+for (const person of people) {
+  for (const marker of person.markers ?? []) {
+    if (!marker.country) continue
+    const reach = isTiny(marker.country) ? ISLAND_REACH_DEGREES : 1.0
+    if (!isInsideCountry(marker.country, marker) && !countriesNear(marker, reach).includes(marker.country)) {
+      const actually = countriesNear(marker, 0.5)
+      problems.push(
+        `${person.name} is filed under ${marker.country} but sits at ${marker.lat}, ${marker.lon}` +
+        (actually.length > 0 ? ` — which is in ${actually.join('/')}` : ' — which is open sea')
+      )
+    }
+  }
+}
+
 if (notes.length > 0) {
   process.stdout.write(`${notes.length} placement(s) worth a look:\n`)
   for (const note of notes) process.stdout.write(`  - ${note}\n`)
@@ -164,5 +181,8 @@ if (problems.length > 0) {
   process.exitCode = 1
 } else {
   const markers = animals.reduce((total, animal) => total + animal.markers.length, 0)
-  process.stdout.write(`placements ok: ${animals.length} animals (${markers} markers) and ${landmarks.length} landmarks, all where they belong\n`)
+  process.stdout.write(
+    `placements ok: ${animals.length} animals (${markers} markers), ${landmarks.length} landmarks ` +
+    `and ${people.length} peoples, all where they belong\n`
+  )
 }

@@ -65,6 +65,14 @@ struct GlobeMarkerImage: View {
         return rendered
     }
 
+    /// How tall the art is against its width. A standing person is much taller
+    /// than wide, and a figure like that stands on the point rather than
+    /// hovering with the point through its middle.
+    static func aspect(named name: String?) -> CGFloat {
+        guard let image = image(named: name), image.size.height > 0 else { return 1 }
+        return image.size.width / image.size.height
+    }
+
     static func image(named name: String?) -> UIImage? {
         guard let name else { return nil }
         if let cached = cache.object(forKey: name as NSString) { return cached }

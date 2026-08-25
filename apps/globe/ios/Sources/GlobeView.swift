@@ -139,6 +139,7 @@ struct GlobeView: View {
                     onSelectCountry: { country in controller.select(country: country, focus: true) },
                     inhabitants: countryEntities(in: selection, kind: .animal),
                     landmarks: countryEntities(in: selection, kind: .landmark),
+                    people: countryEntities(in: selection, kind: .person),
                     onSelectEntity: { entity in controller.select(entityID: entity.id, focus: true) }
                 )
                 .frame(maxWidth: isCompact ? .infinity : panelWidth)
@@ -252,11 +253,16 @@ struct GlobeView: View {
             let size = fullSize * (0.4 + 0.6 * eased)
             context.opacity = min(1, t * 1.4)
             if let image = GlobeMarkerImage.drawable(named: placed.entity.imageName, size: fullSize * 2) {
+                // A standing figure stands on the spot: its feet go where the
+                // marker is, rather than the point passing through its waist.
+                // Anything roughly as wide as it is tall — an animal, a tower —
+                // keeps sitting over the point as before.
+                let standing = GlobeMarkerImage.aspect(named: placed.entity.imageName) < 0.8
                 context.draw(
                     image,
                     in: CGRect(
                         x: placed.point.x - size / 2,
-                        y: placed.point.y - size / 2 - size * 0.2,
+                        y: standing ? placed.point.y - size : placed.point.y - size / 2 - size * 0.2,
                         width: size,
                         height: size
                     )

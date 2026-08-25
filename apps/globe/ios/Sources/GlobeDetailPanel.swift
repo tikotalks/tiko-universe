@@ -17,6 +17,9 @@ struct GlobeDetailPanel: View {
     /// way in to its animals and its landmarks rather than a dead end.
     let inhabitants: [GlobeEntity]
     let landmarks: [GlobeEntity]
+    /// And who lives there: every country has somebody, so a country's card can
+    /// always introduce them.
+    let people: [GlobeEntity]
     let onSelectEntity: (GlobeEntity) -> Void
 
     @Environment(\.colorScheme) private var colorScheme
@@ -48,6 +51,9 @@ struct GlobeDetailPanel: View {
                     }
                     if !landmarks.isEmpty {
                         gallery(i18n.t("globe.card.landmarksHere"), entities: landmarks, prefix: "landmark")
+                    }
+                    if !people.isEmpty {
+                        gallery(i18n.t("globe.card.peopleHere"), entities: people, prefix: "person")
                     }
                     if let footnote { Text(footnote).font(.footnote).foregroundStyle(.secondary) }
                 }

@@ -14,8 +14,8 @@
       "of": 241
     },
     "people": {
-      "missing": 11,
-      "of": 24
+      "missing": 213,
+      "of": 238
     },
     "flags": {
       "missing": 28,
@@ -13224,29 +13224,358 @@
   ],
   "people": [
     {
-      "id": "person.ancient-greek",
-      "name": "Ancient Greek",
+      "id": "person.agojie",
+      "name": "Agojie",
       "era": "historical",
       "importance": 2,
       "countries": [
-        "GRC"
+        "BEN"
       ],
-      "note": "Philosophers, playwrights and the first Olympians.",
+      "note": "The women soldiers of the kingdom of Dahomey.",
       "countryNames": [
-        "Greece"
+        "Benin"
       ]
     },
     {
-      "id": "person.mongol-horseman",
-      "name": "Mongol horseman",
+      "id": "person.amazigh",
+      "name": "Amazigh",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "MAR",
+        "TUN"
+      ],
+      "note": "The people of the Atlas, whose name means 'free people'.",
+      "countryNames": [
+        "Morocco",
+        "Tunisia"
+      ]
+    },
+    {
+      "id": "person.apsara-dancer",
+      "name": "Apsara dancer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "KHM"
+      ],
+      "note": "The dancers carved on the walls of Angkor, still dancing.",
+      "countryNames": [
+        "Cambodia"
+      ]
+    },
+    {
+      "id": "person.asante",
+      "name": "Asante",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "GHA"
+      ],
+      "note": "The kingdom of the Golden Stool, and of kente cloth.",
+      "countryNames": [
+        "Ghana"
+      ]
+    },
+    {
+      "id": "person.balinese-dancer",
+      "name": "Balinese dancer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "IDN"
+      ],
+      "note": "Every finger and every eye moves, and none of it by accident.",
+      "countryNames": [
+        "Indonesia"
+      ]
+    },
+    {
+      "id": "person.basotho-rider",
+      "name": "Basotho horseman",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "LSO"
+      ],
+      "note": "A pony, a blanket and a mountain path — how you travel here.",
+      "countryNames": [
+        "Lesotho"
+      ]
+    },
+    {
+      "id": "person.bedouin",
+      "name": "Bedouin",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "JOR",
+        "SAU"
+      ],
+      "note": "Black goat-hair tents pitched among the red rocks of Wadi Rum.",
+      "countryNames": [
+        "Jordan",
+        "Saudi Arabia"
+      ]
+    },
+    {
+      "id": "person.csikos",
+      "name": "Csikós",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "HUN"
+      ],
+      "note": "Horsemen of the puszta, who ride standing on two horses at once.",
+      "countryNames": [
+        "Hungary"
+      ]
+    },
+    {
+      "id": "person.dogon",
+      "name": "Dogon",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "MLI"
+      ],
+      "note": "Cliff dwellers of Bandiagara, with masks as tall as a house.",
+      "countryNames": [
+        "Mali"
+      ]
+    },
+    {
+      "id": "person.eagle-hunter",
+      "name": "Eagle hunter",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "KAZ"
+      ],
+      "note": "A golden eagle on the arm, trained to hunt across the steppe.",
+      "countryNames": [
+        "Kazakhstan"
+      ]
+    },
+    {
+      "id": "person.fado-singer",
+      "name": "Fado singer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PRT"
+      ],
+      "note": "Songs about missing something you cannot quite name.",
+      "countryNames": [
+        "Portugal"
+      ]
+    },
+    {
+      "id": "person.guna",
+      "name": "Guna",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PAN"
+      ],
+      "note": "Molas: layer on layer of cloth cut away to make a picture.",
+      "countryNames": [
+        "Panama"
+      ]
+    },
+    {
+      "id": "person.haenyeo",
+      "name": "Haenyeo",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "KOR"
+      ],
+      "note": "The sea women of Jeju, who dive without air tanks, well into old age.",
+      "countryNames": [
+        "South Korea"
+      ]
+    },
+    {
+      "id": "person.highland-piper",
+      "name": "Highland piper",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "GBR"
+      ],
+      "note": "Bagpipes that can be heard from the far side of a glen.",
+      "countryNames": [
+        "United Kingdom"
+      ]
+    },
+    {
+      "id": "person.himba",
+      "name": "Himba",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "NAM"
+      ],
+      "note": "Cattle herders of the far north, in red ochre and braids.",
+      "countryNames": [
+        "Namibia"
+      ]
+    },
+    {
+      "id": "person.huli-wigman",
+      "name": "Huli wigman",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PNG"
+      ],
+      "note": "Wigs grown from their own hair and decorated with everlasting daisies.",
+      "countryNames": [
+        "Papua New Guinea"
+      ]
+    },
+    {
+      "id": "person.otea-dancer",
+      "name": "ʻŌteʻa dancer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PYF"
+      ],
+      "note": "Drums so fast the hips can barely keep up.",
+      "countryNames": [
+        "French Polynesia"
+      ]
+    },
+    {
+      "id": "person.ifugao",
+      "name": "Ifugao",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PHL"
+      ],
+      "note": "Rice terraces cut into the mountain two thousand years ago.",
+      "countryNames": [
+        "Philippines"
+      ]
+    },
+    {
+      "id": "person.leg-rower",
+      "name": "Inle leg-rower",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "MMR"
+      ],
+      "note": "Fishermen who row standing up, with one leg wrapped round the oar.",
+      "countryNames": [
+        "Myanmar"
+      ]
+    },
+    {
+      "id": "person.irish-dancer",
+      "name": "Irish dancer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "IRL"
+      ],
+      "note": "Feet like lightning, arms perfectly still.",
+      "countryNames": [
+        "Ireland"
+      ]
+    },
+    {
+      "id": "person.kalash",
+      "name": "Kalash",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "PAK"
+      ],
+      "note": "Three valleys, their own gods, and festivals full of flowers.",
+      "countryNames": [
+        "Pakistan"
+      ]
+    },
+    {
+      "id": "person.kayapo",
+      "name": "Kayapó",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "BRA"
+      ],
+      "note": "People of the Xingu, with headdresses like a yellow sunburst.",
+      "countryNames": [
+        "Brazil"
+      ]
+    },
+    {
+      "id": "person.mapuche",
+      "name": "Mapuche",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "CHL"
+      ],
+      "note": "The people of the land, who were never conquered by Spain.",
+      "countryNames": [
+        "Chile"
+      ]
+    },
+    {
+      "id": "person.maroon",
+      "name": "Maroon",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "JAM"
+      ],
+      "note": "Free towns in the mountains, and an abeng horn to call between them.",
+      "countryNames": [
+        "Jamaica"
+      ]
+    },
+    {
+      "id": "person.land-diver",
+      "name": "Naghol land diver",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "VUT"
+      ],
+      "note": "A tower of sticks, two vines round the ankles, and a dive.",
+      "countryNames": [
+        "Vanuatu"
+      ]
+    },
+    {
+      "id": "person.phoenician",
+      "name": "Phoenician sailor",
       "era": "historical",
       "importance": 2,
       "countries": [
-        "MNG"
+        "LBN"
       ],
-      "note": "Riders of the steppe, who once crossed a continent on horseback.",
+      "note": "Traders who sailed the whole Mediterranean and gave us the alphabet.",
       "countryNames": [
-        "Mongolia"
+        "Lebanon"
+      ]
+    },
+    {
+      "id": "person.polar-explorer",
+      "name": "Polar explorer",
+      "era": "historical",
+      "importance": 2,
+      "countries": [
+        "ATA"
+      ],
+      "note": "Wooden huts, sledges and dogs — and a race for the South Pole.",
+      "countryNames": [
+        "Antarctica"
       ]
     },
     {
@@ -13263,16 +13592,185 @@
       ]
     },
     {
-      "id": "person.roman-legionary",
-      "name": "Roman legionary",
+      "id": "person.san",
+      "name": "San",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "BWA"
+      ],
+      "note": "Trackers of the Kalahari, who can read a day-old footprint.",
+      "countryNames": [
+        "Botswana"
+      ]
+    },
+    {
+      "id": "person.sherpa",
+      "name": "Sherpa",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "NPL"
+      ],
+      "note": "People of the high valleys, at home where the air is thin.",
+      "countryNames": [
+        "Nepal"
+      ]
+    },
+    {
+      "id": "person.silk-road-merchant",
+      "name": "Silk Road merchant",
       "era": "historical",
       "importance": 2,
       "countries": [
-        "ITA"
+        "UZB"
       ],
-      "note": "The soldiers of an empire that reached from Britain to Egypt.",
+      "note": "Samarkand: where the caravans from China met the ones from Rome.",
       "countryNames": [
-        "Italy"
+        "Uzbekistan"
+      ]
+    },
+    {
+      "id": "person.steelpan-player",
+      "name": "Steelpan player",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "TTO"
+      ],
+      "note": "An oil drum beaten into the only new instrument of the last century.",
+      "countryNames": [
+        "Trinidad and Tobago"
+      ]
+    },
+    {
+      "id": "person.water-puppeteer",
+      "name": "Water puppeteer",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "VNM"
+      ],
+      "note": "Puppets danced on a flooded rice field, the poles hidden below.",
+      "countryNames": [
+        "Vietnam"
+      ]
+    },
+    {
+      "id": "person.whirling-dervish",
+      "name": "Whirling dervish",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "TUR"
+      ],
+      "note": "One hand up, one hand down, turning for an hour without stopping.",
+      "countryNames": [
+        "Turkey"
+      ]
+    },
+    {
+      "id": "person.wodaabe",
+      "name": "Wodaabe",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "NER"
+      ],
+      "note": "Herders whose young men dance a beauty contest at Gerewol.",
+      "countryNames": [
+        "Niger"
+      ]
+    },
+    {
+      "id": "person.yoruba",
+      "name": "Yoruba",
+      "era": "living",
+      "importance": 2,
+      "countries": [
+        "NGA"
+      ],
+      "note": "People of Ile-Ife, of talking drums and bronze heads.",
+      "countryNames": [
+        "Nigeria"
+      ]
+    },
+    {
+      "id": "person.zaporozhian-cossack",
+      "name": "Zaporozhian Cossack",
+      "era": "historical",
+      "importance": 2,
+      "countries": [
+        "UKR"
+      ],
+      "note": "A free camp of riders on an island in the Dnipro.",
+      "countryNames": [
+        "Ukraine"
+      ]
+    },
+    {
+      "id": "person.afar",
+      "name": "Afar",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "DJI"
+      ],
+      "note": "Herders of one of the hottest places on Earth.",
+      "countryNames": [
+        "Djibouti"
+      ]
+    },
+    {
+      "id": "person.aka",
+      "name": "Aka",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "CAF"
+      ],
+      "note": "Forest people whose singing weaves many voices at once.",
+      "countryNames": [
+        "Central African Republic"
+      ]
+    },
+    {
+      "id": "person.akhal-teke-rider",
+      "name": "Akhal-Teke rider",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "TKM"
+      ],
+      "note": "Desert horses with coats that shine like metal.",
+      "countryNames": [
+        "Turkmenistan"
+      ]
+    },
+    {
+      "id": "person.alphorn-player",
+      "name": "Alphorn player",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "CHE"
+      ],
+      "note": "A horn as long as three people, once used to call across valleys.",
+      "countryNames": [
+        "Switzerland"
+      ]
+    },
+    {
+      "id": "person.amis",
+      "name": "Amis",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "TWN"
+      ],
+      "note": "The largest of the island's first peoples, and their harvest songs.",
+      "countryNames": [
+        "Taiwan"
       ]
     },
     {
@@ -13289,16 +13787,148 @@
       ]
     },
     {
-      "id": "person.bedouin",
-      "name": "Bedouin",
+      "id": "person.baul",
+      "name": "Baul singer",
       "era": "living",
       "importance": 3,
       "countries": [
-        "SAU"
+        "BGD"
       ],
-      "note": "Desert people who move with their herds.",
+      "note": "Wandering minstrels who own almost nothing but their songs.",
       "countryNames": [
-        "Saudi Arabia"
+        "Bangladesh"
+      ]
+    },
+    {
+      "id": "person.beqa-firewalker",
+      "name": "Beqa firewalker",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "FJI"
+      ],
+      "note": "One island's families walk barefoot over white-hot stones.",
+      "countryNames": [
+        "Fiji"
+      ]
+    },
+    {
+      "id": "person.bodu-beru",
+      "name": "Bodu beru drummer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MDV"
+      ],
+      "note": "A big drum, a circle of singers, and a dance that speeds up and up.",
+      "countryNames": [
+        "Maldives"
+      ]
+    },
+    {
+      "id": "person.boyero",
+      "name": "Boyero",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "CRI"
+      ],
+      "note": "Oxcarts painted like flowers, each one with its own creak.",
+      "countryNames": [
+        "Costa Rica"
+      ]
+    },
+    {
+      "id": "person.breton",
+      "name": "Breton",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "FRA"
+      ],
+      "note": "A Celtic corner of France, with bagpipes and a language of its own.",
+      "countryNames": [
+        "France"
+      ]
+    },
+    {
+      "id": "person.buzkashi-rider",
+      "name": "Buzkashi rider",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "AFG"
+      ],
+      "note": "A game of horsemen, played across a whole field with no ball.",
+      "countryNames": [
+        "Afghanistan"
+      ]
+    },
+    {
+      "id": "person.candombe-drummer",
+      "name": "Candombe drummer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "URY"
+      ],
+      "note": "Three drums of three different sizes, walking down the street together.",
+      "countryNames": [
+        "Uruguay"
+      ]
+    },
+    {
+      "id": "person.cham-dancer",
+      "name": "Cham dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BTN"
+      ],
+      "note": "Masked dances that whirl in the courtyard of a mountain fortress.",
+      "countryNames": [
+        "Bhutan"
+      ]
+    },
+    {
+      "id": "person.chamorro",
+      "name": "CHamoru",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "GUM"
+      ],
+      "note": "The first people of the Marianas, and the fastest sailing canoes in the world.",
+      "countryNames": [
+        "Guam"
+      ]
+    },
+    {
+      "id": "person.dinka",
+      "name": "Dinka",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SDS"
+      ],
+      "note": "Cattle keepers who name themselves after their favourite ox.",
+      "countryNames": [
+        "South Sudan"
+      ]
+    },
+    {
+      "id": "person.falconer",
+      "name": "Falconer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ARE",
+        "QAT"
+      ],
+      "note": "A hunting bird that sits on your glove and comes back to it.",
+      "countryNames": [
+        "United Arab Emirates",
+        "Qatar"
       ]
     },
     {
@@ -13315,6 +13945,60 @@
       ]
     },
     {
+      "id": "person.frankincense-harvester",
+      "name": "Frankincense harvester",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "OMN"
+      ],
+      "note": "Cut the bark, wait, and collect the tears the tree makes.",
+      "countryNames": [
+        "Oman"
+      ]
+    },
+    {
+      "id": "person.frisians",
+      "name": "Frisians",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "NLD"
+      ],
+      "note": "Their own language, and a skating race past eleven towns in one day.",
+      "countryNames": [
+        "Netherlands"
+      ]
+    },
+    {
+      "id": "person.fula",
+      "name": "Fula",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "GIN"
+      ],
+      "note": "Herders who move across a dozen countries with their cattle.",
+      "countryNames": [
+        "Guinea"
+      ]
+    },
+    {
+      "id": "person.garifuna",
+      "name": "Garifuna",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BLZ",
+        "VCT"
+      ],
+      "note": "Caribbean and African together, with drums that talk in threes.",
+      "countryNames": [
+        "Belize",
+        "Saint Vincent and the Grenadines"
+      ]
+    },
+    {
       "id": "person.gaucho",
       "name": "Gaucho",
       "era": "living",
@@ -13325,6 +14009,567 @@
       "note": "Horsemen of the pampas.",
       "countryNames": [
         "Argentina"
+      ]
+    },
+    {
+      "id": "person.gilles-de-binche",
+      "name": "Gille of Binche",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BEL"
+      ],
+      "note": "Wax masks, ostrich feathers, and oranges thrown to the crowd.",
+      "countryNames": [
+        "Belgium"
+      ]
+    },
+    {
+      "id": "person.gombey",
+      "name": "Gombey dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BMU"
+      ],
+      "note": "Peacock feathers, mirrors, whistles and a snare drum through the streets.",
+      "countryNames": [
+        "Bermuda"
+      ]
+    },
+    {
+      "id": "person.gorale",
+      "name": "Górale",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "POL"
+      ],
+      "note": "Highlanders of the Tatras, in felt hats and wooden houses.",
+      "countryNames": [
+        "Poland"
+      ]
+    },
+    {
+      "id": "person.griot",
+      "name": "Griot",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "GMB"
+      ],
+      "note": "Keepers of a family's history, who sing it rather than write it.",
+      "countryNames": [
+        "The Gambia"
+      ]
+    },
+    {
+      "id": "person.gule-wamkulu",
+      "name": "Gule Wamkulu dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MWI"
+      ],
+      "note": "The great dance of the Chewa, danced by masked spirits.",
+      "countryNames": [
+        "Malawi"
+      ]
+    },
+    {
+      "id": "person.hamar",
+      "name": "Hamar",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ETH"
+      ],
+      "note": "Cattle keepers of the Omo valley, in ochre and beads.",
+      "countryNames": [
+        "Ethiopia"
+      ]
+    },
+    {
+      "id": "person.hmong",
+      "name": "Hmong",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "LAO"
+      ],
+      "note": "Mountain people whose stitched cloth tells whole stories.",
+      "countryNames": [
+        "Laos"
+      ]
+    },
+    {
+      "id": "person.iban",
+      "name": "Iban",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MYS"
+      ],
+      "note": "Whole villages under one long roof, on the rivers of Borneo.",
+      "countryNames": [
+        "Malaysia"
+      ]
+    },
+    {
+      "id": "person.imraguen",
+      "name": "Imraguen",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MRT"
+      ],
+      "note": "Fishers who wade into the surf, and fish with the help of dolphins.",
+      "countryNames": [
+        "Mauritania"
+      ]
+    },
+    {
+      "id": "person.intore",
+      "name": "Intore dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "RWA"
+      ],
+      "note": "The dance of heroes, with grass headdresses that swing like manes.",
+      "countryNames": [
+        "Rwanda"
+      ]
+    },
+    {
+      "id": "person.junkanoo",
+      "name": "Junkanoo dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BHS"
+      ],
+      "note": "Costumes of crêpe paper, goatskin drums, and a parade before dawn.",
+      "countryNames": [
+        "The Bahamas"
+      ]
+    },
+    {
+      "id": "person.kabyle",
+      "name": "Kabyle",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "DZA"
+      ],
+      "note": "Amazigh people of the mountains, with a language of their own.",
+      "countryNames": [
+        "Algeria"
+      ]
+    },
+    {
+      "id": "person.kalinago",
+      "name": "Kalinago",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "DMA"
+      ],
+      "note": "The last territory of the Caribbean's first islanders, and their canoes.",
+      "countryNames": [
+        "Dominica"
+      ]
+    },
+    {
+      "id": "person.kanak",
+      "name": "Kanak",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "NCL"
+      ],
+      "note": "The first people of these islands, and their tall round houses.",
+      "countryNames": [
+        "New Caledonia"
+      ]
+    },
+    {
+      "id": "person.kandyan-dancer",
+      "name": "Kandyan dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "LKA"
+      ],
+      "note": "Silver headdresses, and drums that answer every step.",
+      "countryNames": [
+        "Sri Lanka"
+      ]
+    },
+    {
+      "id": "person.khevsur",
+      "name": "Khevsur",
+      "era": "historical",
+      "importance": 3,
+      "countries": [
+        "GEO"
+      ],
+      "note": "Mountain villagers who still wore chainmail a century ago.",
+      "countryNames": [
+        "Georgia"
+      ]
+    },
+    {
+      "id": "person.khon-dancer",
+      "name": "Khon dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "THA"
+      ],
+      "note": "Masked theatre of monkeys and giants, from an ancient story.",
+      "countryNames": [
+        "Thailand"
+      ]
+    },
+    {
+      "id": "person.kukeri",
+      "name": "Kukeri",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BGR"
+      ],
+      "note": "Hairy monsters hung with cowbells, chasing winter away.",
+      "countryNames": [
+        "Bulgaria"
+      ]
+    },
+    {
+      "id": "person.lion-dancer",
+      "name": "Lion dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "HKG"
+      ],
+      "note": "Two people inside one lion, dancing it up a pole for luck.",
+      "countryNames": [
+        "Hong Kong"
+      ]
+    },
+    {
+      "id": "person.llanero",
+      "name": "Llanero",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "VEN"
+      ],
+      "note": "Cattlemen of the flooded plains, who sing to the herd at night.",
+      "countryNames": [
+        "Venezuela"
+      ]
+    },
+    {
+      "id": "person.kuomboka",
+      "name": "Lozi of the Kuomboka",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ZMB"
+      ],
+      "note": "When the flood comes, the king moves house by barge.",
+      "countryNames": [
+        "Zambia"
+      ]
+    },
+    {
+      "id": "person.makonde",
+      "name": "Makonde carver",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MOZ"
+      ],
+      "note": "Whole families carved from one piece of blackwood.",
+      "countryNames": [
+        "Mozambique"
+      ]
+    },
+    {
+      "id": "person.suriname-maroon",
+      "name": "Maroon of the Suriname River",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SUR"
+      ],
+      "note": "Villages upriver founded by people who freed themselves.",
+      "countryNames": [
+        "Suriname"
+      ]
+    },
+    {
+      "id": "person.marsh-arab",
+      "name": "Marsh Arab",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "IRQ"
+      ],
+      "note": "Houses of reed on islands of reed, in the marshes of two rivers.",
+      "countryNames": [
+        "Iraq"
+      ]
+    },
+    {
+      "id": "person.mbuti",
+      "name": "Mbuti",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "COD"
+      ],
+      "note": "Hunters of the Ituri forest, at home under the tallest trees.",
+      "countryNames": [
+        "Democratic Republic of the Congo"
+      ]
+    },
+    {
+      "id": "person.merengue-dancer",
+      "name": "Merengue dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "DOM"
+      ],
+      "note": "An accordion, a two-headed drum, and feet that never stop.",
+      "countryNames": [
+        "Dominican Republic"
+      ]
+    },
+    {
+      "id": "person.nubian",
+      "name": "Nubian",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SDN"
+      ],
+      "note": "People of the Nile with pyramids older than some in Egypt.",
+      "countryNames": [
+        "Sudan"
+      ]
+    },
+    {
+      "id": "person.otavalo-weaver",
+      "name": "Otavalo weaver",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ECU"
+      ],
+      "note": "Weavers and traders whose market is famous across the continent.",
+      "countryNames": [
+        "Ecuador"
+      ]
+    },
+    {
+      "id": "person.palmyrene",
+      "name": "Palmyrene trader",
+      "era": "historical",
+      "importance": 3,
+      "countries": [
+        "SYR"
+      ],
+      "note": "Caravan merchants of a city of columns in the middle of the desert.",
+      "countryNames": [
+        "Syria"
+      ]
+    },
+    {
+      "id": "person.pearl-diver",
+      "name": "Pearl diver",
+      "era": "historical",
+      "importance": 3,
+      "countries": [
+        "BHR"
+      ],
+      "note": "Down on one breath with a stone, up with a basket of oysters.",
+      "countryNames": [
+        "Bahrain"
+      ]
+    },
+    {
+      "id": "person.peranakan",
+      "name": "Peranakan",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SGP"
+      ],
+      "note": "Chinese and Malay together for centuries — in the tiles, the beads and the food.",
+      "countryNames": [
+        "Singapore"
+      ]
+    },
+    {
+      "id": "person.carpet-weaver",
+      "name": "Persian carpet weaver",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "IRN"
+      ],
+      "note": "A garden, drawn in knots, that takes a year to finish.",
+      "countryNames": [
+        "Iran"
+      ]
+    },
+    {
+      "id": "person.burundi-drummer",
+      "name": "Royal drummer of Burundi",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "BDI"
+      ],
+      "note": "Drums carried on the head, played by whole teams at once.",
+      "countryNames": [
+        "Burundi"
+      ]
+    },
+    {
+      "id": "person.sahrawi",
+      "name": "Sahrawi",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SAH"
+      ],
+      "note": "Desert people of the western Sahara, in indigo and tents.",
+      "countryNames": [
+        "Western Sahara"
+      ]
+    },
+    {
+      "id": "person.sega-dancer",
+      "name": "Séga dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MUS"
+      ],
+      "note": "Feet sliding on sand — in this dance they never leave the ground.",
+      "countryNames": [
+        "Mauritius"
+      ]
+    },
+    {
+      "id": "person.shona-carver",
+      "name": "Shona stone carver",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "ZWE"
+      ],
+      "note": "Builders of Great Zimbabwe, and carvers of its birds.",
+      "countryNames": [
+        "Zimbabwe"
+      ]
+    },
+    {
+      "id": "person.haitian-revolutionary",
+      "name": "Soldier of the Haitian Revolution",
+      "era": "historical",
+      "importance": 3,
+      "countries": [
+        "HTI"
+      ],
+      "note": "The enslaved rose, won, and made the first free Black republic.",
+      "countryNames": [
+        "Haiti"
+      ]
+    },
+    {
+      "id": "person.somali-herder",
+      "name": "Somali camel herder",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SOL",
+        "SOM"
+      ],
+      "note": "More camels here than almost anywhere on Earth.",
+      "countryNames": [
+        "Somaliland",
+        "Somalia"
+      ]
+    },
+    {
+      "id": "person.son-musician",
+      "name": "Son musician",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "CUB"
+      ],
+      "note": "A tres guitar, a bongo and a chorus, on a porch in Santiago.",
+      "countryNames": [
+        "Cuba"
+      ]
+    },
+    {
+      "id": "person.stick-chart-navigator",
+      "name": "Stick chart navigator",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MHL"
+      ],
+      "note": "A map of sticks and shells that shows where the waves bend.",
+      "countryNames": [
+        "Marshall Islands"
+      ]
+    },
+    {
+      "id": "person.swazi-reed-dance",
+      "name": "Swazi reed dancer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SWZ"
+      ],
+      "note": "Thousands dance to the royal village carrying cut reeds.",
+      "countryNames": [
+        "Eswatini"
+      ]
+    },
+    {
+      "id": "person.swiss-guard",
+      "name": "Swiss Guard",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "VAT"
+      ],
+      "note": "Striped uniforms and a halberd, guarding the smallest country there is.",
+      "countryNames": [
+        "Vatican City"
+      ]
+    },
+    {
+      "id": "person.tatreez",
+      "name": "Tatreez embroiderer",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "PSX"
+      ],
+      "note": "Cross-stitch in red thread, where every village has its own pattern.",
+      "countryNames": [
+        "Palestine"
       ]
     },
     {
@@ -13341,6 +14586,504 @@
       ]
     },
     {
+      "id": "person.tuareg",
+      "name": "Tuareg",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "LBY"
+      ],
+      "note": "The blue-veiled people of the Sahara, who cross it by camel.",
+      "countryNames": [
+        "Libya"
+      ]
+    },
+    {
+      "id": "person.tufuga-ta-tatau",
+      "name": "Tufuga tā tatau",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "WSM"
+      ],
+      "note": "Tattoo masters who work with a comb of bone and a mallet.",
+      "countryNames": [
+        "Samoa"
+      ]
+    },
+    {
+      "id": "person.vejigante",
+      "name": "Vejigante",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "PRI"
+      ],
+      "note": "A carnival demon in a horned mask made of papier-mâché.",
+      "countryNames": [
+        "Puerto Rico"
+      ]
+    },
+    {
+      "id": "person.vezo",
+      "name": "Vezo",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "MDG"
+      ],
+      "note": "Fishing people of the west coast, who sail outrigger canoes.",
+      "countryNames": [
+        "Madagascar"
+      ]
+    },
+    {
+      "id": "person.wayuu",
+      "name": "Wayuu",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "COL"
+      ],
+      "note": "Desert people of La Guajira, and bags crocheted with their own signs.",
+      "countryNames": [
+        "Colombia"
+      ]
+    },
+    {
+      "id": "person.wolof",
+      "name": "Wolof",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "SEN"
+      ],
+      "note": "People of the sabar drum, played with a hand and a stick.",
+      "countryNames": [
+        "Senegal"
+      ]
+    },
+    {
+      "id": "person.yapese-stone-money",
+      "name": "Yapese stone money carrier",
+      "era": "living",
+      "importance": 3,
+      "countries": [
+        "FSM"
+      ],
+      "note": "Money the size of a door, which stays put when it changes owner.",
+      "countryNames": [
+        "Federated States of Micronesia"
+      ]
+    },
+    {
+      "id": "person.aland-sailor",
+      "name": "Åland windjammer sailor",
+      "era": "historical",
+      "importance": 4,
+      "countries": [
+        "ALD"
+      ],
+      "note": "The last great sailing ships in the world worked from here.",
+      "countryNames": [
+        "Åland"
+      ]
+    },
+    {
+      "id": "person.alpine-cowherd",
+      "name": "Alpine cowherd",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "AUT",
+        "LIE"
+      ],
+      "note": "In autumn the cows come down wearing flowers and enormous bells.",
+      "countryNames": [
+        "Austria",
+        "Liechtenstein"
+      ]
+    },
+    {
+      "id": "person.ashik",
+      "name": "Ashik",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "AZE"
+      ],
+      "note": "A travelling singer who carries the news and the old stories.",
+      "countryNames": [
+        "Azerbaijan"
+      ]
+    },
+    {
+      "id": "person.baganda",
+      "name": "Baganda",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "UGA"
+      ],
+      "note": "People of the kingdom of Buganda, on the shore of the great lake.",
+      "countryNames": [
+        "Uganda"
+      ]
+    },
+    {
+      "id": "person.bamileke",
+      "name": "Bamileke",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "CMR"
+      ],
+      "note": "People of the grassfields, known for beaded masks and elephant dancers.",
+      "countryNames": [
+        "Cameroon"
+      ]
+    },
+    {
+      "id": "person.batammariba",
+      "name": "Batammariba",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "TGO"
+      ],
+      "note": "Builders of clay tower-houses that look like little castles.",
+      "countryNames": [
+        "Togo"
+      ]
+    },
+    {
+      "id": "person.bijago",
+      "name": "Bijagó",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "GNB"
+      ],
+      "note": "Islanders of eighty islands, with dances that become animals.",
+      "countryNames": [
+        "Guinea-Bissau"
+      ]
+    },
+    {
+      "id": "person.bohemian-glassblower",
+      "name": "Bohemian glassblower",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "CZE"
+      ],
+      "note": "Glass gathered on a pipe, and blown while it is still glowing.",
+      "countryNames": [
+        "Czech Republic"
+      ]
+    },
+    {
+      "id": "person.bounty-descendant",
+      "name": "Bounty descendant",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "NFK",
+        "PCN"
+      ],
+      "note": "Families descended from the mutineers, with a language of their own.",
+      "countryNames": [
+        "Norfolk Island",
+        "Pitcairn Islands"
+      ]
+    },
+    {
+      "id": "person.bubi",
+      "name": "Bubi",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "GNQ"
+      ],
+      "note": "The first people of the island of Bioko.",
+      "countryNames": [
+        "Equatorial Guinea"
+      ]
+    },
+    {
+      "id": "person.carolinian-sailor",
+      "name": "Carolinian canoe sailor",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "MNP"
+      ],
+      "note": "Open ocean crossed by the stars, with no instrument at all.",
+      "countryNames": [
+        "Northern Mariana Islands"
+      ]
+    },
+    {
+      "id": "person.chagossian",
+      "name": "Chagossian",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "IOT"
+      ],
+      "note": "Islanders of the Chagos, who fished these lagoons for generations.",
+      "countryNames": [
+        "British Indian Ocean Territory"
+      ]
+    },
+    {
+      "id": "person.dhow-builder",
+      "name": "Dhow builder",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "KWT"
+      ],
+      "note": "Ships sewn and pegged together, built by eye without a plan.",
+      "countryNames": [
+        "Kuwait"
+      ]
+    },
+    {
+      "id": "person.fang",
+      "name": "Fang",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "GAB"
+      ],
+      "note": "Carvers of guardian figures that watch over the ancestors.",
+      "countryNames": [
+        "Gabon"
+      ]
+    },
+    {
+      "id": "person.faroese-chain-dancer",
+      "name": "Faroese chain dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "FRO"
+      ],
+      "note": "Everyone holds hands in a ring and sings the story as they step.",
+      "countryNames": [
+        "Faroe Islands"
+      ]
+    },
+    {
+      "id": "person.fujara-player",
+      "name": "Fujara player",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "SVK"
+      ],
+      "note": "A shepherd's flute taller than the shepherd.",
+      "countryNames": [
+        "Slovakia"
+      ]
+    },
+    {
+      "id": "person.grand-mariage",
+      "name": "Grand Mariage dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "COM"
+      ],
+      "note": "A wedding that lasts days and makes a man an elder.",
+      "countryNames": [
+        "Comoros"
+      ]
+    },
+    {
+      "id": "person.gueguense",
+      "name": "Güegüense dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "NIC"
+      ],
+      "note": "A four-hundred-year-old play where the trickster wins by talking.",
+      "countryNames": [
+        "Nicaragua"
+      ]
+    },
+    {
+      "id": "person.iso-polyphony",
+      "name": "Iso-polyphony singer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ALB"
+      ],
+      "note": "Four voices, one of them holding a single note underneath.",
+      "countryNames": [
+        "Albania"
+      ]
+    },
+    {
+      "id": "person.water-village",
+      "name": "Kampong Ayer boatman",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "BRN"
+      ],
+      "note": "A whole town on stilts above the river, older than the cars.",
+      "countryNames": [
+        "Brunei"
+      ]
+    },
+    {
+      "id": "person.khachkar-carver",
+      "name": "Khachkar carver",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ARM"
+      ],
+      "note": "Cross-stones cut in lace, no two of them the same.",
+      "countryNames": [
+        "Armenia"
+      ]
+    },
+    {
+      "id": "person.kihnu",
+      "name": "Kihnu islander",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "EST"
+      ],
+      "note": "On this island the women kept the old songs, and the motorbikes.",
+      "countryNames": [
+        "Estonia"
+      ]
+    },
+    {
+      "id": "person.kiribati-dancer",
+      "name": "Kiribati dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "KIR"
+      ],
+      "note": "Arms held out and still, like a frigatebird riding the wind.",
+      "countryNames": [
+        "Kiribati"
+      ]
+    },
+    {
+      "id": "person.klapa-singer",
+      "name": "Klapa singer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "HRV"
+      ],
+      "note": "Men in a stone alley, singing with no instruments at all.",
+      "countryNames": [
+        "Croatia"
+      ]
+    },
+    {
+      "id": "person.klezmer",
+      "name": "Klezmer musician",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ISR"
+      ],
+      "note": "A clarinet that laughs and cries in the same tune.",
+      "countryNames": [
+        "Israel"
+      ]
+    },
+    {
+      "id": "person.kongo",
+      "name": "Kongo",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "COG"
+      ],
+      "note": "People of an old kingdom on both banks of the great river.",
+      "countryNames": [
+        "Republic of the Congo"
+      ]
+    },
+    {
+      "id": "person.kurent",
+      "name": "Kurent",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "SVN"
+      ],
+      "note": "A shaggy sheepskin monster with a long red tongue, ringing bells at winter.",
+      "countryNames": [
+        "Slovenia"
+      ]
+    },
+    {
+      "id": "person.lakalaka-dancer",
+      "name": "Lakalaka dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "TON"
+      ],
+      "note": "A whole village in a line, dancing a poem with their hands.",
+      "countryNames": [
+        "Tonga"
+      ]
+    },
+    {
+      "id": "person.lefkara-lace",
+      "name": "Lefkara lace maker",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "CYP"
+      ],
+      "note": "A needle, white thread, and a pattern learned from a grandmother.",
+      "countryNames": [
+        "Cyprus"
+      ]
+    },
+    {
+      "id": "person.lenca-potter",
+      "name": "Lenca potter",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "HND"
+      ],
+      "note": "Black-and-white pots, coiled by hand and fired in a garden.",
+      "countryNames": [
+        "Honduras"
+      ]
+    },
+    {
+      "id": "person.luzzu-fisherman",
+      "name": "Luzzu fisherman",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "MLT"
+      ],
+      "note": "Boats painted with an eye on the bow, to watch the sea for you.",
+      "countryNames": [
+        "Malta"
+      ]
+    },
+    {
       "id": "person.mahout",
       "name": "Mahout",
       "era": "living",
@@ -13354,6 +15097,422 @@
       ]
     },
     {
+      "id": "person.makushi",
+      "name": "Makushi",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "GUY"
+      ],
+      "note": "People of the savanna between the forest and the mountains.",
+      "countryNames": [
+        "Guyana"
+      ]
+    },
+    {
+      "id": "person.manaschi",
+      "name": "Manaschi",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "KGZ"
+      ],
+      "note": "Tellers of the Manas: a poem longer than any book, held in the head.",
+      "countryNames": [
+        "Kyrgyzstan"
+      ]
+    },
+    {
+      "id": "person.maramures-carver",
+      "name": "Maramureș woodcarver",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ROU"
+      ],
+      "note": "Gates and churches carved from oak, with spires like needles.",
+      "countryNames": [
+        "Romania"
+      ]
+    },
+    {
+      "id": "person.matai",
+      "name": "Matai",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ASM"
+      ],
+      "note": "A village chief and speaker, chosen by the family to talk for it.",
+      "countryNames": [
+        "American Samoa"
+      ]
+    },
+    {
+      "id": "person.morna-singer",
+      "name": "Morna singer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "CPV"
+      ],
+      "note": "Songs of the sea and of missing home, sung with a guitar.",
+      "countryNames": [
+        "Cape Verde"
+      ]
+    },
+    {
+      "id": "person.mossi",
+      "name": "Mossi",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "BFA"
+      ],
+      "note": "Horse riders who built kingdoms on the bend of the Volta.",
+      "countryNames": [
+        "Burkina Faso"
+      ]
+    },
+    {
+      "id": "person.moutya-dancer",
+      "name": "Moutya dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "SYC"
+      ],
+      "note": "A drum warmed over a beach fire, and dancing until it cools.",
+      "countryNames": [
+        "Seychelles"
+      ]
+    },
+    {
+      "id": "person.nahua-pipil",
+      "name": "Nahua-Pipil",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "SLV"
+      ],
+      "note": "The old people of these volcanoes, and their Nawat language.",
+      "countryNames": [
+        "El Salvador"
+      ]
+    },
+    {
+      "id": "person.nanduti-lacemaker",
+      "name": "Ñandutí lace maker",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "PRY"
+      ],
+      "note": "Lace made in circles — the name means 'spider web'.",
+      "countryNames": [
+        "Paraguay"
+      ]
+    },
+    {
+      "id": "person.ovimbundu",
+      "name": "Ovimbundu",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "AGO"
+      ],
+      "note": "The largest of Angola's peoples, farmers and traders of the high plateau.",
+      "countryNames": [
+        "Angola"
+      ]
+    },
+    {
+      "id": "person.palauan-carver",
+      "name": "Palauan storyboard carver",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "PLW"
+      ],
+      "note": "A whole legend carved along one plank of wood.",
+      "countryNames": [
+        "Palau"
+      ]
+    },
+    {
+      "id": "person.pamiri",
+      "name": "Pamiri",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "TJK"
+      ],
+      "note": "People of the roof of the world, on the highest road there is.",
+      "countryNames": [
+        "Tajikistan"
+      ]
+    },
+    {
+      "id": "person.rashaida",
+      "name": "Rashaida",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "ERI"
+      ],
+      "note": "Camel herders of the Red Sea coast, in silver and red veils.",
+      "countryNames": [
+        "Eritrea"
+      ]
+    },
+    {
+      "id": "person.senufo",
+      "name": "Senufo",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "CIV"
+      ],
+      "note": "Carvers and mask dancers of the northern savanna.",
+      "countryNames": [
+        "Ivory Coast"
+      ]
+    },
+    {
+      "id": "person.shell-money-maker",
+      "name": "Shell money maker",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "SLB"
+      ],
+      "note": "Shells ground into beads and strung — still used to buy things.",
+      "countryNames": [
+        "Solomon Islands"
+      ]
+    },
+    {
+      "id": "person.socotri",
+      "name": "Socotri",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "YEM"
+      ],
+      "note": "Islanders who live among trees that grow nowhere else on Earth.",
+      "countryNames": [
+        "Yemen"
+      ]
+    },
+    {
+      "id": "person.sorbs",
+      "name": "Sorbs",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "DEU"
+      ],
+      "note": "A Slavic people in eastern Germany, with painted eggs and their own language.",
+      "countryNames": [
+        "Germany"
+      ]
+    },
+    {
+      "id": "person.south-georgia-whaler",
+      "name": "South Georgia whaler",
+      "era": "historical",
+      "importance": 4,
+      "countries": [
+        "SGS"
+      ],
+      "note": "A rusting station in a bay full of penguins and elephant seals.",
+      "countryNames": [
+        "South Georgia and the South Sandwich Islands"
+      ]
+    },
+    {
+      "id": "person.tais-weaver",
+      "name": "Tais weaver",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "TLS"
+      ],
+      "note": "Cloth woven for welcomes, weddings and goodbyes.",
+      "countryNames": [
+        "East Timor"
+      ]
+    },
+    {
+      "id": "person.tchiloli",
+      "name": "Tchiloli player",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "STP"
+      ],
+      "note": "A street play five hundred years old, performed in masks.",
+      "countryNames": [
+        "São Tomé and Príncipe"
+      ]
+    },
+    {
+      "id": "person.toubou",
+      "name": "Toubou",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "TCD"
+      ],
+      "note": "People of the Tibesti mountains, in the middle of the desert.",
+      "countryNames": [
+        "Chad"
+      ]
+    },
+    {
+      "id": "person.ura-dancer",
+      "name": "Ura dancer",
+      "era": "living",
+      "importance": 4,
+      "countries": [
+        "COK"
+      ],
+      "note": "Hips that keep the drum's time exactly, and nothing else moving.",
+      "countryNames": [
+        "Cook Islands"
+      ]
+    },
+    {
+      "id": "person.anguilla-boat-racer",
+      "name": "Anguillian boat racer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "AIA"
+      ],
+      "note": "The national sport is sailing wooden boats built on the beach.",
+      "countryNames": [
+        "Anguilla"
+      ]
+    },
+    {
+      "id": "person.spm-fisherman",
+      "name": "Basque and Breton fisherman",
+      "era": "historical",
+      "importance": 5,
+      "countries": [
+        "SPM"
+      ],
+      "note": "A piece of France off Canada, settled by cod fishermen.",
+      "countryNames": [
+        "Saint Pierre and Miquelon"
+      ]
+    },
+    {
+      "id": "person.catboat-builder",
+      "name": "Catboat builder",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "CYM"
+      ],
+      "note": "A small boat built for turtling, shaped entirely by eye.",
+      "countryNames": [
+        "Cayman Islands"
+      ]
+    },
+    {
+      "id": "person.cross-crafter",
+      "name": "Cross crafter",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "LTU"
+      ],
+      "note": "Carved wooden crosses, and a hill with a hundred thousand of them.",
+      "countryNames": [
+        "Lithuania"
+      ]
+    },
+    {
+      "id": "person.san-marino-crossbowman",
+      "name": "Crossbowman of San Marino",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "SMR"
+      ],
+      "note": "A shooting contest under the towers, in medieval dress, every year.",
+      "countryNames": [
+        "San Marino"
+      ]
+    },
+    {
+      "id": "person.echternach-dancer",
+      "name": "Echternach dancing procession",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "LUX"
+      ],
+      "note": "A procession that hops its way through the town every spring.",
+      "countryNames": [
+        "Luxembourg"
+      ]
+    },
+    {
+      "id": "person.falklands-shepherd",
+      "name": "Falklands shepherd",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "FLK"
+      ],
+      "note": "More sheep than people, and a long ride between the farms.",
+      "countryNames": [
+        "Falkland Islands"
+      ]
+    },
+    {
+      "id": "person.fatele-dancer",
+      "name": "Fatele dancer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "TUV"
+      ],
+      "note": "Everyone sings, and the box they drum on is an empty crate.",
+      "countryNames": [
+        "Tuvalu"
+      ]
+    },
+    {
+      "id": "person.frigatebird-keeper",
+      "name": "Frigatebird keeper",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "NRU"
+      ],
+      "note": "Wild seabirds tamed to fly out and come home again.",
+      "countryNames": [
+        "Nauru"
+      ]
+    },
+    {
+      "id": "person.galicnik-wedding",
+      "name": "Galičnik wedding",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "MKD"
+      ],
+      "note": "Once a year, one wedding for the whole empty mountain village.",
+      "countryNames": [
+        "North Macedonia"
+      ]
+    },
+    {
       "id": "person.gondolier",
       "name": "Gondolier",
       "era": "living",
@@ -13364,6 +15523,487 @@
       "note": "Rowers who steer Venice's boats standing up.",
       "countryNames": [
         "Italy"
+      ]
+    },
+    {
+      "id": "person.grimaldi-knight",
+      "name": "Grimaldi knight",
+      "era": "historical",
+      "importance": 5,
+      "countries": [
+        "MCO"
+      ],
+      "note": "In 1297 a man disguised as a monk took the rock — and never gave it back.",
+      "countryNames": [
+        "Monaco"
+      ]
+    },
+    {
+      "id": "person.gusle-player",
+      "name": "Gusle player",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "SRB"
+      ],
+      "note": "One string, a horsehair bow, and a poem that lasts all evening.",
+      "countryNames": [
+        "Serbia"
+      ]
+    },
+    {
+      "id": "person.hiapo-maker",
+      "name": "Hiapo maker",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "NIU"
+      ],
+      "note": "Cloth beaten from bark and painted with fine spidery lines.",
+      "countryNames": [
+        "Niue"
+      ]
+    },
+    {
+      "id": "person.kalyady",
+      "name": "Kalyady mummer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "BLR"
+      ],
+      "note": "A goat, a star and a song, going house to house in midwinter.",
+      "countryNames": [
+        "Belarus"
+      ]
+    },
+    {
+      "id": "person.karagoz",
+      "name": "Karagöz puppeteer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "CYN"
+      ],
+      "note": "Shadow puppets of camel leather, played behind a lit sheet.",
+      "countryNames": [
+        "Turkish Republic of Northern Cyprus"
+      ]
+    },
+    {
+      "id": "person.kerguelen-sealer",
+      "name": "Kerguelen sealer",
+      "era": "historical",
+      "importance": 5,
+      "countries": [
+        "ATF"
+      ],
+      "note": "Men left for a year on the islands of desolation.",
+      "countryNames": [
+        "French Southern and Antarctic Lands"
+      ]
+    },
+    {
+      "id": "person.kittitian-masquerade",
+      "name": "Kittitian masquerade dancer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "KNA"
+      ],
+      "note": "Peacock feathers and ribbons, dancing between Christmas and New Year.",
+      "countryNames": [
+        "Saint Kitts and Nevis"
+      ]
+    },
+    {
+      "id": "person.korean-drum-dancer",
+      "name": "Korean drum dancer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "PRK"
+      ],
+      "note": "A small drum at the waist, played while spinning.",
+      "countryNames": [
+        "North Korea"
+      ]
+    },
+    {
+      "id": "person.kpelle",
+      "name": "Kpelle",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "LBR"
+      ],
+      "note": "Farmers of the forest, with masks that teach as they dance.",
+      "countryNames": [
+        "Liberia"
+      ]
+    },
+    {
+      "id": "person.la-rose",
+      "name": "La Rose society",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "LCA"
+      ],
+      "note": "Half the island is Rose, the other half Marguerite, and each has its feast.",
+      "countryNames": [
+        "Saint Lucia"
+      ]
+    },
+    {
+      "id": "person.landship",
+      "name": "Landship performer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "BRB"
+      ],
+      "note": "A whole navy on dry land, marching and dancing as a ship.",
+      "countryNames": [
+        "Barbados"
+      ]
+    },
+    {
+      "id": "person.lautar",
+      "name": "Lăutar",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "MDA"
+      ],
+      "note": "Wedding fiddlers who can play for two days without a sheet of music.",
+      "countryNames": [
+        "Moldova"
+      ]
+    },
+    {
+      "id": "person.macanese",
+      "name": "Macanese",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "MAC"
+      ],
+      "note": "Four hundred years of Portugal and China in one kitchen.",
+      "countryNames": [
+        "Macau"
+      ]
+    },
+    {
+      "id": "person.mende",
+      "name": "Mende",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "SLE"
+      ],
+      "note": "The only place in Africa where women wear the great masks.",
+      "countryNames": [
+        "Sierra Leone"
+      ]
+    },
+    {
+      "id": "person.njegusi-highlander",
+      "name": "Njeguši highlander",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "MNE"
+      ],
+      "note": "A village on the black mountain that gave the country its name.",
+      "countryNames": [
+        "Montenegro"
+      ]
+    },
+    {
+      "id": "person.pyrenean-shepherd",
+      "name": "Pyrenean shepherd",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "AND"
+      ],
+      "note": "Up the mountain in summer, down again before the snow.",
+      "countryNames": [
+        "Andorra"
+      ]
+    },
+    {
+      "id": "person.rugova-highlander",
+      "name": "Rugova highlander",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "KOS"
+      ],
+      "note": "Stone villages up a gorge, and a dance with swords.",
+      "countryNames": [
+        "Kosovo"
+      ]
+    },
+    {
+      "id": "person.dockyard-sailor",
+      "name": "Sailor of Nelson's Dockyard",
+      "era": "historical",
+      "importance": 5,
+      "countries": [
+        "ATG"
+      ],
+      "note": "A harbour hidden in a bay, where whole fleets were repaired.",
+      "countryNames": [
+        "Antigua and Barbuda"
+      ]
+    },
+    {
+      "id": "person.saint-helena-flax-worker",
+      "name": "Saint Helena flax worker",
+      "era": "historical",
+      "importance": 5,
+      "countries": [
+        "SHN"
+      ],
+      "note": "Rope made from flax on the loneliest island in the Atlantic.",
+      "countryNames": [
+        "Saint Helena"
+      ]
+    },
+    {
+      "id": "person.sevdah-singer",
+      "name": "Sevdah singer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "BIH"
+      ],
+      "note": "Slow songs of longing, sung in a room too small for them.",
+      "countryNames": [
+        "Bosnia and Herzegovina"
+      ]
+    },
+    {
+      "id": "person.shortknee",
+      "name": "Shortknee masquerader",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "GRD"
+      ],
+      "note": "Wire masks and powder thrown at carnival, in trousers cut short.",
+      "countryNames": [
+        "Grenada"
+      ]
+    },
+    {
+      "id": "person.suiti",
+      "name": "Suiti",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "LVA"
+      ],
+      "note": "A small community whose women improvise songs on the spot.",
+      "countryNames": [
+        "Latvia"
+      ]
+    },
+    {
+      "id": "person.tambu-drummer",
+      "name": "Tambú drummer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "CUW"
+      ],
+      "note": "A drum, a hoe blade for a bell, and songs that say what cannot be said.",
+      "countryNames": [
+        "Curaçao"
+      ]
+    },
+    {
+      "id": "person.wallisian-dancer",
+      "name": "Wallisian dancer",
+      "era": "living",
+      "importance": 5,
+      "countries": [
+        "WLF"
+      ],
+      "note": "Dances for the king, in mats and scented oil.",
+      "countryNames": [
+        "Wallis and Futuna"
+      ]
+    },
+    {
+      "id": "person.cocos-malay",
+      "name": "Cocos Malay",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "IOA"
+      ],
+      "note": "Islanders of a ring of coral, halfway to nowhere.",
+      "countryNames": [
+        "Australian Indian Ocean Territories"
+      ]
+    },
+    {
+      "id": "person.dande-singer",
+      "name": "Dande singer",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "ABW"
+      ],
+      "note": "At New Year a band goes house to house and sings your luck for you.",
+      "countryNames": [
+        "Aruba"
+      ]
+    },
+    {
+      "id": "person.guernsey-knitter",
+      "name": "Guernsey knitter",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "GGY"
+      ],
+      "note": "The fisherman's jumper is named after this island.",
+      "countryNames": [
+        "Guernsey"
+      ]
+    },
+    {
+      "id": "person.jersey-oysterman",
+      "name": "Jersey oysterman",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "JEY"
+      ],
+      "note": "The tide goes out so far here that the island nearly doubles.",
+      "countryNames": [
+        "Jersey"
+      ]
+    },
+    {
+      "id": "person.manx-singer",
+      "name": "Manx Gaelic singer",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "IMN"
+      ],
+      "note": "A language that nearly disappeared, and is being sung back.",
+      "countryNames": [
+        "Isle of Man"
+      ]
+    },
+    {
+      "id": "person.montserrat-masquerade",
+      "name": "Montserrat masquerader",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "MSR"
+      ],
+      "note": "Irish and African at once, on an island with shamrocks and a volcano.",
+      "countryNames": [
+        "Montserrat"
+      ]
+    },
+    {
+      "id": "person.ponum-dancer",
+      "name": "Ponum dancer",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "SXM"
+      ],
+      "note": "A dance that began as a celebration of emancipation.",
+      "countryNames": [
+        "Sint Maarten"
+      ]
+    },
+    {
+      "id": "person.quadrille-dancer",
+      "name": "Quadrille dancer",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "VIR"
+      ],
+      "note": "A European square dance, taken over and given a new rhythm.",
+      "countryNames": [
+        "United States Virgin Islands"
+      ]
+    },
+    {
+      "id": "person.ripsaw",
+      "name": "Ripsaw musician",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "TCA"
+      ],
+      "note": "The rhythm is a knife scraped along a carpenter's handsaw.",
+      "countryNames": [
+        "Turks and Caicos Islands"
+      ]
+    },
+    {
+      "id": "person.rote-fisherman",
+      "name": "Rote fisherman",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "ATC"
+      ],
+      "note": "Sailors from Rote have fished these reefs for three hundred years.",
+      "countryNames": [
+        "Ashmore and Cartier Islands"
+      ]
+    },
+    {
+      "id": "person.saint-barth-weaver",
+      "name": "Saint-Barth straw weaver",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "BLM"
+      ],
+      "note": "Hats and baskets plaited from latania palm, and Norman bonnets.",
+      "countryNames": [
+        "Saint Barthélemy"
+      ]
+    },
+    {
+      "id": "person.saint-martin-salt-raker",
+      "name": "Saint-Martin salt raker",
+      "era": "historical",
+      "importance": 6,
+      "countries": [
+        "MAF"
+      ],
+      "note": "Salt raked from the ponds by hand and carried out in baskets.",
+      "countryNames": [
+        "Saint Martin"
+      ]
+    },
+    {
+      "id": "person.tortola-sloop-sailor",
+      "name": "Tortola sloop sailor",
+      "era": "living",
+      "importance": 6,
+      "countries": [
+        "VGB"
+      ],
+      "note": "Wooden sloops built on the beach and raced between the islands.",
+      "countryNames": [
+        "British Virgin Islands"
       ]
     }
   ],

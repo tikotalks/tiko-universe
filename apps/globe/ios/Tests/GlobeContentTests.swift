@@ -80,6 +80,29 @@ final class GlobeContentTests: XCTestCase {
         }
     }
 
+    /// The point of the people pack: wherever a child lands, somebody lives
+    /// there. Only Heard Island and the Siachen Glacier are empty, and nobody
+    /// lives on either of those.
+    func testEveryCountryHasSomebodyLivingInIt() throws {
+        let library = try library
+        let people = library.entities.values.filter { $0.kind == .person }
+        XCTAssertGreaterThan(people.count, 200, "a people for nearly every country")
+
+        let bundle = Bundle(for: GlobeContentTests.self)
+        let geography = try XCTUnwrap(
+            (try? GlobeGeography.loadFromBundle(bundle)) ?? (try? GlobeGeography.loadFromBundle())
+        )
+        var peopled = Set<String>()
+        for occurrence in library.occurrences[.people] ?? [] {
+            if let country = occurrence.countryID { peopled.insert(country) }
+        }
+        let empty = geography.countries.map(\.id).filter { !peopled.contains($0) }
+        XCTAssertEqual(
+            Set(empty), ["HMD", "KAS"],
+            "only the places nobody lives should have nobody: \(empty.sorted())"
+        )
+    }
+
     func testZoomBandsOpenUpAsTheChildComesCloserAndNeverTheOtherWay() {
         let radii: [Double] = [90, 60, 40, 20, 15, 8, 5, 3, 1.5, 0.8]
         let deepest = radii.map(GlobeImportanceBands.deepest(forVisibleRadius:))

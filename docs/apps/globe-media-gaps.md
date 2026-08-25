@@ -11,7 +11,7 @@ place is real either way; only the artwork is missing.
 
 At the time of writing: **332 animals**,
 **1412 of 1432 landmarks** and
-**11 people** have no picture.
+**213 people** have no picture.
 
 ## Animals
 
@@ -1793,15 +1793,217 @@ standing in for the Sámi would teach a child something false.
 
 | Person | Era | Importance | Where |
 | --- | --- | --- | --- |
-| Ancient Greek | historical | 2 | Greece |
-| Mongol horseman | historical | 2 | Mongolia |
+| Agojie | historical | 2 | Benin |
+| Amazigh | living | 2 | Morocco, Tunisia |
+| Apsara dancer | living | 2 | Cambodia |
+| Asante | living | 2 | Ghana |
+| Balinese dancer | living | 2 | Indonesia |
+| Basotho horseman | living | 2 | Lesotho |
+| Bedouin | living | 2 | Jordan, Saudi Arabia |
+| Csikós | living | 2 | Hungary |
+| Dogon | living | 2 | Mali |
+| Eagle hunter | living | 2 | Kazakhstan |
+| Fado singer | living | 2 | Portugal |
+| Guna | living | 2 | Panama |
+| Haenyeo | living | 2 | South Korea |
+| Highland piper | living | 2 | United Kingdom |
+| Himba | living | 2 | Namibia |
+| Huli wigman | living | 2 | Papua New Guinea |
+| ʻŌteʻa dancer | living | 2 | French Polynesia |
+| Ifugao | living | 2 | Philippines |
+| Inle leg-rower | living | 2 | Myanmar |
+| Irish dancer | living | 2 | Ireland |
+| Kalash | living | 2 | Pakistan |
+| Kayapó | living | 2 | Brazil |
+| Mapuche | living | 2 | Chile |
+| Maroon | living | 2 | Jamaica |
+| Naghol land diver | living | 2 | Vanuatu |
+| Phoenician sailor | historical | 2 | Lebanon |
+| Polar explorer | historical | 2 | Antarctica |
 | Quechua | living | 2 | Peru |
-| Roman legionary | historical | 2 | Italy |
+| San | living | 2 | Botswana |
+| Sherpa | living | 2 | Nepal |
+| Silk Road merchant | historical | 2 | Uzbekistan |
+| Steelpan player | living | 2 | Trinidad and Tobago |
+| Water puppeteer | living | 2 | Vietnam |
+| Whirling dervish | living | 2 | Turkey |
+| Wodaabe | living | 2 | Niger |
+| Yoruba | living | 2 | Nigeria |
+| Zaporozhian Cossack | historical | 2 | Ukraine |
+| Afar | living | 3 | Djibouti |
+| Aka | living | 3 | Central African Republic |
+| Akhal-Teke rider | living | 3 | Turkmenistan |
+| Alphorn player | living | 3 | Switzerland |
+| Amis | living | 3 | Taiwan |
 | Aymara | living | 3 | Bolivia |
-| Bedouin | living | 3 | Saudi Arabia |
+| Baul singer | living | 3 | Bangladesh |
+| Beqa firewalker | living | 3 | Fiji |
+| Bodu beru drummer | living | 3 | Maldives |
+| Boyero | living | 3 | Costa Rica |
+| Breton | living | 3 | France |
+| Buzkashi rider | living | 3 | Afghanistan |
+| Candombe drummer | living | 3 | Uruguay |
+| Cham dancer | living | 3 | Bhutan |
+| CHamoru | living | 3 | Guam |
+| Dinka | living | 3 | South Sudan |
+| Falconer | living | 3 | United Arab Emirates, Qatar |
 | Flamenco dancer | living | 3 | Spain |
+| Frankincense harvester | living | 3 | Oman |
+| Frisians | living | 3 | Netherlands |
+| Fula | living | 3 | Guinea |
+| Garifuna | living | 3 | Belize, Saint Vincent and the Grenadines |
 | Gaucho | living | 3 | Argentina |
+| Gille of Binche | living | 3 | Belgium |
+| Gombey dancer | living | 3 | Bermuda |
+| Górale | living | 3 | Poland |
+| Griot | living | 3 | The Gambia |
+| Gule Wamkulu dancer | living | 3 | Malawi |
+| Hamar | living | 3 | Ethiopia |
+| Hmong | living | 3 | Laos |
+| Iban | living | 3 | Malaysia |
+| Imraguen | living | 3 | Mauritania |
+| Intore dancer | living | 3 | Rwanda |
+| Junkanoo dancer | living | 3 | The Bahamas |
+| Kabyle | living | 3 | Algeria |
+| Kalinago | living | 3 | Dominica |
+| Kanak | living | 3 | New Caledonia |
+| Kandyan dancer | living | 3 | Sri Lanka |
+| Khevsur | historical | 3 | Georgia |
+| Khon dancer | living | 3 | Thailand |
+| Kukeri | living | 3 | Bulgaria |
+| Lion dancer | living | 3 | Hong Kong |
+| Llanero | living | 3 | Venezuela |
+| Lozi of the Kuomboka | living | 3 | Zambia |
+| Makonde carver | living | 3 | Mozambique |
+| Maroon of the Suriname River | living | 3 | Suriname |
+| Marsh Arab | living | 3 | Iraq |
+| Mbuti | living | 3 | Democratic Republic of the Congo |
+| Merengue dancer | living | 3 | Dominican Republic |
+| Nubian | living | 3 | Sudan |
+| Otavalo weaver | living | 3 | Ecuador |
+| Palmyrene trader | historical | 3 | Syria |
+| Pearl diver | historical | 3 | Bahrain |
+| Peranakan | living | 3 | Singapore |
+| Persian carpet weaver | living | 3 | Iran |
+| Royal drummer of Burundi | living | 3 | Burundi |
+| Sahrawi | living | 3 | Western Sahara |
+| Séga dancer | living | 3 | Mauritius |
+| Shona stone carver | living | 3 | Zimbabwe |
+| Soldier of the Haitian Revolution | historical | 3 | Haiti |
+| Somali camel herder | living | 3 | Somaliland, Somalia |
+| Son musician | living | 3 | Cuba |
+| Stick chart navigator | living | 3 | Marshall Islands |
+| Swazi reed dancer | living | 3 | Eswatini |
+| Swiss Guard | living | 3 | Vatican City |
+| Tatreez embroiderer | living | 3 | Palestine |
 | Terracotta warrior | historical | 3 | People's Republic of China |
+| Tuareg | living | 3 | Libya |
+| Tufuga tā tatau | living | 3 | Samoa |
+| Vejigante | living | 3 | Puerto Rico |
+| Vezo | living | 3 | Madagascar |
+| Wayuu | living | 3 | Colombia |
+| Wolof | living | 3 | Senegal |
+| Yapese stone money carrier | living | 3 | Federated States of Micronesia |
+| Åland windjammer sailor | historical | 4 | Åland |
+| Alpine cowherd | living | 4 | Austria, Liechtenstein |
+| Ashik | living | 4 | Azerbaijan |
+| Baganda | living | 4 | Uganda |
+| Bamileke | living | 4 | Cameroon |
+| Batammariba | living | 4 | Togo |
+| Bijagó | living | 4 | Guinea-Bissau |
+| Bohemian glassblower | living | 4 | Czech Republic |
+| Bounty descendant | living | 4 | Norfolk Island, Pitcairn Islands |
+| Bubi | living | 4 | Equatorial Guinea |
+| Carolinian canoe sailor | living | 4 | Northern Mariana Islands |
+| Chagossian | living | 4 | British Indian Ocean Territory |
+| Dhow builder | living | 4 | Kuwait |
+| Fang | living | 4 | Gabon |
+| Faroese chain dancer | living | 4 | Faroe Islands |
+| Fujara player | living | 4 | Slovakia |
+| Grand Mariage dancer | living | 4 | Comoros |
+| Güegüense dancer | living | 4 | Nicaragua |
+| Iso-polyphony singer | living | 4 | Albania |
+| Kampong Ayer boatman | living | 4 | Brunei |
+| Khachkar carver | living | 4 | Armenia |
+| Kihnu islander | living | 4 | Estonia |
+| Kiribati dancer | living | 4 | Kiribati |
+| Klapa singer | living | 4 | Croatia |
+| Klezmer musician | living | 4 | Israel |
+| Kongo | living | 4 | Republic of the Congo |
+| Kurent | living | 4 | Slovenia |
+| Lakalaka dancer | living | 4 | Tonga |
+| Lefkara lace maker | living | 4 | Cyprus |
+| Lenca potter | living | 4 | Honduras |
+| Luzzu fisherman | living | 4 | Malta |
 | Mahout | living | 4 | India |
+| Makushi | living | 4 | Guyana |
+| Manaschi | living | 4 | Kyrgyzstan |
+| Maramureș woodcarver | living | 4 | Romania |
+| Matai | living | 4 | American Samoa |
+| Morna singer | living | 4 | Cape Verde |
+| Mossi | living | 4 | Burkina Faso |
+| Moutya dancer | living | 4 | Seychelles |
+| Nahua-Pipil | living | 4 | El Salvador |
+| Ñandutí lace maker | living | 4 | Paraguay |
+| Ovimbundu | living | 4 | Angola |
+| Palauan storyboard carver | living | 4 | Palau |
+| Pamiri | living | 4 | Tajikistan |
+| Rashaida | living | 4 | Eritrea |
+| Senufo | living | 4 | Ivory Coast |
+| Shell money maker | living | 4 | Solomon Islands |
+| Socotri | living | 4 | Yemen |
+| Sorbs | living | 4 | Germany |
+| South Georgia whaler | historical | 4 | South Georgia and the South Sandwich Islands |
+| Tais weaver | living | 4 | East Timor |
+| Tchiloli player | living | 4 | São Tomé and Príncipe |
+| Toubou | living | 4 | Chad |
+| Ura dancer | living | 4 | Cook Islands |
+| Anguillian boat racer | living | 5 | Anguilla |
+| Basque and Breton fisherman | historical | 5 | Saint Pierre and Miquelon |
+| Catboat builder | living | 5 | Cayman Islands |
+| Cross crafter | living | 5 | Lithuania |
+| Crossbowman of San Marino | living | 5 | San Marino |
+| Echternach dancing procession | living | 5 | Luxembourg |
+| Falklands shepherd | living | 5 | Falkland Islands |
+| Fatele dancer | living | 5 | Tuvalu |
+| Frigatebird keeper | living | 5 | Nauru |
+| Galičnik wedding | living | 5 | North Macedonia |
 | Gondolier | living | 5 | Italy |
+| Grimaldi knight | historical | 5 | Monaco |
+| Gusle player | living | 5 | Serbia |
+| Hiapo maker | living | 5 | Niue |
+| Kalyady mummer | living | 5 | Belarus |
+| Karagöz puppeteer | living | 5 | Turkish Republic of Northern Cyprus |
+| Kerguelen sealer | historical | 5 | French Southern and Antarctic Lands |
+| Kittitian masquerade dancer | living | 5 | Saint Kitts and Nevis |
+| Korean drum dancer | living | 5 | North Korea |
+| Kpelle | living | 5 | Liberia |
+| La Rose society | living | 5 | Saint Lucia |
+| Landship performer | living | 5 | Barbados |
+| Lăutar | living | 5 | Moldova |
+| Macanese | living | 5 | Macau |
+| Mende | living | 5 | Sierra Leone |
+| Njeguši highlander | living | 5 | Montenegro |
+| Pyrenean shepherd | living | 5 | Andorra |
+| Rugova highlander | living | 5 | Kosovo |
+| Sailor of Nelson's Dockyard | historical | 5 | Antigua and Barbuda |
+| Saint Helena flax worker | historical | 5 | Saint Helena |
+| Sevdah singer | living | 5 | Bosnia and Herzegovina |
+| Shortknee masquerader | living | 5 | Grenada |
+| Suiti | living | 5 | Latvia |
+| Tambú drummer | living | 5 | Curaçao |
+| Wallisian dancer | living | 5 | Wallis and Futuna |
+| Cocos Malay | living | 6 | Australian Indian Ocean Territories |
+| Dande singer | living | 6 | Aruba |
+| Guernsey knitter | living | 6 | Guernsey |
+| Jersey oysterman | living | 6 | Jersey |
+| Manx Gaelic singer | living | 6 | Isle of Man |
+| Montserrat masquerader | living | 6 | Montserrat |
+| Ponum dancer | living | 6 | Sint Maarten |
+| Quadrille dancer | living | 6 | United States Virgin Islands |
+| Ripsaw musician | living | 6 | Turks and Caicos Islands |
+| Rote fisherman | living | 6 | Ashmore and Cartier Islands |
+| Saint-Barth straw weaver | living | 6 | Saint Barthélemy |
+| Saint-Martin salt raker | historical | 6 | Saint Martin |
+| Tortola sloop sailor | living | 6 | British Virgin Islands |
 
