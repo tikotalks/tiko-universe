@@ -72,12 +72,20 @@ class MemoryD1 {
       const id = String(values.at(-1))
       const row = this.media.find(item => item.id === id)
       if (!row) return new MemoryResult()
-      const fields = ['title', 'description', 'name', 'tags', 'categories', 'is_active', 'is_hidden', 'updated_at']
+      // Listed in the order the worker binds them, so both the metadata update and the
+      // file replacement read their values off the same cursor.
+      const fields = [
+        'filename', 'file_size', 'mime_type', 'width', 'height',
+        'title', 'description', 'name', 'tags', 'categories', 'is_active', 'is_hidden',
+        'original_url', 'thumbnail_url', 'medium_url', 'updated_at',
+      ]
       let valueIndex = 0
       for (const field of fields) {
-        if (!normalized.includes(`${field} = ?`)) continue
+        // `name = ?` is a substring of `filename = ?`; anchor the match so they stay distinct.
+        if (!new RegExp(`(?:^|[ ,(])${field} = \\?`).test(normalized)) continue
         row[field] = values[valueIndex]
         if (field === 'categories') row.folder = values[valueIndex]
+        if (field === 'filename') row.file_name = values[valueIndex]
         valueIndex += 1
       }
       return new MemoryResult()
@@ -327,6 +335,18 @@ function mediaRow(overrides: Row = {}): Row {
     updated_at: '2026-05-01T00:00:00.000Z',
     ...overrides,
   }
+}
+
+// A PNG header just long enough for the worker's IHDR dimension reader.
+function pngBytes(width: number, height: number): ArrayBuffer {
+  const buffer = new ArrayBuffer(24)
+  const data = new Uint8Array(buffer)
+  data.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a], 0)
+  data.set([0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52], 8)
+  const view = new DataView(buffer)
+  view.setUint32(16, width)
+  view.setUint32(20, height)
+  return buffer
 }
 
 function authFetch(userId = 'usr_1') {
@@ -660,6 +680,68 @@ describe('media-api worker', () => {
 
     expect(response.status).toBe(401)
     expect(body.error.code).toBe('unauthorized')
+  })
+
+  it('requires auth to replace a media file', async () => {
+    const form = new FormData()
+    form.set('file', new File([pngBytes(8, 8)], 'edited.png', { type: 'image/png' }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/media_1/file', { method: 'POST', body: form }), makeEnv() as never)
+
+    expect(response.status).toBe(401)
+    expect((await parseJson(response)).error.code).toBe('unauthorized')
+  })
+
+  it('replaces a media file in place, keeping the id and the catalog metadata', async () => {
+    const env = makeEnv()
+    const form = new FormData()
+    form.set('file', new File([pngBytes(640, 480)], 'edited.png', { type: 'image/png' }))
+
+    const response = await worker.fetch(new Request('https://media.test/v1/media/media_1/file', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key' },
+      body: form,
+    }), env as never)
+    const body = await parseJson(response)
+
+    expect(response.status).toBe(200)
+    expect(body.data.id).toBe('media_1')
+    expect(body.data.title).toBe('Hello')
+    expect(body.data.tags).toEqual(['test', 'cards'])
+    expect(body.data.width).toBe(640)
+    expect(body.data.height).toBe(480)
+    expect(body.data.file_size).toBe(24)
+
+    // A fresh CDN path, so the edited picture is not shadowed by the cached old one.
+    const key = String(env.MEDIA_DB.media[0].filename)
+    expect(key).toMatch(/^uploads\/\d+-edited\.png$/)
+    expect(key).not.toBe('uploads/hello.png')
+    expect(body.data.original_url).toBe(`https://data.tikocdn.org/${key}`)
+    expect(env.MEDIA_BUCKET.objects.has(key)).toBe(true)
+    expect(env.MEDIA_BUCKET.deleted).toContain('uploads/hello.png')
+  })
+
+  it('rejects an unsupported replacement file and an unknown media id', async () => {
+    const env = makeEnv()
+
+    const badType = new FormData()
+    badType.set('file', new File(['nope'], 'notes.txt', { type: 'text/plain' }))
+    const unsupported = await worker.fetch(new Request('https://media.test/v1/media/media_1/file', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key' },
+      body: badType,
+    }), env as never)
+    expect(unsupported.status).toBe(415)
+    expect(env.MEDIA_BUCKET.deleted).toEqual([])
+
+    const missing = new FormData()
+    missing.set('file', new File([pngBytes(8, 8)], 'edited.png', { type: 'image/png' }))
+    const notFound = await worker.fetch(new Request('https://media.test/v1/media/media_nope/file', {
+      method: 'POST',
+      headers: { authorization: 'Bearer test-api-key' },
+      body: missing,
+    }), env as never)
+    expect(notFound.status).toBe(404)
   })
 
   it('allows the scoped automation key to update catalog metadata, but not delete media', async () => {

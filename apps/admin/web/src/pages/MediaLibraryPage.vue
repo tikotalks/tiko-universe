@@ -3,7 +3,6 @@ import { computed, onMounted, ref } from 'vue'
 import { useBemm } from 'bemm'
 import { Button, Icon, useConfirm } from '@sil/ui'
 import { EMPTY_MEDIA_FACETS, useAdminMediaLibrary } from '../composables/useAdminMediaLibrary'
-import { useAdminAuth } from '../composables/useAdminAuth'
 import { useImageGeneration } from '../composables/useImageGeneration'
 import { useToast } from '../composables/useToast'
 import type { AdminMediaItem, AudioLibraryAlbum, MediaFacets, MediaState } from '../composables/useAdminMediaLibrary'
@@ -12,6 +11,8 @@ import type { ImageGenerationResult } from '../types/admin'
 import ImageEditModal from '../components/images/ImageEditModal.vue'
 import MediaFilterBar from '../components/media/MediaFilterBar.vue'
 import MediaDetailsModal from '../components/media/MediaDetailsModal.vue'
+import MediaImageEditor from '../components/media/MediaImageEditor.vue'
+import { maskedFileName } from '../components/media/imageMaskEditor'
 import type { MediaDetails } from '../components/media/mediaTypes'
 
 const bemm = useBemm('media-library', { return: 'string', includeBaseClass: true })
@@ -20,16 +21,11 @@ const { confirmDelete } = useConfirm()
 
 const {
   items, total, page, totalPages, loading, uploading, error,
-  list, listFacets, upload, updateMedia, deleteMedia, toggleActive, toggleHidden,
-  itemUrl, itemPreviewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack,
+  list, listFacets, upload, updateMedia, replaceMediaFile, deleteMedia, toggleActive, toggleHidden,
+  itemUrl, itemPreviewUrl, mediaDownloadUrl, listAudioAlbums, createAudioAlbum, addAudioTrack,
 } = useAdminMediaLibrary()
 
 const { importImage, editImage, imageSrc } = useImageGeneration()
-const { token: adminToken } = useAdminAuth()
-
-function getAdminToken(): string {
-  return adminToken.value
-}
 
 const search = ref('')
 const type = ref('')
@@ -66,6 +62,8 @@ const savingNew = ref(false)
 const applyingChange = ref(false)
 const detailsItem = ref<AdminMediaItem | null>(null)
 const savingDetails = ref(false)
+const maskItem = ref<AdminMediaItem | null>(null)
+const savingMask = ref(false)
 
 onMounted(() => {
   void refreshList()
@@ -320,7 +318,7 @@ function closeEdit() {
 }
 
 async function onApplyChange() {
-  if (!editSourceUrl.value || !editResultUrl.value) return
+  if (!editResultUrl.value) return
   applyingChange.value = true
   try {
     // The source URL is a CDN URL for most assets, so it can't be parsed back
@@ -328,27 +326,8 @@ async function onApplyChange() {
     const originalItem = items.value.find(i => i.id === editSourceMediaId.value)
     if (!originalItem) throw new Error('Could not find original media item')
 
-    const imgResponse = await fetch(editResultUrl.value)
-    const blob = await imgResponse.blob()
-    const fileName = (originalItem.title || 'edited').replace(/[^a-z0-9_-]/gi, '_')
-    const formData = new FormData()
-    formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
-    if (originalItem.title) formData.set('title', originalItem.title)
-    if (originalItem.description) formData.set('description', originalItem.description)
-    if (originalItem.category) formData.set('categories', JSON.stringify([originalItem.category]))
-    if (originalItem.tags?.length) formData.set('tags', JSON.stringify(originalItem.tags))
-
-    const baseUrl = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1'
-    const uploadResponse = await fetch(`${baseUrl}/media/upload`, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${getAdminToken()}` },
-      body: formData,
-    })
-    const uploadBody = await uploadResponse.json().catch(() => null) as { success?: boolean; id?: string; error?: string } | null
-    if (!uploadResponse.ok || !uploadBody?.success) throw new Error(uploadBody?.error ?? `Upload failed: ${uploadResponse.status}`)
-
-    await deleteMedia(originalItem.id)
-    await refreshList()
+    const blob = await (await fetch(editResultUrl.value)).blob()
+    await replaceEditedImage(originalItem, blob)
     closeEdit()
     toast.success('Applied change — original replaced')
   } catch (e) {
@@ -362,26 +341,13 @@ async function onSaveAsNew() {
   if (!editResultUrl.value || !editResultItem.value) return
   savingNew.value = true
   try {
-    const imgResponse = await fetch(editResultUrl.value)
-    const blob = await imgResponse.blob()
-    const fileName = (editItem.value?.title || 'edited').replace(/[^a-z0-9_-]/gi, '_')
-    const formData = new FormData()
-    formData.set('file', new File([blob], `${fileName}.png`, { type: blob.type || 'image/png' }))
-    if (editItem.value?.title) formData.set('title', editItem.value.title)
-    if (editItem.value?.description) formData.set('description', editItem.value.description)
-    if (editItem.value?.category) formData.set('categories', JSON.stringify([editItem.value.category]))
-    if (editItem.value?.tags?.length) formData.set('tags', JSON.stringify(editItem.value.tags))
-
-    const baseUrl = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_MEDIA_API_URL ?? 'https://media.tikoapi.org/v1'
-    const response = await fetch(`${baseUrl}/media/upload`, {
-      method: 'POST',
-      headers: { authorization: `Bearer ${getAdminToken()}` },
-      body: formData,
-    })
-    const body = await response.json().catch(() => null) as { success?: boolean; error?: string } | null
-    if (!response.ok || !body?.success) throw new Error(body?.error ?? `Upload failed: ${response.status}`)
-
-    await refreshList()
+    const blob = await (await fetch(editResultUrl.value)).blob()
+    await uploadEditedImage({
+      title: editItem.value?.title ?? undefined,
+      description: editItem.value?.description ?? undefined,
+      category: editItem.value?.category ?? undefined,
+      tags: editItem.value?.tags ?? undefined,
+    }, blob)
     closeEdit()
     toast.success('Saved as new image')
   } catch (e) {
@@ -390,6 +356,67 @@ async function onSaveAsNew() {
     savingNew.value = false
   }
 }
+
+interface EditedImageMeta {
+  title?: string
+  description?: string
+  category?: string
+  tags?: string[]
+}
+
+function editedImageFile(title: string | undefined, blob: Blob): File {
+  return new File([blob], maskedFileName(title || 'edited'), { type: blob.type || 'image/png' })
+}
+
+/**
+ * Overwrites an item's picture without touching its id, so the apps that already
+ * reference it keep resolving.
+ */
+async function replaceEditedImage(item: AdminMediaItem, blob: Blob): Promise<void> {
+  await replaceMediaFile(item.id, editedImageFile(item.title, blob))
+  await refreshList()
+}
+
+/** Files an edited picture as a separate asset, carrying the catalog fields over. */
+async function uploadEditedImage(meta: EditedImageMeta, blob: Blob): Promise<void> {
+  await upload(editedImageFile(meta.title, blob), {
+    title: meta.title,
+    description: meta.description,
+    categories: meta.category ? [meta.category] : [],
+    tags: meta.tags ?? [],
+  })
+  await refreshList()
+}
+
+function openMaskEditor(item: AdminMediaItem) {
+  maskItem.value = item
+}
+
+async function onSaveMask(payload: { blob: Blob; mode: 'replace' | 'new' }) {
+  const item = maskItem.value
+  if (!item) return
+  savingMask.value = true
+  try {
+    if (payload.mode === 'replace') {
+      await replaceEditedImage(item, payload.blob)
+      toast.success('Image replaced')
+    } else {
+      await uploadEditedImage({
+        title: item.title ? `${item.title} (edit)` : undefined,
+        description: item.description,
+        category: item.category,
+        tags: item.tags,
+      }, payload.blob)
+      toast.success('Saved as a new asset')
+    }
+    maskItem.value = null
+  } catch (e) {
+    toast.error(e instanceof Error ? e.message : 'Could not save the edited image.')
+  } finally {
+    savingMask.value = false
+  }
+}
+
 </script>
 
 <template>
@@ -490,6 +517,12 @@ async function onSaveAsNew() {
             <button
               v-if="mediaKind(item) === 'image'"
               :class="bemm('icon-btn')"
+              title="Edit picture — mask, erase, restore or replace it by hand"
+              @click="openMaskEditor(item)"
+            ><Icon name="ui/paint-brush" size="small" aria-hidden="true" /></button>
+            <button
+              v-if="mediaKind(item) === 'image'"
+              :class="bemm('icon-btn')"
               title="Edit image — redraw it with AI"
               :disabled="editLoading"
               @click="onEditImage(item)"
@@ -536,6 +569,16 @@ async function onSaveAsNew() {
       :saving="savingDetails"
       @close="detailsItem = null"
       @save="onSaveDetails"
+    />
+
+    <!-- Hand mask editor — erases, restores and replaces the actual pixels -->
+    <MediaImageEditor
+      v-if="maskItem"
+      :name="maskItem.title || maskItem.file_name || maskItem.id"
+      :source-url="mediaDownloadUrl(maskItem.id)"
+      :saving="savingMask"
+      @close="maskItem = null"
+      @save="onSaveMask"
     />
 
     <!-- AI image editor — regenerates the picture itself -->
