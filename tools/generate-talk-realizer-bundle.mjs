@@ -42,14 +42,31 @@ const ENTRY = `
 import { realize, lexicons, languages, supportedLanguages, customNounFeatures } from './packages/talk-realizer/src/index'
 
 /**
- * @param {string} payload JSON: { words, locale, negated?, tense?, speakerGender?, custom? }
- * @returns {string} JSON: { text, strip, notes, inserted }
+ * @param {string} payload JSON: { words, locale, negated?, tense?, speakerGender?, custom?, lexicon? }
+ * @returns {string} JSON: { text, strip, tokens, notes, inserted }
+ *
+ * \`lexicon\` is a feature overlay keyed by concept id, exactly like the bundled
+ * ones. It is merged **over** the language's own overlay, one concept id at a
+ * time: an id the caller mentions is taken wholly from the caller, and every id
+ * it does not mention keeps the bundled entry. The merge order is
+ *
+ *   bundled lexicon → the caller's \`lexicon\` → \`custom\`
+ *
+ * so a caller can restate the vocabulary it disagrees with — an app for adults
+ * needs different words from an app for children — without forking 54 languages
+ * of grammar to do it, and a word the user typed themselves still wins, because
+ * only this entry knows it was typed.
+ *
+ * \`tokens\` comes back with the text: each one carries \`from\`, the concept id it
+ * came from, or null where the realizer inserted a function word, plus \`merged\`
+ * for the ids an elision folded in. That is what lets a caller *prove* no content
+ * word was invented rather than trust that none was.
  */
 globalThis.tikoRealize = function tikoRealize(payload) {
   try {
     const input = JSON.parse(payload)
     const code = String(input.locale || 'en').split('-')[0].toLowerCase()
-    const lexicon = Object.assign({}, lexicons[code] || {})
+    const lexicon = Object.assign({}, lexicons[code] || {}, input.lexicon || {})
     // A word the parent typed is a name if it is written like one: "Mum" takes no
     // article, "trampoline" does.
     for (const id of input.custom || []) {
@@ -68,6 +85,9 @@ globalThis.tikoRealize = function tikoRealize(payload) {
       // The strip a child is still building: the same grammar without the
       // terminator, in every script the realizer writes.
       strip: result.text.replace(/[.\\u3002\\uFF01\\uFF1F?!\\u0964\\u0965\\u0589]+$/, ''),
+      // Per-token provenance, so a caller can check the invariant instead of
+      // taking it on faith: every content word traces to a tile the user chose.
+      tokens: result.tokens,
       notes: result.notes,
       inserted: result.inserted,
     })

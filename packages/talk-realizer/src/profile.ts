@@ -228,18 +228,38 @@ export function isDativeSensation(ctx: SentenceContext): boolean {
   return ctx.subjectAnimate === true && ctx.predicate?.features.dativeSensation === true
 }
 
+/**
+ * True where this noun phrase is plural. Two different things make it so: a
+ * quantifier that forces the count ("two apples"), and a head noun that is
+ * lexically plural in this language — "glasses", "Schuhe", "gafas". Only the
+ * first was ever asked about, so every language with an article gave a plural
+ * noun the singular indefinite one: "a glasses", "una gafas", "einen Schuhe".
+ *
+ * Deliberately **not** the same question as "does the head have to be
+ * pluralised". A lexically plural noun is already spelled plural, so the `noun`
+ * hooks go on asking `forcesNumber` on their own; using this there would
+ * pluralise a plural.
+ */
+export function isPlural(np: { head?: Word, determiner?: Word } | undefined): boolean {
+  return np?.determiner?.features.forcesNumber === 'pl' || np?.head?.features.number === 'pl'
+}
+
 export function agreesWith(
   np: { head?: Word, determiner?: Word } | undefined,
   ctx: PhraseContext,
 ): { gender?: Gender, plural: boolean } {
-  if (ctx.role === 'predicate') {
+  // A predicate *noun* phrase has a head of its own, and an adjective inside it
+  // agrees with that head rather than with the subject: "das ist ein guter Arzt".
+  // Only a bare predicate adjective, which has no phrase around it, reaches past
+  // itself to the subject.
+  if (ctx.role === 'predicate' && !np?.head) {
     // "Nous sommes contents": the subject is a pronoun, so its number comes from
     // the agreement the verb already used, not from a determiner.
     return { gender: ctx.subjectGender, plural: ctx.subjectPlural === true || ctx.number === 'pl' }
   }
   return {
     gender: np?.head?.features.gender,
-    plural: np?.determiner?.features.forcesNumber === 'pl',
+    plural: isPlural(np),
   }
 }
 
@@ -261,9 +281,12 @@ export interface SentenceContext {
   /** True when the language must supply a copula (no verb tile was chosen). */
   needsCopula: boolean
   /**
-   * The subject's gender, where the subject is a noun. A predicate adjective
-   * agrees with it: "Äpplet är stort", "La pomme est grosse". Undefined for a
-   * pronoun subject, whose gender the tiles do not carry.
+   * The subject's gender. A predicate adjective agrees with it: "Äpplet är
+   * stort", "La pomme est grosse", "Ella está cansada". A noun subject gives its
+   * own; a pronoun subject gives the one its concept carries, because "she" is
+   * feminine in every language that has the distinction. Undefined only where
+   * neither says — an uncurated noun, or a language whose third person does not
+   * distinguish gender at all.
    */
   subjectGender?: Gender
   /**
@@ -276,6 +299,14 @@ export interface SentenceContext {
   speakerGenderAssumed: boolean
   /** True when the subject is plural, for the same agreement. */
   subjectPlural?: boolean
+  /**
+   * True where the subject is a pronoun rather than a noun. Russian and its
+   * neighbours want the short predicative adjective there — "он устал", not "он
+   * усталый" — while a noun subject takes the long one, "Яблоко большое". They
+   * used to tell the two apart by the pronoun having no gender, which is not the
+   * same question and stopped being true once pronouns carried one.
+   */
+  subjectIsPronoun?: boolean
   /**
    * True when the subject is a person rather than a thing. It decides between the
    * two readings of the same tile: "tengo frío" (I feel cold) and "el agua está

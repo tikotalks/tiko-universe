@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { applyExperiencer } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, note, type LanguageRules, type SentenceContext } from '../profile'
+import { agreesWith, formFor, isPlural, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Romanian. A Romance language that postposes its definite article, so it needs
@@ -106,7 +106,7 @@ export const romanian: LanguageRules = {
     const head = np.head
     const determiner = np.determiner
     const feminine = head?.features.gender === 'feminine'
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     if (determiner) {
       const kind = determiner.features.determinerKind
@@ -134,7 +134,12 @@ export const romanian: LanguageRules = {
       note(ctx.builder, `no article: "${head.text}" is institutional after a preposition`)
       return null
     }
-    if (plural) return { text: 'niște', from: null }
+    if (plural) {
+      // Romanian leaves a bare plural bare: "vreau pantofi". "Niște" is "some",
+      // which counts rather than names.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: feminine ? 'o' : 'un', from: null }
   },
 

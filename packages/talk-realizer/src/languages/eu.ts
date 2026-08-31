@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { note, type LanguageRules } from '../profile'
+import { isPlural, note, type LanguageRules } from '../profile'
 
 /**
  * Basque. Not related to anything else in this package — or to anything else in
@@ -169,7 +169,8 @@ export const basque: LanguageRules = {
     if (!head || ctx.role === 'subject') return null
     const countable = !head.features.mass && !head.features.proper
     if (kind === 'indefinite') return { text: 'bat', from: np.determiner?.id ?? null }
-    if (!kind && countable && np.determiner === undefined) {
+    // "bat" is the numeral "one", so a lexically plural noun never takes it.
+    if (!kind && countable && !isPlural(np) && np.determiner === undefined) {
       note(ctx.builder, '"bat": a countable noun needs an article, and it comes last')
       return { text: 'bat', from: null }
     }

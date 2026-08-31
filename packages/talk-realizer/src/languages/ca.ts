@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Catalan. Structurally close to Spanish, with its own articles (el/la/els/les),
@@ -89,7 +89,7 @@ export const catalan: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     const definite = plural ? (feminine ? 'les' : 'els') : (feminine ? 'la' : 'el')
 
@@ -129,7 +129,12 @@ export const catalan: LanguageRules = {
       return null
     }
     if (ctx.afterPreposition && head.features.institutional) return null
-    if (plural) return { text: feminine ? 'unes' : 'uns', from: null }
+    if (plural) {
+      // Catalan leaves a bare plural bare: "vull sabates", not "vull unes sabates",
+      // which counts a pair rather than naming the thing.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: feminine ? 'una' : 'un', from: null }
   },
 
