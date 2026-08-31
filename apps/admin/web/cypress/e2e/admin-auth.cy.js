@@ -119,6 +119,6 @@ describe('admin OTP sign-in', () => {
     cy.wait('@adminConfig')
 
     cy.contains('sil@example.com').should('be.visible')
-    cy.contains('Images').should('be.visible')
+    cy.contains('Image creator').should('be.visible')
   })
 })

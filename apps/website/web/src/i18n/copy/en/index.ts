@@ -5,6 +5,11 @@ import { caregiversEn } from './caregivers'
 import { educatorsEn } from './educators'
 import { faqEn } from './faq'
 import { supportEn } from './support'
+import { privacyEn } from './privacy'
+import { homeEn } from './home'
+import { appsPageEn, appDetailEn, notFoundEn } from './apps-page'
+import { appsEn } from './apps'
+import { docsEn } from './docs'
 
 /**
  * English is the source of truth for the website's copy: it defines the shape
@@ -21,6 +26,8 @@ export const en = {
     exploreApps: 'Explore the apps',
     openOnWeb: 'Open on the web',
     downloadAppStore: 'Download on the App Store',
+    /** First line of the App Store badge lockup, above "App Store". */
+    downloadOnCaption: 'Download on the',
     learnMore: 'Learn more',
     backToApps: 'All apps',
     available: 'Available',
@@ -56,6 +63,28 @@ export const en = {
     philosophy: 'Philosophy',
   },
 
+  /** Document titles, without the " — TikoTalks" suffix the site appends. */
+  meta: {
+    home: 'TikoTalks — Beautiful free education and communication apps for every child',
+    apps: 'Apps',
+    docs: 'Docs',
+    notFound: 'Page not found',
+  },
+
+  /** The home page. */
+  home: homeEn,
+
+  /** The `/apps` index, an app's detail page, and the 404. */
+  appsPage: appsPageEn,
+  appDetail: appDetailEn,
+  notFound: notFoundEn,
+
+  /** Per-app prose, keyed by slug. */
+  apps: appsEn,
+
+  /** The builder documentation, keyed by page id. */
+  docs: docsEn,
+
   /** The content pages. */
   pages: {
     whyTiko: whyTikoEn,
@@ -65,6 +94,9 @@ export const en = {
     faq: faqEn,
     support: supportEn,
   },
+
+  /** The privacy policy — plain prose rather than a content page. */
+  privacy: privacyEn,
 } as const
 
 /**

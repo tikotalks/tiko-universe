@@ -84,6 +84,7 @@
     "@playwright/test": "^1.56.1",
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.1.7",
+    "earcut": "^3.2.3",
     "miniflare": "^4.20260611.0",
     "oxlint": "^1.69.0",
     "sharp": "^0.34.5",

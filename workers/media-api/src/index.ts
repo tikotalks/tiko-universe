@@ -22,6 +22,18 @@ interface Env {
   OPENAI_SECRET?: SecretStoreBinding
   PEPPER_SECRET?: SecretStoreBinding
   IDENTITY_BASE_URL?: string
+  /**
+   * Service key for trusted metadata automation. This is intentionally limited
+   * to media metadata updates; it must never authorize deletion or private
+   * user-media access.
+   */
+  MEDIA_AUTOMATION_API_KEY?: string
+}
+
+function hasMediaAutomationKey(request: Request, env: Env): boolean {
+  const authorization = request.headers.get('authorization')
+  const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]
+  return Boolean(token && env.MEDIA_AUTOMATION_API_KEY && token === env.MEDIA_AUTOMATION_API_KEY)
 }
 
 interface D1Database {
@@ -1176,6 +1188,74 @@ async function handleMediaUpdate(request: Request, env: Env, id: string): Promis
   }
 }
 
+// POST /v1/media/:id/file — replace an existing item's binary, keeping its id and metadata
+async function handleMediaReplaceFile(request: Request, env: Env, id: string): Promise<Response> {
+  try {
+    const formData = await request.formData()
+    const file = formData.get('file') as File | null
+    if (!file) return err('No file provided')
+    const validationError = validateMediaUploadFile(file)
+    if (validationError) return validationError
+
+    const row = await env.MEDIA_DB.prepare(
+      'SELECT id, filename, is_private, original_url FROM media WHERE id = ? LIMIT 1',
+    ).bind(id).first<{ id: string; filename: string; is_private: unknown; original_url: string }>()
+    if (!row) return err('Media not found', 404)
+
+    const apiOrigin = new URL(request.url).origin
+    const isPrivate = dbBoolean(row.is_private)
+    const bucket = isPrivate ? env.USER_MEDIA_BUCKET : env.MEDIA_BUCKET
+    const previousKey = isPrivate ? row.filename : row.original_url.replace(/^https?:\/\/[^/]+\//, '')
+
+    // Read the header before the upload, so a file we cannot measure never leaves
+    // an orphaned object behind in R2.
+    const isImage = file.type.startsWith('image/')
+    const { width, height } = await getImageDimensions(file)
+
+    // A fresh key rather than an overwrite: the CDN caches by path, so reusing the old key
+    // would keep serving the picture the operator just edited away.
+    const { safeName } = generateSafeFilename(file.name)
+    const nextKey = `uploads/${safeName}`
+    await bucket.put(nextKey, file.stream(), { httpMetadata: { contentType: file.type } })
+    const originalUrl = isPrivate ? `/v1/media/${id}/download` : `https://data.tikocdn.org/${nextKey}`
+    const thumbnailUrl = isImage ? `${apiOrigin}/v1/media/${id}/image/small` : originalUrl
+    const mediumUrl = isImage ? `${apiOrigin}/v1/media/${id}/image/medium` : originalUrl
+    const now = new Date().toISOString()
+
+    await env.MEDIA_DB.prepare(
+      `UPDATE media SET filename = ?, file_size = ?, mime_type = ?, width = ?, height = ?,
+              original_url = ?, thumbnail_url = ?, medium_url = ?, updated_at = ?
+       WHERE id = ?`,
+    ).bind(
+      nextKey,
+      file.size,
+      file.type,
+      width ?? null,
+      height ?? null,
+      originalUrl,
+      thumbnailUrl,
+      mediumUrl,
+      now,
+      id,
+    ).run()
+
+    // Only after the row points at the new object, so a failure here leaves the item servable.
+    if (previousKey && previousKey !== nextKey) {
+      try { await bucket.delete(previousKey) } catch { /* best-effort R2 cleanup */ }
+    }
+
+    const updated = await env.MEDIA_DB.prepare(
+      `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
+              description, categories AS folder, tags, is_private, is_active, is_hidden, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
+       FROM media WHERE id = ? LIMIT 1`,
+    ).bind(id).first<Record<string, unknown>>()
+
+    return ok({ data: rowToMediaItem(updated!) })
+  } catch (error) {
+    return json({ success: false, error: 'Failed to replace media file', details: (error as Error).message }, 500)
+  }
+}
+
 // DELETE /v1/media/:id — delete media from R2 and D1
 async function handleMediaDelete(request: Request, env: Env, id: string): Promise<Response> {
   try {
@@ -1546,8 +1626,13 @@ export default {
       }
       if (request.method === 'PUT' && id) {
         const authed = await authenticate(request, env)
-        if (authed.ok === false) return withCors(authed.response)
+        if (authed.ok === false && !hasMediaAutomationKey(request, env)) return withCors(authed.response)
         return withCors(await handleMediaUpdate(request, env, id))
+      }
+      if (request.method === 'POST' && id && segments[3] === 'file') {
+        const authed = await authenticate(request, env)
+        if (authed.ok === false) return withCors(authed.response)
+        return withCors(await handleMediaReplaceFile(request, env, id))
       }
       if (request.method === 'DELETE' && id) {
         const authed = await authenticate(request, env)

@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { mediaImages, mediaImage, showcaseCategories } from './mediaImages'
 import { tikoWebsiteAppUniverse, type TikoWebsiteAppMetadata } from './appUniverse'
-import { whyTikoPillars, whyFreePillars, platformNotes } from '../siteContent'
+import { whyFreePillarImages, platformNoteImages } from '../siteContent'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
@@ -23,9 +23,8 @@ describe('curated media images', () => {
 
   it('gives every card and app an image that resolves in the registry', () => {
     const named = [
-      ...whyTikoPillars.map((p) => p.image),
-      ...whyFreePillars.map((p) => p.image),
-      ...platformNotes.map((n) => n.image),
+      ...whyFreePillarImages,
+      ...platformNoteImages,
       ...(tikoWebsiteAppUniverse as readonly TikoWebsiteAppMetadata[]).map((a) => a.momentImage),
     ]
     expect(named.length).toBeGreaterThan(0)

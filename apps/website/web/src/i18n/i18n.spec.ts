@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { overlayCopy } from './resolve'
-import { copyFor, localesWithCopy } from './index'
+import { copyFor, localesWithCopy, overrides } from './index'
 import { en } from './copy/en'
 import { translatedLocales } from './locale'
 import { tikoLocaleEntries } from '@tiko/i18n'
-import { nl } from './copy/nl'
 
 /**
  * Every leaf English has that the override does not, as dotted paths. Arrays
@@ -25,6 +24,17 @@ function missingKeys(base: unknown, override: unknown, path = ''): string[] {
   }
   return []
 }
+
+/**
+ * Leaves a locale is not expected to own: an email address, a code sample, and
+ * the brand's own name. `overlayCopy` keeps the English value for these, which
+ * is the right answer rather than a gap.
+ */
+const UNTRANSLATED = [
+  /^privacy\.supportEmail$/,
+  /^docs\.pages\.[^.]+\.sections\[\d+\]\.code$/,
+  /^appDetail\.hero\.brandPrefix$/,
+]
 
 describe('website copy resolution', () => {
   it('falls back to English leaf by leaf rather than whole-object', () => {
@@ -80,14 +90,42 @@ describe('website copy resolution', () => {
     }
   })
 
-  it('has fully translated page copy for Dutch', () => {
-    // Dutch is the locale a native speaker will check, so it is the one held to
-    // "nothing left falling back". The others fall back on purpose.
+  it('translates the whole bundle for every locale the picker offers', () => {
+    // The bug this guards: the picker offered nine languages while seven of
+    // them translated only `common`, `nav` and `footer`, so switching language
+    // changed the menu and nothing else.
     //
     // Measured by key coverage, not by comparing values: "Support" and "App
     // Store" are the same word in Dutch, and asserting the text differs would
     // flag a correct translation as a missing one.
-    expect(missingKeys(en.pages, (nl as Record<string, unknown>).pages)).toEqual([])
+    for (const locale of translatedLocales) {
+      if (locale === 'en') continue
+      const override = overrides[locale] as Record<string, unknown> | undefined
+      expect(override, `${locale} has a copy file`).toBeDefined()
+      const missing = missingKeys(en, override).filter(
+        (path) => !UNTRANSLATED.some((pattern) => pattern.test(path)),
+      )
+      expect(missing, `${locale} is missing copy`).toEqual([])
+    }
+  })
+
+  it('keeps app slugs and doc ids identical across locales', () => {
+    // These are addresses, not prose. A translated key would silently fall back
+    // to English for that app or doc page instead of failing loudly.
+    for (const locale of translatedLocales) {
+      const copy = copyFor(locale)
+      expect(Object.keys(copy.apps).sort(), `${locale} apps`).toEqual(Object.keys(en.apps).sort())
+      expect(Object.keys(copy.docs.pages).sort(), `${locale} docs`).toEqual(
+        Object.keys(en.docs.pages).sort(),
+      )
+    }
+  })
+
+  it('keeps the privacy policy anchors identical across locales', () => {
+    const ids = en.privacy.sections.map((section) => section.id)
+    for (const locale of translatedLocales) {
+      expect(copyFor(locale).privacy.sections.map((section) => section.id), locale).toEqual(ids)
+    }
   })
 
   it('keeps section ids identical across locales so anchors survive translation', () => {

@@ -2,7 +2,8 @@
 import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useBemm } from 'bemm'
-import { tikoApps } from '../../content/appUniverse'
+import { useApps } from '../../content/useApps'
+import { useCopy } from '../../i18n'
 import AppStoreButton from '../AppStoreButton.vue'
 
 /**
@@ -14,7 +15,9 @@ import AppStoreButton from '../AppStoreButton.vue'
  */
 const bemm = useBemm('store-lineup', { return: 'string', includeBaseClass: true })
 
-const shipped = computed(() => tikoApps.filter((app) => app.appStoreUrl))
+const copy = useCopy()
+const apps = useApps()
+const shipped = computed(() => apps.value.filter((app) => app.appStoreUrl))
 </script>
 
 <template>
@@ -32,7 +35,7 @@ const shipped = computed(() => tikoApps.filter((app) => app.appStoreUrl))
           <span :class="bemm('summary')">{{ app.summary }}</span>
         </span>
       </RouterLink>
-      <AppStoreButton :href="app.appStoreUrl!" :label="`Download ${app.name} on the App Store`" />
+      <AppStoreButton :href="app.appStoreUrl!" :label="copy.appDetail.downloadLabel.replace('{app}', app.name)" />
     </article>
   </div>
 </template>

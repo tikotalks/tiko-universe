@@ -77,6 +77,15 @@ export interface AudioLibraryTrack {
   fileName?: string
 }
 
+/** Everything the upload endpoint accepts beside the file. */
+export interface UploadOptions {
+  thumbnail?: File | null
+  title?: string
+  description?: string
+  categories?: string[]
+  tags?: string[]
+}
+
 export type MediaState = '' | 'active' | 'inactive' | 'hidden'
 
 export interface MediaListFilters {
@@ -203,13 +212,25 @@ export function useAdminMediaLibrary() {
     }
   }
 
-  async function upload(file: File, options: { thumbnail?: File | null } = {}): Promise<UploadResponse> {
+  /**
+   * Uploads a new library asset.
+   *
+   * @param file The media file itself.
+   * @param options Optional video thumbnail, plus catalog fields to set instead of
+   *   leaving the server to derive them from the file and Vision.
+   * @returns The created record as the API reported it.
+   */
+  async function upload(file: File, options: UploadOptions = {}): Promise<UploadResponse> {
     uploading.value = true
     error.value = null
     try {
       const formData = new FormData()
       formData.set('file', file)
       if (options.thumbnail) formData.set('thumbnail', options.thumbnail)
+      if (options.title) formData.set('title', options.title)
+      if (options.description) formData.set('description', options.description)
+      if (options.categories?.length) formData.set('categories', JSON.stringify(options.categories))
+      if (options.tags?.length) formData.set('tags', JSON.stringify(options.tags))
       const response = await fetch(`${mediaBaseUrl()}/media/upload`, {
         method: 'POST',
         headers: { authorization: `Bearer ${token.value}` },
@@ -298,6 +319,30 @@ export function useAdminMediaLibrary() {
     items.value = items.value.map(item => item.id === id ? { ...item, ...updated } : item)
   }
 
+  /**
+   * Overwrites an item's binary while keeping its media id, so every reference to that id
+   * keeps resolving. The server writes a new storage key and reports the new dimensions.
+   *
+   * @param id Media id to overwrite.
+   * @param file Replacement file.
+   * @returns The refreshed catalog record.
+   */
+  async function replaceMediaFile(id: string, file: File): Promise<AdminMediaItem> {
+    const formData = new FormData()
+    formData.set('file', file)
+    const response = await fetch(`${mediaBaseUrl()}/media/${encodeURIComponent(id)}/file`, {
+      method: 'POST',
+      headers: { authorization: `Bearer ${token.value}` },
+      body: formData,
+    })
+    const body = await response.json().catch(() => null) as ApiErrorBody | { data: AdminMediaItem } | null
+    const apiError = body && 'error' in body ? body.error : undefined
+    if (!response.ok) throw new Error((typeof apiError === 'string' ? apiError : apiError?.message) ?? `Replace failed: ${response.status}`)
+    const updated = normaliseItem((body as { data: AdminMediaItem }).data)
+    items.value = items.value.map(item => item.id === id ? { ...item, ...updated } : item)
+    return updated
+  }
+
   async function listFacets(): Promise<MediaFacets> {
     const url = new URL(`${mediaBaseUrl()}/media/facets`)
     url.searchParams.set('includeInactive', 'true')
@@ -334,5 +379,5 @@ export function useAdminMediaLibrary() {
     await updateMedia(id, { is_hidden: isHidden })
   }
 
-  return { items, total, page, totalPages, loading, uploading, error, list, listFacets, upload, updateMedia, deleteMedia, toggleActive, toggleHidden, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
+  return { items, total, page, totalPages, loading, uploading, error, list, listFacets, upload, updateMedia, replaceMediaFile, deleteMedia, toggleActive, toggleHidden, itemUrl, mediaDownloadUrl, mediaRefPreviewUrl, itemPreviewUrl, previewUrl, listAudioAlbums, createAudioAlbum, addAudioTrack }
 }
