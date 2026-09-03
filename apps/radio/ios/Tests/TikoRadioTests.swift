@@ -150,17 +150,22 @@ final class TikoRadioTests: XCTestCase {
         XCTAssertFalse(first.color.isEmpty)
     }
 
-    /// Req 7: deleting a collection re-files its tracks to "Unsorted".
+    /// Req 7: deleting a collection deletes the songs inside it, and nothing else.
     @MainActor
-    func testRemoveCollectionRefilesTracks() {
+    func testRemoveCollectionDeletesItsTracks() {
         let (store, defaults, suite) = makeStore()
         defer { defaults.removePersistentDomain(forName: suite) }
         let collection = store.addCategory(title: "Bedtime", userDefaults: defaults)
         let track = RadioTrack(title: "Sleep Song", source: .youtube, youtubeVideoId: "abc", categoryId: collection.id)
         store.addTrack(track, userDefaults: defaults)
+        let kept = RadioTrack(title: "Morning Song", source: .youtube, youtubeVideoId: "def", categoryId: "music")
+        store.addTrack(kept, userDefaults: defaults)
+
         store.removeCategory(id: collection.id, userDefaults: defaults)
+
         XCTAssertFalse(store.categories.contains { $0.id == collection.id })
-        XCTAssertEqual(store.tracks.first(where: { $0.id == track.id })?.categoryId, defaultUncategorizedCategoryID)
+        XCTAssertNil(store.tracks.first { $0.id == track.id }, "the collection's songs go with it")
+        XCTAssertNotNil(store.tracks.first { $0.id == kept.id }, "songs elsewhere stay put")
     }
 
     /// The offline-defaults path used for UI tests / screenshots populates the
@@ -559,4 +564,212 @@ private struct SeededGenerator: RandomNumberGenerator {
         z = (z ^ (z >> 27)) &* 0x94D049BB133111EB
         return z ^ (z >> 31)
     }
+
+    // MARK: - Share codes
+
+    func testShareCodeAcceptsHoweverAParentTypedIt() {
+        XCTAssertEqual(RadioShareCode.normalize("K7M2Q9XR"), "K7M2Q9XR")
+        XCTAssertEqual(RadioShareCode.normalize("k7m2 q9xr"), "K7M2Q9XR")
+        XCTAssertEqual(RadioShareCode.normalize("K7M2-Q9XR"), "K7M2Q9XR")
+        // The alphabet has no I, L or O, so a misread one still lands on the code.
+        XCTAssertEqual(RadioShareCode.normalize("K7M2Q9XO"), "K7M2Q9X0")
+        XCTAssertEqual(RadioShareCode.normalize("K7M2Q9Xl"), "K7M2Q9X1")
+    }
+
+    func testShareCodeRejectsAnythingElse() {
+        XCTAssertNil(RadioShareCode.normalize("short"))
+        XCTAssertNil(RadioShareCode.normalize("K7M2Q9XR9"))
+        XCTAssertNil(RadioShareCode.normalize("K7M2Q9X!"))
+    }
+
+    func testShareCodeFromScannedLinkOrBareCode() {
+        XCTAssertEqual(RadioShareCode.fromScan("https://radio.tikoapps.org/?collection=K7M2Q9XR"), "K7M2Q9XR")
+        XCTAssertEqual(RadioShareCode.fromScan("https://radio.tikoapps.org/c/K7M2Q9XR"), "K7M2Q9XR")
+        XCTAssertEqual(RadioShareCode.fromScan("  k7m2q9xr "), "K7M2Q9XR")
+        XCTAssertNil(RadioShareCode.fromScan("https://example.com/"))
+        XCTAssertNil(RadioShareCode.fromScan(""))
+    }
+
+    func testShareCodeIsReadAloudInTwoHalves() {
+        XCTAssertEqual(RadioShareCode.formatted("K7M2Q9XR"), "K7M2 Q9XR")
+    }
+
+    // MARK: - Sharing a collection
+
+    func testSharingLeavesOutSongsThatOnlyExistOnThisDevice() {
+        let youtube = RadioTrack(title: "Let It Go", source: .youtube, youtubeVideoId: "abcdefghijk", categoryId: "disney")
+        let uploaded = RadioTrack(title: "Hummed at home", source: .upload, audioUrl: "file:///tmp/hum.m4a", categoryId: "disney")
+
+        let payload = RadioShareConversion.sharedSongs(from: [youtube, uploaded])
+
+        XCTAssertEqual(payload.songs.count, 1)
+        XCTAssertEqual(payload.songs.first?.youtubeVideoId, "abcdefghijk")
+        XCTAssertEqual(payload.skipped, 1)
+    }
+
+    func testSharedSongsBecomeTracksWithShelfDerivedIDs() {
+        let collection = RadioSharedCollection(
+            code: "K7M2Q9XR",
+            name: "Disney",
+            color: "purple",
+            imageUrl: nil,
+            songs: [
+                RadioSharedSong(title: "Let It Go", artist: "Tiko Songs", source: "youtube", youtubeVideoId: "abcdefghijk"),
+                RadioSharedSong(title: "Lullaby", source: "spotify", externalId: "4uLU6hMCjMI75M1A2tKUQC", externalUrl: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC")
+            ],
+            songCount: 2,
+            featured: true,
+            shareUrl: "https://radio.tikoapps.org/?collection=K7M2Q9XR"
+        )
+
+        let tracks = RadioShareConversion.tracks(from: collection, categoryID: "disney")
+
+        XCTAssertEqual(tracks.count, 2)
+        XCTAssertEqual(tracks[0].id, "shared:disney:abcdefghijk")
+        XCTAssertEqual(tracks[0].categoryId, "disney")
+        XCTAssertEqual(tracks[1].source, .spotify)
+        XCTAssertEqual(tracks[1].externalUrl, "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC")
+        // Re-scanning into the same shelf replaces its songs; a second shelf keeps its own.
+        XCTAssertEqual(RadioShareConversion.tracks(from: collection, categoryID: "disney")[0].id, tracks[0].id)
+        XCTAssertNotEqual(RadioShareConversion.tracks(from: collection, categoryID: "disney-2")[0].id, tracks[0].id)
+    }
+
+    func testSharedCollectionDecodesFromTheAPIEnvelopeShape() throws {
+        let json = Data("""
+        {
+          "code": "K7M2Q9XR",
+          "name": "Disney",
+          "color": "purple",
+          "imageUrl": "https://data.tikocdn.org/uploads/castle.png",
+          "songs": [{"title": "Let It Go", "source": "youtube", "youtubeVideoId": "abcdefghijk"}],
+          "songCount": 1,
+          "featured": true,
+          "shareUrl": "https://radio.tikoapps.org/?collection=K7M2Q9XR"
+        }
+        """.utf8)
+
+        let collection = try JSONDecoder().decode(RadioSharedCollection.self, from: json)
+
+        XCTAssertEqual(collection.code, "K7M2Q9XR")
+        XCTAssertEqual(collection.songs.first?.title, "Let It Go")
+        XCTAssertEqual(collection.imageURL?.host, "data.tikocdn.org")
+    }
+
+    func testQRCodeIsGeneratedForSomethingToScan() {
+        XCTAssertNotNil(RadioQRCode.image(for: "https://radio.tikoapps.org/?collection=K7M2Q9XR", size: 200))
+        XCTAssertNil(RadioQRCode.image(for: "", size: 200))
+    }
+
+    // MARK: - Library
+
+    @MainActor
+    func testDeletingACollectionDeletesItsSongs() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        store.replaceTracks([
+            RadioTrack(title: "One", source: .youtube, youtubeVideoId: "a", categoryId: "animals"),
+            RadioTrack(title: "Two", source: .youtube, youtubeVideoId: "b", categoryId: "animals"),
+            RadioTrack(title: "Three", source: .youtube, youtubeVideoId: "c", categoryId: "music")
+        ], userDefaults: defaults)
+
+        store.removeCategory(id: "animals", userDefaults: defaults)
+
+        XCTAssertEqual(store.tracks.map(\.title), ["Three"])
+        XCTAssertFalse(store.categories.contains { $0.id == "animals" })
+    }
+
+    @MainActor
+    func testImportingTheSameSetTwiceKeepsBothShelves() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let collection = RadioSharedCollection(
+            code: "K7M2Q9XR",
+            name: "Disney",
+            color: "purple",
+            imageUrl: nil,
+            songs: [RadioSharedSong(title: "Let It Go", source: "youtube", youtubeVideoId: "abcdefghijk")],
+            songCount: 1,
+            featured: true,
+            shareUrl: "https://radio.tikoapps.org/?collection=K7M2Q9XR"
+        )
+
+        let first = store.importShared(collection, userDefaults: defaults)
+        let second = store.importShared(collection, userDefaults: defaults)
+
+        XCTAssertEqual(first.id, "disney")
+        XCTAssertEqual(second.id, "disney-2")
+        XCTAssertEqual(store.tracks(in: "disney").count, 1)
+        XCTAssertEqual(store.tracks(in: "disney-2").count, 1)
+    }
+
+    @MainActor
+    func testShareCodeIsRememberedPerCollection() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        XCTAssertNil(store.shareCode(for: "animals", userDefaults: defaults))
+        store.rememberShareCode("K7M2Q9XR", for: "animals", userDefaults: defaults)
+        XCTAssertEqual(store.shareCode(for: "animals", userDefaults: defaults), "K7M2Q9XR")
+    }
+
+    @MainActor
+    func testStarterSongsSeedOnceIntoAnEmptyLibrary() {
+        let (store, defaults, suite) = makeStore()
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        store.seedStarterSongsIfEmpty(userDefaults: defaults)
+        XCTAssertFalse(store.tracks.isEmpty)
+
+        // A family that cleared their library is not re-seeded behind their back.
+        store.replaceTracks([], userDefaults: defaults)
+        store.seedStarterSongsIfEmpty(userDefaults: defaults)
+        XCTAssertTrue(store.tracks.isEmpty)
+    }
+
+    // MARK: - Subscriptions
+
+    @MainActor
+    func testLinkingAndUnlinkingAService() {
+        let suite = "TikoRadioTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = RadioSubscriptionStore(userDefaults: defaults)
+
+        XCTAssertFalse(store.isLinked(.spotify))
+        store.link(.spotify, userDefaults: defaults)
+        XCTAssertTrue(store.isLinked(.spotify))
+        XCTAssertEqual(store.linkedProviders, [.spotify])
+
+        // Linking twice keeps one subscription, not two.
+        store.link(.spotify, userDefaults: defaults)
+        XCTAssertEqual(store.subscriptions.count, 1)
+
+        store.unlink(.spotify, userDefaults: defaults)
+        XCTAssertTrue(store.subscriptions.isEmpty)
+    }
+
+    func testServiceProvidersMapToTheirTrackSource() {
+        XCTAssertEqual(RadioServiceProvider.spotify.trackSource, .spotify)
+        XCTAssertEqual(RadioServiceProvider.appleMusic.trackSource, .appleMusic)
+        XCTAssertEqual(RadioServiceProvider(rawValue: "apple-music"), .appleMusic)
+    }
+
+    func testYouTubeResultBecomesATrackInTheChosenCollection() {
+        let result = RadioYouTubeResult(
+            videoId: "abcdefghijk",
+            title: "Sleepy lullaby",
+            channelTitle: "Tiko Songs",
+            thumbnailUrl: "https://i.ytimg.com/vi/abcdefghijk/mqdefault.jpg",
+            durationSeconds: 205
+        )
+
+        let track = result.track(categoryID: "calm")
+
+        XCTAssertEqual(track.source, .youtube)
+        XCTAssertEqual(track.youtubeVideoId, "abcdefghijk")
+        XCTAssertEqual(track.artist, "Tiko Songs")
+        XCTAssertEqual(track.categoryId, "calm")
+        XCTAssertEqual(result.durationLabel, "3:25")
+    }
+
 }

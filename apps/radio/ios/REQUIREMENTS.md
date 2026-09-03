@@ -35,12 +35,49 @@ suite verifies. Each requirement notes how it is covered:
 6. The library (tracks + collections + selection) persists across launches. **[unit]**
    (`testRadioLibraryStorePersistsTracks`,
    `testRadioLibraryStorePersistsCollectionsAndMovesTracks`)
-7. Collections can be created (with an auto-assigned colour and unique id) and
-   renamed; tracks can be renamed and moved between collections; deleting a
-   collection re-files its tracks to "Unsorted". **[unit]**
-   (`testAddCategoryAssignsUniqueIdAndColor`, `testRemoveCollectionRefilesTracks`,
-   `testRadioLibraryStorePersistsCollectionsAndMovesTracks`) **[manual]** (editor UI)
-8. Adding a song from a YouTube URL fetches its title / artist metadata. **[manual]**
+7. Collections can be created (with a chosen colour, artwork and unique id),
+   edited and deleted; tracks can be renamed and moved between collections.
+   **Deleting a collection deletes the songs inside it**, after a warning naming
+   the collection and its song count. **[unit]**
+   (`testAddCategoryAssignsUniqueIdAndColor`, `testRemoveCollectionDeletesItsTracks`,
+   `testRadioLibraryStorePersistsCollectionsAndMovesTracks`) **[manual]** (the warning card)
+8. Songs are added by searching YouTube (results with channel and duration), by
+   pasting any YouTube link, or from a linked subscription's share link. The add
+   button names the collection the song lands in. **[unit]**
+   (`testYouTubeResultBecomesATrackInTheChosenCollection`) **[manual]** (the sheet)
+
+## Sharing collections
+
+21. A collection can be published and handed to another family by a QR code or by
+    an eight-character share code, read back however it was typed (case, spacing,
+    hyphens, look-alike letters). **[unit]** (`testShareCodeAcceptsHoweverAParentTypedIt`,
+    `testShareCodeRejectsAnythingElse`, `testShareCodeFromScannedLinkOrBareCode`,
+    `testShareCodeIsReadAloudInTwoHalves`, `testQRCodeIsGeneratedForSomethingToScan`)
+22. Publishing is a snapshot, and songs that only exist on this device (uploads)
+    are left out and counted rather than shared as dead tiles. **[unit]**
+    (`testSharingLeavesOutSongsThatOnlyExistOnThisDevice`)
+23. A collection keeps the code it was first published under, so a QR already
+    handed out keeps working. **[unit]** (`testShareCodeIsRememberedPerCollection`)
+24. Scanning or entering a code adds the collection with its songs; importing the
+    same set twice makes a second shelf rather than overwriting the first.
+    **[unit]** (`testImportingTheSameSetTwiceKeepsBothShelves`,
+    `testSharedSongsBecomeTracksWithShelfDerivedIDs`,
+    `testSharedCollectionDecodesFromTheAPIEnvelopeShape`) **[manual]** (camera scan)
+
+## Subscriptions
+
+25. A parent can link Spotify or Apple Music, and add songs from those services by
+    share link. Linking twice keeps one subscription. **[unit]**
+    (`testLinkingAndUnlinkingAService`, `testServiceProvidersMapToTheirTrackSource`)
+26. A subscription song opens in its own service's app, because its audio is
+    licensed to that player. **[unit]**
+    (`testStreamingSourcesDecodeAndOpenExternally`) **[manual]** (the hand-off)
+
+## First run
+
+27. A first launch seeds starter songs from Tiko's own Tomato Bird channel, once,
+    and never re-seeds a library the family has emptied. **[unit]**
+    (`testStarterSongsSeedOnceIntoAnEmptyLibrary`)
 
 ## Playback
 

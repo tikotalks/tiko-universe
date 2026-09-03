@@ -6,6 +6,8 @@ import Observation
 final class RadioLibraryStore {
     private static let storageKey = "radio.library.snapshot.v2"
     private static let legacyTracksKey = "radio.tracks"
+    private static let seededKey = "radio.starterSongsSeeded.v1"
+    private static let shareCodesKey = "radio.shareCodes.v1"
 
     private(set) var tracks: [RadioTrack] = []
     var categories: [RadioCategory] = defaultRadioCategories
@@ -125,41 +127,116 @@ final class RadioLibraryStore {
         save(userDefaults: userDefaults)
     }
 
-    func addCategory(title: String, userDefaults: UserDefaults = .standard) -> RadioCategory {
+    @discardableResult
+    func addCategory(
+        title: String,
+        color: String? = nil,
+        imageURL: URL? = nil,
+        userDefaults: UserDefaults = .standard
+    ) -> RadioCategory {
         let baseID = title
             .lowercased()
             .components(separatedBy: CharacterSet.alphanumerics.inverted)
             .filter { !$0.isEmpty }
             .joined(separator: "-")
         let id = uniqueCategoryID(baseID.isEmpty ? "collection" : baseID)
-        let color = defaultCategoryColors[categories.count % defaultCategoryColors.count]
-        let category = RadioCategory(id: id, title: title, symbol: "music.note.list", color: color)
+        let category = RadioCategory(
+            id: id,
+            title: title,
+            symbol: "music.note.list",
+            color: color ?? defaultCategoryColors[categories.count % defaultCategoryColors.count],
+            imageURL: imageURL
+        )
         categories.append(category)
         selectedCategoryID = category.id
         save(userDefaults: userDefaults)
         return category
     }
 
+    // ── Share codes ─────────────────────────────────────────────
+    //
+    // A collection keeps the code it was first published under: a QR on the
+    // fridge should not go stale because the share screen was opened again.
+
+    func shareCode(for categoryID: String, userDefaults: UserDefaults = .standard) -> String? {
+        (userDefaults.dictionary(forKey: Self.shareCodesKey) as? [String: String])?[categoryID]
+    }
+
+    func rememberShareCode(_ code: String, for categoryID: String, userDefaults: UserDefaults = .standard) {
+        var codes = (userDefaults.dictionary(forKey: Self.shareCodesKey) as? [String: String]) ?? [:]
+        codes[categoryID] = code
+        userDefaults.set(codes, forKey: Self.shareCodesKey)
+    }
+
+    /// Deleting a collection deletes the songs inside it. The confirmation says
+    /// so by name and count before this runs, so nothing disappears unannounced.
     func removeCategory(id: String, userDefaults: UserDefaults = .standard) {
         categories.removeAll { $0.id == id }
-        tracks = tracks.map { track in
-            guard track.categoryId == id else { return track }
-            return RadioTrack(
-                id: track.id,
-                title: track.title,
-                artist: track.artist,
-                source: track.source,
-                youtubeVideoId: track.youtubeVideoId,
-                audioUrl: track.audioUrl,
-                thumbnailUrl: track.thumbnailUrl,
-                duration: track.duration,
-                categoryId: defaultUncategorizedCategoryID,
-                addedAt: track.addedAt,
-                externalId: track.externalId,
-                externalUrl: track.externalUrl
+        tracks.removeAll { $0.categoryId == id }
+        if selectedCategoryID == id { selectedCategoryID = nil }
+        save(userDefaults: userDefaults)
+    }
+
+    /// Artwork and colour are editable too, not just the name.
+    func updateCategory(
+        id: String,
+        title: String,
+        color: String,
+        imageURL: URL?,
+        userDefaults: UserDefaults = .standard
+    ) {
+        let cleaned = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleaned.isEmpty else { return }
+        categories = categories.map { category in
+            guard category.id == id else { return category }
+            return RadioCategory(
+                id: category.id,
+                title: cleaned,
+                symbol: category.symbol,
+                color: color,
+                imageURL: imageURL
             )
         }
-        if selectedCategoryID == id { selectedCategoryID = nil }
+        save(userDefaults: userDefaults)
+    }
+
+    /// A scanned collection becomes a real collection, with its songs.
+    /// Importing the same set twice makes a second shelf; it never overwrites
+    /// the first.
+    @discardableResult
+    func importShared(_ collection: RadioSharedCollection, userDefaults: UserDefaults = .standard) -> RadioCategory {
+        let baseID = collection.name
+            .lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .joined(separator: "-")
+        let id = uniqueCategoryID(baseID.isEmpty ? "collection" : baseID)
+        let category = RadioCategory(
+            id: id,
+            title: collection.name,
+            symbol: "music.note.list",
+            color: collection.color.isEmpty ? "purple" : collection.color,
+            imageURL: collection.imageURL
+        )
+        categories.append(category)
+
+        let imported = RadioShareConversion.tracks(from: collection, categoryID: id)
+        let importedIDs = Set(imported.map(\.id))
+        tracks.removeAll { importedIDs.contains($0.id) }
+        tracks.append(contentsOf: imported)
+
+        selectedCategoryID = id
+        save(userDefaults: userDefaults)
+        return category
+    }
+
+    /// First-run songs, from Tiko's own Tomato Bird channel. Pinned rather than
+    /// fetched: a first launch on a train should still have something to play,
+    /// and first-party video ids are ours to keep working.
+    func seedStarterSongsIfEmpty(userDefaults: UserDefaults = .standard) {
+        guard tracks.isEmpty, !userDefaults.bool(forKey: Self.seededKey) else { return }
+        tracks = Self.offlineSampleTracks
+        userDefaults.set(true, forKey: Self.seededKey)
         save(userDefaults: userDefaults)
     }
 

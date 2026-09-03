@@ -14,9 +14,13 @@ struct RadioView: View {
 
     @State private var library = RadioLibraryStore()
     @State private var playback = RadioPlaybackService()
-    @State private var showAddSheet = false
+    @State private var subscriptions = RadioSubscriptionStore()
     @State private var selectedTrackID: RadioTrack.ID?
     @State private var editTarget: RadioEditTarget?
+
+    /// One popup at a time. Presenting them through a single case avoids two
+    /// cards animating over each other when one opens another.
+    @State private var sheet: RadioSheet?
 
     private var tracks: [RadioTrack] { library.tracks }
     private var selectedCategoryTracks: [RadioTrack] { library.tracks(in: library.selectedCategoryID) }
@@ -80,15 +84,22 @@ struct RadioView: View {
             onIconTap: headerIconAction,
             backgroundColor: shellBackground,
             actions: [
-                TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")
+                TikoHeaderAction(id: "add", label: i18n.t("radio.add.menuTitle"), systemImage: "plus")
             ],
             onAction: { action in
-                if action == "add" { showAddSheet = true }
+                if action == "add" { sheet = .addMenu }
             },
             settingsContent: {
                 TikoSettingsSection(title: i18n.t("radio.settings.title")) {
                     TikoSettingsToggleRow(title: i18n.t("radio.settings.shuffle"), icon: "shuffle", appColor: .radio, isOn: $shuffleEnabled)
                     TikoSettingsToggleRow(title: i18n.t("radio.settings.repeat"), icon: "repeat", appColor: .radio, isOn: $repeatEnabled)
+                    TikoSettingsActionRow(
+                        title: i18n.t("radio.services.title"),
+                        value: linkedServicesValue,
+                        icon: "link",
+                        appColor: .radio,
+                        identifier: "MusicServices"
+                    ) { sheet = .services }
                 }
             }
         ) {
@@ -97,15 +108,8 @@ struct RadioView: View {
                     WebViewWindowAttacher(webView: playback.youtubeBridge.webView)
                 )
         }
-        .tikoPopup(isPresented: $showAddSheet) {
-            AddTrackPopup(
-                categories: library.categories,
-                initialCategoryID: library.selectedCategoryID,
-                onAddTrack: addTrack,
-                onAddCategory: { name in library.addCategory(title: name) },
-                onDismiss: { showAddSheet = false }
-            )
-            .environmentObject(i18n)
+        .tikoPopup(isPresented: sheetBinding) {
+            sheetContent
         }
         .sheet(item: $editTarget) { target in
             renameSheet(for: target)
@@ -122,6 +126,7 @@ struct RadioView: View {
                 return
             }
             library.load()
+            library.seedStarterSongsIfEmpty()
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
@@ -178,10 +183,10 @@ struct RadioView: View {
                             .font(.system(.body, design: .rounded).weight(.semibold))
                             .foregroundStyle(radioDark.opacity(0.62))
                             .multilineTextAlignment(.center)
-                        Button(action: { showAddSheet = true }) {
+                        Button(action: { sheet = .addMenu }) {
                             HStack(spacing: 8) {
                                 Image(systemName: "plus")
-                                Text(i18n.t("radio.library.addSong"))
+                                Text(i18n.t("radio.add.song"))
                             }
                             .font(.system(.body, design: .rounded).weight(.bold))
                             .foregroundStyle(.white)
@@ -240,24 +245,6 @@ struct RadioView: View {
         }
     }
 
-    /// Tiko Media artwork for a collection tile, falling back to the SF Symbol
-    /// while the image loads or for user-made collections without artwork.
-    @ViewBuilder
-    private func categoryArtwork(_ category: RadioCategory) -> some View {
-        if let url = category.imageURL {
-            TikoCachedRemoteImage(url: TikoImageURL.resized(url, size: .medium), contentMode: .fit) {
-                Image(systemName: category.symbol)
-                    .font(.system(size: 52, weight: .heavy))
-                    .foregroundStyle(.white)
-            }
-            .padding(14)
-        } else {
-            Image(systemName: category.symbol)
-                .font(.system(size: 52, weight: .heavy))
-                .foregroundStyle(.white)
-        }
-    }
-
     private func collectionTile(_ category: RadioCategory) -> some View {
         let count = library.tracks(in: category.id).count
         return Button(action: {
@@ -269,17 +256,21 @@ struct RadioView: View {
                 subtitle: count == 0 ? i18n.t("radio.collections.empty") : "\(count) \(count == 1 ? "song" : "songs")",
                 background: TikoColors.color(named: category.color) ?? TikoColors.color(named: "gray")!
             ) {
-                categoryArtwork(category)
+                RadioCollectionArtwork(category: category)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(category.title)
+        // Long press: edit, share, delete. Delete asks first, by name and count.
         .contextMenu {
-            Button { editTarget = .category(category.id) } label: {
-                Label(i18n.t("radio.management.renameCollection"), systemImage: "pencil")
+            Button { sheet = .collectionForm(.existing(category.id)) } label: {
+                Label(i18n.t("radio.management.editCollection"), systemImage: "pencil")
             }
-            Button(role: .destructive) { library.removeCategory(id: category.id) } label: {
+            Button { sheet = .share(category.id) } label: {
+                Label(i18n.t("radio.share.shareCollection"), systemImage: "qrcode")
+            }
+            Button(role: .destructive) { sheet = .deleteCollection(category.id) } label: {
                 Label(i18n.t("radio.management.deleteCollection"), systemImage: "trash")
             }
         }
@@ -494,6 +485,112 @@ struct RadioView: View {
         }
     }
 
+    /// `tikoPopup` takes a Bool; this turns "which popup" into that.
+    private var sheetBinding: Binding<Bool> {
+        Binding(get: { sheet != nil }, set: { if !$0 { sheet = nil } })
+    }
+
+    @ViewBuilder
+    private var sheetContent: some View {
+        if let current = sheet {
+            popup(for: current)
+        }
+    }
+
+    @ViewBuilder
+    private func popup(for current: RadioSheet) -> some View {
+        switch current {
+        case .addMenu:
+            RadioAddMenuPopup(
+                onAddSong: { sheet = .addSong },
+                onAddCollection: { sheet = .collectionForm(.new) },
+                onScanCode: { sheet = .importCollection },
+                onDismiss: { sheet = nil }
+            )
+            .environmentObject(i18n)
+
+        case .addSong:
+            RadioAddSongPopup(
+                categories: library.categories,
+                initialCategoryID: library.selectedCategoryID,
+                linkedProviders: subscriptions.linkedProviders,
+                onAdd: addTrack,
+                onOpenServices: { sheet = .services },
+                onDismiss: { sheet = nil }
+            )
+            .environmentObject(i18n)
+
+        case .importCollection:
+            RadioImportPopup(
+                onImport: { collection in library.importShared(collection) },
+                onDismiss: { sheet = nil }
+            )
+            .environmentObject(i18n)
+
+        case .services:
+            RadioServicesPopup(
+                subscriptions: subscriptions.subscriptions,
+                onLink: { subscriptions.link($0) },
+                onUnlink: { subscriptions.unlink($0) },
+                onDismiss: { sheet = nil }
+            )
+            .environmentObject(i18n)
+
+        case .collectionForm(let target):
+            RadioCollectionFormPopup(
+                existing: target.category(in: library.categories),
+                onSave: { title, color, imageURL in
+                    if let existing = target.category(in: library.categories) {
+                        library.updateCategory(id: existing.id, title: title, color: color, imageURL: imageURL)
+                    } else {
+                        library.addCategory(title: title, color: color, imageURL: imageURL)
+                    }
+                },
+                onDismiss: { sheet = nil }
+            )
+            .environmentObject(i18n)
+
+        case .share(let categoryID):
+            if let category = library.categories.first(where: { $0.id == categoryID }) {
+                RadioSharePopup(
+                    category: category,
+                    tracks: library.tracks(in: categoryID),
+                    sessionToken: sessionToken,
+                    existingCode: library.shareCode(for: categoryID),
+                    onPublished: { code in library.rememberShareCode(code, for: categoryID) },
+                    onDismiss: { sheet = nil }
+                )
+                .environmentObject(i18n)
+            }
+
+        case .deleteCollection(let categoryID):
+            if let category = library.categories.first(where: { $0.id == categoryID }) {
+                RadioDeleteCollectionPopup(
+                    category: category,
+                    songCount: library.tracks(in: categoryID).count,
+                    onDelete: {
+                        if playback.currentTrack?.categoryId == categoryID { playback.stop() }
+                        library.removeCategory(id: categoryID)
+                        sheet = nil
+                    },
+                    onDismiss: { sheet = nil }
+                )
+                .environmentObject(i18n)
+            }
+        }
+    }
+
+    /// Publishing a share needs the device session every Tiko app already has.
+    private var sessionToken: String {
+        let bundle = (try? TikoDeviceSessionStore().load()) ?? nil
+        return bundle?.accessToken ?? ""
+    }
+
+    private var linkedServicesValue: String? {
+        let names = subscriptions.linkedProviders.map(\.name)
+        return names.isEmpty ? nil : names.joined(separator: ", ")
+    }
+
     private func addTrack(_ track: RadioTrack) {
         let wasEmpty = tracks.isEmpty
         library.addTrack(track)
@@ -533,6 +630,49 @@ struct RadioView: View {
         currentTrackIndex = index
         selectedTrackID = currentTrack?.id
         playCurrentTrack()
+    }
+}
+
+/// Every popup the Radio screen can show, so only one is ever presented.
+enum RadioSheet: Identifiable, Equatable {
+    case addMenu
+    case addSong
+    case importCollection
+    case services
+    case collectionForm(RadioCollectionFormTarget)
+    case share(String)
+    case deleteCollection(String)
+
+    var id: String {
+        switch self {
+        case .addMenu: return "add-menu"
+        case .addSong: return "add-song"
+        case .importCollection: return "import"
+        case .services: return "services"
+        case .collectionForm(let target): return "form:\(target.id)"
+        case .share(let id): return "share:\(id)"
+        case .deleteCollection(let id): return "delete:\(id)"
+        }
+    }
+}
+
+/// Which collection the form is editing, if any.
+enum RadioCollectionFormTarget: Identifiable, Equatable {
+    case new
+    case existing(String)
+
+    var id: String {
+        switch self {
+        case .new: return "new"
+        case .existing(let id): return "existing:\(id)"
+        }
+    }
+
+    func category(in categories: [RadioCategory]) -> RadioCategory? {
+        switch self {
+        case .new: return nil
+        case .existing(let id): return categories.first { $0.id == id }
+        }
     }
 }
 

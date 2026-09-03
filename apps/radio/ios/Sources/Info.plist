@@ -18,6 +18,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Radio uses the camera to scan a Tiko code, so you can add a collection someone shared with you.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>TikoKeychainAccessGroup</key>

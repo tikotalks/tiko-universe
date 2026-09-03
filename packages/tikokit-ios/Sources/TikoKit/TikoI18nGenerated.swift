@@ -56,6 +56,7 @@ extension TikoLocalTranslations {
         "radio.import.title": "Gedeelde collectie toevoegen",
         "radio.import.subtitle": "Scan een Tiko-code, of typ de acht tekens eronder.",
         "radio.import.scan": "Scan een code",
+        "radio.import.codeLabel": "Deelcode",
         "radio.import.scanHint": "Houd de code voor de camera.",
         "radio.import.find": "Zoeken",
         "radio.import.notFound": "Er is geen collectie gevonden voor die code.",
@@ -84,6 +85,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Annuleren",
         "common.save": "Opslaan",
         "common.add": "Toevoegen",
+        "common.delete": "Verwijderen",
         "common.settings": "Instellingen",
     ]
 
@@ -127,6 +129,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Abbrechen",
         "common.save": "Speichern",
         "common.add": "Hinzufügen",
+        "common.delete": "Löschen",
         "common.settings": "Einstellungen",
     ]
 
@@ -168,6 +171,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Annuler",
         "common.save": "Enregistrer",
         "common.add": "Ajouter",
+        "common.delete": "Supprimer",
         "common.settings": "Paramètres",
     ]
 
@@ -211,6 +215,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Cancelar",
         "common.save": "Guardar",
         "common.add": "Añadir",
+        "common.delete": "Eliminar",
         "common.settings": "Ajustes",
     ]
 
@@ -253,6 +258,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Cancelar",
         "common.save": "Guardar",
         "common.add": "Adicionar",
+        "common.delete": "Eliminar",
         "common.settings": "Definições",
     ]
 
@@ -275,6 +281,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Annulla",
         "common.save": "Salva",
         "common.add": "Aggiungi",
+        "common.delete": "Elimina",
         "common.settings": "Impostazioni",
     ]
 
@@ -323,6 +330,7 @@ extension TikoLocalTranslations {
         "radio.import.title": "Zid kollezzjoni maqsuma",
         "radio.import.subtitle": "Skennja kodici ta Tiko, jew ikteb it-tmien karattri ta tahtu.",
         "radio.import.scan": "Skennja kodici",
+        "radio.import.codeLabel": "Kodici tal-qsim",
         "radio.import.scanHint": "Zomm il-kodici quddiem il-kamera.",
         "radio.import.find": "Fittex",
         "radio.import.notFound": "Ma nstabet ebda kollezzjoni ghal dak il-kodici.",
@@ -351,6 +359,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Ikkanċella",
         "common.save": "Issejvja",
         "common.add": "Żid",
+        "common.delete": "Ħassar",
         "common.settings": "Impostazzjonijiet",
     ]
 
@@ -373,6 +382,7 @@ extension TikoLocalTranslations {
         "common.cancel": "キャンセル",
         "common.save": "保存",
         "common.add": "追加",
+        "common.delete": "削除",
         "common.settings": "設定",
     ]
 
@@ -395,6 +405,7 @@ extension TikoLocalTranslations {
         "common.cancel": "取消",
         "common.save": "保存",
         "common.add": "添加",
+        "common.delete": "删除",
         "common.settings": "设置",
     ]
 
@@ -417,6 +428,7 @@ extension TikoLocalTranslations {
         "common.cancel": "취소",
         "common.save": "저장",
         "common.add": "추가",
+        "common.delete": "삭제",
         "common.settings": "설정",
     ]
 
@@ -439,6 +451,7 @@ extension TikoLocalTranslations {
         "common.cancel": "إلغاء",
         "common.save": "حفظ",
         "common.add": "إضافة",
+        "common.delete": "حذف",
         "common.settings": "الإعدادات",
     ]
 
@@ -461,6 +474,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Չեղարկել",
         "common.save": "Պահպանել",
         "common.add": "Ավելացնել",
+        "common.delete": "Ջնջել",
         "common.settings": "Կարգավորումներ",
     ]
 
@@ -483,6 +497,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Batal",
         "common.save": "Simpan",
         "common.add": "Tambah",
+        "common.delete": "Hapus",
         "common.settings": "Pengaturan",
     ]
 
@@ -505,6 +520,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Batal",
         "common.save": "Simpan",
         "common.add": "Tambah",
+        "common.delete": "Hapus",
         "common.settings": "Tetapan",
     ]
 
@@ -527,6 +543,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Hủy",
         "common.save": "Lưu",
         "common.add": "Thêm",
+        "common.delete": "Xóa",
         "common.settings": "Cài đặt",
     ]
 
@@ -549,6 +566,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Kanselleer",
         "common.save": "Stoor",
         "common.add": "Voeg by",
+        "common.delete": "Verwyder",
         "common.settings": "Instellings",
     ]
 
@@ -571,6 +589,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Avbryt",
         "common.save": "Spara",
         "common.add": "Lägg till",
+        "common.delete": "Ta bort",
         "common.settings": "Inställningar",
     ]
 
@@ -593,6 +612,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Annuller",
         "common.save": "Gem",
         "common.add": "Tilføj",
+        "common.delete": "Slet",
         "common.settings": "Indstillinger",
     ]
 
@@ -615,6 +635,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Avbryt",
         "common.save": "Lagre",
         "common.add": "Legg til",
+        "common.delete": "Slett",
         "common.settings": "Innstillinger",
     ]
 
@@ -637,6 +658,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Hætta",
         "common.save": "Vista",
         "common.add": "Bæta við",
+        "common.delete": "Eyða",
         "common.settings": "Stillingar",
     ]
 
@@ -659,6 +681,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Ofbrekke",
         "common.save": "Bewarje",
         "common.add": "Tafoegje",
+        "common.delete": "Wiskje",
         "common.settings": "Ynstellings",
     ]
 
@@ -681,6 +704,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Ofbrieche",
         "common.save": "Speicheren",
         "common.add": "Dobäisetzen",
+        "common.delete": "Läschen",
         "common.settings": "Astellungen",
     ]
 
@@ -703,6 +727,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Cancel·la",
         "common.save": "Desa",
         "common.add": "Afegeix",
+        "common.delete": "Elimina",
         "common.settings": "Configuració",
     ]
 
@@ -725,6 +750,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Cancelar",
         "common.save": "Gardar",
         "common.add": "Engadir",
+        "common.delete": "Eliminar",
         "common.settings": "Axustes",
     ]
 
@@ -747,6 +773,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Anulează",
         "common.save": "Salvează",
         "common.add": "Adaugă",
+        "common.delete": "Șterge",
         "common.settings": "Setări",
     ]
 
@@ -769,6 +796,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Kanselá",
         "common.save": "Warda",
         "common.add": "Añadí",
+        "common.delete": "Elimina",
         "common.settings": "Konfigurashon",
     ]
 
@@ -791,6 +819,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Отмена",
         "common.save": "Сохранить",
         "common.add": "Добавить",
+        "common.delete": "Удалить",
         "common.settings": "Настройки",
     ]
 
@@ -813,6 +842,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Скасувати",
         "common.save": "Зберегти",
         "common.add": "Додати",
+        "common.delete": "Видалити",
         "common.settings": "Налаштування",
     ]
 
@@ -835,6 +865,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Скасаваць",
         "common.save": "Захаваць",
         "common.add": "Дадаць",
+        "common.delete": "Выдаліць",
         "common.settings": "Налады",
     ]
 
@@ -857,6 +888,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Anuluj",
         "common.save": "Zapisz",
         "common.add": "Dodaj",
+        "common.delete": "Usuń",
         "common.settings": "Ustawienia",
     ]
 
@@ -879,6 +911,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Zrušit",
         "common.save": "Uložit",
         "common.add": "Přidat",
+        "common.delete": "Smazat",
         "common.settings": "Nastavení",
     ]
 
@@ -901,6 +934,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Zrušiť",
         "common.save": "Uložiť",
         "common.add": "Pridať",
+        "common.delete": "Odstrániť",
         "common.settings": "Nastavenia",
     ]
 
@@ -923,6 +957,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Prekliči",
         "common.save": "Shrani",
         "common.add": "Dodaj",
+        "common.delete": "Izbriši",
         "common.settings": "Nastavitve",
     ]
 
@@ -945,6 +980,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Odustani",
         "common.save": "Spremi",
         "common.add": "Dodaj",
+        "common.delete": "Izbriši",
         "common.settings": "Postavke",
     ]
 
@@ -967,6 +1003,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Одустани",
         "common.save": "Сачувај",
         "common.add": "Додај",
+        "common.delete": "Избриши",
         "common.settings": "Подешавања",
     ]
 
@@ -989,6 +1026,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Odustani",
         "common.save": "Spremi",
         "common.add": "Dodaj",
+        "common.delete": "Izbriši",
         "common.settings": "Postavke",
     ]
 
@@ -1011,6 +1049,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Odustani",
         "common.save": "Spremi",
         "common.add": "Dodaj",
+        "common.delete": "Izbriši",
         "common.settings": "Postavke",
     ]
 
@@ -1033,6 +1072,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Отказ",
         "common.save": "Запази",
         "common.add": "Добави",
+        "common.delete": "Изтрий",
         "common.settings": "Настройки",
     ]
 
@@ -1055,6 +1095,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Откажи",
         "common.save": "Зачувај",
         "common.add": "Додај",
+        "common.delete": "Избриши",
         "common.settings": "Поставки",
     ]
 
@@ -1077,6 +1118,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Atšaukti",
         "common.save": "Išsaugoti",
         "common.add": "Pridėti",
+        "common.delete": "Ištrinti",
         "common.settings": "Nustatymai",
     ]
 
@@ -1099,6 +1141,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Atcelt",
         "common.save": "Saglabāt",
         "common.add": "Pievienot",
+        "common.delete": "Dzēst",
         "common.settings": "Iestatījumi",
     ]
 
@@ -1121,6 +1164,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Peruuta",
         "common.save": "Tallenna",
         "common.add": "Lisää",
+        "common.delete": "Poista",
         "common.settings": "Asetukset",
     ]
 
@@ -1143,6 +1187,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Tühista",
         "common.save": "Salvesta",
         "common.add": "Lisa",
+        "common.delete": "Kustuta",
         "common.settings": "Seaded",
     ]
 
@@ -1165,6 +1210,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Mégse",
         "common.save": "Mentés",
         "common.add": "Hozzáadás",
+        "common.delete": "Törlés",
         "common.settings": "Beállítások",
     ]
 
@@ -1187,6 +1233,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Canslo",
         "common.save": "Cadw",
         "common.add": "Ychwanegu",
+        "common.delete": "Dileu",
         "common.settings": "Gosodiadau",
     ]
 
@@ -1209,6 +1256,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Cealaigh",
         "common.save": "Sábháil",
         "common.add": "Cuir leis",
+        "common.delete": "Scrios",
         "common.settings": "Socruithe",
     ]
 
@@ -1231,6 +1279,7 @@ extension TikoLocalTranslations {
         "common.cancel": "বাতিল",
         "common.save": "সংরক্ষণ",
         "common.add": "যোগ করুন",
+        "common.delete": "মুছুন",
         "common.settings": "সেটিংস",
     ]
 
@@ -1253,6 +1302,7 @@ extension TikoLocalTranslations {
         "common.cancel": "रद्द करें",
         "common.save": "सहेजें",
         "common.add": "जोड़ें",
+        "common.delete": "मिटाएँ",
         "common.settings": "सेटिंग्स",
     ]
 
@@ -1275,6 +1325,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Άκυρο",
         "common.save": "Αποθήκευση",
         "common.add": "Προσθήκη",
+        "common.delete": "Διαγραφή",
         "common.settings": "Ρυθμίσεις",
     ]
 
@@ -1297,6 +1348,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Anulo",
         "common.save": "Ruaj",
         "common.add": "Shto",
+        "common.delete": "Fshi",
         "common.settings": "Cilësimet",
     ]
 
@@ -1319,6 +1371,7 @@ extension TikoLocalTranslations {
         "common.cancel": "İptal",
         "common.save": "Kaydet",
         "common.add": "Ekle",
+        "common.delete": "Sil",
         "common.settings": "Ayarlar",
     ]
 
@@ -1341,6 +1394,7 @@ extension TikoLocalTranslations {
         "common.cancel": "Utzi",
         "common.save": "Gorde",
         "common.add": "Gehitu",
+        "common.delete": "Ezabatu",
         "common.settings": "Ezarpenak",
     ]
 
@@ -1363,6 +1417,7 @@ extension TikoLocalTranslations {
         "common.cancel": "გაუქმება",
         "common.save": "შენახვა",
         "common.add": "დამატება",
+        "common.delete": "წაშლა",
         "common.settings": "პარამეტრები",
     ]
 

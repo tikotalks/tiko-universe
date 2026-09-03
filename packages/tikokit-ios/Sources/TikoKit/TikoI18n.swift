@@ -203,6 +203,13 @@ enum TikoLocalTranslations {
         "radio.import.title": "Add a shared collection",
         "radio.import.subtitle": "Scan a Tiko code, or type the eight characters under it.",
         "radio.import.scan": "Scan a code",
+        "radio.import.codeLabel": "Share code",
+        "radio.import.codePlaceholder": "ABCD 2345",
+        "radio.import.cameraBlocked": "The camera is not available. Type the code instead.",
+        "radio.share.publishing": "Making a code\u{2026}",
+        "radio.share.skipped": "{count} songs were left out because they only live on this device.",
+        "radio.share.failed": "This collection could not be shared.",
+        "radio.share.nothingToShare": "This collection has nothing that plays on another device yet.",
         "radio.import.scanHint": "Hold the code in front of the camera.",
         "radio.import.find": "Find",
         "radio.import.notFound": "No collection was found for that code.",
@@ -233,6 +240,7 @@ enum TikoLocalTranslations {
         "common.cancel": "Cancel",
         "common.save": "Save",
         "common.add": "Add",
+        "common.delete": "Delete",
         "common.settings": "Settings",
     ]
 
