@@ -13,5 +13,10 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['highlight.js/lib/core'],
+    // @sil/ui ships TypeScript source. Letting Vite pre-bundle it in dev
+    // produces a second copy of its popup service, so the app's popups are
+    // registered on one instance while <Popup /> renders from the other and
+    // nothing appears on screen. Production bundles resolve it once.
+    exclude: ['@sil/ui'],
   },
 })
