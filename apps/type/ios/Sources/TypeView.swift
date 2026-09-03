@@ -2,161 +2,6 @@ import SwiftUI
 import TikoKit
 import AVFoundation
 
-// MARK: - Keyboard layouts
-
-struct KeyboardLayout: Identifiable, Hashable {
-    let id: String
-    let label: String
-    let rows: [[String]]
-}
-
-enum KeyboardLayouts {
-    static let all: [KeyboardLayout] = [
-        KeyboardLayout(id: "qwerty", label: "QWERTY", rows: [
-            ["q","w","e","r","t","y","u","i","o","p"],
-            ["a","s","d","f","g","h","j","k","l"],
-            ["z","x","c","v","b","n","m"],
-        ]),
-        KeyboardLayout(id: "abc", label: "ABC", rows: [
-            ["a","b","c","d","e","f","g","h","i"],
-            ["j","k","l","m","n","o","p","q","r"],
-            ["s","t","u","v","w","x","y","z"],
-        ]),
-        KeyboardLayout(id: "azerty", label: "AZERTY", rows: [
-            ["a","z","e","r","t","y","u","i","o","p"],
-            ["q","s","d","f","g","h","j","k","l","m"],
-            ["w","x","c","v","b","n"],
-        ]),
-        KeyboardLayout(id: "qwertz", label: "QWERTZ", rows: [
-            ["q","w","e","r","t","z","u","i","o","p"],
-            ["a","s","d","f","g","h","j","k","l"],
-            ["y","x","c","v","b","n","m"],
-        ]),
-        KeyboardLayout(id: "dvorak", label: "Dvorak", rows: [
-            ["'",",",".","p","y","f","g","c","r","l"],
-            ["a","o","e","u","i","d","h","t","n","s"],
-            [";","q","j","k","x","b","m","w","v","z"],
-        ]),
-    ]
-
-    static let symbols: [[String]] = [
-        ["1","2","3","4","5","6","7","8","9","0"],
-        ["-","/",":",";","(",")","$","@","&"],
-        [".",",","?","!","'"],
-    ]
-
-    static func layout(for id: String) -> KeyboardLayout {
-        all.first { $0.id == id } ?? all[0]
-    }
-}
-
-// MARK: - Key themes
-
-struct KeyThemeColors {
-    let key: (String, Int) -> Color
-    let keyText: Color
-    let special: Color
-    let specialText: Color
-    /// Background shown briefly while a key is pressed.
-    let active: Color
-}
-
-private let colorfulPalette: [Color] = [
-    Color(hex: 0xFF6B6B),
-    Color(hex: 0xFF922B),
-    Color(hex: 0xFCC419),
-    Color(hex: 0x69DB7C),
-    Color(hex: 0x4DABF7),
-    Color(hex: 0xCC5DE8),
-    Color(hex: 0xF783AC),
-    Color(hex: 0x63E6BE),
-]
-
-enum KeyTheme: String, CaseIterable, Identifiable {
-    case classic, warm, cool, colorful, contrast, ghost
-
-    var id: String { rawValue }
-
-    var label: String {
-        switch self {
-        case .classic: "Classic"
-        case .warm: "Warm"
-        case .cool: "Cool"
-        case .colorful: "Colorful"
-        case .contrast: "Contrast"
-        case .ghost: "Ghost"
-        }
-    }
-
-    var swatch: Color {
-        switch self {
-        case .classic: Color(.systemGray5)
-        case .warm: TikoAppColor.type.palette.primary
-        case .cool: Color(hex: 0x4dabf7)
-        case .colorful: colorfulPalette[0]
-        case .contrast: .black
-        case .ghost: Color(.systemGray3)
-        }
-    }
-
-    func colors(in scheme: ColorScheme) -> KeyThemeColors {
-        switch self {
-        case .classic:
-            let keyColor = scheme == .dark ? Color(white: 0.24) : Color.white
-            return KeyThemeColors(
-                key: { _, _ in keyColor },
-                keyText: .primary,
-                special: scheme == .dark ? Color(white: 0.17) : Color(white: 0.92),
-                specialText: .primary,
-                active: TikoAppColor.type.palette.primary.opacity(0.40)
-            )
-        case .warm:
-            let keyColor = TikoAppColor.type.palette.primary.opacity(scheme == .dark ? 0.30 : 0.18)
-            return KeyThemeColors(
-                key: { _, _ in keyColor },
-                keyText: scheme == .dark ? .white : TikoAppColor.type.palette.dark,
-                special: TikoAppColor.type.palette.dark.opacity(scheme == .dark ? 0.55 : 0.30),
-                specialText: .white,
-                active: TikoAppColor.type.palette.primary.opacity(0.65)
-            )
-        case .cool:
-            let keyColor = Color(hex: 0x4dabf7).opacity(scheme == .dark ? 0.30 : 0.20)
-            return KeyThemeColors(
-                key: { _, _ in keyColor },
-                keyText: scheme == .dark ? .white : Color(hex: 0x1864ab),
-                special: Color(hex: 0x1864ab).opacity(scheme == .dark ? 0.60 : 0.35),
-                specialText: .white,
-                active: Color(hex: 0x4dabf7).opacity(0.70)
-            )
-        case .colorful:
-            return KeyThemeColors(
-                key: { _, idx in colorfulPalette[idx % colorfulPalette.count] },
-                keyText: .white,
-                special: scheme == .dark ? Color(white: 0.17) : Color(white: 0.88),
-                specialText: .primary,
-                active: Color.white.opacity(0.45)
-            )
-        case .contrast:
-            let keyColor: Color = scheme == .dark ? .white : .black
-            return KeyThemeColors(
-                key: { _, _ in keyColor },
-                keyText: scheme == .dark ? .black : .white,
-                special: scheme == .dark ? Color(white: 0.10) : Color(white: 0.96),
-                specialText: .primary,
-                active: TikoAppColor.type.palette.primary
-            )
-        case .ghost:
-            return KeyThemeColors(
-                key: { _, _ in Color.clear },
-                keyText: .primary,
-                special: Color.clear,
-                specialText: .primary.opacity(0.6),
-                active: TikoAppColor.type.palette.primary.opacity(0.45)
-            )
-        }
-    }
-}
-
 // MARK: - Flow layout (wraps word chips onto multiple lines)
 
 /// Lays subviews left-to-right, wrapping to a new line whenever the next
@@ -293,68 +138,6 @@ private struct FlyingLetterView: View {
     }
 }
 
-// MARK: - Single key cap
-
-private struct KeyCap: View {
-    let key: String
-    let display: String
-    let fill: Color
-    let textColor: Color
-    let activeColor: Color
-    let keySide: CGFloat
-    let cornerRadius: CGFloat
-    let coordSpace: String
-    let animate: Bool
-    let onKey: (String, CGRect) -> Void
-
-    @State private var frame: CGRect = .zero
-    @State private var pressed = false
-
-    var body: some View {
-        Button {
-            onKey(key, frame)
-            triggerPress()
-        } label: {
-            Text(display)
-                .font(.system(size: keySide * 0.42, design: .rounded).weight(.bold))
-                .foregroundStyle(textColor)
-                .frame(width: keySide, height: keySide)
-                .background(
-                    ZStack {
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous).fill(fill)
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(activeColor)
-                            .opacity(pressed ? 1 : 0)
-                    }
-                )
-                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-                .scaleEffect(pressed ? 0.9 : 1)
-                .background(
-                    GeometryReader { geo in
-                        Color.clear
-                            .onAppear { frame = geo.frame(in: .named(coordSpace)) }
-                            .onChange(of: geo.frame(in: .named(coordSpace))) { _, f in frame = f }
-                    }
-                )
-        }
-        .buttonStyle(.plain)
-        // Stable identifier for UI tests, independent of capitalisation.
-        .accessibilityIdentifier("key-\(key)")
-    }
-
-    private func triggerPress() {
-        if animate {
-            withAnimation(.easeOut(duration: 0.08)) { pressed = true }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                withAnimation(.easeOut(duration: 0.28)) { pressed = false }
-            }
-        } else {
-            pressed = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { pressed = false }
-        }
-    }
-}
-
 // MARK: - Letter speech
 
 /// Letters go through the shared voice service like everything else, on their
@@ -377,134 +160,86 @@ private final class LetterSpeaker {
 
 // MARK: - Virtual keyboard
 
-private struct TypeKeyboard: View {
-    let layout: KeyboardLayout
+/// The panel at the foot of the screen.
+///
+/// It owns no arrangement of its own: it asks ``KeyboardLayoutDefinition`` what the keys
+/// are and hands them to the one ``KeyGrid``. Everything that makes a keyboard look like
+/// a keyboard — the home row's half-key offset, backspace reaching the right edge, a
+/// space bar wide enough to hit blind — is arithmetic in that definition, in columns
+/// rather than points, so the same keyboard is right on a phone and on a 13-inch iPad.
+private struct TypeKeyboardPanel: View {
+    let layout: TypeKeyboardLayout
+    let languageCode: String
+    let keySize: TypeKeySize
     let theme: KeyTheme
-    let useCapitals: Bool
-    let animate: Bool
+    let showsCapitals: Bool
+    let isShifted: Bool
+    let showingNumbers: Bool
+    let animates: Bool
     let coordSpace: String
-    /// Vertical space the keyboard may occupy. Keys are capped to this so they
-    /// don't become oversized on short layouts (e.g. iPhone landscape). 0 = no
-    /// height cap (size from width only).
+    /// Vertical space the keyboard may occupy. Rows are tuned down to this so they don't
+    /// become oversized on short layouts (e.g. iPhone landscape). 0 = no height cap.
     let maxKeyboardHeight: CGFloat
-    let onKey: (String, CGRect) -> Void
-    let onBackspace: () -> Void
+    let onKey: (KeyAction, CGRect) -> Void
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.colorScheme) private var scheme
-    @State private var measuredWidth: CGFloat = .zero
-    @State private var showSymbols = false
 
     private let spacing: CGFloat = 7
     private let sidePadding: CGFloat = 12
 
-    private var rows: [[String]] {
-        showSymbols ? KeyboardLayouts.symbols : layout.rows
+    /// The arrangement, as data. A phone and an iPad get different ones — the digits
+    /// live behind `123` where there is no room for a numeral row.
+    var definition: KeyboardLayoutDefinition {
+        KeyboardLayoutDefinition.definition(
+            for: layout,
+            languageCode: languageCode,
+            keySize: keySize,
+            enlargedForAccessibilityText: dynamicTypeSize.isAccessibilitySize,
+            isShifted: isShifted,
+            isCompactWidth: horizontalSizeClass == .compact,
+            showingNumbers: showingNumbers
+        )
     }
-
-    private var maxKeysPerRow: Int {
-        rows.map(\.count).max() ?? 10
-    }
-
-    private var keySide: CGFloat {
-        let contentWidth = measuredWidth - sidePadding * 2
-        guard contentWidth > 0 else { return 32 }
-        let totalSpacing = spacing * CGFloat(maxKeysPerRow - 1)
-        var side = (contentWidth - totalSpacing) / CGFloat(maxKeysPerRow)
-
-        // Also cap by available height so wide-but-short layouts (iPhone
-        // landscape) don't blow the keys up. Total rows = letter rows + the
-        // bottom 123/space/delete row.
-        if maxKeyboardHeight > 0 {
-            let totalRows = rows.count + 1
-            let rowSpacing = spacing * CGFloat(totalRows - 1)
-            let verticalPadding = sidePadding * 0.6 * 2
-            let heightBased = (maxKeyboardHeight - rowSpacing - verticalPadding) / CGFloat(totalRows)
-            side = min(side, heightBased)
-        }
-
-        return max(28, side)
-    }
-
-    private var cornerRadius: CGFloat { keySide * 0.22 }
 
     var body: some View {
-        let colors = theme.colors(in: scheme)
-
-        VStack(spacing: spacing) {
-            ForEach(Array(rows.enumerated()), id: \.offset) { rowIdx, row in
-                HStack(spacing: spacing) {
-                    ForEach(Array(row.enumerated()), id: \.offset) { colIdx, key in
-                        let flatIndex = rowIdx * 100 + colIdx
-                        KeyCap(
-                            key: key,
-                            display: useCapitals ? key.uppercased() : key,
-                            fill: colors.key(key, flatIndex),
-                            textColor: colors.keyText,
-                            activeColor: colors.active,
-                            keySide: keySide,
-                            cornerRadius: cornerRadius,
-                            coordSpace: coordSpace,
-                            animate: animate,
-                            onKey: onKey
-                        )
-                    }
-                }
-            }
-
-            HStack(spacing: spacing) {
-                Button { showSymbols.toggle() } label: {
-                    Text(showSymbols ? "ABC" : "123")
-                        .font(.system(size: keySide * 0.34, design: .rounded).weight(.bold))
-                        .foregroundStyle(colors.specialText)
-                        .frame(width: keySide * 1.5, height: keySide)
-                        .background(colors.special)
-                        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("key-symbols-toggle")
-
-                Button { onKey(" ", .zero) } label: {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(theme == .ghost ? Color.primary.opacity(0.06) : colors.key(" ", 0))
-                        if theme == .ghost {
-                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                                .strokeBorder(Color.primary.opacity(0.22), lineWidth: 1.5)
-                        }
-                    }
-                    .frame(height: keySide)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Space")
-                .accessibilityIdentifier("key-space")
-
-                Button(action: onBackspace) {
-                    Image(systemName: "delete.left")
-                        .font(.system(size: keySide * 0.42, weight: .bold))
-                        .foregroundStyle(colors.specialText)
-                        .frame(width: keySide * 1.5, height: keySide)
-                        .background(colors.special)
-                        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Backspace")
-                .accessibilityIdentifier("key-backspace")
-            }
-        }
+        let keyboard = definition
+        KeyGrid(
+            rows: keyboard.rows,
+            columns: keyboard.totalUnits,
+            sizing: .panel(tunedHeight: tunedHeight(keyboard)),
+            titlePointSize: keyboard.titlePointSize,
+            showsCapitals: showsCapitals,
+            isShifted: isShifted,
+            theme: theme,
+            scheme: scheme,
+            spacing: spacing,
+            animates: animates,
+            accessibilityLabel: "Keyboard",
+            coordinateSpace: coordSpace,
+            onKey: onKey
+        )
+        .equatable()
         .padding(.horizontal, sidePadding)
         .padding(.vertical, sidePadding * 0.6)
-        // Pin the keyboard to the available width so `measuredWidth` reflects
-        // the parent, not the keyboard's own (key-size-derived) content width.
-        // Measuring the content created a feedback loop where keys could grow
-        // on rotation to landscape but never shrink back in portrait.
+        // Pin the keyboard to the available width rather than letting its own content
+        // decide: measuring the content created a feedback loop where keys could grow on
+        // rotation to landscape but never shrink back in portrait.
         .frame(maxWidth: .infinity)
-        .background(
-            GeometryReader { proxy in
-                Color.clear
-                    .onAppear { measuredWidth = proxy.size.width }
-                    .onChange(of: proxy.size.width) { _, w in measuredWidth = w }
-            }
-        )
+    }
+
+    /// The tuned row height, brought down to whatever height the panel was actually given.
+    ///
+    /// The preset says how tall a row wants to be; this says how tall it may be. Never
+    /// below the platform touch floor — a keyboard too tall for its box is a bug to see,
+    /// not one to hide behind keys nobody can hit.
+    private func tunedHeight(_ definition: KeyboardLayoutDefinition) -> Double {
+        let rows = Double(definition.rows.count)
+        guard maxKeyboardHeight > 0, rows > 0 else { return definition.keyHeight }
+        let chrome = Double(sidePadding * 1.2) + Double(spacing) * (rows - 1)
+        let perRow = (Double(maxKeyboardHeight) - chrome) / rows
+        return max(Double(KeyGeometry.minimumHittableSide), min(definition.keyHeight, perRow))
     }
 }
 
@@ -561,7 +296,8 @@ private struct TypePickerRow<MenuContent: View>: View {
 struct TypeView: View {
     @AppStorage("type.words") private var wordsData = Data()
     @AppStorage("type.currentWord") private var currentWord = ""
-    @AppStorage("type.keyboardLayout") private var keyboardLayoutID = "qwerty"
+    @AppStorage("type.keyboardLayout") private var keyboardLayoutID = TypeKeyboardLayout.familiar.rawValue
+    @AppStorage("type.keySize") private var keySizeRaw = TypeKeySize.standard.rawValue
     @AppStorage("type.keyTheme") private var keyThemeRaw = KeyTheme.classic.rawValue
     @AppStorage("type.speakLetters") private var speakLetters = false
     @AppStorage("type.useCapitals") private var useCapitals = true
@@ -575,6 +311,13 @@ struct TypeView: View {
     @State private var barFrame: CGRect = .zero
     @State private var currentWordFrame: CGRect = .zero
     @State private var availableHeight: CGFloat = 0
+    /// Shift, one press at a time — it capitalises the next letter and lets go, which is
+    /// what a phone keyboard does and what somebody writing a name expects.
+    @State private var isShifted = false
+    /// Whether `123` has been pressed. Not persisted: a keyboard comes back to letters.
+    @State private var showingNumbers = false
+    /// Whether the letterboard has the screen instead of the keyboard.
+    @State private var showingLetterboard = false
 
     private let coordSpace = "typeRoot"
     private let currentWordColor = Color(hex: 0x4dabf7)
@@ -591,8 +334,18 @@ struct TypeView: View {
         KeyTheme(rawValue: keyThemeRaw) ?? .classic
     }
 
-    private var currentLayout: KeyboardLayout {
+    private var keySize: TypeKeySize {
+        TypeKeySize(rawValue: keySizeRaw) ?? .standard
+    }
+
+    private var currentLayout: TypeKeyboardLayout {
         KeyboardLayouts.layout(for: keyboardLayoutID)
+    }
+
+    /// What the Familiar option resolves to right now, so the picker can say so rather
+    /// than making the person guess which keyboard "Familiar" means for their language.
+    private var familiarLabel: String {
+        "Familiar (\(TypeKeyboardLayout.familiarArrangement(forLanguageCode: languageCode).label))"
     }
 
     private var hasContent: Bool {
@@ -628,17 +381,36 @@ struct TypeView: View {
                     TypePickerRow(
                         title: "Keyboard layout",
                         icon: "keyboard",
-                        valueLabel: currentLayout.label,
+                        valueLabel: currentLayout == .familiar ? familiarLabel : currentLayout.label,
                         appColor: .type
                     ) {
                         ForEach(KeyboardLayouts.all) { layout in
                             Button {
                                 keyboardLayoutID = layout.id
                             } label: {
+                                let label = layout == .familiar ? familiarLabel : layout.label
                                 if layout.id == keyboardLayoutID {
-                                    Label(layout.label, systemImage: "checkmark")
+                                    Label(label, systemImage: "checkmark")
                                 } else {
-                                    Text(layout.label)
+                                    Text(label)
+                                }
+                            }
+                        }
+                    }
+                    TypePickerRow(
+                        title: "Key size",
+                        icon: "arrow.up.left.and.arrow.down.right",
+                        valueLabel: keySize.label,
+                        appColor: .type
+                    ) {
+                        ForEach(TypeKeySize.allCases) { size in
+                            Button {
+                                keySizeRaw = size.rawValue
+                            } label: {
+                                if size.rawValue == keySizeRaw {
+                                    Label(size.label, systemImage: "checkmark")
+                                } else {
+                                    Text(size.label)
                                 }
                             }
                         }
@@ -666,7 +438,47 @@ struct TypeView: View {
                 }
             }
         ) {
-            ZStack {
+            Group {
+                if showingLetterboard {
+                    LetterboardView(
+                        languageCode: languageCode,
+                        keySize: keySize,
+                        theme: keyTheme,
+                        animates: showAnimations,
+                        speak: speakOnBoard,
+                        exit: { showingLetterboard = false }
+                    )
+                } else {
+                    keyboardScreen
+                }
+            }
+        }
+        .environmentObject(i18n)
+        .onAppear {
+            i18n.setLanguage(languageCode)
+            if TikoScreenshotMode.isActive {
+                // Screenshot / UI-test mode is deterministic: never inherit the
+                // persisted in-progress word or saved chips from a previous run.
+                words = []
+                currentWord = ""
+                if TikoScreenshotMode.scene == "sentence" { words = ["Hello", "world"] }
+                return
+            }
+            loadWords()
+            migrateOldText()
+            warmLetterVoices()
+        }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
+            warmLetterVoices()
+        }
+        .onChange(of: keyboardLayoutID) { _, _ in warmLetterVoices() }
+    }
+
+    // MARK: - The typing screen
+
+    private var keyboardScreen: some View {
+        ZStack {
             VStack(spacing: 0) {
                 Spacer(minLength: 8)
 
@@ -699,20 +511,39 @@ struct TypeView: View {
                         .disabled(!hasContent)
                         .accessibilityLabel("Clear")
                         .accessibilityIdentifier("clearButton")
+
+                        // The letterboard lives here rather than in the header, because
+                        // the header's buttons belong to a parent and this one does not:
+                        // somebody who can no longer hit a keyboard key still has to be
+                        // able to reach the board.
+                        Button { showingLetterboard = true } label: {
+                            Image(systemName: "square.grid.3x3.fill")
+                                .font(.title2.weight(.bold))
+                                .foregroundStyle(typeDark)
+                                .frame(width: 56, height: 56)
+                                .background(typePrimary.opacity(0.14))
+                                .clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Letterboard")
+                        .accessibilityIdentifier("letterboardButton")
                     }
                 }
 
                 Spacer(minLength: 8)
 
-                TypeKeyboard(
+                TypeKeyboardPanel(
                     layout: currentLayout,
+                    languageCode: languageCode,
+                    keySize: keySize,
                     theme: keyTheme,
-                    useCapitals: useCapitals,
-                    animate: showAnimations,
+                    showsCapitals: useCapitals,
+                    isShifted: isShifted,
+                    showingNumbers: showingNumbers,
+                    animates: showAnimations,
                     coordSpace: coordSpace,
                     maxKeyboardHeight: availableHeight > 0 ? availableHeight * 0.55 : 0,
-                    onKey: handleKey,
-                    onBackspace: handleBackspace
+                    onKey: handleKey
                 )
             }
             .padding(.top, 8)
@@ -731,29 +562,8 @@ struct TypeView: View {
                     fontSize: letter.kind == .fly ? 32 : 38
                 )
             }
-            }
-            .coordinateSpace(name: coordSpace)
         }
-        .environmentObject(i18n)
-        .onAppear {
-            i18n.setLanguage(languageCode)
-            if TikoScreenshotMode.isActive {
-                // Screenshot / UI-test mode is deterministic: never inherit the
-                // persisted in-progress word or saved chips from a previous run.
-                words = []
-                currentWord = ""
-                if TikoScreenshotMode.scene == "sentence" { words = ["Hello", "world"] }
-                return
-            }
-            loadWords()
-            migrateOldText()
-            warmLetterVoices()
-        }
-        .onChange(of: languageCode) { _, code in
-            i18n.setLanguage(code)
-            warmLetterVoices()
-        }
-        .onChange(of: keyboardLayoutID) { _, _ in warmLetterVoices() }
+        .coordinateSpace(name: coordSpace)
     }
 
     // MARK: - Type bar (word chips)
@@ -817,19 +627,36 @@ struct TypeView: View {
 
     // MARK: - Key handling
 
-    private func handleKey(_ key: String, from frame: CGRect) {
-        if key == " " {
+    private func handleKey(_ action: KeyAction, from frame: CGRect) {
+        switch action {
+        case .insert(let fragment):
+            // Shift is the only thing that puts a capital into the message. `useCapitals`
+            // is a display choice — it shouts the keys and the chips, and leaves the words
+            // themselves alone.
+            let typed = isShifted ? fragment.uppercased() : fragment
+            currentWord += typed
+            if speakLetters {
+                letterSpeaker.speak(fragment, languageCode: languageCode)
+            }
+            spawnFly(typed, from: frame)
+            // One press, one capital: shift lets go the moment it has been used.
+            if isShifted { isShifted = false }
+        case .word:
             if !currentWord.isEmpty {
                 words = TypeText.committing(words: words, currentWord: currentWord)
                 currentWord = ""
                 saveWords()
             }
-        } else {
-            currentWord += key
-            if speakLetters {
-                letterSpeaker.speak(key, languageCode: languageCode)
-            }
-            spawnFly(key, from: frame)
+        case .backspace:
+            handleBackspace()
+        case .numbers:
+            showingNumbers.toggle()
+        case .shift:
+            isShifted.toggle()
+        // Not keys this keyboard has. DONE belongs to the letterboard, and a gap is a hole
+        // in a row rather than something to press.
+        case .finish, .gap:
+            break
         }
     }
 
@@ -895,11 +722,21 @@ struct TypeView: View {
         }
     }
 
-    /// Caches every key of the current layout so typed letters play instantly
-    /// and keep working offline.
+    /// Caches every letter of the current alphabet so typed letters play instantly and
+    /// keep working offline. The alphabet rather than the arrangement: the same letters
+    /// are on the keyboard whichever way they are arranged, and they are also what the
+    /// letterboard is made of.
     private func warmLetterVoices() {
         guard speakLetters else { return }
-        letterSpeaker.warm(keys: currentLayout.rows.flatMap { $0 }, languageCode: languageCode)
+        let alphabet = KeyboardAlphabet.alphabet(forLanguageCode: languageCode)
+        letterSpeaker.warm(keys: alphabet.letters.map(String.init), languageCode: languageCode)
+    }
+
+    /// The letterboard's voice: every letter as it is pressed, and the whole spelled
+    /// message when DONE is. It does not touch `isSpeaking`, which belongs to the sentence
+    /// bar's speak button on the other screen.
+    private func speakOnBoard(_ text: String) {
+        speechService.speakDetached(text, languageCode: languageCode)
     }
 
     private func speakWord(_ word: String) {
@@ -933,11 +770,15 @@ struct TypeView: View {
         UserDefaults.standard.removeObject(forKey: "type.text")
 
         // Reset settings to defaults.
-        keyboardLayoutID = "qwerty"
+        keyboardLayoutID = TypeKeyboardLayout.familiar.rawValue
+        keySizeRaw = TypeKeySize.standard.rawValue
         keyThemeRaw = KeyTheme.classic.rawValue
         speakLetters = false
         useCapitals = true
         showAnimations = true
+        isShifted = false
+        showingNumbers = false
+        showingLetterboard = false
 
         // Shared device-level prefs → device defaults (language follows the
         // device locale / English; colour mode follows the device appearance).

@@ -31,6 +31,7 @@ Type helps a child communicate by typing words, phrases, or sentences and speaki
 | Speak | Main screen | Speaks the current text or selected phrase immediately. |
 | Clear | Main screen | Clears the current draft after safe child-facing affordance. |
 | Saved phrases | Child Mode / app surface | Shows saved phrases if enabled and child-safe. |
+| Letterboard | Main screen (iOS) | Opens the full-screen letterboard: the alphabet five across with a rail of marks, DONE across the foot. Reached from the main screen and left again from the board's own Keyboard control, so it stays available in Child Mode. |
 | Parent Mode settings | Parent Mode only | Opens Type settings, account state, reset actions, and phrase management. |
 | Child Mode exit | Child Mode only | Opens PIN gate before returning to Parent Mode. |
 
@@ -161,7 +162,7 @@ Child Accounts cannot self-delete. A Profile Manager deletes the Child Account. 
 | Platform | Notes |
 | --- | --- |
 | Web | May use browser speech fallback. Avoid blocking text entry on network calls. |
-| iOS | May use native speech and keyboard behavior. Keep speak action immediate. |
+| iOS | May use native speech and keyboard behavior. Keep speak action immediate. Ships its own arrangement engine: the keyboard rows are data measured in key columns, so a language gets its own alphabet and its own familiar arrangement (German QWERTZ, French AZERTY, Russian ЙЦУКЕН) rather than a Latin A–Z. Arrangement, key size and key theme are iOS-local preferences today — they are deliberately not in the shared `TypeSettings` above, because `keyboardLayout` there is a three-value web contract and widening it is a separate, cross-platform change. See `apps/type/ios/REQUIREMENTS.md`. |
 | Android | May use native speech and keyboard behavior. Keep speak action immediate. |
 
 ## Acceptance criteria
