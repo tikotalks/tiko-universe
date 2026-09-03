@@ -10,6 +10,8 @@ type NewTrackInput = {
   thumbnailUrl?: string
   duration?: number
   categoryId?: string
+  externalId?: string
+  externalUrl?: string
 }
 
 function hasPersistentAudioUrl(track: RadioTrack): boolean {
@@ -62,6 +64,16 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
     tracks.value = tracks.value.filter((_, i) => i !== index)
   }
 
+  /** Songs in a collection, in library order. */
+  function tracksInCategory(categoryId: string): RadioTrack[] {
+    return tracks.value.filter(track => track.categoryId === categoryId)
+  }
+
+  /** Deleting a collection deletes the songs inside it. */
+  function removeTracksInCategory(categoryId: string) {
+    tracks.value = tracks.value.filter(track => track.categoryId !== categoryId)
+  }
+
   function moveTrack(fromIndex: number, toIndex: number) {
     const list = [...tracks.value]
     const [moved] = list.splice(fromIndex, 1)
@@ -78,5 +90,17 @@ export function useTrackLibrary(storageKey: string = 'tiko:radio:tracks') {
 
   watch(tracks, saveTracks, { deep: true })
 
-  return { tracks, addTrack, mergeTracks, removeTrack, removeTrackByIndex, moveTrack, clearAll, isEmpty, count }
+  return {
+    tracks,
+    addTrack,
+    mergeTracks,
+    removeTrack,
+    removeTrackByIndex,
+    tracksInCategory,
+    removeTracksInCategory,
+    moveTrack,
+    clearAll,
+    isEmpty,
+    count,
+  }
 }

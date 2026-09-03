@@ -13,6 +13,8 @@ interface Props {
     light: string
     dark: string
     system: string
+    /** Present only for a parent: opens the linked music services. */
+    services?: string
   }
 }
 
@@ -21,6 +23,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   (e: 'update:language', value: string): void
   (e: 'update:colorMode', value: string): void
+  (e: 'open-services'): void
 }>()
 
 const modes = computed<Array<{ value: TikoColorMode; label: string; icon: string }>>(() => [
@@ -70,6 +73,16 @@ function setColorMode(value: string) {
         </button>
       </div>
     </div>
+
+    <div v-if="labels.services" class="radio-settings-popup__row">
+      <button
+        class="radio-settings-popup__link"
+        data-test="radio-settings-services"
+        @click="emit('open-services')"
+      >
+        {{ labels.services }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -98,6 +111,23 @@ function setColorMode(value: string) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
+  }
+
+  &__link {
+    padding: 0.55rem 0.8rem;
+    border: none;
+    border-radius: 0.7rem;
+    background: color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 94%);
+    color: var(--color-foreground, #1a1a2e);
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in srgb, var(--color-foreground, #1a1a2e), transparent 88%);
+    }
   }
 
   &__pill {

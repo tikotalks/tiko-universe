@@ -842,4 +842,157 @@ describe('media-api worker', () => {
     expect(musicAlbum).toMatchObject({ id: musicAlbumBody.data.id, title: 'Songs', tracks: [expect.objectContaining({ title: 'Morning', mediaId: 'audio_2', audioUrl: 'https://data.tikocdn.org/uploads/song.mp3' })] })
     expect(env.MEDIA_DB.audioTrackQueryCount).toBe(1)
   })
+
+  describe('external audio for Radio', () => {
+    it('searches YouTube with strict safe search and attaches durations', async () => {
+      const calls: string[] = []
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input)
+        calls.push(url)
+        if (url.includes('/youtube/v3/search')) {
+          return new Response(JSON.stringify({
+            items: [
+              {
+                id: { videoId: 'abcdefghijk' },
+                snippet: {
+                  title: 'Sleepy lullaby',
+                  channelTitle: 'Tiko Songs',
+                  publishedAt: '2026-01-01T00:00:00Z',
+                  thumbnails: { medium: { url: 'https://i.ytimg.com/vi/abcdefghijk/mqdefault.jpg' } },
+                },
+              },
+              { id: {}, snippet: { title: 'A playlist, not a video' } },
+            ],
+          }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
+        if (url.includes('/youtube/v3/videos')) {
+          return new Response(JSON.stringify({
+            items: [{ id: 'abcdefghijk', contentDetails: { duration: 'PT3M25S' } }],
+          }), { status: 200, headers: { 'content-type': 'application/json' } })
+        }
+        throw new Error(`Unexpected fetch: ${url}`)
+      })
+
+      const env = { ...makeEnv(), YOUTUBE_API_KEY: 'yt-test-key' }
+      const response = await worker.fetch(new Request('https://media.test/v1/youtube/search?q=lullaby&limit=5'), env as never)
+      const body = await parseJson(response)
+
+      expect(response.status).toBe(200)
+      expect(body.data).toEqual([{
+        videoId: 'abcdefghijk',
+        title: 'Sleepy lullaby',
+        channelTitle: 'Tiko Songs',
+        thumbnailUrl: 'https://i.ytimg.com/vi/abcdefghijk/mqdefault.jpg',
+        publishedAt: '2026-01-01T00:00:00Z',
+        durationSeconds: 205,
+      }])
+      expect(body.meta).toMatchObject({ total: 1, schemaVersion: 1 })
+      expect(calls[0]).toContain('safeSearch=strict')
+      expect(calls[0]).toContain('videoEmbeddable=true')
+      expect(calls[0]).toContain('maxResults=5')
+      expect(calls[0]).toContain('q=lullaby')
+    })
+
+    it('lists a channel newest-first when no query is given', async () => {
+      const calls: string[] = []
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) => {
+        calls.push(String(input))
+        return new Response(JSON.stringify({ items: [] }), { status: 200, headers: { 'content-type': 'application/json' } })
+      })
+
+      const env = { ...makeEnv(), YOUTUBE_API_KEY: 'yt-test-key' }
+      const response = await worker.fetch(new Request('https://media.test/v1/youtube/search?channelId=UC123'), env as never)
+
+      expect(response.status).toBe(200)
+      expect((await parseJson(response)).data).toEqual([])
+      expect(calls[0]).toContain('channelId=UC123')
+      expect(calls[0]).toContain('order=date')
+      // No durations lookup when the search came back empty.
+      expect(calls).toHaveLength(1)
+    })
+
+    it('reports a structured error when no YouTube key is configured', async () => {
+      const response = await worker.fetch(new Request('https://media.test/v1/youtube/search?q=lullaby'), makeEnv() as never)
+      const body = await parseJson(response)
+
+      expect(response.status).toBe(503)
+      expect(body.error).toMatchObject({ code: 'youtube_not_configured' })
+    })
+
+    it('rejects a YouTube search with neither query nor channel', async () => {
+      const env = { ...makeEnv(), YOUTUBE_API_KEY: 'yt-test-key' }
+      const response = await worker.fetch(new Request('https://media.test/v1/youtube/search'), env as never)
+
+      expect(response.status).toBe(400)
+      expect((await parseJson(response)).error).toMatchObject({ code: 'invalid_request' })
+    })
+
+    it('resolves a Spotify track link into a song', async () => {
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) => {
+        expect(String(input)).toContain('open.spotify.com/oembed')
+        return new Response(JSON.stringify({
+          title: 'Twinkle Twinkle Little Star',
+          thumbnail_url: 'https://i.scdn.co/image/twinkle',
+        }), { status: 200, headers: { 'content-type': 'application/json' } })
+      })
+
+      const link = 'https://open.spotify.com/intl-nl/track/4uLU6hMCjMI75M1A2tKUQC?si=abc'
+      const response = await worker.fetch(
+        new Request(`https://media.test/v1/music/resolve?url=${encodeURIComponent(link)}`),
+        makeEnv() as never,
+      )
+      const body = await parseJson(response)
+
+      expect(response.status).toBe(200)
+      expect(body.data).toMatchObject({
+        provider: 'spotify',
+        externalId: '4uLU6hMCjMI75M1A2tKUQC',
+        externalUrl: 'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC',
+        title: 'Twinkle Twinkle Little Star',
+        thumbnailUrl: 'https://i.scdn.co/image/twinkle',
+      })
+    })
+
+    it('resolves an Apple Music song link with artist and duration', async () => {
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (input: RequestInfo | URL) => {
+        expect(String(input)).toContain('itunes.apple.com/lookup?id=1440857781')
+        return new Response(JSON.stringify({
+          results: [{
+            trackName: 'Lullaby',
+            artistName: 'Tiko Songs',
+            artworkUrl100: 'https://is1-ssl.mzstatic.com/image/100x100bb.jpg',
+            trackTimeMillis: 185000,
+            trackViewUrl: 'https://music.apple.com/us/album/lullaby/1440857775?i=1440857781',
+          }],
+        }), { status: 200, headers: { 'content-type': 'application/json' } })
+      })
+
+      const link = 'https://music.apple.com/us/album/lullaby/1440857775?i=1440857781'
+      const response = await worker.fetch(
+        new Request(`https://media.test/v1/music/resolve?url=${encodeURIComponent(link)}`),
+        makeEnv() as never,
+      )
+      const body = await parseJson(response)
+
+      expect(response.status).toBe(200)
+      expect(body.data).toMatchObject({
+        provider: 'apple-music',
+        externalId: '1440857781',
+        title: 'Lullaby',
+        artist: 'Tiko Songs',
+        thumbnailUrl: 'https://is1-ssl.mzstatic.com/image/300x300bb.jpg',
+        durationSeconds: 185,
+      })
+    })
+
+    it('rejects links from services Radio cannot play', async () => {
+      const response = await worker.fetch(
+        new Request(`https://media.test/v1/music/resolve?url=${encodeURIComponent('https://example.com/song/1')}`),
+        makeEnv() as never,
+      )
+
+      expect(response.status).toBe(400)
+      expect((await parseJson(response)).error).toMatchObject({ code: 'unsupported_music_link' })
+    })
+  })
 })

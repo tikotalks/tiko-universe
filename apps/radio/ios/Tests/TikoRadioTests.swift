@@ -268,7 +268,44 @@ final class TikoRadioTests: XCTestCase {
         XCTAssertEqual(TrackSource.r2.rawValue, "r2")
         XCTAssertEqual(TrackSource.upload.rawValue, "upload")
         XCTAssertEqual(TrackSource(rawValue: "youtube"), .youtube)
-        XCTAssertNil(TrackSource(rawValue: "spotify"))
+        XCTAssertNil(TrackSource(rawValue: "bandcamp"))
+    }
+
+    /// Songs added from a linked subscription decode on iOS and are marked as
+    /// belonging to the service's own player.
+    func testStreamingSourcesDecodeAndOpenExternally() {
+        XCTAssertEqual(TrackSource(rawValue: "spotify"), .spotify)
+        XCTAssertEqual(TrackSource(rawValue: "apple-music"), .appleMusic)
+        XCTAssertEqual(TrackSource.appleMusic.rawValue, "apple-music")
+
+        let spotifySong = RadioTrack(
+            title: "Lullaby",
+            source: .spotify,
+            categoryId: "calm",
+            externalId: "4uLU6hMCjMI75M1A2tKUQC",
+            externalUrl: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC"
+        )
+        XCTAssertTrue(spotifySong.playsInStreamingService)
+        XCTAssertFalse(RadioTrack(title: "Song", source: .youtube, youtubeVideoId: "abc").playsInStreamingService)
+        XCTAssertEqual(spotifySong.withCategory("music").externalUrl, spotifySong.externalUrl)
+    }
+
+    /// A snapshot carrying subscription songs round-trips, so a web-added
+    /// Spotify song never wipes the iOS library on decode.
+    func testSnapshotWithStreamingTrackRoundTrips() throws {
+        let snapshot = RadioLibrarySnapshot(
+            tracks: [RadioTrack(
+                title: "Lullaby",
+                source: .appleMusic,
+                categoryId: "calm",
+                externalId: "1440857781",
+                externalUrl: "https://music.apple.com/us/album/lullaby/1440857775?i=1440857781"
+            )],
+            categories: defaultRadioCategories,
+            selectedCategoryID: "calm"
+        )
+        let decoded = try JSONDecoder().decode(RadioLibrarySnapshot.self, from: JSONEncoder().encode(snapshot))
+        XCTAssertEqual(decoded, snapshot)
     }
 
     func testCategoryColorNameMirrorsColor() {

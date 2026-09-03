@@ -14,13 +14,17 @@ function normalizeColor(value: unknown): TikoColorName {
 
 function normalizeCategory(category: Partial<RadioCategory>, order = 0): RadioCategory {
   const name = typeof category.name === 'string' && category.name.trim() ? category.name : 'Category'
-  return {
+  const normalized: RadioCategory = {
     id: typeof category.id === 'string' && category.id.trim() ? category.id : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
     name,
     icon: typeof category.icon === 'string' && category.icon.trim() ? category.icon : 'media/headphones',
     color: normalizeColor(category.color),
     order: typeof category.order === 'number' ? category.order : order,
   }
+  if (typeof category.imageUrl === 'string' && category.imageUrl.trim()) {
+    normalized.imageUrl = category.imageUrl.trim()
+  }
+  return normalized
 }
 
 export function useCategories(storageKey: string = 'tiko:radio:categories') {
@@ -43,6 +47,10 @@ export function useCategories(storageKey: string = 'tiko:radio:categories') {
   const isEmpty: ComputedRef<boolean> = computed(() => categories.value.length === 0)
 
   const categoryNames: ComputedRef<Set<string>> = computed(() => new Set(categories.value.map(c => c.name)))
+
+  const byId: ComputedRef<Map<string, RadioCategory>> = computed(
+    () => new Map(categories.value.map(category => [category.id, category])),
+  )
 
   function addCategory(category: Partial<RadioCategory> & Pick<RadioCategory, 'name' | 'icon' | 'color'>): RadioCategory {
     const maxOrder = categories.value.reduce((max, c) => Math.max(max, c.order), -1)
@@ -69,6 +77,7 @@ export function useCategories(storageKey: string = 'tiko:radio:categories') {
     categories,
     isEmpty,
     categoryNames,
+    byId,
     addCategory,
     replaceCategories,
     removeCategory,

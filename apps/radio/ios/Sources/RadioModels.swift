@@ -11,6 +11,10 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
     let duration: TimeInterval?
     let categoryId: String?
     let addedAt: String?
+    /// Track id inside the streaming service (Spotify track id, Apple Music song id).
+    let externalId: String?
+    /// Canonical web URL of the track on the streaming service.
+    let externalUrl: String?
 
     init(
         id: String = UUID().uuidString,
@@ -22,7 +26,9 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
         thumbnailUrl: String? = nil,
         duration: TimeInterval? = nil,
         categoryId: String? = nil,
-        addedAt: String? = nil
+        addedAt: String? = nil,
+        externalId: String? = nil,
+        externalUrl: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -34,6 +40,8 @@ struct RadioTrack: Identifiable, Codable, Equatable, Sendable {
         self.duration = duration
         self.categoryId = categoryId
         self.addedAt = addedAt ?? ISO8601DateFormatter().string(from: Date())
+        self.externalId = externalId
+        self.externalUrl = externalUrl
     }
 }
 
@@ -49,8 +57,17 @@ extension RadioTrack {
             thumbnailUrl: thumbnailUrl,
             duration: duration,
             categoryId: categoryId,
-            addedAt: addedAt
+            addedAt: addedAt,
+            externalId: externalId,
+            externalUrl: externalUrl
         )
+    }
+
+    /// Songs that live inside a linked streaming subscription. iOS hands these
+    /// to the service's own app instead of playing them itself, because their
+    /// audio is licensed to that player.
+    var playsInStreamingService: Bool {
+        source == .spotify || source == .appleMusic
     }
 }
 
@@ -58,6 +75,8 @@ enum TrackSource: String, Codable, Equatable, Sendable {
     case youtube
     case r2
     case upload
+    case spotify
+    case appleMusic = "apple-music"
 }
 
 struct RadioCategory: Identifiable, Codable, Equatable, Sendable {

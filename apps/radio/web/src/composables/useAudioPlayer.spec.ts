@@ -122,4 +122,72 @@ describe('useAudioPlayer', () => {
 
     scope.stop()
   })
+
+  it('plays a Spotify song through a hidden embed and reports its progress once it ends', async () => {
+    const { player, scope } = await createPlayer()
+    const controller = {
+      addListener: vi.fn(),
+      play: vi.fn(),
+      pause: vi.fn(),
+      resume: vi.fn(),
+      seek: vi.fn(),
+      destroy: vi.fn(),
+    }
+    const createController = vi.fn((element: HTMLElement, _options: unknown, callback: (c: unknown) => void) => {
+      // The embed must stay off-screen: Radio is a listening app.
+      expect(element.style.opacity).toBe('0')
+      callback(controller)
+    })
+
+    player.play({
+      id: 'spotify-1',
+      title: 'Lullaby',
+      source: 'spotify',
+      externalId: '4uLU6hMCjMI75M1A2tKUQC',
+      externalUrl: 'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC',
+    })
+    ;(window as any).onSpotifyIframeApiReady({ createController })
+    await Promise.resolve()
+    await nextTick()
+
+    expect(createController).toHaveBeenCalledTimes(1)
+    expect(createController.mock.calls[0][1]).toMatchObject({ uri: 'spotify:track:4uLU6hMCjMI75M1A2tKUQC' })
+    expect(controller.play).toHaveBeenCalled()
+    expect(player.isPlaying.value).toBe(true)
+
+    const onPlaybackUpdate = controller.addListener.mock.calls[0][1] as (event: unknown) => void
+    onPlaybackUpdate({ data: { position: 30_000, duration: 120_000, isPaused: false } })
+    expect(player.progress.value).toBeCloseTo(0.25)
+
+    // The embed keeps reporting the final position; the song ends only once.
+    onPlaybackUpdate({ data: { position: 120_000, duration: 120_000, isPaused: true } })
+    onPlaybackUpdate({ data: { position: 120_000, duration: 120_000, isPaused: true } })
+    expect(player.endedCount.value).toBe(1)
+
+    player.stop()
+    expect(controller.destroy).toHaveBeenCalled()
+    expect(document.querySelector('.spotify-player-container')).toBeNull()
+
+    scope.stop()
+  })
+
+  it('hands an Apple Music song to Apple Music instead of pretending to play it', async () => {
+    const { player, scope } = await createPlayer()
+    const open = vi.fn()
+    vi.stubGlobal('open', open)
+
+    player.play({
+      id: 'apple-1',
+      title: 'Lullaby',
+      source: 'apple-music',
+      externalId: '1440857781',
+      externalUrl: 'https://music.apple.com/us/album/lullaby/1440857775?i=1440857781',
+    })
+
+    expect(open).toHaveBeenCalledWith('https://music.apple.com/us/album/lullaby/1440857775?i=1440857781', '_blank', 'noopener')
+    expect(player.isPlaying.value).toBe(false)
+    expect(player.source.value).toBe('external')
+
+    scope.stop()
+  })
 })

@@ -1,6 +1,9 @@
 import AVFoundation
 import Foundation
 import Observation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 @MainActor
 @Observable
@@ -47,6 +50,13 @@ final class RadioPlaybackService {
             player.play()
             isPlaying = true
             startProgressTimer()
+        case .spotify, .appleMusic:
+            // A subscription song is licensed to its own player, so iOS opens it
+            // there instead of pretending to play it.
+            isPlaying = false
+            guard let urlString = track.externalUrl,
+                  let url = URL(string: urlString) else { return }
+            openExternally(url)
         }
     }
 
@@ -82,6 +92,12 @@ final class RadioPlaybackService {
         if resetTrack {
             currentTrack = nil
         }
+    }
+
+    private func openExternally(_ url: URL) {
+        #if canImport(UIKit)
+        UIApplication.shared.open(url)
+        #endif
     }
 
     private func configureAudioSession() {

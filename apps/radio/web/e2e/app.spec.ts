@@ -74,4 +74,25 @@ test.describe('Radio app', () => {
     await expect(page.locator('.radio-app__content')).toBeVisible()
     await expect(page.locator('.radio-app__empty, .radio-app__track-grid')).toBeVisible()
   })
+
+  test('shows the default collections with their artwork', async ({ page }) => {
+    await expect(page.getByTestId('radio-collection-animals')).toBeVisible()
+    await expect(page.locator('.radio-app__category-card')).toHaveCount(5)
+  })
+
+  test('the + button asks whether to add a song or a collection', async ({ page }) => {
+    await page.getByTestId('tiko-header-action-add').click()
+
+    await expect(page.getByTestId('radio-context-menu')).toBeVisible()
+    await expect(page.getByTestId('radio-context-menu-song')).toBeVisible()
+    await expect(page.getByTestId('radio-context-menu-collection')).toBeVisible()
+  })
+
+  test('adding a collection opens the collection form', async ({ page }) => {
+    await page.getByTestId('tiko-header-action-add').click()
+    await page.getByTestId('radio-context-menu-collection').click()
+
+    await expect(page.getByTestId('radio-collection-form')).toBeVisible()
+    await expect(page.getByTestId('radio-collection-name')).toBeVisible()
+  })
 })

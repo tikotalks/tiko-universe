@@ -6,6 +6,7 @@
 
 import { authenticate, type AuthSuccess } from '../../shared/auth'
 import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
+import { isApiError, resolveMusicLink, searchYouTube } from './external-audio'
 
 // ── Inline env / type interfaces (no @cloudflare/workers-types) ─
 
@@ -21,6 +22,8 @@ interface Env {
   OPENAI_API_KEY?: string
   OPENAI_SECRET?: SecretStoreBinding
   PEPPER_SECRET?: SecretStoreBinding
+  YOUTUBE_API_KEY?: string
+  YOUTUBE_SECRET?: SecretStoreBinding
   IDENTITY_BASE_URL?: string
 }
 
@@ -1496,6 +1499,36 @@ async function handleAddAudioTrack(request: Request, env: Env, albumId: string):
   }
 }
 
+// ── External audio (Radio) ─────────────────────────────────────
+
+/** Structured error envelope, per docs/api/openapi.yaml. */
+function errorEnvelope(code: string, message: string, status: number): Response {
+  return json({ error: { code, message }, meta: {} }, status)
+}
+
+// GET /v1/youtube/search?q=&channelId=&limit= — safe-search video lookup for Radio
+async function handleYouTubeSearch(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url)
+  const limitParam = Number(url.searchParams.get('limit'))
+  const result = await searchYouTube(env, {
+    query: url.searchParams.get('q') ?? undefined,
+    channelId: url.searchParams.get('channelId') ?? undefined,
+    limit: Number.isFinite(limitParam) && limitParam > 0 ? limitParam : undefined,
+  })
+
+  if (isApiError(result)) return errorEnvelope(result.code, result.message, result.status)
+  return json({ data: result, meta: { total: result.length, schemaVersion: 1 } })
+}
+
+// GET /v1/music/resolve?url= — Spotify / Apple Music share link → Radio song
+async function handleMusicResolve(request: Request): Promise<Response> {
+  const url = new URL(request.url)
+  const result = await resolveMusicLink(url.searchParams.get('url') ?? '')
+
+  if (isApiError(result)) return errorEnvelope(result.code, result.message, result.status)
+  return json({ data: result, meta: { schemaVersion: 1 } })
+}
+
 // ── Router ─────────────────────────────────────────────────────
 
 export default {
@@ -1514,6 +1547,14 @@ export default {
     const id = segments[2]        // optional UUID
 
     if (version !== 'v1') return err('Not found', 404)
+
+    // ── External audio lookups (public reads for Radio) ──
+    if (resource === 'youtube' && id === 'search' && request.method === 'GET') {
+      return handleYouTubeSearch(request, env)
+    }
+    if (resource === 'music' && id === 'resolve' && request.method === 'GET') {
+      return handleMusicResolve(request)
+    }
 
     // ── Audio library routes (admin writes, public radio reads) ──
     if (resource === 'audio' && id === 'albums') {

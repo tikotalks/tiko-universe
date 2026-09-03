@@ -129,7 +129,7 @@ describe('Radio App (unified layout)', () => {
     expect(trackCards.length).toBe(3)
   })
 
-  it('shows category cards for categories that have videos', async () => {
+  it('shows a card per collection, with its song count', async () => {
     const ls = createLocalStorageMock()
     seedTracks(ls)
     seedCategories(ls)
@@ -137,28 +137,42 @@ describe('Radio App (unified layout)', () => {
     await nextTick()
 
     const categoryCards = wrapper.findAll('.radio-app__category-card')
-    // animals + songs = 2 categories with tracks, + add button in parent mode = 3
-    expect(categoryCards.length).toBe(3)
+    expect(categoryCards.length).toBe(2)
+    expect(categoryCards[0].text()).toContain('Animals')
+    expect(categoryCards[0].text()).toContain('2 songs')
   })
 
-  it('parent mode shows + category button, kid mode does not', async () => {
+  it('renders Tiko Media artwork on a collection card', async () => {
     const ls = createLocalStorageMock()
     seedTracks(ls)
     seedCategories(ls)
     const { wrapper } = mountApp(ls)
     await nextTick()
 
-    // Parent mode (default): should have + add card
-    const addCards = wrapper.findAll('.radio-app__category-card--add')
-    expect(addCards.length).toBe(1)
+    const artwork = wrapper.find('.radio-app__category-card__image')
+    expect(artwork.exists()).toBe(true)
+    expect(artwork.attributes('src')).toContain('data.tikocdn.org')
+  })
 
-    // Switch to kid mode
-    await wrapper.setData({ parentMode: false })
+  it('hides empty collections from a child but keeps them for a parent', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    ls.store['tiko:radio:categories'] = JSON.stringify([
+      ...JSON.parse(ls.store['tiko:radio:categories']),
+      { id: 'empty', name: 'Empty', icon: 'media/music-note', color: 'blue', order: 2 },
+    ])
+    const { wrapper } = mountApp(ls)
     await nextTick()
 
-    // Kid mode: no + add card
-    const kidAddCards = wrapper.findAll('.radio-app__category-card--add')
-    expect(kidAddCards.length).toBe(0)
+    expect(wrapper.findAll('.radio-app__category-card').length).toBe(3)
+
+    ;(wrapper.vm as any).parentMode = false
+    await nextTick()
+
+    const childCards = wrapper.findAll('.radio-app__category-card')
+    expect(childCards.length).toBe(2)
+    expect(childCards.some(card => card.text().includes('Empty'))).toBe(false)
   })
 
   it('parent mode shows delete buttons on track cards, kid mode does not', async () => {
@@ -181,19 +195,19 @@ describe('Radio App (unified layout)', () => {
     expect(kidRemoveBtns.length).toBe(0)
   })
 
-  it('kid mode hides + add-video header action', async () => {
-    const { wrapper } = mountApp()
+  it('kid mode ignores the + header action', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(undefined, popupService)
     await nextTick()
 
-    // Switch to kid mode
-    await wrapper.setData({ parentMode: false })
-    await nextTick()
-
-    // In kid mode, clicking add-video action should not open popup
     const actions = (wrapper.vm as any).headerActions as Array<{ id: string }>
-    const addVideoAction = actions.find(a => a.id === 'add-video')
-    // The action is still visible but handler returns early in child mode
-    expect(addVideoAction).toBeDefined()
+    expect(actions.find(action => action.id === 'add')).toBeDefined()
+
+    ;(wrapper.vm as any).parentMode = false
+    await nextTick()
+    ;(wrapper.vm as any).headerAction('add')
+
+    expect(popupService.showPopup).not.toHaveBeenCalled()
   })
 
   it('filters tracks by selected category', async () => {
@@ -274,6 +288,84 @@ describe('Radio App (unified layout)', () => {
     expect(wrapper.findAll('.radio-app__track-card').some(card => card.text().includes('The Sleepy Rabbit'))).toBe(true)
   })
 
+  it('seeds starter songs from the curated channel on a first run', async () => {
+    const ls = createLocalStorageMock()
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (String(url).includes('/youtube/search')) {
+        expect(String(url)).toContain('channelId=UCLXC88sF7_PSymrmXrw5f5w')
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            data: [{
+              videoId: 'abcdefghijk',
+              title: 'Sleepy lullaby',
+              channelTitle: 'Tiko Songs',
+              thumbnailUrl: 'https://i.ytimg.com/vi/abcdefghijk/mqdefault.jpg',
+              durationSeconds: 205,
+            }],
+          }),
+        })
+      }
+      return Promise.resolve({ ok: false, status: 0, json: () => Promise.resolve({}) })
+    }))
+
+    const { wrapper } = mountApp(ls)
+    await flushAsync()
+
+    expect(wrapper.findAll('.radio-app__track-card').some(card => card.text().includes('Sleepy lullaby'))).toBe(true)
+    expect(JSON.parse(ls.store['tiko:radio:tracks'])[0]).toMatchObject({
+      id: 'youtube:abcdefghijk',
+      source: 'youtube',
+      categoryId: 'music',
+    })
+    expect(ls.store['tiko:radio:default-songs-seeded']).toBeTruthy()
+  })
+
+  it('does not seed starter songs over an existing library', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const requested: string[] = []
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      requested.push(String(url))
+      return Promise.resolve({ ok: false, status: 0, json: () => Promise.resolve({}) })
+    }))
+
+    mountApp(ls)
+    await flushAsync()
+
+    expect(requested.some(url => url.includes('/youtube/search'))).toBe(false)
+  })
+
+  it('seeds the default collections with their Tiko Media artwork', async () => {
+    const ls = createLocalStorageMock()
+    mountApp(ls)
+    await flushAsync()
+
+    const seeded = JSON.parse(ls.store['tiko:radio:categories']) as Array<{ id: string; imageUrl?: string }>
+    expect(seeded.map(collection => collection.id)).toEqual(['animals', 'stories', 'music', 'calm', 'favorites'])
+    expect(seeded.every(collection => Boolean(collection.imageUrl))).toBe(true)
+  })
+
+  it('links and unlinks a music subscription from the services popup', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper, ls } = mountApp(undefined, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).openServicesPopup()
+    const services = popupService.showPopup.mock.calls[0][0]
+    services.on.link('spotify')
+    await nextTick()
+
+    expect(JSON.parse(ls.store['tiko:radio:subscriptions'])).toEqual([
+      expect.objectContaining({ provider: 'spotify' }),
+    ])
+
+    services.on.unlink('spotify')
+    await nextTick()
+    expect(JSON.parse(ls.store['tiko:radio:subscriptions'])).toEqual([])
+  })
+
   it('shows empty state when no tracks exist', async () => {
     const { wrapper } = mountApp()
     await nextTick()
@@ -293,28 +385,128 @@ describe('Radio App (unified layout)', () => {
     expect(ls.getItem).toHaveBeenCalledWith('tiko:radio:categories')
   })
 
-  it('new category form shows in parent mode when + card clicked', async () => {
-    const { wrapper } = mountApp()
+  it('the + header action offers adding a song or a collection', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(undefined, popupService)
     await nextTick()
 
-    // Click the + add category card
-    const addCard = wrapper.find('.radio-app__category-card--add')
-    if (addCard.exists()) {
-      await addCard.trigger('click')
-      await nextTick()
-      expect(wrapper.find('.radio-app__new-cat-form').exists()).toBe(true)
-    }
+    ;(wrapper.vm as any).headerAction('add')
+
+    expect(popupService.showPopup).toHaveBeenCalledTimes(1)
+    const menu = popupService.showPopup.mock.calls[0][0]
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['song', 'collection'])
   })
 
-  it('kid mode does not show new category form', async () => {
-    const { wrapper } = mountApp()
+  it('choosing "add collection" from the + menu opens the collection form', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(undefined, popupService)
     await nextTick()
 
-    await wrapper.setData({ parentMode: false })
+    ;(wrapper.vm as any).headerAction('add')
+    popupService.showPopup.mock.calls[0][0].on.select('collection')
     await nextTick()
 
-    expect(wrapper.find('.radio-app__new-cat-form').exists()).toBe(false)
-    expect(wrapper.find('.radio-app__category-card--add').exists()).toBe(false)
+    const form = popupService.showPopup.mock.calls[1][0]
+    expect(form.props.title).toBe('Add collection')
+    expect(form.props.submitLabel).toBe('Create')
+  })
+
+  it('choosing "add song" targets the collection the child is looking at', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).selectCategory('songs')
+    ;(wrapper.vm as any).headerAction('add')
+    popupService.showPopup.mock.calls[0][0].on.select('song')
+    await nextTick()
+
+    const addSong = popupService.showPopup.mock.calls[1][0]
+    expect(addSong.props.collectionId).toBe('songs')
+    expect(addSong.props.collections.map((collection: { id: string }) => collection.id)).toEqual(['animals', 'songs'])
+  })
+
+  it('long-pressing a collection offers edit and delete', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    const card = wrapper.find('[data-test="radio-collection-animals"]')
+    await card.trigger('pointerdown')
+    vi.advanceTimersByTime(600)
+    await nextTick()
+
+    const menu = popupService.showPopup.mock.calls[0][0]
+    expect(menu.props.title).toBe('Animals')
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['edit', 'delete'])
+    expect(menu.props.items[1].destructive).toBe(true)
+
+    // The press that opened the menu must not also select the collection.
+    await card.trigger('click')
+    await nextTick()
+    expect(wrapper.findAll('.radio-app__track-card').length).toBe(3)
+  })
+
+  it('a child cannot open the collection menu', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).parentMode = false
+    await nextTick()
+
+    await wrapper.find('[data-test="radio-collection-animals"]').trigger('pointerdown')
+    vi.advanceTimersByTime(600)
+    await nextTick()
+
+    expect(popupService.showPopup).not.toHaveBeenCalled()
+  })
+
+  it('warns that deleting a collection removes its songs, then removes both', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    await wrapper.find('[data-test="radio-collection-animals"]').trigger('pointerdown')
+    vi.advanceTimersByTime(600)
+    popupService.showPopup.mock.calls[0][0].on.select('delete')
+    await nextTick()
+
+    const confirm = popupService.showPopup.mock.calls[1][0]
+    expect(confirm.props.message).toBe('Deleting \u201cAnimals\u201d also removes its 2 songs.')
+    expect(confirm.props.destructive).toBe(true)
+
+    confirm.on.confirm()
+    await nextTick()
+
+    expect(wrapper.findAll('.radio-app__category-card').length).toBe(1)
+    // Only the song from the other collection survives.
+    expect(wrapper.findAll('.radio-app__track-card').length).toBe(1)
+  })
+
+  it('warns without a song count when the collection is empty', async () => {
+    const ls = createLocalStorageMock()
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).confirmDeleteCollection({ id: 'animals', name: 'Animals', icon: 'x', color: 'red', order: 0 })
+    await nextTick()
+
+    expect(popupService.showPopup.mock.calls[0][0].props.message).toBe('Delete \u201cAnimals\u201d?')
   })
 
   it('uses identity runtime composable and does not store pinHash locally', async () => {

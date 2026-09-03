@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, nextTick, inject, markRaw, h } from 'vue'
-import { Button, Icon as SilIcon, Popup } from '@sil/ui'
+import { Icon as SilIcon, Popup } from '@sil/ui'
 import type { PopupService } from '@sil/ui'
 import { IdentityClient } from '@tiko/identity'
 import { TikoDataClient, type RadioSettings, type RadioState } from '@tiko/data'
-import type { RadioTrack, RadioCategory } from '@tiko/data'
+import type { RadioCategory, RadioServiceProvider, RadioTrack, TikoColorName } from '@tiko/data'
 import { createI18n, createTikoIdentityLabels, createTikoShellLabels, normalizeTikoLanguage, tikoI18nKeys, tikoLanguageOptions, type TikoLanguage } from '@tiko/i18n'
 import {
   TikoAppShell,
@@ -16,6 +16,7 @@ import {
   resolveTikoIdentityBaseUrl,
   resolveTikoMediaApiBaseUrl,
   tikoColors,
+  tikoImageUrl,
   useTikoAppDataRuntime,
   useTikoColorModeEffect,
   useTikoI18nRuntime,
@@ -26,8 +27,22 @@ import {
 import { useAudioPlayer } from './composables/useAudioPlayer'
 import { getPersistableRadioTracks, useTrackLibrary } from './composables/useTrackLibrary'
 import { useCategories } from './composables/useCategories'
-import AddAudioPopup from './components/AddAudioPopup.vue'
+import { useYouTubeSearch } from './composables/useYouTubeSearch'
+import { radioServiceFor, useSubscriptions } from './composables/useSubscriptions'
+import AddSongPopup, { type AddSongTrack } from './components/AddSongPopup.vue'
+import CollectionFormPopup, { type CollectionFormValue } from './components/CollectionFormPopup.vue'
+import ConfirmPopup from './components/ConfirmPopup.vue'
+import ContextMenuPopup from './components/ContextMenuPopup.vue'
+import ServicesPopup from './components/ServicesPopup.vue'
 import SettingsPopup from './components/SettingsPopup.vue'
+import {
+  colorNamesForNewCollections,
+  defaultRadioCollections,
+  defaultSongsChannelId,
+  defaultSongsCollectionId,
+  defaultSongsCount,
+  radioCollectionArtwork,
+} from './radioCollections'
 import { appConfig } from './appConfig'
 import './styles.scss'
 
@@ -36,11 +51,13 @@ const popup = inject<PopupService>('popupService')!
 
 // ---- Constants ------------------------------------------------------------
 const storageKey = 'tiko:radio'
+const seededSongsKey = 'tiko:radio:default-songs-seeded'
 const appId = 'radio' as const
 const apiBaseUrl = resolveTikoAppApiBaseUrl()
 const identityBaseUrl = resolveTikoIdentityBaseUrl()
 const generationApiBaseUrl = resolveTikoGenerationApiBaseUrl()
 const mediaApiBaseUrl = resolveTikoMediaApiBaseUrl()
+const longPressMs = 500
 
 // ---- Interfaces -----------------------------------------------------------
 interface PersistedState {
@@ -80,7 +97,6 @@ interface PublicAudioAlbum {
   tracks?: PublicAudioTrack[]
 }
 
-// ---- Utility functions ----------------------------------------------------
 // ---- State initialization --------------------------------------------------
 const stored = readTikoLocalJson<PersistedState>(storageKey, {})
 const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.language) })
@@ -126,6 +142,7 @@ const dataRuntime = useTikoAppDataRuntime<typeof appId, RadioSettings, RadioStat
     currentTrackIndex: currentTrackIndex.value,
     tracks: getPersistableRadioTracks(library.tracks.value),
     categories: categories.categories.value,
+    subscriptions: subscriptions.subscriptions.value,
     shuffleEnabled: shuffleEnabled.value,
     repeatEnabled: repeatEnabled.value,
   }),
@@ -136,13 +153,13 @@ const dataRuntime = useTikoAppDataRuntime<typeof appId, RadioSettings, RadioStat
 // ---- Kid / parent mode (aliases into runtimeState) -------------------------
 const parentMode = runtimeState.parentMode
 const selectedCategoryId = ref<string | null>(null)
-const newCategoryName = ref('')
-const newCategoryOpen = ref(false)
 
 // ---- Composables ----------------------------------------------------------
 const player = useAudioPlayer()
 const library = useTrackLibrary('tiko:radio:tracks')
 const categories = useCategories('tiko:radio:categories')
+const subscriptions = useSubscriptions('tiko:radio:subscriptions')
+const youtubeSearch = useYouTubeSearch(mediaApiBaseUrl)
 
 // ---- Labels ---------------------------------------------------------------
 const labels = computed(() => {
@@ -156,14 +173,16 @@ const labels = computed(() => {
     repeat: i18n.t(tikoI18nKeys.radio.player.repeat),
     noTracks: i18n.t(tikoI18nKeys.radio.player.noTracks),
     volume: i18n.t(tikoI18nKeys.radio.volume),
-    addVideo: i18n.t(tikoI18nKeys.radio.management.addVideo),
-    parentOnly: i18n.t(tikoI18nKeys.radio.management.parentOnly),
-    noVideos: i18n.t(tikoI18nKeys.radio.management.noVideos),
-    newCategory: i18n.t(tikoI18nKeys.radio.management.newCategory),
-    categoryName: i18n.t(tikoI18nKeys.radio.management.categoryName),
-    createCategory: i18n.t(tikoI18nKeys.radio.management.createCategory),
+    add: i18n.t(tikoI18nKeys.radio.add.menuTitle),
+    addSong: i18n.t(tikoI18nKeys.radio.add.song),
+    addCollection: i18n.t(tikoI18nKeys.radio.add.collection),
     removeTrack: i18n.t(tikoI18nKeys.radio.library.removeTrack),
-    uploadFile: i18n.t(tikoI18nKeys.radio.library.uploadFile),
+    collectionSongs: i18n.t(tikoI18nKeys.radio.collections.songs),
+    collectionEmpty: i18n.t(tikoI18nKeys.radio.collections.empty),
+    collectionActions: i18n.t(tikoI18nKeys.radio.management.collectionActions),
+    editCollection: i18n.t(tikoI18nKeys.radio.management.editCollection),
+    deleteCollection: i18n.t(tikoI18nKeys.radio.management.deleteCollection),
+    services: i18n.t(tikoI18nKeys.radio.services.title),
     settings: i18n.t(tikoI18nKeys.common.settings),
     shell: createTikoShellLabels(i18n.t),
     settingsPanel: {
@@ -175,11 +194,49 @@ const labels = computed(() => {
       light: i18n.t(tikoI18nKeys.common.colorModeOptions.light),
       dark: i18n.t(tikoI18nKeys.common.colorModeOptions.dark),
       system: i18n.t(tikoI18nKeys.common.colorModeOptions.system),
+      // Linking a subscription is a parent job, so a child never sees the row.
+      services: parentMode.value ? i18n.t(tikoI18nKeys.radio.services.title) : undefined,
     },
   }
 })
+
+const addSongLabels = computed(() => ({
+  addSong: i18n.t(tikoI18nKeys.radio.add.song),
+  youtube: 'YouTube',
+  youtubeHint: i18n.t(tikoI18nKeys.radio.add.searchYouTube),
+  upload: i18n.t(tikoI18nKeys.radio.library.uploadFile),
+  uploadHint: i18n.t(tikoI18nKeys.radio.add.uploadHint),
+  uploadTitle: i18n.t(tikoI18nKeys.radio.add.uploadTitle),
+  chooseFile: i18n.t(tikoI18nKeys.radio.add.chooseFile),
+  searchYouTube: i18n.t(tikoI18nKeys.radio.add.searchYouTube),
+  searchPlaceholder: i18n.t(tikoI18nKeys.radio.add.searchPlaceholder),
+  searchEmpty: i18n.t(tikoI18nKeys.radio.add.searchEmpty),
+  searchUnavailable: i18n.t(tikoI18nKeys.radio.add.searchUnavailable),
+  pasteLink: i18n.t(tikoI18nKeys.radio.add.pasteLink),
+  pasteLinkPlaceholder: i18n.t(tikoI18nKeys.radio.add.pasteLinkPlaceholder),
+  pasteServiceLink: i18n.t(tikoI18nKeys.radio.add.pasteServiceLink),
+  pasteServiceLinkPlaceholder: i18n.t(tikoI18nKeys.radio.add.pasteServiceLinkPlaceholder),
+  collection: i18n.t(tikoI18nKeys.radio.collections.title),
+  toCollection: i18n.t(tikoI18nKeys.radio.add.toCollection),
+  audioOnly: i18n.t(tikoI18nKeys.radio.add.audioOnly),
+  linkNotRecognised: i18n.t(tikoI18nKeys.radio.add.linkNotRecognised),
+  addFrom: i18n.t(tikoI18nKeys.radio.services.addFrom),
+  back: i18n.t(tikoI18nKeys.common.back),
+  close: i18n.t(tikoI18nKeys.common.identity.close),
+  services: i18n.t(tikoI18nKeys.radio.services.title),
+  servicesHint: i18n.t(tikoI18nKeys.radio.services.subtitle),
+}))
+
+const collectionFormLabels = computed(() => ({
+  name: i18n.t(tikoI18nKeys.radio.collections.name),
+  artwork: i18n.t(tikoI18nKeys.radio.collections.artwork),
+  artworkSearch: i18n.t(tikoI18nKeys.radio.collections.artworkSearch),
+  artworkEmpty: i18n.t(tikoI18nKeys.radio.collections.artworkEmpty),
+  color: i18n.t(tikoI18nKeys.radio.collections.color),
+  cancel: i18n.t(tikoI18nKeys.common.cancel),
+}))
+
 const colorValueByName = new Map(tikoColors.map(color => [color.name, color.hex]))
-const categoryColorNames = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'cyan', 'teal', 'lime'] as const
 
 // ---- Volume icon ----------------------------------------------------------
 const volumeIcon = computed(() => {
@@ -197,8 +254,8 @@ const headerActions = computed(() => {
       icon: volumeIcon.value,
     },
     {
-      id: 'add-video',
-      label: labels.value.addVideo,
+      id: 'add',
+      label: labels.value.add,
       icon: 'ui/add-m',
     },
   ]
@@ -234,21 +291,35 @@ const currentTrackArtist = computed(
   (): string => player.currentTrack.value?.artist ?? currentTrack.value?.artist ?? '',
 )
 
-const hasCategories = computed(() => categories.categories.value.length > 0)
+const trackCountByCategory = computed(() => {
+  const counts: Record<string, number> = {}
+  for (const track of library.tracks.value) {
+    if (track.categoryId) counts[track.categoryId] = (counts[track.categoryId] ?? 0) + 1
+  }
+  return counts
+})
 
-const categoriesWithTracks = computed(() =>
-  [...categories.categories.value]
-    .sort((a, b) => a.order - b.order)
-    .filter(cat => library.tracks.value.some(t => t.categoryId === cat.id)),
-)
+const sortedCategories = computed(() => [...categories.categories.value].sort((a, b) => a.order - b.order))
 
-const hasAnyVideos = computed(() => library.tracks.value.length > 0)
+/**
+ * A parent sees every collection, including the empty one they just made — it is
+ * where the next song goes. A child only sees collections that have something to
+ * play.
+ */
+const visibleCategories = computed(() => (
+  parentMode.value
+    ? sortedCategories.value
+    : sortedCategories.value.filter(category => (trackCountByCategory.value[category.id] ?? 0) > 0)
+))
 
 const filteredTracks = computed(() => {
   if (!selectedCategoryId.value) return library.tracks.value
   return library.tracks.value.filter((t) => t.categoryId === selectedCategoryId.value)
 })
 
+const selectedCategory = computed(
+  () => (selectedCategoryId.value ? categories.byId.value.get(selectedCategoryId.value) ?? null : null),
+)
 
 // ---- Formatting -----------------------------------------------------------
 function formatTime(seconds: number): string {
@@ -260,6 +331,21 @@ function formatTime(seconds: number): string {
 function handleProgressClick(event: MouseEvent) {
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
   player.seek((event.clientX - rect.left) / rect.width)
+}
+
+function categorySubtitle(category: RadioCategory): string {
+  const count = trackCountByCategory.value[category.id] ?? 0
+  if (count === 0) return labels.value.collectionEmpty
+  return labels.value.collectionSongs.replace('{count}', String(count))
+}
+
+function categoryColor(category: RadioCategory) {
+  return colorValueByName.get(category.color) ?? colorValueByName.get('gray') ?? 'currentColor'
+}
+
+function categoryArtwork(category: RadioCategory): string {
+  const url = radioCollectionArtwork(category)
+  return url ? tikoImageUrl(url, 'medium') : ''
 }
 
 // ---- Persistence -----------------------------------------------------------
@@ -292,6 +378,9 @@ function applyState(state: RadioState) {
   if (Array.isArray(state.categories) && state.categories.length > 0) {
     categories.replaceCategories(state.categories)
   }
+  if (Array.isArray(state.subscriptions)) {
+    subscriptions.replaceSubscriptions(state.subscriptions)
+  }
   if (typeof state.shuffleEnabled === 'boolean') {
     shuffleEnabled.value = state.shuffleEnabled
   }
@@ -300,23 +389,40 @@ function applyState(state: RadioState) {
   }
 }
 
-// ---- Seed default categories -----------------------------------------------
+// ---- Seeding ---------------------------------------------------------------
 function seedDefaultCategories() {
   if (categories.isEmpty.value) {
-    const defaults: RadioCategory[] = [
-      { id: 'animals', name: 'Animals', icon: 'animals/cat-head', color: 'yellow', order: 0 },
-      { id: 'stories', name: 'Stories', icon: 'ui/books', color: 'purple', order: 1 },
-      { id: 'bedtime', name: 'Bedtime', icon: 'media/headphones', color: 'cyan', order: 2 },
-      { id: 'songs', name: 'Songs', icon: 'media/music-note', color: 'pink', order: 3 },
-    ]
-    for (const cat of defaults) {
-      categories.addCategory(cat)
-    }
+    categories.replaceCategories(defaultRadioCollections)
   }
 }
 
-function categoryColor(category: RadioCategory) {
-  return colorValueByName.get(category.color) ?? colorValueByName.get('gray') ?? 'currentColor'
+/**
+ * First-run songs come from a curated kids' channel, fetched live, so the
+ * library never carries a hardcoded video id that has since been taken down.
+ */
+async function seedDefaultSongs() {
+  if (typeof window === 'undefined') return
+  if (window.localStorage.getItem(seededSongsKey)) return
+  if (library.tracks.value.length > 0) {
+    window.localStorage.setItem(seededSongsKey, 'skipped')
+    return
+  }
+
+  const videos = await youtubeSearch.search({ channelId: defaultSongsChannelId, limit: defaultSongsCount })
+  if (videos.length === 0) return
+
+  library.mergeTracks(videos.map(video => ({
+    id: `youtube:${video.videoId}`,
+    title: video.title,
+    artist: video.channelTitle || undefined,
+    source: 'youtube' as const,
+    youtubeVideoId: video.videoId,
+    thumbnailUrl: video.thumbnailUrl,
+    duration: video.durationSeconds,
+    categoryId: defaultSongsCollectionId,
+    addedAt: new Date().toISOString(),
+  })))
+  window.localStorage.setItem(seededSongsKey, new Date().toISOString())
 }
 
 function absoluteGenerationUrl(url: string) {
@@ -396,7 +502,7 @@ watch(library.tracks, () => {
   void dataRuntime.persistStateRemote()
 }, { deep: true })
 
-watch(categories.categories, () => {
+watch([categories.categories, subscriptions.subscriptions], () => {
   void dataRuntime.persistStateRemote()
 }, { deep: true })
 
@@ -424,7 +530,6 @@ watch(player.endedCount, () => {
   }
 })
 
-
 // ---- Lifecycle -------------------------------------------------------------
 onMounted(async () => {
   try {
@@ -439,6 +544,7 @@ onMounted(async () => {
     seedDefaultCategories()
     void syncPublicAudioAlbums()
     void syncGeneratedStories()
+    void seedDefaultSongs()
   }
 })
 
@@ -489,44 +595,197 @@ function openSettingsPopup() {
     on: {
       'update:language': (...args: unknown[]) => { language.value = args[0] as TikoLanguage },
       'update:colorMode': (...args: unknown[]) => { colorMode.value = args[0] as TikoColorMode },
+      'open-services': () => openServicesPopup(),
     },
   })
 }
 
-function openAddAudioPopup() {
+/** The + button asks what to add rather than assuming a song. */
+function openAddMenu() {
   popup.showPopup({
-    component: markRaw(AddAudioPopup),
+    component: markRaw(ContextMenuPopup),
     title: '',
-    props: { hasEmail: runtimeState.accountEmailVerified.value },
+    props: {
+      title: labels.value.add,
+      items: [
+        { id: 'song', label: labels.value.addSong, icon: 'media/music-note' },
+        { id: 'collection', label: labels.value.addCollection, icon: 'ui/folder' },
+      ],
+    },
+    config: { position: 'center', canClose: true, background: true, width: '18rem' },
+    on: {
+      select: (...args: unknown[]) => {
+        if (args[0] === 'song') openAddSongPopup(selectedCategoryId.value ?? undefined)
+        if (args[0] === 'collection') openCollectionForm()
+      },
+    },
+  })
+}
+
+function openAddSongPopup(collectionId?: string) {
+  popup.showPopup({
+    component: markRaw(AddSongPopup),
+    title: '',
+    props: {
+      collections: sortedCategories.value,
+      collectionId: collectionId ?? '',
+      linkedProviders: subscriptions.linkedProviders.value,
+      labels: addSongLabels.value,
+    },
     config: { position: 'center', canClose: true, background: true, width: '28rem' },
     on: {
-      add: (track: unknown) => {
-        const t = track as Parameters<typeof library.addTrack>[0] & { categoryId?: string }
-        const newTrack = library.addTrack(t)
-        // Auto-play if nothing is playing
-        if (!player.isPlaying.value) {
-          currentTrackIndex.value = library.tracks.value.length - 1
-          nextTick(() => player.play(newTrack))
-        }
-      },
-      upload: (data: unknown) => {
-        const d = data as { title: string; source: 'upload'; file: File; categoryId?: string }
-        const audioUrl = URL.createObjectURL(d.file)
-        const newTrack = library.addTrack({
-          title: d.title,
-          source: 'upload',
-          audioUrl,
-          categoryId: d.categoryId,
-        } as Parameters<typeof library.addTrack>[0] & { categoryId?: string })
-        if (!player.isPlaying.value) {
-          currentTrackIndex.value = library.tracks.value.length - 1
-          nextTick(() => player.play(newTrack))
-        }
-      },
-      close: () => {},
+      add: (...args: unknown[]) => addSong(args[0] as AddSongTrack),
+      upload: (...args: unknown[]) => uploadSong(args[0] as { title: string; file: File; categoryId: string }),
+      'open-services': () => openServicesPopup(),
     },
     onClose: () => {},
   })
+}
+
+function openCollectionForm(category?: RadioCategory) {
+  popup.showPopup({
+    component: markRaw(CollectionFormPopup),
+    title: '',
+    props: {
+      title: category ? labels.value.editCollection : labels.value.addCollection,
+      submitLabel: category ? i18n.t(tikoI18nKeys.common.save) : i18n.t(tikoI18nKeys.common.create),
+      name: category?.name ?? '',
+      color: category?.color ?? nextCollectionColor(),
+      imageUrl: category ? radioCollectionArtwork(category) : '',
+      labels: collectionFormLabels.value,
+    },
+    config: { position: 'center', canClose: true, background: true, width: '26rem' },
+    on: {
+      submit: (...args: unknown[]) => {
+        const value = args[0] as CollectionFormValue
+        if (category) {
+          categories.updateCategory(category.id, { name: value.name, color: value.color, imageUrl: value.imageUrl })
+          return
+        }
+        const created = categories.addCategory({
+          name: value.name,
+          icon: 'media/music-note',
+          color: value.color,
+          imageUrl: value.imageUrl,
+        })
+        selectedCategoryId.value = created.id
+      },
+    },
+  })
+}
+
+/** Long press (or right click) on a collection: edit or delete. */
+function openCollectionMenu(category: RadioCategory) {
+  if (!parentMode.value) return
+  popup.showPopup({
+    component: markRaw(ContextMenuPopup),
+    title: '',
+    props: {
+      title: category.name,
+      subtitle: labels.value.collectionActions,
+      items: [
+        { id: 'edit', label: labels.value.editCollection, icon: 'ui/edit-m' },
+        { id: 'delete', label: labels.value.deleteCollection, icon: 'ui/trash', destructive: true },
+      ],
+    },
+    config: { position: 'center', canClose: true, background: true, width: '18rem' },
+    on: {
+      select: (...args: unknown[]) => {
+        if (args[0] === 'edit') openCollectionForm(category)
+        if (args[0] === 'delete') confirmDeleteCollection(category)
+      },
+    },
+  })
+}
+
+/** Deleting a collection deletes its songs, so the warning says so by name. */
+function confirmDeleteCollection(category: RadioCategory) {
+  const count = library.tracksInCategory(category.id).length
+  const message = count > 0
+    ? i18n.t(tikoI18nKeys.radio.management.deleteCollectionWarning, { collection: category.name, count })
+    : i18n.t(tikoI18nKeys.radio.management.deleteCollectionWarningEmpty, { collection: category.name })
+
+  popup.showPopup({
+    component: markRaw(ConfirmPopup),
+    title: '',
+    props: {
+      title: labels.value.deleteCollection,
+      message,
+      confirmLabel: i18n.t(tikoI18nKeys.common.delete),
+      cancelLabel: i18n.t(tikoI18nKeys.common.cancel),
+      destructive: true,
+    },
+    config: { position: 'center', canClose: true, background: true, width: '22rem' },
+    on: {
+      confirm: () => deleteCollection(category.id),
+    },
+  })
+}
+
+function openServicesPopup() {
+  popup.showPopup({
+    component: markRaw(ServicesPopup),
+    title: '',
+    props: {
+      subscriptions: subscriptions.subscriptions.value,
+      labels: {
+        title: i18n.t(tikoI18nKeys.radio.services.title),
+        subtitle: i18n.t(tikoI18nKeys.radio.services.subtitle),
+        link: i18n.t(tikoI18nKeys.radio.services.link),
+        unlink: i18n.t(tikoI18nKeys.radio.services.unlink),
+        linked: i18n.t(tikoI18nKeys.radio.services.linked),
+        spotifyHint: i18n.t(tikoI18nKeys.radio.services.spotifyHint),
+        appleMusicHint: i18n.t(tikoI18nKeys.radio.services.appleMusicHint),
+      },
+    },
+    config: { position: 'center', canClose: true, background: true, width: '26rem' },
+    on: {
+      link: (...args: unknown[]) => { subscriptions.link(args[0] as RadioServiceProvider) },
+      unlink: (...args: unknown[]) => { subscriptions.unlink(args[0] as RadioServiceProvider) },
+    },
+  })
+}
+
+// ---- Library mutations -----------------------------------------------------
+function nextCollectionColor(): TikoColorName {
+  const index = categories.categories.value.length % colorNamesForNewCollections.length
+  return colorNamesForNewCollections[index] as TikoColorName
+}
+
+function addSong(track: AddSongTrack) {
+  const newTrack = library.addTrack(track)
+  if (!player.isPlaying.value) {
+    currentTrackIndex.value = library.tracks.value.length - 1
+    nextTick(() => player.play(newTrack))
+  }
+}
+
+function uploadSong(data: { title: string; file: File; categoryId: string }) {
+  const audioUrl = URL.createObjectURL(data.file)
+  const newTrack = library.addTrack({
+    title: data.title,
+    source: 'upload',
+    audioUrl,
+    categoryId: data.categoryId,
+  })
+  if (!player.isPlaying.value) {
+    currentTrackIndex.value = library.tracks.value.length - 1
+    nextTick(() => player.play(newTrack))
+  }
+}
+
+function deleteCollection(categoryId: string) {
+  if (player.currentTrack.value?.categoryId === categoryId) player.stop()
+  library.removeTracksInCategory(categoryId)
+  categories.removeCategory(categoryId)
+  if (selectedCategoryId.value === categoryId) selectedCategoryId.value = null
+  clampTrackIndex()
+}
+
+function clampTrackIndex() {
+  const len = library.tracks.value.length
+  if (currentTrackIndex.value >= len) currentTrackIndex.value = len - 1
+  if (currentTrackIndex.value < 0) currentTrackIndex.value = -1
 }
 
 // ---- Event handlers --------------------------------------------------------
@@ -540,9 +799,9 @@ function headerAction(id: string) {
   if (id === 'toggle-mode') {
     runtime.openParentCodePopup()
   }
-  if (id === 'add-video') {
+  if (id === 'add') {
     if (!parentMode.value) return // Can't add in child mode
-    openAddAudioPopup()
+    openAddMenu()
   }
 }
 
@@ -578,14 +837,6 @@ function handlePrevious() {
   if (track) player.play(track)
 }
 
-function toggleShuffle() {
-  shuffleEnabled.value = !shuffleEnabled.value
-}
-
-function toggleRepeat() {
-  repeatEnabled.value = !repeatEnabled.value
-}
-
 function selectTrack(index: number) {
   currentTrackIndex.value = index
   const track = library.tracks.value[index]
@@ -612,27 +863,46 @@ function removeTrackById(id: string) {
       player.stop()
     }
     library.removeTrackByIndex(index)
-    const len = library.tracks.value.length
-    if (currentTrackIndex.value >= len) {
-      currentTrackIndex.value = len - 1
-    }
-    if (currentTrackIndex.value < 0) {
-      currentTrackIndex.value = -1
-    }
+    clampTrackIndex()
   }
 }
 
-function handleCreateCategory() {
-  const name = newCategoryName.value.trim()
-  if (!name) return
-  const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-  categories.addCategory({
-    name,
-    icon: 'media/headphones',
-    color: categoryColorNames[categories.categories.value.length % categoryColorNames.length],
-  })
-  newCategoryName.value = ''
-  newCategoryOpen.value = false
+// ---- Long press ------------------------------------------------------------
+let longPressTimer: ReturnType<typeof setTimeout> | null = null
+let longPressFired = false
+
+function startLongPress(category: RadioCategory) {
+  cancelLongPress()
+  longPressFired = false
+  longPressTimer = setTimeout(() => {
+    longPressFired = true
+    openCollectionMenu(category)
+  }, longPressMs)
+}
+
+function cancelLongPress() {
+  if (longPressTimer) {
+    clearTimeout(longPressTimer)
+    longPressTimer = null
+  }
+}
+
+/** A press that became a long press opens the menu and does not also select. */
+function handleCategoryClick(category: RadioCategory) {
+  cancelLongPress()
+  if (longPressFired) {
+    longPressFired = false
+    return
+  }
+  selectCategory(category.id)
+}
+
+function trackIsExternal(track: RadioTrack): boolean {
+  return track.source === 'spotify' || track.source === 'apple-music'
+}
+
+function trackServiceName(track: RadioTrack): string {
+  return track.source === 'spotify' ? radioServiceFor('spotify').name : radioServiceFor('apple-music').name
 }
 </script>
 
@@ -658,46 +928,35 @@ function handleCreateCategory() {
       <!-- ==================== CONTENT (shared by both modes) ==================== -->
       <div class="radio-app__content">
 
-        <!-- Category tiles: only show categories that have videos -->
-        <div v-if="categoriesWithTracks.length" class="radio-app__categories">
+        <!-- Collection cards -->
+        <div v-if="visibleCategories.length" class="radio-app__categories">
           <button
-            v-for="cat in categoriesWithTracks"
+            v-for="cat in visibleCategories"
             :key="cat.id"
             class="radio-app__category-card"
             :class="{ 'radio-app__category-card--active': selectedCategoryId === cat.id }"
             :style="{ '--cat-color': categoryColor(cat) }"
-            @click="selectCategory(cat.id)"
+            :data-test="`radio-collection-${cat.id}`"
+            @click="handleCategoryClick(cat)"
+            @pointerdown="startLongPress(cat)"
+            @pointerup="cancelLongPress"
+            @pointerleave="cancelLongPress"
+            @pointercancel="cancelLongPress"
+            @contextmenu.prevent="openCollectionMenu(cat)"
           >
-            <span class="radio-app__category-card__icon">
-              <SilIcon :name="cat.icon" size="large" />
+            <span class="radio-app__category-card__art">
+              <img
+                v-if="categoryArtwork(cat)"
+                :src="categoryArtwork(cat)"
+                :alt="cat.name"
+                class="radio-app__category-card__image"
+                loading="lazy"
+              />
+              <SilIcon v-else :name="cat.icon" size="large" />
             </span>
             <span class="radio-app__category-card__label">{{ cat.name }}</span>
+            <span class="radio-app__category-card__count">{{ categorySubtitle(cat) }}</span>
           </button>
-          <!-- Parent mode: add category button -->
-          <button
-            v-if="parentMode"
-            class="radio-app__category-card radio-app__category-card--add"
-            @click="newCategoryOpen = !newCategoryOpen"
-          >
-            <span class="radio-app__category-card__icon">+</span>
-            <span class="radio-app__category-card__label">{{ labels.newCategory }}</span>
-          </button>
-        </div>
-
-        <!-- New category inline form (parent mode) -->
-        <div v-if="parentMode && newCategoryOpen" class="radio-app__new-cat-form">
-          <input
-            v-model="newCategoryName"
-            :placeholder="labels.categoryName"
-            @keyup.enter="handleCreateCategory"
-          />
-          <Button
-            variant="primary"
-            :disabled="!newCategoryName.trim()"
-            @click="handleCreateCategory"
-          >
-            {{ labels.createCategory }}
-          </Button>
         </div>
 
         <!-- Track grid -->
@@ -720,6 +979,9 @@ function handleCreateCategory() {
             <div class="radio-app__track-card__info">
               <span class="radio-app__track-card__title">{{ track.title }}</span>
               <span v-if="track.artist" class="radio-app__track-card__artist">{{ track.artist }}</span>
+              <span v-if="trackIsExternal(track)" class="radio-app__track-card__service">
+                {{ trackServiceName(track) }}
+              </span>
             </div>
             <!-- Parent mode: delete button on track card -->
             <button
@@ -732,7 +994,9 @@ function handleCreateCategory() {
             </button>
           </div>
         </div>
-        <p v-else class="radio-app__empty">{{ labels.noTracks }}</p>
+        <p v-else class="radio-app__empty">
+          {{ selectedCategory ? labels.collectionEmpty : labels.noTracks }}
+        </p>
       </div>
 
       <!-- ==================== FLOATING PLAYER ==================== -->

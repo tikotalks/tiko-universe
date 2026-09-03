@@ -26,6 +26,7 @@ type ResolverEnv = {
   ELEVENLABS_SECRET?: SecretStoreBinding
   ATLAS_SECRET?: SecretStoreBinding
   COMMUNICATION_SECRET?: SecretStoreBinding
+  YOUTUBE_SECRET?: SecretStoreBinding
 }
 
 const SECRET_MAPPINGS: Array<{ binding: keyof ResolverEnv; varName: string }> = [
@@ -34,6 +35,7 @@ const SECRET_MAPPINGS: Array<{ binding: keyof ResolverEnv; varName: string }> = 
   { binding: 'ELEVENLABS_SECRET', varName: 'ELEVENLABS_API_KEY' },
   { binding: 'ATLAS_SECRET', varName: 'ATLAS_API_KEY' },
   { binding: 'COMMUNICATION_SECRET', varName: 'COMMUNICATION_API_KEY' },
+  { binding: 'YOUTUBE_SECRET', varName: 'YOUTUBE_API_KEY' },
 ]
 
 let secretCache = new Map<string, { value: string; expiresAt: number }>()

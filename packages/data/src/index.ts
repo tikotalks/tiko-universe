@@ -156,7 +156,10 @@ export interface TimerState extends JsonObject {
   presets?: { id: string; label: string; seconds: number }[]
 }
 
-export type TrackSource = 'youtube' | 'r2' | 'upload'
+export type TrackSource = 'youtube' | 'r2' | 'upload' | 'spotify' | 'apple-music'
+
+/** Streaming services a family can link with their own subscription. */
+export type RadioServiceProvider = 'spotify' | 'apple-music'
 
 export interface RadioCategory {
   id: string
@@ -164,6 +167,8 @@ export interface RadioCategory {
   icon: string
   color: TikoColorName
   order: number
+  /** Tiko Media artwork for the collection card; `icon` is the fallback. */
+  imageUrl?: string
 }
 
 export interface RadioTrack {
@@ -177,6 +182,18 @@ export interface RadioTrack {
   thumbnailUrl?: string
   duration?: number
   addedAt?: string
+  /** Track id inside the streaming service (Spotify track id, Apple Music song id). */
+  externalId?: string
+  /** Canonical web URL of the track on the streaming service. */
+  externalUrl?: string
+}
+
+/** A streaming service the parent linked so its songs can be added to a collection. */
+export interface RadioSubscription {
+  provider: RadioServiceProvider
+  /** Name the parent gave the linked account, shown in the services list. */
+  displayName?: string
+  linkedAt: string
 }
 
 export interface RadioSettings extends JsonObject {
@@ -190,6 +207,7 @@ export interface RadioState {
   currentTrackIndex?: number
   tracks?: RadioTrack[]
   categories?: RadioCategory[]
+  subscriptions?: RadioSubscription[]
   shuffleEnabled?: boolean
   repeatEnabled?: boolean
   [key: string]: unknown

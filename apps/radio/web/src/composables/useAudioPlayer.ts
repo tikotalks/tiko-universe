@@ -28,6 +28,33 @@ function loadYouTubeIframeAPI(): Promise<void> {
 }
 
 // -------------------------------------------------------------------
+// Spotify IFrame API loader
+// -------------------------------------------------------------------
+let spotifyIframeApiPromise: Promise<any> | null = null
+
+function loadSpotifyIframeAPI(): Promise<any> {
+  if (spotifyIframeApiPromise) return spotifyIframeApiPromise
+
+  spotifyIframeApiPromise = new Promise((resolve) => {
+    if ((window as any).SpotifyIframeApi) {
+      resolve((window as any).SpotifyIframeApi)
+      return
+    }
+    const previousReady = (window as any).onSpotifyIframeApiReady
+    const tag = document.createElement('script')
+    tag.src = 'https://open.spotify.com/embed/iframe-api/v1'
+    document.head.appendChild(tag)
+    ;(window as any).onSpotifyIframeApiReady = (api: any) => {
+      if (typeof previousReady === 'function') previousReady(api)
+      ;(window as any).SpotifyIframeApi = api
+      resolve(api)
+    }
+  })
+
+  return spotifyIframeApiPromise
+}
+
+// -------------------------------------------------------------------
 // Composable
 // -------------------------------------------------------------------
 export function useAudioPlayer() {
@@ -38,7 +65,7 @@ export function useAudioPlayer() {
   const duration = ref(0)
   const progress = ref(0)
   const volume = ref(1)
-  const source = ref<'youtube' | 'html5' | null>(null)
+  const source = ref<'youtube' | 'html5' | 'spotify' | 'external' | null>(null)
   const endedCount = ref(0)
 
   // ---- internal refs -------------------------------------------------
@@ -49,6 +76,9 @@ export function useAudioPlayer() {
 
   let audio: HTMLAudioElement | null = null
   let rafId: number | null = null
+
+  let spotifyController: any = null
+  let spotifyContainer: HTMLDivElement | null = null
 
   // ---- helpers -------------------------------------------------------
   function resetState() {
@@ -74,9 +104,14 @@ export function useAudioPlayer() {
     }
   }
 
-  function createYTContainer(): HTMLDivElement {
+  /**
+   * Radio is a listening app: the video element exists only because the
+   * embeds need one, so it is parked off-screen and only the audio reaches
+   * the child.
+   */
+  function createHiddenEmbedContainer(className: string): HTMLDivElement {
     const div = document.createElement('div')
-    div.className = 'youtube-player-container'
+    div.className = className
     div.style.position = 'fixed'
     div.style.bottom = '-100px'
     div.style.width = '1px'
@@ -85,6 +120,10 @@ export function useAudioPlayer() {
     div.style.pointerEvents = 'none'
     document.body.appendChild(div)
     return div
+  }
+
+  function createYTContainer(): HTMLDivElement {
+    return createHiddenEmbedContainer('youtube-player-container')
   }
 
   function startYTPolling() {
@@ -100,6 +139,64 @@ export function useAudioPlayer() {
         // player may have been destroyed
       }
     }, 250)
+  }
+
+  // ---- Spotify helpers ------------------------------------------------
+  function destroySpotify() {
+    if (spotifyController) {
+      try { spotifyController.destroy() } catch { /* controller already gone */ }
+      spotifyController = null
+    }
+    if (spotifyContainer) {
+      spotifyContainer.remove()
+      spotifyContainer = null
+    }
+  }
+
+  /**
+   * Spotify's embed plays a preview for a signed-out browser and the full song
+   * once the family is signed in to Spotify there. Either way it stays audio:
+   * the iframe is off-screen and only the controller talks to us.
+   */
+  function playSpotify(track: RadioTrack, generation: number) {
+    source.value = 'spotify'
+    const trackId = track.externalId
+    if (!trackId) return
+
+    void loadSpotifyIframeAPI().then((api) => {
+      if (generation !== playGeneration || currentTrack.value?.id !== track.id) return
+
+      spotifyContainer = createHiddenEmbedContainer('spotify-player-container')
+      let reachedEnd = false
+      api.createController(
+        spotifyContainer,
+        { uri: `spotify:track:${trackId}`, width: '1', height: '1' },
+        (controller: any) => {
+          if (generation !== playGeneration) {
+            try { controller.destroy() } catch { /* already torn down */ }
+            return
+          }
+          spotifyController = controller
+          controller.addListener('playback_update', (event: any) => {
+            const data = event?.data
+            if (!data || generation !== playGeneration) return
+            currentTime.value = (data.position ?? 0) / 1000
+            duration.value = (data.duration ?? 0) / 1000
+            progress.value = duration.value > 0 ? currentTime.value / duration.value : 0
+            isPlaying.value = data.isPaused === false
+            // The embed keeps reporting the final position, so the song only
+            // counts as ended once.
+            if (!reachedEnd && data.duration > 0 && data.position >= data.duration) {
+              reachedEnd = true
+              isPlaying.value = false
+              endedCount.value += 1
+            }
+          })
+          controller.play()
+          isPlaying.value = true
+        },
+      )
+    })
   }
 
   // ---- HTML5 helpers --------------------------------------------------
@@ -180,6 +277,21 @@ export function useAudioPlayer() {
       return
     }
 
+    // Spotify mode — plays inside Radio through Spotify's own embed
+    if (track.source === 'spotify') {
+      playSpotify(track, generation)
+      return
+    }
+
+    // Apple Music is licensed to its own player: Radio hands the song over
+    // instead of pretending to play it.
+    if (track.source === 'apple-music') {
+      source.value = 'external'
+      isPlaying.value = false
+      if (track.externalUrl) window.open(track.externalUrl, '_blank', 'noopener')
+      return
+    }
+
     // HTML5 mode (r2 or upload)
     if (track.audioUrl) {
       source.value = 'html5'
@@ -219,6 +331,11 @@ export function useAudioPlayer() {
   }
 
   function pause(): void {
+    if (source.value === 'spotify' && spotifyController) {
+      spotifyController.pause()
+      isPlaying.value = false
+      return
+    }
     if (source.value === 'youtube' && ytPlayer) {
       ytPlayer.pauseVideo()
       isPlaying.value = false
@@ -243,6 +360,18 @@ export function useAudioPlayer() {
   }
 
   function resume(): void {
+    if (source.value === 'spotify' && spotifyController) {
+      spotifyController.resume()
+      isPlaying.value = true
+      return
+    }
+    if (source.value === 'external') {
+      // Nothing plays here; the song lives in the service's own app.
+      if (currentTrack.value?.externalUrl) {
+        window.open(currentTrack.value.externalUrl, '_blank', 'noopener')
+      }
+      return
+    }
     if (source.value === 'youtube' && ytPlayer) {
       ytPlayer.playVideo()
       isPlaying.value = true
@@ -265,6 +394,7 @@ export function useAudioPlayer() {
   function stop(): void {
     playGeneration += 1
     destroyYouTube()
+    destroySpotify()
     destroyHTML5()
     currentTrack.value = null
     source.value = null
@@ -273,6 +403,11 @@ export function useAudioPlayer() {
 
   function seek(fraction: number): void {
     const clamped = Math.max(0, Math.min(1, fraction))
+    if (source.value === 'spotify' && spotifyController && duration.value > 0) {
+      spotifyController.seek(clamped * duration.value)
+      progress.value = clamped
+      return
+    }
     if (source.value === 'youtube' && ytPlayer) {
       try {
         const dur = ytPlayer.getDuration() ?? 0
@@ -304,6 +439,8 @@ export function useAudioPlayer() {
     if (source.value === 'html5' && audio) {
       audio.volume = clamped
     }
+    // Spotify's embed controller exposes no volume control; its own player
+    // keeps the level the family set in Spotify.
   }
 
   // ---- lifecycle cleanup ---------------------------------------------

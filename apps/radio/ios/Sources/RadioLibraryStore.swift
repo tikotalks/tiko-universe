@@ -94,7 +94,9 @@ final class RadioLibraryStore {
                 thumbnailUrl: existing.thumbnailUrl,
                 duration: existing.duration,
                 categoryId: categoryID,
-                addedAt: existing.addedAt
+                addedAt: existing.addedAt,
+                externalId: existing.externalId,
+                externalUrl: existing.externalUrl
             )
         }
         save(userDefaults: userDefaults)
@@ -115,7 +117,9 @@ final class RadioLibraryStore {
                 thumbnailUrl: existing.thumbnailUrl,
                 duration: existing.duration,
                 categoryId: existing.categoryId,
-                addedAt: existing.addedAt
+                addedAt: existing.addedAt,
+                externalId: existing.externalId,
+                externalUrl: existing.externalUrl
             )
         }
         save(userDefaults: userDefaults)
@@ -150,7 +154,9 @@ final class RadioLibraryStore {
                 thumbnailUrl: track.thumbnailUrl,
                 duration: track.duration,
                 categoryId: defaultUncategorizedCategoryID,
-                addedAt: track.addedAt
+                addedAt: track.addedAt,
+                externalId: track.externalId,
+                externalUrl: track.externalUrl
             )
         }
         if selectedCategoryID == id { selectedCategoryID = nil }
