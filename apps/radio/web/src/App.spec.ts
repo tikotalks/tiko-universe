@@ -366,6 +366,128 @@ describe('Radio App (unified layout)', () => {
     expect(JSON.parse(ls.store['tiko:radio:subscriptions'])).toEqual([])
   })
 
+  it('offers scanning a shared collection from the + menu', async () => {
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(undefined, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).headerAction('add')
+    const menu = popupService.showPopup.mock.calls[0][0]
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['song', 'collection', 'scan'])
+
+    menu.on.select('scan')
+    await nextTick()
+    expect(popupService.showPopup.mock.calls[1][0].props.labels.title).toBe('Add a shared collection')
+  })
+
+  it('imports a scanned collection with its songs', async () => {
+    const ls = createLocalStorageMock()
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    ;(wrapper.vm as any).openImportPopup()
+    await nextTick()
+    popupService.showPopup.mock.calls[0][0].on.import({
+      code: 'K7M2Q9XR',
+      name: 'Disney',
+      color: 'purple',
+      imageUrl: 'https://data.tikocdn.org/uploads/castle.png',
+      songCount: 1,
+      featured: true,
+      shareUrl: 'https://radio.tikoapps.org/?collection=K7M2Q9XR',
+      songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }],
+    })
+    await nextTick()
+
+    const collections = wrapper.findAll('.radio-app__category-card')
+    expect(collections.some(card => card.text().includes('Disney'))).toBe(true)
+    expect(wrapper.findAll('.radio-app__track-card').some(card => card.text().includes('Let It Go'))).toBe(true)
+  })
+
+  it('gives a second import of the same set its own shelf', async () => {
+    const ls = createLocalStorageMock()
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    const shared = {
+      code: 'K7M2Q9XR',
+      name: 'Disney',
+      color: 'purple',
+      songCount: 1,
+      featured: true,
+      shareUrl: 'https://radio.tikoapps.org/?collection=K7M2Q9XR',
+      songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }],
+    }
+    ;(wrapper.vm as any).importSharedCollection(shared)
+    ;(wrapper.vm as any).importSharedCollection(shared)
+    await nextTick()
+
+    const ids = JSON.parse(ls.store['tiko:radio:categories']).map((collection: { id: string }) => collection.id)
+    expect(ids).toContain('disney')
+    expect(ids).toContain('disney-2')
+
+    // Both shelves keep their songs; the second import must not empty the first.
+    const tracks = JSON.parse(ls.store['tiko:radio:tracks']) as Array<{ categoryId: string }>
+    expect(tracks.filter(track => track.categoryId === 'disney')).toHaveLength(1)
+    expect(tracks.filter(track => track.categoryId === 'disney-2')).toHaveLength(1)
+  })
+
+  it('shares a collection from its long-press menu', async () => {
+    const ls = createLocalStorageMock()
+    seedTracks(ls)
+    seedCategories(ls)
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    const { wrapper } = mountApp(ls, popupService)
+    await nextTick()
+
+    await wrapper.find('[data-test="radio-collection-animals"]').trigger('pointerdown')
+    vi.advanceTimersByTime(600)
+    const menu = popupService.showPopup.mock.calls[0][0]
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['edit', 'share', 'delete'])
+
+    menu.on.select('share')
+    await nextTick()
+
+    const share = popupService.showPopup.mock.calls[1][0]
+    expect(share.props.collection).toMatchObject({ id: 'animals', name: 'Animals' })
+    expect(share.props.tracks.map((track: { id: string }) => track.id)).toEqual(['t1', 't2'])
+  })
+
+  it('opens the import popup when a scanned link brought us here', async () => {
+    const ls = createLocalStorageMock()
+    const popupService = { showPopup: vi.fn(), close: vi.fn(), closeAllPopups: vi.fn(), popups: { value: [] } }
+    window.history.replaceState({}, '', '/?collection=K7M2Q9XR')
+    vi.stubGlobal('fetch', vi.fn((url: string) => {
+      if (String(url).includes('/radio/collections/K7M2Q9XR')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({
+            data: {
+              code: 'K7M2Q9XR',
+              name: 'Disney',
+              color: 'purple',
+              songCount: 1,
+              featured: true,
+              shareUrl: 'https://radio.tikoapps.org/?collection=K7M2Q9XR',
+              songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }],
+            },
+          }),
+        })
+      }
+      return Promise.resolve({ ok: false, status: 0, json: () => Promise.resolve({}) })
+    }))
+
+    mountApp(ls, popupService)
+    await flushAsync()
+
+    const importPopup = popupService.showPopup.mock.calls.find(call => call[0].props?.collection?.code === 'K7M2Q9XR')
+    expect(importPopup).toBeTruthy()
+    // The code is cleared so a refresh does not ask again.
+    expect(window.location.search).toBe('')
+  })
+
   it('shows empty state when no tracks exist', async () => {
     const { wrapper } = mountApp()
     await nextTick()
@@ -394,7 +516,7 @@ describe('Radio App (unified layout)', () => {
 
     expect(popupService.showPopup).toHaveBeenCalledTimes(1)
     const menu = popupService.showPopup.mock.calls[0][0]
-    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['song', 'collection'])
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['song', 'collection', 'scan'])
   })
 
   it('choosing "add collection" from the + menu opens the collection form', async () => {
@@ -444,8 +566,8 @@ describe('Radio App (unified layout)', () => {
 
     const menu = popupService.showPopup.mock.calls[0][0]
     expect(menu.props.title).toBe('Animals')
-    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['edit', 'delete'])
-    expect(menu.props.items[1].destructive).toBe(true)
+    expect(menu.props.items.map((item: { id: string }) => item.id)).toEqual(['edit', 'share', 'delete'])
+    expect(menu.props.items[2].destructive).toBe(true)
 
     // The press that opened the menu must not also select the collection.
     await card.trigger('click')

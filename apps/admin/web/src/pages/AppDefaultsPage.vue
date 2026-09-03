@@ -315,6 +315,9 @@ if (!isOverview.value && !routeApp.value) {
         <Button v-if="selectedApp === 'talk'" variant="outline" @click="router.push('/apps/talk/mapping')">
           Image Mapping
         </Button>
+        <Button v-if="selectedApp === 'radio'" variant="outline" @click="router.push('/apps/radio/collections')">
+          Shared Collections
+        </Button>
         <Button variant="outline" :loading="configApi.loading.value" :disabled="configApi.loading.value" @click="loadConfigs">
           Reload
         </Button>

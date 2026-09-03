@@ -63,6 +63,34 @@ What playback honestly is:
   credentials, so those songs open in Apple Music instead. iOS does the same,
   handing the song to the Apple Music app.
 
+## Sharing a collection
+
+A collection can travel. Long press it and pick **Share**: Radio publishes it and
+shows a QR code with an eight-character code under it. Another family scans the
+code with Radio, or with their phone's own camera — the QR carries a link
+(`https://radio.tikoapps.org/?collection=CODE`) that opens Radio straight onto the
+import. The code can also simply be read out loud; the alphabet has no I, L, O or
+U, and the app accepts it in any case, spacing or hyphenation.
+
+Publishing is a snapshot. Editing your own copy afterwards does not change what
+someone else scanned, and songs that only exist on the publishing device
+(uploaded files) are left out, with a count of what was dropped.
+
+**Import** lives on the + menu next to add song and add collection. It offers the
+ready-made sets, an in-app scanner, and a field for the code. In-app scanning uses
+the browser's own barcode detector, which Chrome and Android have and Safari does
+not; where there is none, the phone's camera app opens the link and the code can
+be typed.
+
+### Curated sets
+
+Admin → Apps → Radio → **Shared Collections** builds the sets every family sees on
+the import screen: name, colour, a Tiko Media picture, and songs found with the
+same YouTube search the app uses. Publishing there marks the collection
+`featured`, which is the only thing listed publicly — a family's own share stays
+private to whoever has its code. Featuring requires the `admin` or
+`content_editor` role; any signed-in parent can publish an unlisted share.
+
 ## Starter songs
 
 A first run seeds a handful of songs from a curated kids' channel
@@ -72,12 +100,17 @@ skipped when a library already has songs, and needs the YouTube key.
 
 ## Configuration
 
-| Secret | Worker | Without it |
+| Setting | Worker | Without it |
 | --- | --- | --- |
-| `YOUTUBE_API_KEY` | media-api | No YouTube search and no starter songs; link paste still works |
+| `YOUTUBE_API_KEY` (secret) | media-api | No YouTube search and no starter songs; link paste still works |
+| `RADIO_APP_BASE_URL` (var) | media-api | Share links point at `https://radio.tikoapps.org` |
 
-Set it with `npx wrangler secret put YOUTUBE_API_KEY` in `workers/media-api`, or
-bind `YOUTUBE_SECRET` from the Secrets Store.
+Set the key with `npx wrangler secret put YOUTUBE_API_KEY` in `workers/media-api`,
+or bind `YOUTUBE_SECRET` from the Secrets Store.
+
+The app's own `_headers` allow what these features need: the YouTube and Spotify
+embed scripts and frames, their thumbnail hosts, and `camera=(self)` for scanning
+a code.
 
 ## Data
 
@@ -85,3 +118,6 @@ bind `YOUTUBE_SECRET` from the Secrets Store.
 `TrackSource` gained `spotify` and `apple-music`; `RadioCategory` gained
 `imageUrl`. Both platforms decode the same shapes, so a Spotify song added on the
 web never breaks the iOS library.
+
+A shared collection is its own row in media-api (`radio_shared_collections`),
+holding the songs as published plus the share code that addresses it.

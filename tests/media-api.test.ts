@@ -59,6 +59,7 @@ class MemoryD1 {
   assets: Row[] = []
   audioAlbums: Row[] = []
   audioTracks: Row[] = []
+  sharedCollections: Row[] = []
   audioTrackQueryCount = 0
 
   prepare(sql: string): MemoryStatement {
@@ -120,6 +121,50 @@ class MemoryD1 {
         return new MemoryResult(this.media.filter(row => row.id === id))
       }
       return new MemoryResult(rows)
+    }
+
+    if (normalized.startsWith('INSERT INTO radio_shared_collections')) {
+      this.sharedCollections.push({
+        code: values[0],
+        name: values[1],
+        color: values[2],
+        image_url: values[3],
+        songs: values[4],
+        song_count: values[5],
+        featured: values[6],
+        owner_user_id: values[7],
+        created_at: values[8],
+        updated_at: values[9],
+      })
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('UPDATE radio_shared_collections')) {
+      const code = String(values.at(-1))
+      this.sharedCollections = this.sharedCollections.map(row => row.code === code ? {
+        ...row,
+        name: values[0],
+        color: values[1],
+        image_url: values[2],
+        songs: values[3],
+        song_count: values[4],
+        featured: values[5],
+        updated_at: values[6],
+      } : row)
+      return new MemoryResult()
+    }
+
+    if (normalized.startsWith('DELETE FROM radio_shared_collections')) {
+      this.sharedCollections = this.sharedCollections.filter(row => row.code !== String(values[0]))
+      return new MemoryResult()
+    }
+
+    if (normalized.includes('FROM radio_shared_collections')) {
+      if (normalized.includes('WHERE code = ?')) {
+        return new MemoryResult(this.sharedCollections.filter(row => row.code === String(values[0])))
+      }
+      const featured = this.sharedCollections.filter(row => Number(row.featured) === 1)
+      return new MemoryResult(featured.slice(0, Number(values[0] ?? featured.length)))
     }
 
     if (normalized.startsWith('INSERT INTO audio_albums')) {
@@ -314,9 +359,10 @@ function mediaRow(overrides: Row = {}): Row {
   }
 }
 
-function authFetch(userId = 'usr_1') {
+function authFetch(userId = 'usr_1', roles: string[] = []) {
   return vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({
     subject: { id: userId },
+    roles,
     session: { token: 'session-token', expiresAt: '2099-01-01T00:00:00.000Z' },
   }), { status: 200, headers: { 'content-type': 'application/json' } }))
 }
@@ -983,6 +1029,164 @@ describe('media-api worker', () => {
         thumbnailUrl: 'https://is1-ssl.mzstatic.com/image/300x300bb.jpg',
         durationSeconds: 185,
       })
+    })
+
+    it('publishes a collection under a share code and reads it back by code', async () => {
+      const env = makeEnv()
+      authFetch('usr_parent')
+
+      const published = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({
+          name: 'Disney',
+          color: 'purple',
+          imageUrl: 'https://data.tikocdn.org/uploads/castle.png',
+          songs: [
+            { title: 'Let It Go', artist: 'Tiko Songs', source: 'youtube', youtubeVideoId: 'abcdefghijk', duration: 210 },
+            { title: 'Hummed at home', source: 'upload', audioUrl: 'blob:https://radio.test/1234' },
+          ],
+        }),
+      }), env as never)
+      const body = await parseJson(published)
+
+      expect(published.status).toBe(201)
+      expect(body.data).toMatchObject({ name: 'Disney', color: 'purple', songCount: 1, featured: false })
+      expect(body.data.code).toMatch(/^[0-9A-HJKMNP-TV-Z]{8}$/)
+      expect(body.data.shareUrl).toBe(`https://radio.tikoapps.org/?collection=${body.data.code}`)
+      // The uploaded file only exists in the publisher's browser, so it is dropped.
+      expect(body.meta.skippedSongs).toBe(1)
+
+      // Reading is public and forgiving about how the code was typed.
+      const spaced = `${body.data.code.slice(0, 4)} ${body.data.code.slice(4)}`.toLowerCase()
+      const read = await worker.fetch(
+        new Request(`https://media.test/v1/radio/collections/${encodeURIComponent(spaced)}`),
+        env as never,
+      )
+      const readBody = await parseJson(read)
+
+      expect(read.status).toBe(200)
+      expect(readBody.data).toMatchObject({ code: body.data.code, name: 'Disney' })
+      expect(readBody.data.songs).toEqual([expect.objectContaining({ title: 'Let It Go', youtubeVideoId: 'abcdefghijk' })])
+    })
+
+    it('refuses to publish a collection with nothing another device can play', async () => {
+      const env = makeEnv()
+      authFetch('usr_parent')
+
+      const response = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({ name: 'Recordings', songs: [{ title: 'Hummed', source: 'upload', audioUrl: 'blob:x' }] }),
+      }), env as never)
+
+      expect(response.status).toBe(400)
+      expect((await parseJson(response)).error).toMatchObject({ code: 'empty_collection' })
+    })
+
+    it('needs a session to publish, and an editor to feature a set', async () => {
+      const env = makeEnv()
+      const payload = JSON.stringify({
+        name: 'Disney',
+        featured: true,
+        songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }],
+      })
+
+      const anonymous = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: payload,
+      }), env as never)
+      expect(anonymous.status).toBe(401)
+
+      authFetch('usr_parent')
+      const parent = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: payload,
+      }), env as never)
+      expect(parent.status).toBe(403)
+
+      vi.restoreAllMocks()
+      authFetch('usr_editor', ['admin'])
+      const editor = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: payload,
+      }), env as never)
+
+      expect(editor.status).toBe(201)
+      expect((await parseJson(editor)).data.featured).toBe(true)
+    })
+
+    it('lists only featured sets, never a family\u2019s private share', async () => {
+      const env = makeEnv()
+      authFetch('usr_editor', ['admin'])
+      await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({ name: 'Disney', featured: true, songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }] }),
+      }), env as never)
+
+      vi.restoreAllMocks()
+      authFetch('usr_parent')
+      await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({ name: 'Our bedtime', songs: [{ title: 'Lullaby', source: 'youtube', youtubeVideoId: 'lmnopqrstuv' }] }),
+      }), env as never)
+
+      const listed = await worker.fetch(new Request('https://media.test/v1/radio/collections'), env as never)
+      const body = await parseJson(listed)
+
+      expect(listed.status).toBe(200)
+      expect(body.data.map((collection: Row) => collection.name)).toEqual(['Disney'])
+    })
+
+    it('lets the publisher republish and unshare, but nobody else', async () => {
+      const env = makeEnv()
+      authFetch('usr_parent')
+      const created = await worker.fetch(new Request('https://media.test/v1/radio/collections', {
+        method: 'POST',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({ name: 'Our bedtime', songs: [{ title: 'Lullaby', source: 'youtube', youtubeVideoId: 'lmnopqrstuv' }] }),
+      }), env as never)
+      const { code } = (await parseJson(created)).data
+
+      const updated = await worker.fetch(new Request(`https://media.test/v1/radio/collections/${code}`, {
+        method: 'PUT',
+        headers: { authorization: 'Bearer session-token', 'content-type': 'application/json' },
+        body: JSON.stringify({ name: 'Bedtime', songs: [{ title: 'Lullaby', source: 'youtube', youtubeVideoId: 'lmnopqrstuv' }] }),
+      }), env as never)
+      expect(updated.status).toBe(200)
+      expect((await parseJson(updated)).data).toMatchObject({ code, name: 'Bedtime' })
+
+      vi.restoreAllMocks()
+      authFetch('usr_stranger')
+      const strangerDelete = await worker.fetch(new Request(`https://media.test/v1/radio/collections/${code}`, {
+        method: 'DELETE',
+        headers: { authorization: 'Bearer session-token' },
+      }), env as never)
+      expect(strangerDelete.status).toBe(403)
+
+      vi.restoreAllMocks()
+      authFetch('usr_parent')
+      const removed = await worker.fetch(new Request(`https://media.test/v1/radio/collections/${code}`, {
+        method: 'DELETE',
+        headers: { authorization: 'Bearer session-token' },
+      }), env as never)
+      expect(removed.status).toBe(200)
+
+      const gone = await worker.fetch(new Request(`https://media.test/v1/radio/collections/${code}`), env as never)
+      expect(gone.status).toBe(404)
+      expect((await parseJson(gone)).error).toMatchObject({ code: 'collection_not_found' })
+    })
+
+    it('rejects a code that is not a Tiko share code', async () => {
+      const response = await worker.fetch(new Request('https://media.test/v1/radio/collections/nope'), makeEnv() as never)
+
+      expect(response.status).toBe(400)
+      expect((await parseJson(response)).error).toMatchObject({ code: 'invalid_share_code' })
     })
 
     it('rejects links from services Radio cannot play', async () => {

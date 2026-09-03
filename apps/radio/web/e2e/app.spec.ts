@@ -95,4 +95,41 @@ test.describe('Radio app', () => {
     await expect(page.getByTestId('radio-collection-form')).toBeVisible()
     await expect(page.getByTestId('radio-collection-name')).toBeVisible()
   })
+
+  test('a shared collection can be added by its code', async ({ page }) => {
+    await page.route('https://media.tikoapi.org/v1/radio/collections**', async route => {
+      const url = new URL(route.request().url())
+      if (url.pathname.endsWith('/K7M2Q9XR')) {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            data: {
+              code: 'K7M2Q9XR',
+              name: 'Disney',
+              color: 'purple',
+              songCount: 1,
+              featured: true,
+              shareUrl: 'https://radio.tikoapps.org/?collection=K7M2Q9XR',
+              songs: [{ title: 'Let It Go', source: 'youtube', youtubeVideoId: 'abcdefghijk' }],
+            },
+          }),
+        })
+        return
+      }
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ data: [] }) })
+    })
+
+    await page.getByTestId('tiko-header-action-add').click()
+    await page.getByTestId('radio-context-menu-scan').click()
+
+    await page.getByTestId('radio-import-code').fill('k7m2 q9xr')
+    await page.getByTestId('radio-import-find').click()
+
+    await expect(page.getByTestId('radio-import-preview')).toContainText('Disney')
+    await page.getByTestId('radio-import-confirm').click()
+
+    await expect(page.getByTestId('radio-collection-disney')).toBeVisible()
+    await expect(page.locator('.radio-app__track-card')).toContainText('Let It Go')
+  })
 })

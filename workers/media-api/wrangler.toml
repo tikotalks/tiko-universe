@@ -44,6 +44,10 @@ bucket_name = "user-media"
 #   back to adding songs by pasting a link. A Secrets Store binding named
 #   YOUTUBE_SECRET is picked up automatically when one is configured.
 # IDENTITY_BASE_URL — optional, defaults to https://api.tikotalks.com/v1
+#
+# ── Vars ──────────────────────────────────────────────────────
+# RADIO_APP_BASE_URL — where a scanned Radio share code opens.
+#   Defaults to https://radio.tikoapps.org; set it to the dev app on dev.
 
 [[d1_databases]]
 binding = "AUTH_DB"

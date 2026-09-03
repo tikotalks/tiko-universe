@@ -4,9 +4,18 @@
 // service with versioned /v1/ routes.
 // ────────────────────────────────────────────────────────────────
 
-import { authenticate, type AuthSuccess } from '../../shared/auth'
+import { authenticate, requireRole, requireSession, type AuthSuccess } from '../../shared/auth'
 import { resolveSecrets, type SecretStoreBinding } from '../../shared/secrets'
 import { isApiError, resolveMusicLink, searchYouTube } from './external-audio'
+import {
+  createShareCode,
+  isRadioCollectionsError,
+  normalizeShareCode,
+  normalizeSharedCollectionInput,
+  rowToSharedCollection,
+  shareUrlFor,
+  type SharedCollectionRow,
+} from './radio-collections'
 
 // ── Inline env / type interfaces (no @cloudflare/workers-types) ─
 
@@ -25,6 +34,8 @@ interface Env {
   YOUTUBE_API_KEY?: string
   YOUTUBE_SECRET?: SecretStoreBinding
   IDENTITY_BASE_URL?: string
+  /** Where a scanned share code opens; defaults to the production Radio app. */
+  RADIO_APP_BASE_URL?: string
 }
 
 interface D1Database {
@@ -1529,6 +1540,222 @@ async function handleMusicResolve(request: Request): Promise<Response> {
   return json({ data: result, meta: { schemaVersion: 1 } })
 }
 
+// ── Shared radio collections ───────────────────────────────────
+
+const DEFAULT_RADIO_APP_BASE_URL = 'https://radio.tikoapps.org'
+const ADMIN_ROLES = ['admin', 'content_editor']
+
+function decodePathSegment(segment: string | undefined): string | undefined {
+  if (segment === undefined) return undefined
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return segment
+  }
+}
+
+function radioAppBaseUrl(env: Env): string {
+  return env.RADIO_APP_BASE_URL || DEFAULT_RADIO_APP_BASE_URL
+}
+
+function sharedCollectionPayload(row: SharedCollectionRow, env: Env) {
+  const collection = rowToSharedCollection(row)
+  return { ...collection, shareUrl: shareUrlFor(collection.code, radioAppBaseUrl(env)) }
+}
+
+async function loadSharedCollection(env: Env, code: string): Promise<SharedCollectionRow | null> {
+  return env.MEDIA_DB.prepare(
+    `SELECT code, name, color, image_url, songs, song_count, featured, owner_user_id, created_at, updated_at
+     FROM radio_shared_collections WHERE code = ? LIMIT 1`,
+  ).bind(code).first<SharedCollectionRow>()
+}
+
+// GET /v1/radio/collections?featured=true — curated sets a parent can import
+async function handleListSharedCollections(request: Request, env: Env): Promise<Response> {
+  try {
+    const url = new URL(request.url)
+    const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '50'), 1), 100)
+    // Only featured sets are listable; a family's own share stays private to its code.
+    const rows = await env.MEDIA_DB.prepare(
+      `SELECT code, name, color, image_url, songs, song_count, featured, owner_user_id, created_at, updated_at
+       FROM radio_shared_collections
+       WHERE featured = 1
+       ORDER BY created_at DESC
+       LIMIT ?`,
+    ).bind(limit).all<SharedCollectionRow>()
+
+    const data = rows.results.map(row => sharedCollectionPayload(row, env))
+    return json({ data, meta: { total: data.length, schemaVersion: 1 } })
+  } catch (caught) {
+    return errorEnvelope('shared_collections_unavailable', (caught as Error).message, 500)
+  }
+}
+
+// GET /v1/radio/collections/:code — read a shared collection by its code
+async function handleGetSharedCollection(env: Env, rawCode: string): Promise<Response> {
+  const code = normalizeShareCode(rawCode)
+  if (!code) return errorEnvelope('invalid_share_code', 'That share code is not a Tiko code.', 400)
+
+  try {
+    const row = await loadSharedCollection(env, code)
+    if (!row) return errorEnvelope('collection_not_found', 'No collection is shared under that code.', 404)
+    return json({ data: sharedCollectionPayload(row, env), meta: { schemaVersion: 1 } })
+  } catch (caught) {
+    return errorEnvelope('shared_collections_unavailable', (caught as Error).message, 500)
+  }
+}
+
+// POST /v1/radio/collections — publish a collection and get its share code
+async function handleCreateSharedCollection(request: Request, env: Env): Promise<Response> {
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return errorEnvelope('invalid_request', 'A JSON body is required.', 400)
+  }
+
+  const input = normalizeSharedCollectionInput(body)
+  if (isRadioCollectionsError(input)) return errorEnvelope(input.code, input.message, input.status)
+
+  // Featuring a set puts it in front of every family, so it stays with editors.
+  const auth = input.featured
+    ? await requireRole(request, env, ADMIN_ROLES, { capabilities: ['canEditContent'] })
+    : await requireSession(request, env)
+  if (auth instanceof Response) return withCors(auth)
+
+  const now = new Date().toISOString()
+  try {
+    // Retry a code collision rather than handing back someone else's collection.
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const code = createShareCode()
+      const existing = await loadSharedCollection(env, code)
+      if (existing) continue
+
+      const row: SharedCollectionRow = {
+        code,
+        name: input.name,
+        color: input.color,
+        image_url: input.imageUrl,
+        songs: JSON.stringify(input.songs),
+        song_count: input.songs.length,
+        featured: input.featured ? 1 : 0,
+        owner_user_id: auth.userId ?? null,
+        created_at: now,
+        updated_at: now,
+      }
+
+      await env.MEDIA_DB.prepare(
+        `INSERT INTO radio_shared_collections
+           (code, name, color, image_url, songs, song_count, featured, owner_user_id, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(
+        row.code, row.name, row.color, row.image_url, row.songs,
+        row.song_count, row.featured, row.owner_user_id, row.created_at, row.updated_at,
+      ).run()
+
+      return json({
+        data: sharedCollectionPayload(row, env),
+        meta: { schemaVersion: 1, skippedSongs: input.skippedSongs },
+      }, 201)
+    }
+
+    return errorEnvelope('share_code_unavailable', 'Could not allocate a share code. Try again.', 503)
+  } catch (caught) {
+    return errorEnvelope('shared_collections_unavailable', (caught as Error).message, 500)
+  }
+}
+
+// PUT /v1/radio/collections/:code — republish under the same code
+async function handleUpdateSharedCollection(request: Request, env: Env, rawCode: string): Promise<Response> {
+  const code = normalizeShareCode(rawCode)
+  if (!code) return errorEnvelope('invalid_share_code', 'That share code is not a Tiko code.', 400)
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return errorEnvelope('invalid_request', 'A JSON body is required.', 400)
+  }
+
+  const input = normalizeSharedCollectionInput(body)
+  if (isRadioCollectionsError(input)) return errorEnvelope(input.code, input.message, input.status)
+
+  const auth = input.featured
+    ? await requireRole(request, env, ADMIN_ROLES, { capabilities: ['canEditContent'] })
+    : await requireSession(request, env)
+  if (auth instanceof Response) return withCors(auth)
+
+  try {
+    const existing = await loadSharedCollection(env, code)
+    if (!existing) return errorEnvelope('collection_not_found', 'No collection is shared under that code.', 404)
+
+    const editable = await canEditSharedCollection(request, env, existing, auth)
+    if (editable instanceof Response) return withCors(editable)
+
+    const now = new Date().toISOString()
+    const row: SharedCollectionRow = {
+      ...existing,
+      name: input.name,
+      color: input.color,
+      image_url: input.imageUrl,
+      songs: JSON.stringify(input.songs),
+      song_count: input.songs.length,
+      featured: input.featured ? 1 : 0,
+      updated_at: now,
+    }
+
+    await env.MEDIA_DB.prepare(
+      `UPDATE radio_shared_collections
+       SET name = ?, color = ?, image_url = ?, songs = ?, song_count = ?, featured = ?, updated_at = ?
+       WHERE code = ?`,
+    ).bind(row.name, row.color, row.image_url, row.songs, row.song_count, row.featured, row.updated_at, code).run()
+
+    return json({
+      data: sharedCollectionPayload(row, env),
+      meta: { schemaVersion: 1, skippedSongs: input.skippedSongs },
+    })
+  } catch (caught) {
+    return errorEnvelope('shared_collections_unavailable', (caught as Error).message, 500)
+  }
+}
+
+// DELETE /v1/radio/collections/:code — stop sharing
+async function handleDeleteSharedCollection(request: Request, env: Env, rawCode: string): Promise<Response> {
+  const code = normalizeShareCode(rawCode)
+  if (!code) return errorEnvelope('invalid_share_code', 'That share code is not a Tiko code.', 400)
+
+  const auth = await requireSession(request, env)
+  if (auth instanceof Response) return withCors(auth)
+
+  try {
+    const existing = await loadSharedCollection(env, code)
+    if (!existing) return errorEnvelope('collection_not_found', 'No collection is shared under that code.', 404)
+
+    const editable = await canEditSharedCollection(request, env, existing, auth)
+    if (editable instanceof Response) return withCors(editable)
+
+    await env.MEDIA_DB.prepare('DELETE FROM radio_shared_collections WHERE code = ?').bind(code).run()
+    return json({ data: { code }, meta: { schemaVersion: 1 } })
+  } catch (caught) {
+    return errorEnvelope('shared_collections_unavailable', (caught as Error).message, 500)
+  }
+}
+
+/** The family that published a collection owns it; editors own the curated ones. */
+async function canEditSharedCollection(
+  request: Request,
+  env: Env,
+  row: SharedCollectionRow,
+  auth: AuthSuccess,
+): Promise<true | Response> {
+  if (row.owner_user_id && row.owner_user_id === auth.userId) return true
+  const elevated = await requireRole(request, env, ADMIN_ROLES, { capabilities: ['canEditContent'] })
+  if (elevated instanceof Response) {
+    return errorEnvelope('forbidden', 'That collection belongs to someone else.', 403)
+  }
+  return true
+}
+
 // ── Router ─────────────────────────────────────────────────────
 
 export default {
@@ -1554,6 +1781,17 @@ export default {
     }
     if (resource === 'music' && id === 'resolve' && request.method === 'GET') {
       return handleMusicResolve(request)
+    }
+
+    // ── Shared radio collections (public reads by code, authenticated writes) ──
+    if (resource === 'radio' && id === 'collections') {
+      // A code read off a QR or typed by hand can arrive percent-encoded.
+      const code = decodePathSegment(segments[3])
+      if (request.method === 'GET' && !code) return handleListSharedCollections(request, env)
+      if (request.method === 'GET' && code) return handleGetSharedCollection(env, code)
+      if (request.method === 'POST' && !code) return handleCreateSharedCollection(request, env)
+      if (request.method === 'PUT' && code) return handleUpdateSharedCollection(request, env, code)
+      if (request.method === 'DELETE' && code) return handleDeleteSharedCollection(request, env, code)
     }
 
     // ── Audio library routes (admin writes, public radio reads) ──

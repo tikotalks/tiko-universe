@@ -32,6 +32,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/settings', name: 'settings', component: () => import('./pages/SettingsPage.vue') },
   { path: '/cards', redirect: '/apps/cards' },
   { path: '/apps/talk/mapping', name: 'talk-mapping', component: () => import('./pages/TalkMappingPage.vue') },
+  { path: '/apps/radio/collections', name: 'radio-collections', component: () => import('./pages/RadioCollectionsPage.vue') },
   { path: '/apps', name: 'apps', component: () => import('./pages/AppDefaultsPage.vue') },
   { path: '/apps/:app', name: 'app-detail', component: () => import('./pages/AppDefaultsPage.vue') },
   { path: '/defaults', redirect: '/apps' },

@@ -1,4 +1,5 @@
 export { default as TikoLogo } from './TikoLogo.vue'
+export { default as TikoQrCode } from './TikoQrCode.vue'
 export { default as TikoChildAccountsPanel } from './TikoChildAccountsPanel.vue'
 export { default as TikoProfileMenu } from './TikoProfileMenu.vue'
 export { default as TikoPinPopup } from './TikoPinPopup.vue'

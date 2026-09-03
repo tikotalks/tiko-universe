@@ -7,11 +7,12 @@
   "types": "src/index.ts",
   "dependencies": {
     "@sil/ui": "^2.6.0",
-    "@tiko/identity": "file:../identity",
     "@tiko/i18n": "file:../i18n",
+    "@tiko/identity": "file:../identity",
     "@tiko/media": "file:../media",
     "bemm": "^1.4.0",
     "open-icon": "^1.1.9",
+    "qrcode-generator": "^2.0.4",
     "vue": "^3.5.24"
   },
   "scripts": {

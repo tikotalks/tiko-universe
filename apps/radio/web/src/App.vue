@@ -29,7 +29,15 @@ import { getPersistableRadioTracks, useTrackLibrary } from './composables/useTra
 import { useCategories } from './composables/useCategories'
 import { useYouTubeSearch } from './composables/useYouTubeSearch'
 import { radioServiceFor, useSubscriptions } from './composables/useSubscriptions'
+import {
+  shareCodeFromLocation,
+  toRadioTracks,
+  useSharedCollections,
+  type SharedCollection,
+} from './composables/useSharedCollections'
 import AddSongPopup, { type AddSongTrack } from './components/AddSongPopup.vue'
+import ImportCollectionPopup from './components/ImportCollectionPopup.vue'
+import ShareCollectionPopup from './components/ShareCollectionPopup.vue'
 import CollectionFormPopup, { type CollectionFormValue } from './components/CollectionFormPopup.vue'
 import ConfirmPopup from './components/ConfirmPopup.vue'
 import ContextMenuPopup from './components/ContextMenuPopup.vue'
@@ -160,6 +168,7 @@ const library = useTrackLibrary('tiko:radio:tracks')
 const categories = useCategories('tiko:radio:categories')
 const subscriptions = useSubscriptions('tiko:radio:subscriptions')
 const youtubeSearch = useYouTubeSearch(mediaApiBaseUrl)
+const sharedCollections = useSharedCollections(mediaApiBaseUrl)
 
 // ---- Labels ---------------------------------------------------------------
 const labels = computed(() => {
@@ -182,6 +191,8 @@ const labels = computed(() => {
     collectionActions: i18n.t(tikoI18nKeys.radio.management.collectionActions),
     editCollection: i18n.t(tikoI18nKeys.radio.management.editCollection),
     deleteCollection: i18n.t(tikoI18nKeys.radio.management.deleteCollection),
+    shareCollection: i18n.t(tikoI18nKeys.radio.share.shareCollection),
+    importCollection: i18n.t(tikoI18nKeys.radio.import.title),
     services: i18n.t(tikoI18nKeys.radio.services.title),
     settings: i18n.t(tikoI18nKeys.common.settings),
     shell: createTikoShellLabels(i18n.t),
@@ -545,6 +556,7 @@ onMounted(async () => {
     void syncPublicAudioAlbums()
     void syncGeneratedStories()
     void seedDefaultSongs()
+    void handleSharedCollectionLink()
   }
 })
 
@@ -610,6 +622,7 @@ function openAddMenu() {
       items: [
         { id: 'song', label: labels.value.addSong, icon: 'media/music-note' },
         { id: 'collection', label: labels.value.addCollection, icon: 'ui/folder' },
+        { id: 'scan', label: labels.value.importCollection, icon: 'ui/rounded-square-grid' },
       ],
     },
     config: { position: 'center', canClose: true, background: true, width: '18rem' },
@@ -617,8 +630,65 @@ function openAddMenu() {
       select: (...args: unknown[]) => {
         if (args[0] === 'song') openAddSongPopup(selectedCategoryId.value ?? undefined)
         if (args[0] === 'collection') openCollectionForm()
+        if (args[0] === 'scan') openImportPopup()
       },
     },
+  })
+}
+
+/** Scan a Tiko code, type one, or take a ready-made set. */
+function openImportPopup(collection: SharedCollection | null = null) {
+  popup.showPopup({
+    component: markRaw(ImportCollectionPopup),
+    title: '',
+    props: {
+      collection,
+      labels: {
+        title: i18n.t(tikoI18nKeys.radio.import.title),
+        subtitle: i18n.t(tikoI18nKeys.radio.import.subtitle),
+        scan: i18n.t(tikoI18nKeys.radio.import.scan),
+        scanHint: i18n.t(tikoI18nKeys.radio.import.scanHint),
+        scanUnsupported: i18n.t(tikoI18nKeys.radio.import.scanUnsupported),
+        cameraBlocked: i18n.t(tikoI18nKeys.radio.import.cameraBlocked),
+        codeLabel: i18n.t(tikoI18nKeys.radio.import.codeLabel),
+        codePlaceholder: i18n.t(tikoI18nKeys.radio.import.codePlaceholder),
+        find: i18n.t(tikoI18nKeys.radio.import.find),
+        notFound: i18n.t(tikoI18nKeys.radio.import.notFound),
+        featured: i18n.t(tikoI18nKeys.radio.import.featured),
+        songs: i18n.t(tikoI18nKeys.radio.collections.songs),
+        import: i18n.t(tikoI18nKeys.radio.import.addCollection),
+        close: i18n.t(tikoI18nKeys.common.identity.close),
+      },
+    },
+    config: { position: 'center', canClose: true, background: true, width: '26rem' },
+    on: {
+      import: (...args: unknown[]) => importSharedCollection(args[0] as SharedCollection),
+    },
+  })
+}
+
+/** Hand a collection to another family: a QR to scan, or a code to read out. */
+function openSharePopup(category: RadioCategory) {
+  popup.showPopup({
+    component: markRaw(ShareCollectionPopup),
+    title: '',
+    props: {
+      collection: { ...category, imageUrl: radioCollectionArtwork(category) },
+      tracks: library.tracksInCategory(category.id),
+      sessionToken: runtimeState.sessionToken.value,
+      labels: {
+        title: i18n.t(tikoI18nKeys.radio.share.title),
+        subtitle: i18n.t(tikoI18nKeys.radio.share.subtitle),
+        publishing: i18n.t(tikoI18nKeys.radio.share.publishing),
+        codeLabel: i18n.t(tikoI18nKeys.radio.share.codeLabel),
+        copyLink: i18n.t(tikoI18nKeys.radio.share.copyLink),
+        copied: i18n.t(tikoI18nKeys.radio.share.copied),
+        skipped: i18n.t(tikoI18nKeys.radio.share.skipped),
+        failed: i18n.t(tikoI18nKeys.radio.share.failed),
+        close: i18n.t(tikoI18nKeys.common.identity.close),
+      },
+    },
+    config: { position: 'center', canClose: true, background: true, width: '24rem' },
   })
 }
 
@@ -685,6 +755,7 @@ function openCollectionMenu(category: RadioCategory) {
       subtitle: labels.value.collectionActions,
       items: [
         { id: 'edit', label: labels.value.editCollection, icon: 'ui/edit-m' },
+        { id: 'share', label: labels.value.shareCollection, icon: 'arrows/arrow-share' },
         { id: 'delete', label: labels.value.deleteCollection, icon: 'ui/trash', destructive: true },
       ],
     },
@@ -692,6 +763,7 @@ function openCollectionMenu(category: RadioCategory) {
     on: {
       select: (...args: unknown[]) => {
         if (args[0] === 'edit') openCollectionForm(category)
+        if (args[0] === 'share') openSharePopup(category)
         if (args[0] === 'delete') confirmDeleteCollection(category)
       },
     },
@@ -772,6 +844,47 @@ function uploadSong(data: { title: string; file: File; categoryId: string }) {
     currentTrackIndex.value = library.tracks.value.length - 1
     nextTick(() => player.play(newTrack))
   }
+}
+
+/** A scanned collection becomes a real collection, with its songs, right away. */
+function importSharedCollection(collection: SharedCollection) {
+  const created = categories.addCategory({
+    id: uniqueCollectionId(collection.name),
+    name: collection.name,
+    icon: 'media/music-note',
+    color: (collection.color || 'red') as TikoColorName,
+    imageUrl: collection.imageUrl,
+  })
+  library.mergeTracks(toRadioTracks(collection, created.id))
+  selectedCategoryId.value = created.id
+}
+
+/** Importing the same set twice makes a second shelf, never overwrites the first. */
+function uniqueCollectionId(name: string): string {
+  const base = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'collection'
+  const taken = categories.byId.value
+  if (!taken.has(base)) return base
+  let suffix = 2
+  while (taken.has(`${base}-${suffix}`)) suffix += 1
+  return `${base}-${suffix}`
+}
+
+/**
+ * A QR scanned with the phone's own camera opens Radio on the collection, so
+ * the app answers `?collection=CODE` by offering the import straight away.
+ */
+async function handleSharedCollectionLink() {
+  if (typeof window === 'undefined') return
+  const code = shareCodeFromLocation(window.location.href)
+  if (!code) return
+
+  // Take the code out of the URL so a refresh does not ask again.
+  const url = new URL(window.location.href)
+  url.searchParams.delete('collection')
+  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`)
+
+  const collection = await sharedCollections.fetchByCode(code)
+  openImportPopup(collection)
 }
 
 function deleteCollection(categoryId: string) {

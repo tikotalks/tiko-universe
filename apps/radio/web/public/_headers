@@ -2,8 +2,8 @@
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: camera=(), microphone=(), geolocation=()
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org; font-src 'self' data:; connect-src 'self' https://*.tikoapi.org https://*.tikoapps.org https://api.tikotalks.com https://*.workers.dev; media-src 'self' blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Permissions-Policy: camera=(self), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://open.spotify.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org https://i.ytimg.com https://img.youtube.com https://i.scdn.co https://*.mzstatic.com; font-src 'self' data:; connect-src 'self' https://*.tikoapi.org https://*.tikoapps.org https://api.tikotalks.com https://*.workers.dev https://noembed.com; media-src 'self' blob: https://data.tikocdn.org https://media.tikoapi.org https://*.tikoapi.org; frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://open.spotify.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
 /robots.txt
   Content-Type: text/plain
