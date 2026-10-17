@@ -39,6 +39,7 @@ const sourceCollection: CardCollection = {
       id: 'user_card',
       title: 'Water',
       speech: 'Water',
+      fitzgeraldCategory: 'thing',
       color: 'blue',
       order: 0,
     },
@@ -104,7 +105,7 @@ describe('useCardsStore moveSelected', () => {
       expect.objectContaining({ id: 'user_card_3', title: 'Sleep' }),
     ])
     expect(store.collections.value.find(collection => collection.id === 'user_target')?.cards).toEqual([
-      expect.objectContaining({ id: 'user_card', title: 'Water' }),
+      expect.objectContaining({ id: 'user_card', title: 'Water', fitzgeraldCategory: 'thing' }),
     ])
   })
 
@@ -119,7 +120,7 @@ describe('useCardsStore moveSelected', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
     expect(store.collections.value.find(collection => collection.id === 'user_source')?.cards).toEqual([
-      expect.objectContaining({ id: 'user_card', title: 'Water' }),
+      expect.objectContaining({ id: 'user_card', title: 'Water', fitzgeraldCategory: 'thing' }),
       expect.objectContaining({ id: 'user_card_2', title: 'Food' }),
       expect.objectContaining({ id: 'user_card_3', title: 'Sleep' }),
     ])

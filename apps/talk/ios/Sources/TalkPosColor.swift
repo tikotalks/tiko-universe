@@ -4,7 +4,8 @@ import TikoKit
 /// Colour per part of speech, used to tint sentence-bar chips (solid) and to
 /// subtly border words in the cloud and tiles. Distinct, child-friendly hues.
 enum TalkPosColor {
-    static func color(for pos: String) -> Color {
+    static func color(for pos: String, fitzgeraldKey: Bool = false) -> Color {
+        if fitzgeraldKey { return TikoFitzgerald.category(for: pos).color }
         switch pos {
         case "pronoun": return Color(hex: 0x4f86ff)      // blue
         case "verb": return Color(hex: 0x35b87a)         // green (actions)

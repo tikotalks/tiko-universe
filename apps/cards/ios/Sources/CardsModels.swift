@@ -45,6 +45,7 @@ struct CardCollection: Identifiable, Codable, Equatable, Sendable {
 }
 
 struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
+    var fitzgeraldCategory: String?
     var id: String
     var title: String
     var speech: String
@@ -52,7 +53,8 @@ struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
     var color: String
     var order: Int
 
-    init(id: String, title: String, speech: String, imageRef: String? = nil, color: String, order: Int = 0) {
+    init(id: String, title: String, speech: String, imageRef: String? = nil, color: String, order: Int = 0, fitzgeraldCategory: String? = nil) {
+        self.fitzgeraldCategory = fitzgeraldCategory
         self.id = id
         self.title = title
         self.speech = speech
@@ -63,6 +65,7 @@ struct CommunicationCard: Identifiable, Codable, Equatable, Sendable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        fitzgeraldCategory = try container.decodeIfPresent(String.self, forKey: .fitzgeraldCategory)
         id = try container.decode(String.self, forKey: .id)
         title = try container.decode(String.self, forKey: .title)
         speech = try container.decode(String.self, forKey: .speech)

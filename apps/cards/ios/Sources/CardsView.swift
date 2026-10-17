@@ -11,6 +11,7 @@ private enum CardsSheet: String, Identifiable {
 }
 
 struct CardsView: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
 
@@ -112,6 +113,7 @@ struct CardsView: View {
                     )
                 }
                 TikoSettingsSection(title: i18n.t("cards.settings.display")) {
+                    TikoSettingsToggleRow(title: "Fitzgerald Key", icon: "paintpalette", appColor: .cards, isOn: $fitzgeraldKey)
                     TikoSettingsToggleRow(
                         title: i18n.t("cards.settings.showAnimations"),
                         icon: "sparkles",
@@ -1083,6 +1085,7 @@ private struct BulkColorSheet: View {
 }
 
 private struct CommunicationCardTile: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     let card: CommunicationCard
     let imageURL: URL?
     let isSpeaking: Bool
@@ -1110,7 +1113,7 @@ private struct CommunicationCardTile: View {
         Button(action: { if !isEditing { onSpeak() } }) {
             TikoSquareTile(
                 title: card.title,
-                background: cardColor(card.color),
+                background: (fitzgeraldKey ? (TikoFitzgerald(rawValue: card.fitzgeraldCategory ?? "") ?? .miscellaneous).color : cardColor(card.color)),
                 isActive: isSpeaking,
                 labelFont: labelFont
             ) {
@@ -1160,6 +1163,7 @@ private struct PageDots: View {
 // MARK: - Fullscreen card (child mode)
 
 private struct FullscreenCardView: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     let card: CommunicationCard
     let imageURL: URL?
     let onClose: () -> Void
@@ -1169,7 +1173,7 @@ private struct FullscreenCardView: View {
 
     var body: some View {
         ZStack {
-            cardColor(card.color).ignoresSafeArea()
+            (fitzgeraldKey ? (TikoFitzgerald(rawValue: card.fitzgeraldCategory ?? "") ?? .miscellaneous).color : cardColor(card.color)).ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Spacer()
@@ -1196,7 +1200,7 @@ private struct FullscreenCardView: View {
 
                 Text(card.title)
                     .font(.system(size: 42, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .white)
                     .multilineTextAlignment(.center)
                     .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 40)
@@ -1300,6 +1304,7 @@ private struct AddCardSheet: View {
 
     @State private var title = ""
     @State private var speech = ""
+    @State private var fitzgeraldCategory = "miscellaneous"
     @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
@@ -1330,6 +1335,11 @@ private struct AddCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
+                Picker("Fitzgerald category", selection: $fitzgeraldCategory) {
+                    ForEach(TikoFitzgerald.allCases) { category in
+                        Text(category.rawValue.capitalized).tag(category.rawValue)
+                    }
+                }
                 CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -1349,6 +1359,7 @@ private struct AddCardSheet: View {
                         title: title,
                         speech: speech,
                         color: selectedColor,
+                        fitzgeraldCategory: fitzgeraldCategory,
                         imageURL: selectedImageURL,
                         to: collection.id
                     )
@@ -1523,6 +1534,7 @@ private struct EditCardSheet: View {
 
     @State private var title: String
     @State private var speech: String
+    @State private var fitzgeraldCategory = "miscellaneous"
     @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
@@ -1539,6 +1551,7 @@ private struct EditCardSheet: View {
         self.onClose = onClose
         self._title = State(initialValue: card.title)
         self._speech = State(initialValue: card.speech)
+        self._fitzgeraldCategory = State(initialValue: card.fitzgeraldCategory ?? "miscellaneous")
         self._selectedColor = State(initialValue: card.color)
         self._selectedImageURL = State(initialValue: store.imageURL(for: card))
     }
@@ -1558,7 +1571,8 @@ private struct EditCardSheet: View {
                             id: card.id,
                             title: title.isEmpty ? " " : title,
                             speech: speech,
-                            color: selectedColor
+                            color: selectedColor,
+                            fitzgeraldCategory: fitzgeraldCategory
                         ),
                         imageURL: selectedImageURL,
                         isSpeaking: false,
@@ -1581,6 +1595,11 @@ private struct EditCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
+                Picker("Fitzgerald category", selection: $fitzgeraldCategory) {
+                    ForEach(TikoFitzgerald.allCases) { category in
+                        Text(category.rawValue.capitalized).tag(category.rawValue)
+                    }
+                }
                 CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -1652,6 +1671,7 @@ private struct EditCardSheet: View {
             title: trimmedTitle,
             speech: trimmedSpeech.isEmpty ? trimmedTitle : trimmedSpeech,
             color: selectedColor,
+            fitzgeraldCategory: fitzgeraldCategory,
             imageURL: selectedImageURL,
             inCollectionID: collectionID
         )
