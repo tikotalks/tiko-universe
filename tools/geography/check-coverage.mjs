@@ -3,8 +3,13 @@
 // handful of animals, not one scorpion — and Globe can only show what the
 // authored data says, so a thin country is a data gap and nothing else.
 //
-//   node tools/geography/check-coverage.mjs            report and fail below target
-//   node tools/geography/check-coverage.mjs --write    also write the worklist
+//   node tools/geography/check-coverage.mjs            report, and fail if a country lost content
+//   node tools/geography/check-coverage.mjs --write    also write the worklist and raise the baseline
+//
+// The targets are a worklist, not a gate: most countries are still under them,
+// and an unwritten landmark is no reason to hold back every app's deploy. What
+// does fail is a country ending up with fewer animals or landmarks than
+// coverage-baseline.json records, so the gap can only close.
 //
 // Writes docs/apps/globe-content-gaps.md: every country under target, with what
 // it already has, so filling it needs no further research into what is missing.
@@ -17,6 +22,7 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const CONTENT_DIR = join(HERE, '..', '..', 'packages', 'geography', 'content')
 const GENERATED_DIR = join(HERE, '..', '..', 'packages', 'geography', 'generated')
 const DOC = join(HERE, '..', '..', 'docs', 'apps', 'globe-content-gaps.md')
+const BASELINE = join(HERE, 'coverage-baseline.json')
 const WRITE = process.argv.includes('--write')
 
 /** What a country needs before it is worth zooming into. */
@@ -59,6 +65,11 @@ const species = new Set(Object.values(source.countries).flatMap((entry) => (entr
 const total = rows.reduce((sum, row) => sum + row.animals.length, 0)
 const belowFloor = rows.filter((row) => row.animals.length < FLOOR_ANIMALS)
 const belowTarget = rows.filter((row) => row.animals.length < TARGET_ANIMALS)
+
+/** Per country, how many of each there are now — what the baseline holds. */
+const counts = (list, field) =>
+  Object.fromEntries([...list].sort((a, b) => a.id.localeCompare(b.id)).map((row) => [row.id, row[field].length]))
+const current = { animals: counts(rows, 'animals'), landmarks: counts(landmarkRows, 'landmarks') }
 
 if (WRITE) {
   const lines = [
@@ -105,6 +116,7 @@ if (WRITE) {
   }
   lines.push('')
   await writeFile(DOC, `${lines.join('\n')}\n`)
+  await writeFile(BASELINE, `${JSON.stringify(current, null, 2)}\n`)
 }
 
 process.stdout.write(
@@ -117,13 +129,26 @@ if (landmarksBelowTarget.length > 0) {
     `${landmarksBelowTarget.length} countries under ${TARGET_LANDMARKS} landmarks, ` +
     `${landmarksBelowFloor.length} under ${FLOOR_LANDMARKS}\n`
   )
-  process.exitCode = 1
 }
 if (belowTarget.length > 0) {
   process.stdout.write(
     `${belowTarget.length} countries under ${TARGET_ANIMALS} animals, ` +
     `${belowFloor.length} under ${FLOOR_ANIMALS}: ${belowFloor.map((row) => `${row.name} (${row.animals.length})`).slice(0, 12).join(', ')}` +
     `${belowFloor.length > 12 ? ` and ${belowFloor.length - 12} more` : ''}\n`
+  )
+}
+
+const baseline = await read('coverage-baseline.json', HERE)
+const losses = ['animals', 'landmarks'].flatMap((kind) =>
+  Object.entries(baseline[kind]).flatMap(([id, had]) => {
+    const has = current[kind][id] ?? 0
+    return has < had ? [`${countryName.get(id) ?? id} has ${has} ${kind}, down from ${had}`] : []
+  })
+)
+if (losses.length > 0) {
+  process.stdout.write(
+    `coverage went down in ${losses.length} place(s) — restore the content, or if it was wrong, ` +
+    `run \`npm run geography:gaps\` to record the new baseline:\n${losses.map((loss) => `  - ${loss}`).join('\n')}\n`
   )
   process.exitCode = 1
 }
