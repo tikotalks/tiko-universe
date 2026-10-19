@@ -15,6 +15,7 @@ private final class MockSpeechService: SaySpeechServicing {
     private(set) var listenLanguages: [String] = []
     private(set) var listenContextualWords: [[String]] = []
     private(set) var stopAllCount = 0
+    private(set) var permissionRequestCount = 0
 
     /// Each entry scripts one listen attempt. When exhausted, listening parks
     /// (stream stays open) so tests can observe a stable `.listening` state.
@@ -23,7 +24,10 @@ private final class MockSpeechService: SaySpeechServicing {
 
     func permissionState() -> SayPermissionState { permission }
 
-    func requestPermissions() async -> Bool { permissionRequestResult }
+    func requestPermissions() async -> Bool {
+        permissionRequestCount += 1
+        return permissionRequestResult
+    }
 
     func recognitionAvailability(languageCode: String) -> SayRecognitionAvailability {
         availabilityByLanguage[languageCode] ?? defaultAvailability
@@ -251,21 +255,29 @@ final class PracticeViewModelTests: XCTestCase {
         speech.permission = .denied
         let vm = makeViewModel(cards: [card()], speech: speech)
         vm.begin()
-        XCTAssertEqual(vm.state, .permissionRequired)
-        XCTAssertTrue(vm.permissionDenied)
+        XCTAssertEqual(vm.state, .permissionDenied)
     }
 
-    func testPermissionRequestDenialStaysOnRecovery() async {
+    /// Guideline 5.1.1(iv): an undecided permission goes straight to the system
+    /// prompt, with no screen in between that could be dismissed instead.
+    func testUndecidedPermissionAsksImmediately() async {
+        let speech = MockSpeechService()
+        speech.permission = .notDetermined
+        speech.permissionRequestResult = true
+        let vm = makeViewModel(cards: [card()], speech: speech)
+        vm.begin()
+        XCTAssertEqual(vm.state, .requestingPermission, "no interstitial before the system prompt")
+        await waitFor("prompt requested") { speech.permissionRequestCount == 1 }
+        vm.cancel()
+    }
+
+    func testPermissionRequestDenialShowsRecovery() async {
         let speech = MockSpeechService()
         speech.permission = .notDetermined
         speech.permissionRequestResult = false
         let vm = makeViewModel(cards: [card()], speech: speech)
         vm.begin()
-        XCTAssertEqual(vm.state, .permissionRequired)
-        XCTAssertFalse(vm.permissionDenied)
-        vm.requestPermissions()
-        await waitFor("denied") { vm.permissionDenied }
-        XCTAssertEqual(vm.state, .permissionRequired)
+        await waitFor("denied") { vm.state == .permissionDenied }
     }
 
     func testPermissionGrantStartsPractice() async {
@@ -274,7 +286,19 @@ final class PracticeViewModelTests: XCTestCase {
         speech.permissionRequestResult = true
         let vm = makeViewModel(cards: [card()], speech: speech)
         vm.begin()
-        vm.requestPermissions()
+        await waitFor("listening") { vm.state == .listening }
+        vm.cancel()
+    }
+
+    func testGrantingInSettingsResumesPracticeOnReturn() async {
+        let speech = MockSpeechService()
+        speech.permission = .denied
+        let vm = makeViewModel(cards: [card()], speech: speech)
+        vm.begin()
+        XCTAssertEqual(vm.state, .permissionDenied)
+
+        speech.permission = .granted
+        vm.recheckPermissionsAfterSettings()
         await waitFor("listening") { vm.state == .listening }
         vm.cancel()
     }

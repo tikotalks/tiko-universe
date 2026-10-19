@@ -26,10 +26,14 @@ DerivedData/
 .build/
 **/.build/
 .swiftpm/
+.gradle/
+build/
+**/.gradle/
+**/build/
 # Library package resolved file (apps keep their xcshareddata Package.resolved)
 packages/tikokit-ios/Package.resolved
 
-apps/ios/**/*.xcodeproj/
+apps/*/ios/*.xcodeproj/
 apps/android/**/.gradle/
 apps/android/**/build/
 
@@ -49,6 +53,9 @@ artifacts/
 
 # iOS build output (archives, .ipa, dSYMs)
 apps/*/ios/build/
+
+# Git worktrees for parallel agent sessions — never part of the repo itself.
+.claude/worktrees/
 
 # XcodeGen output for Write (generated from Project.yml)
 apps/write/ios/TikoWrite.xcodeproj/

@@ -1,10 +1,12 @@
 import type { SiteCopyOverride } from '../..'
 import { nlPages } from './pages'
 import { nlAudiencePages } from './pages-audience'
+import { nlHome } from './home'
+import { nlApps, nlAppsPage, nlAppDetail, nlNotFound } from './apps'
+import { nlDocs } from './docs'
+import { nlPrivacy } from './privacy'
 
-/**
- * Dutch website copy — chrome and all six content pages.
- */
+/** Dutch website copy — the whole site. */
 export const nl: SiteCopyOverride = {
   ...({
   "common": {
@@ -15,6 +17,7 @@ export const nl: SiteCopyOverride = {
     "exploreApps": "Bekijk de apps",
     "openOnWeb": "Openen in de browser",
     "downloadAppStore": "Download in de App Store",
+    "downloadOnCaption": "Download in de",
     "learnMore": "Meer lezen",
     "backToApps": "Alle apps",
     "available": "Beschikbaar",
@@ -47,5 +50,18 @@ export const nl: SiteCopyOverride = {
     "philosophy": "Filosofie"
   }
 } as SiteCopyOverride),
+  meta: {
+    home: 'TikoTalks — Mooie, gratis apps voor onderwijs en communicatie, voor elk kind',
+    apps: 'Apps',
+    docs: 'Docs',
+    notFound: 'Pagina niet gevonden',
+  },
+  home: nlHome,
+  appsPage: nlAppsPage,
+  appDetail: nlAppDetail,
+  notFound: nlNotFound,
+  apps: nlApps,
+  docs: nlDocs,
+  privacy: nlPrivacy,
   pages: { ...nlPages, ...nlAudiencePages },
 }

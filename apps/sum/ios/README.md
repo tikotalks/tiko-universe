@@ -35,3 +35,10 @@ and the play state machine including the retry ladder and voice answering.
   app is fully usable offline after first use.
 - Screenshot scenes for capture/promo: `home`, `practice`, `keypad`,
   `celebrate` (auto-plays) via `--screenshot-mode --screenshot <scene>`.
+  `--screenshot-mode` also skips the splash, whose network calls hang
+  indefinitely on a simulator with a broken HTTP/3 path — it is the only
+  reliable way to reach the UI there.
+- The home header carries the operator (`+ − × ÷` and a shuffle tab); the
+  choice is remembered in `tiko.sum.operatorChoice`, so tapping a mode tile
+  starts the ten immediately. Modes are ranges (`1-5 … 1-100`), bands
+  (`10-20`, `20-50`, `50-100`) and number families (the 2s … the 10s).

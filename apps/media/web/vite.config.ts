@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { ui } from '@sil/ui/vite'
 import { deployInfo } from '../../../tools/vite-plugin-deploy-info.mjs'
@@ -13,5 +13,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['highlight.js/lib/core'],
+  },
+  test: {
+    environment: 'jsdom',
   },
 })

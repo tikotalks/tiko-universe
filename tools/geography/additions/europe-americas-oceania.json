@@ -1,0 +1,228 @@
+{
+  "NLD": [
+    { "name": "Eurasian otter", "scientificName": "Lutra lutra", "importance": 3 },
+    { "name": "European badger", "scientificName": "Meles meles", "importance": 4 },
+    { "name": "Grey seal", "scientificName": "Halichoerus grypus", "importance": 3 },
+    { "name": "Eurasian spoonbill", "scientificName": "Platalea leucorodia", "importance": 4 },
+    { "name": "Konik horse", "scientificName": "Equus ferus caballus", "importance": 5 },
+    { "name": "Common buzzard", "scientificName": "Buteo buteo", "importance": 5 }
+  ],
+  "BEL": [
+    { "name": "Wild boar", "scientificName": "Sus scrofa", "importance": 4 },
+    { "name": "Red fox", "scientificName": "Vulpes vulpes", "importance": 4 },
+    { "name": "European badger", "scientificName": "Meles meles", "importance": 5 },
+    { "name": "Roe deer", "scientificName": "Capreolus capreolus", "importance": 4 },
+    { "name": "Black woodpecker", "scientificName": "Dryocopus martius", "importance": 6 },
+    { "name": "Grey seal", "scientificName": "Halichoerus grypus", "importance": 5 }
+  ],
+  "DEU": [
+    { "name": "Grey wolf", "scientificName": "Canis lupus", "importance": 3 },
+    { "name": "European bison", "scientificName": "Bison bonasus", "importance": 3 },
+    { "name": "Wild boar", "scientificName": "Sus scrofa", "importance": 4 },
+    { "name": "White stork", "scientificName": "Ciconia ciconia", "importance": 3 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 4 },
+    { "name": "Red deer", "scientificName": "Cervus elaphus", "importance": 4 }
+  ],
+  "FRA": [
+    { "name": "Alpine ibex", "scientificName": "Capra ibex", "importance": 3 },
+    { "name": "Camargue horse", "scientificName": "Equus ferus caballus", "importance": 3 },
+    { "name": "Greater flamingo", "scientificName": "Phoenicopterus roseus", "importance": 3 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 4 },
+    { "name": "Chamois", "scientificName": "Rupicapra rupicapra", "importance": 4 },
+    { "name": "Bearded vulture", "scientificName": "Gypaetus barbatus", "importance": 4 }
+  ],
+  "ESP": [
+    { "name": "Iberian lynx", "scientificName": "Lynx pardinus", "importance": 2 },
+    { "name": "Spanish imperial eagle", "scientificName": "Aquila adalberti", "importance": 3 },
+    { "name": "Iberian wolf", "scientificName": "Canis lupus signatus", "importance": 3 },
+    { "name": "Greater flamingo", "scientificName": "Phoenicopterus roseus", "importance": 4 },
+    { "name": "Spanish ibex", "scientificName": "Capra pyrenaica", "importance": 4 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 4 }
+  ],
+  "ITA": [
+    { "name": "Marsican brown bear", "scientificName": "Ursus arctos marsicanus", "importance": 3 },
+    { "name": "Italian wolf", "scientificName": "Canis lupus italicus", "importance": 3 },
+    { "name": "Alpine ibex", "scientificName": "Capra ibex", "importance": 3 },
+    { "name": "Loggerhead sea turtle", "scientificName": "Caretta caretta", "importance": 4 },
+    { "name": "Chamois", "scientificName": "Rupicapra rupicapra", "importance": 5 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 4 }
+  ],
+  "GBR": [
+    { "name": "Red squirrel", "scientificName": "Sciurus vulgaris", "importance": 3 },
+    { "name": "Red deer", "scientificName": "Cervus elaphus", "importance": 3 },
+    { "name": "Atlantic puffin", "scientificName": "Fratercula arctica", "importance": 2 },
+    { "name": "European badger", "scientificName": "Meles meles", "importance": 4 },
+    { "name": "Grey seal", "scientificName": "Halichoerus grypus", "importance": 3 },
+    { "name": "Scottish wildcat", "scientificName": "Felis silvestris silvestris", "importance": 4 }
+  ],
+  "IRL": [
+    { "name": "Atlantic puffin", "scientificName": "Fratercula arctica", "importance": 3 },
+    { "name": "Red deer", "scientificName": "Cervus elaphus", "importance": 3 },
+    { "name": "Grey seal", "scientificName": "Halichoerus grypus", "importance": 3 },
+    { "name": "Eurasian otter", "scientificName": "Lutra lutra", "importance": 4 },
+    { "name": "Basking shark", "scientificName": "Cetorhinus maximus", "importance": 3 },
+    { "name": "Pine marten", "scientificName": "Martes martes", "importance": 5 }
+  ],
+  "NOR": [
+    { "name": "Reindeer", "scientificName": "Rangifer tarandus", "importance": 2 },
+    { "name": "Muskox", "scientificName": "Ovibos moschatus", "importance": 3 },
+    { "name": "Arctic fox", "scientificName": "Vulpes lagopus", "importance": 3 },
+    { "name": "Atlantic puffin", "scientificName": "Fratercula arctica", "importance": 3 },
+    { "name": "Moose", "scientificName": "Alces alces", "importance": 3 },
+    { "name": "Killer whale", "scientificName": "Orcinus orca", "importance": 3 }
+  ],
+  "SWE": [
+    { "name": "Moose", "scientificName": "Alces alces", "importance": 2 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 3 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 3 },
+    { "name": "Reindeer", "scientificName": "Rangifer tarandus", "importance": 3 },
+    { "name": "Wolverine", "scientificName": "Gulo gulo", "importance": 4 },
+    { "name": "Eurasian eagle-owl", "scientificName": "Bubo bubo", "importance": 5 }
+  ],
+  "FIN": [
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 2 },
+    { "name": "Saimaa ringed seal", "scientificName": "Pusa hispida saimensis", "importance": 3 },
+    { "name": "Wolverine", "scientificName": "Gulo gulo", "importance": 4 },
+    { "name": "Reindeer", "scientificName": "Rangifer tarandus", "importance": 3 },
+    { "name": "Whooper swan", "scientificName": "Cygnus cygnus", "importance": 4 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 4 }
+  ],
+  "POL": [
+    { "name": "European bison", "scientificName": "Bison bonasus", "importance": 2 },
+    { "name": "Grey wolf", "scientificName": "Canis lupus", "importance": 3 },
+    { "name": "White stork", "scientificName": "Ciconia ciconia", "importance": 3 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 4 },
+    { "name": "European beaver", "scientificName": "Castor fiber", "importance": 4 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 4 }
+  ],
+  "CHE": [
+    { "name": "Alpine ibex", "scientificName": "Capra ibex", "importance": 2 },
+    { "name": "Chamois", "scientificName": "Rupicapra rupicapra", "importance": 3 },
+    { "name": "Alpine marmot", "scientificName": "Marmota marmota", "importance": 3 },
+    { "name": "Bearded vulture", "scientificName": "Gypaetus barbatus", "importance": 3 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 4 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 4 }
+  ],
+  "AUT": [
+    { "name": "Alpine ibex", "scientificName": "Capra ibex", "importance": 3 },
+    { "name": "Alpine marmot", "scientificName": "Marmota marmota", "importance": 3 },
+    { "name": "Chamois", "scientificName": "Rupicapra rupicapra", "importance": 4 },
+    { "name": "Golden eagle", "scientificName": "Aquila chrysaetos", "importance": 4 },
+    { "name": "Red deer", "scientificName": "Cervus elaphus", "importance": 4 },
+    { "name": "Bearded vulture", "scientificName": "Gypaetus barbatus", "importance": 5 }
+  ],
+  "ROU": [
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 2 },
+    { "name": "Grey wolf", "scientificName": "Canis lupus", "importance": 3 },
+    { "name": "Eurasian lynx", "scientificName": "Lynx lynx", "importance": 3 },
+    { "name": "Dalmatian pelican", "scientificName": "Pelecanus crispus", "importance": 3 },
+    { "name": "European bison", "scientificName": "Bison bonasus", "importance": 4 },
+    { "name": "Chamois", "scientificName": "Rupicapra rupicapra", "importance": 5 }
+  ],
+  "GRC": [
+    { "name": "Mediterranean monk seal", "scientificName": "Monachus monachus", "importance": 2 },
+    { "name": "Loggerhead sea turtle", "scientificName": "Caretta caretta", "importance": 3 },
+    { "name": "Brown bear", "scientificName": "Ursus arctos", "importance": 4 },
+    { "name": "Cretan wild goat", "scientificName": "Capra aegagrus cretica", "importance": 4 },
+    { "name": "Griffon vulture", "scientificName": "Gyps fulvus", "importance": 4 },
+    { "name": "Greater flamingo", "scientificName": "Phoenicopterus roseus", "importance": 5 }
+  ],
+  "ISL": [
+    { "name": "Arctic fox", "scientificName": "Vulpes lagopus", "importance": 2 },
+    { "name": "Atlantic puffin", "scientificName": "Fratercula arctica", "importance": 2 },
+    { "name": "Icelandic horse", "scientificName": "Equus ferus caballus", "importance": 2 },
+    { "name": "Humpback whale", "scientificName": "Megaptera novaeangliae", "importance": 3 },
+    { "name": "Harbour seal", "scientificName": "Phoca vitulina", "importance": 4 },
+    { "name": "Gyrfalcon", "scientificName": "Falco rusticolus", "importance": 4 }
+  ],
+  "USA": [
+    { "name": "American alligator", "scientificName": "Alligator mississippiensis", "importance": 2 },
+    { "name": "Moose", "scientificName": "Alces alces", "importance": 3 },
+    { "name": "Pronghorn", "scientificName": "Antilocapra americana", "importance": 3 },
+    { "name": "Raccoon", "scientificName": "Procyon lotor", "importance": 3 },
+    { "name": "Manatee", "scientificName": "Trichechus manatus", "importance": 3 },
+    { "name": "Roadrunner", "scientificName": "Geococcyx californianus", "importance": 4 },
+    { "name": "Rattlesnake", "scientificName": "Crotalus", "importance": 4 }
+  ],
+  "CAN": [
+    { "name": "Moose", "scientificName": "Alces alces", "importance": 2 },
+    { "name": "Polar bear", "scientificName": "Ursus maritimus", "importance": 1 },
+    { "name": "Canada lynx", "scientificName": "Lynx canadensis", "importance": 3 },
+    { "name": "Beaver", "scientificName": "Castor canadensis", "importance": 2 },
+    { "name": "Caribou", "scientificName": "Rangifer tarandus caribou", "importance": 3 },
+    { "name": "Common loon", "scientificName": "Gavia immer", "importance": 4 }
+  ],
+  "MEX": [
+    { "name": "Jaguar", "scientificName": "Panthera onca", "importance": 2 },
+    { "name": "Axolotl", "scientificName": "Ambystoma mexicanum", "importance": 2 },
+    { "name": "Vaquita", "scientificName": "Phocoena sinus", "importance": 3 },
+    { "name": "Monarch butterfly", "scientificName": "Danaus plexippus", "importance": 2 },
+    { "name": "Grey whale", "scientificName": "Eschrichtius robustus", "importance": 3 },
+    { "name": "Coati", "scientificName": "Nasua narica", "importance": 5 }
+  ],
+  "BRA": [
+    { "name": "Giant anteater", "scientificName": "Myrmecophaga tridactyla", "importance": 2 },
+    { "name": "Capybara", "scientificName": "Hydrochoerus hydrochaeris", "importance": 2 },
+    { "name": "Golden lion tamarin", "scientificName": "Leontopithecus rosalia", "importance": 3 },
+    { "name": "Giant otter", "scientificName": "Pteronura brasiliensis", "importance": 3 },
+    { "name": "Hyacinth macaw", "scientificName": "Anodorhynchus hyacinthinus", "importance": 2 },
+    { "name": "Three-toed sloth", "scientificName": "Bradypus variegatus", "importance": 3 }
+  ],
+  "ARG": [
+    { "name": "Guanaco", "scientificName": "Lama guanicoe", "importance": 3 },
+    { "name": "Magellanic penguin", "scientificName": "Spheniscus magellanicus", "importance": 2 },
+    { "name": "Andean condor", "scientificName": "Vultur gryphus", "importance": 2 },
+    { "name": "Southern right whale", "scientificName": "Eubalaena australis", "importance": 3 },
+    { "name": "Capybara", "scientificName": "Hydrochoerus hydrochaeris", "importance": 3 },
+    { "name": "Puma", "scientificName": "Puma concolor", "importance": 3 }
+  ],
+  "CHL": [
+    { "name": "Andean condor", "scientificName": "Vultur gryphus", "importance": 2 },
+    { "name": "Vicuña", "scientificName": "Vicugna vicugna", "importance": 3 },
+    { "name": "Humboldt penguin", "scientificName": "Spheniscus humboldti", "importance": 3 },
+    { "name": "Puma", "scientificName": "Puma concolor", "importance": 3 },
+    { "name": "Pudú", "scientificName": "Pudu puda", "importance": 3 },
+    { "name": "Darwin's rhea", "scientificName": "Rhea pennata", "importance": 4 }
+  ],
+  "PER": [
+    { "name": "Vicuña", "scientificName": "Vicugna vicugna", "importance": 2 },
+    { "name": "Andean condor", "scientificName": "Vultur gryphus", "importance": 2 },
+    { "name": "Alpaca", "scientificName": "Vicugna pacos", "importance": 2 },
+    { "name": "Spectacled bear", "scientificName": "Tremarctos ornatus", "importance": 3 },
+    { "name": "Cock-of-the-rock", "scientificName": "Rupicola peruvianus", "importance": 3 },
+    { "name": "Giant otter", "scientificName": "Pteronura brasiliensis", "importance": 4 }
+  ],
+  "COL": [
+    { "name": "Spectacled bear", "scientificName": "Tremarctos ornatus", "importance": 3 },
+    { "name": "Cotton-top tamarin", "scientificName": "Saguinus oedipus", "importance": 3 },
+    { "name": "Andean condor", "scientificName": "Vultur gryphus", "importance": 3 },
+    { "name": "Poison dart frog", "scientificName": "Dendrobatidae", "importance": 3 },
+    { "name": "Pink river dolphin", "scientificName": "Inia geoffrensis", "importance": 3 },
+    { "name": "Jaguar", "scientificName": "Panthera onca", "importance": 3 }
+  ],
+  "AUS": [
+    { "name": "Platypus", "scientificName": "Ornithorhynchus anatinus", "importance": 1 },
+    { "name": "Echidna", "scientificName": "Tachyglossus aculeatus", "importance": 2 },
+    { "name": "Wombat", "scientificName": "Vombatus ursinus", "importance": 2 },
+    { "name": "Emu", "scientificName": "Dromaius novaehollandiae", "importance": 2 },
+    { "name": "Tasmanian devil", "scientificName": "Sarcophilus harrisii", "importance": 2 },
+    { "name": "Saltwater crocodile", "scientificName": "Crocodylus porosus", "importance": 2 },
+    { "name": "Kookaburra", "scientificName": "Dacelo novaeguineae", "importance": 3 }
+  ],
+  "NZL": [
+    { "name": "Kea", "scientificName": "Nestor notabilis", "importance": 2 },
+    { "name": "Kākāpō", "scientificName": "Strigops habroptilus", "importance": 2 },
+    { "name": "Yellow-eyed penguin", "scientificName": "Megadyptes antipodes", "importance": 3 },
+    { "name": "Hector's dolphin", "scientificName": "Cephalorhynchus hectori", "importance": 3 },
+    { "name": "Weta", "scientificName": "Anostostomatidae", "importance": 5 },
+    { "name": "New Zealand fur seal", "scientificName": "Arctocephalus forsteri", "importance": 4 }
+  ],
+  "PNG": [
+    { "name": "Bird-of-paradise", "scientificName": "Paradisaeidae", "importance": 2 },
+    { "name": "Tree kangaroo", "scientificName": "Dendrolagus", "importance": 3 },
+    { "name": "Southern cassowary", "scientificName": "Casuarius casuarius", "importance": 2 },
+    { "name": "Victoria crowned pigeon", "scientificName": "Goura victoria", "importance": 4 },
+    { "name": "Saltwater crocodile", "scientificName": "Crocodylus porosus", "importance": 4 },
+    { "name": "Spotted cuscus", "scientificName": "Spilocuscus maculatus", "importance": 5 }
+  ]
+}

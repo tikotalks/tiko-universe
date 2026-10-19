@@ -1,0 +1,183 @@
+{
+  "ETH": [
+    { "name": "Gelada", "scientificName": "Theropithecus gelada", "importance": 3 },
+    { "name": "Ethiopian wolf", "scientificName": "Canis simensis", "importance": 3 },
+    { "name": "Walia ibex", "scientificName": "Capra walie", "importance": 4 },
+    { "name": "Mountain nyala", "scientificName": "Tragelaphus buxtoni", "importance": 4 },
+    { "name": "Hamadryas baboon", "scientificName": "Papio hamadryas", "importance": 5 },
+    { "name": "Spotted hyena", "scientificName": "Crocuta crocuta", "importance": 4 },
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 }
+  ],
+  "KEN": [
+    { "name": "Masai giraffe", "scientificName": "Giraffa camelopardalis tippelskirchi", "importance": 2 },
+    { "name": "Black rhinoceros", "scientificName": "Diceros bicornis", "importance": 2 },
+    { "name": "Grevy's zebra", "scientificName": "Equus grevyi", "importance": 3 },
+    { "name": "Spotted hyena", "scientificName": "Crocuta crocuta", "importance": 4 },
+    { "name": "Lesser flamingo", "scientificName": "Phoeniconaias minor", "importance": 4 },
+    { "name": "Wildebeest", "scientificName": "Connochaetes taurinus", "importance": 3 },
+    { "name": "African buffalo", "scientificName": "Syncerus caffer", "importance": 4 }
+  ],
+  "TZA": [
+    { "name": "Wildebeest", "scientificName": "Connochaetes taurinus", "importance": 2 },
+    { "name": "Masai giraffe", "scientificName": "Giraffa camelopardalis tippelskirchi", "importance": 2 },
+    { "name": "Black rhinoceros", "scientificName": "Diceros bicornis", "importance": 3 },
+    { "name": "Eastern chimpanzee", "scientificName": "Pan troglodytes schweinfurthii", "importance": 3 },
+    { "name": "Spotted hyena", "scientificName": "Crocuta crocuta", "importance": 4 },
+    { "name": "Plains zebra", "scientificName": "Equus quagga", "importance": 3 },
+    { "name": "African buffalo", "scientificName": "Syncerus caffer", "importance": 4 }
+  ],
+  "UGA": [
+    { "name": "Mountain gorilla", "scientificName": "Gorilla beringei beringei", "importance": 2 },
+    { "name": "Eastern chimpanzee", "scientificName": "Pan troglodytes schweinfurthii", "importance": 3 },
+    { "name": "Shoebill", "scientificName": "Balaeniceps rex", "importance": 3 },
+    { "name": "Rothschild's giraffe", "scientificName": "Giraffa camelopardalis rothschildi", "importance": 3 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 },
+    { "name": "Uganda kob", "scientificName": "Kobus kob thomasi", "importance": 5 }
+  ],
+  "RWA": [
+    { "name": "Mountain gorilla", "scientificName": "Gorilla beringei beringei", "importance": 2 },
+    { "name": "Golden monkey", "scientificName": "Cercopithecus kandti", "importance": 4 },
+    { "name": "Eastern chimpanzee", "scientificName": "Pan troglodytes schweinfurthii", "importance": 3 },
+    { "name": "African buffalo", "scientificName": "Syncerus caffer", "importance": 5 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "Grey crowned crane", "scientificName": "Balearica regulorum", "importance": 4 }
+  ],
+  "BDI": [
+    { "name": "Eastern chimpanzee", "scientificName": "Pan troglodytes schweinfurthii", "importance": 3 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "Grey crowned crane", "scientificName": "Balearica regulorum", "importance": 4 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 5 },
+    { "name": "Olive baboon", "scientificName": "Papio anubis", "importance": 5 },
+    { "name": "Bushbuck", "scientificName": "Tragelaphus scriptus", "importance": 6 }
+  ],
+  "COD": [
+    { "name": "Okapi", "scientificName": "Okapia johnstoni", "importance": 2 },
+    { "name": "Eastern lowland gorilla", "scientificName": "Gorilla beringei graueri", "importance": 2 },
+    { "name": "Bonobo", "scientificName": "Pan paniscus", "importance": 2 },
+    { "name": "Forest buffalo", "scientificName": "Syncerus caffer nanus", "importance": 5 },
+    { "name": "African forest elephant", "scientificName": "Loxodonta cyclotis", "importance": 3 },
+    { "name": "Congo peafowl", "scientificName": "Afropavo congensis", "importance": 4 }
+  ],
+  "COG": [
+    { "name": "Western lowland gorilla", "scientificName": "Gorilla gorilla gorilla", "importance": 2 },
+    { "name": "Forest buffalo", "scientificName": "Syncerus caffer nanus", "importance": 5 },
+    { "name": "Mandrill", "scientificName": "Mandrillus sphinx", "importance": 3 },
+    { "name": "African grey parrot", "scientificName": "Psittacus erithacus", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "African forest elephant", "scientificName": "Loxodonta cyclotis", "importance": 3 }
+  ],
+  "GAB": [
+    { "name": "Mandrill", "scientificName": "Mandrillus sphinx", "importance": 2 },
+    { "name": "Western lowland gorilla", "scientificName": "Gorilla gorilla gorilla", "importance": 2 },
+    { "name": "African forest elephant", "scientificName": "Loxodonta cyclotis", "importance": 3 },
+    { "name": "Leatherback sea turtle", "scientificName": "Dermochelys coriacea", "importance": 3 },
+    { "name": "African grey parrot", "scientificName": "Psittacus erithacus", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 }
+  ],
+  "CMR": [
+    { "name": "Cross River gorilla", "scientificName": "Gorilla gorilla diehli", "importance": 3 },
+    { "name": "Drill", "scientificName": "Mandrillus leucophaeus", "importance": 4 },
+    { "name": "African forest elephant", "scientificName": "Loxodonta cyclotis", "importance": 3 },
+    { "name": "Black rhinoceros", "scientificName": "Diceros bicornis", "importance": 3 },
+    { "name": "Giant eland", "scientificName": "Taurotragus derbianus", "importance": 4 },
+    { "name": "African grey parrot", "scientificName": "Psittacus erithacus", "importance": 4 }
+  ],
+  "CAF": [
+    { "name": "Western lowland gorilla", "scientificName": "Gorilla gorilla gorilla", "importance": 2 },
+    { "name": "Forest buffalo", "scientificName": "Syncerus caffer nanus", "importance": 5 },
+    { "name": "Bongo", "scientificName": "Tragelaphus eurycerus", "importance": 4 },
+    { "name": "African forest elephant", "scientificName": "Loxodonta cyclotis", "importance": 3 },
+    { "name": "Giant eland", "scientificName": "Taurotragus derbianus", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 }
+  ],
+  "ZMB": [
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 2 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 3 },
+    { "name": "Thornicroft's giraffe", "scientificName": "Giraffa camelopardalis thornicrofti", "importance": 4 },
+    { "name": "African wild dog", "scientificName": "Lycaon pictus", "importance": 3 },
+    { "name": "Sable antelope", "scientificName": "Hippotragus niger", "importance": 4 },
+    { "name": "Straw-coloured fruit bat", "scientificName": "Eidolon helvum", "importance": 5 }
+  ],
+  "ZWE": [
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 2 },
+    { "name": "White rhinoceros", "scientificName": "Ceratotherium simum", "importance": 3 },
+    { "name": "African wild dog", "scientificName": "Lycaon pictus", "importance": 3 },
+    { "name": "Sable antelope", "scientificName": "Hippotragus niger", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 3 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 4 }
+  ],
+  "BWA": [
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 2 },
+    { "name": "Meerkat", "scientificName": "Suricata suricatta", "importance": 3 },
+    { "name": "African wild dog", "scientificName": "Lycaon pictus", "importance": 3 },
+    { "name": "Springbok", "scientificName": "Antidorcas marsupialis", "importance": 3 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "Gemsbok", "scientificName": "Oryx gazella", "importance": 4 }
+  ],
+  "NAM": [
+    { "name": "Gemsbok", "scientificName": "Oryx gazella", "importance": 3 },
+    { "name": "Meerkat", "scientificName": "Suricata suricatta", "importance": 3 },
+    { "name": "Cape fur seal", "scientificName": "Arctocephalus pusillus", "importance": 3 },
+    { "name": "Black rhinoceros", "scientificName": "Diceros bicornis", "importance": 3 },
+    { "name": "Springbok", "scientificName": "Antidorcas marsupialis", "importance": 3 },
+    { "name": "Welwitschia beetle", "scientificName": "Ochryonota", "importance": 8 }
+  ],
+  "ZAF": [
+    { "name": "White rhinoceros", "scientificName": "Ceratotherium simum", "importance": 2 },
+    { "name": "African penguin", "scientificName": "Spheniscus demersus", "importance": 2 },
+    { "name": "Meerkat", "scientificName": "Suricata suricatta", "importance": 3 },
+    { "name": "Springbok", "scientificName": "Antidorcas marsupialis", "importance": 3 },
+    { "name": "Cape buffalo", "scientificName": "Syncerus caffer caffer", "importance": 3 },
+    { "name": "Southern right whale", "scientificName": "Eubalaena australis", "importance": 3 },
+    { "name": "Chacma baboon", "scientificName": "Papio ursinus", "importance": 5 }
+  ],
+  "MOZ": [
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 },
+    { "name": "Dugong", "scientificName": "Dugong dugon", "importance": 3 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 3 },
+    { "name": "Whale shark", "scientificName": "Rhincodon typus", "importance": 3 },
+    { "name": "Sable antelope", "scientificName": "Hippotragus niger", "importance": 4 }
+  ],
+  "MWI": [
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 3 },
+    { "name": "Cichlid", "scientificName": "Cichlidae", "importance": 4 },
+    { "name": "Fish eagle", "scientificName": "Haliaeetus vocifer", "importance": 4 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 5 },
+    { "name": "Sable antelope", "scientificName": "Hippotragus niger", "importance": 5 }
+  ],
+  "AGO": [
+    { "name": "Giant sable antelope", "scientificName": "Hippotragus niger variani", "importance": 2 },
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 },
+    { "name": "Cape fur seal", "scientificName": "Arctocephalus pusillus", "importance": 4 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "Red-tailed monkey", "scientificName": "Cercopithecus ascanius", "importance": 6 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 5 }
+  ],
+  "MDG": [
+    { "name": "Ring-tailed lemur", "scientificName": "Lemur catta", "importance": 2 },
+    { "name": "Indri", "scientificName": "Indri indri", "importance": 3 },
+    { "name": "Aye-aye", "scientificName": "Daubentonia madagascariensis", "importance": 3 },
+    { "name": "Fossa", "scientificName": "Cryptoprocta ferox", "importance": 3 },
+    { "name": "Panther chameleon", "scientificName": "Furcifer pardalis", "importance": 3 },
+    { "name": "Madagascar hissing cockroach", "scientificName": "Gromphadorhina portentosa", "importance": 7 }
+  ],
+  "LSO": [
+    { "name": "Bearded vulture", "scientificName": "Gypaetus barbatus", "importance": 3 },
+    { "name": "Eland", "scientificName": "Taurotragus oryx", "importance": 4 },
+    { "name": "Black-backed jackal", "scientificName": "Lupulella mesomelas", "importance": 5 },
+    { "name": "Rock hyrax", "scientificName": "Procavia capensis", "importance": 5 },
+    { "name": "Southern bald ibis", "scientificName": "Geronticus calvus", "importance": 5 },
+    { "name": "Grey rhebok", "scientificName": "Pelea capreolus", "importance": 6 }
+  ],
+  "SWZ": [
+    { "name": "White rhinoceros", "scientificName": "Ceratotherium simum", "importance": 3 },
+    { "name": "African savanna elephant", "scientificName": "Loxodonta africana", "importance": 3 },
+    { "name": "Blue wildebeest", "scientificName": "Connochaetes taurinus", "importance": 4 },
+    { "name": "Nile crocodile", "scientificName": "Crocodylus niloticus", "importance": 5 },
+    { "name": "Hippopotamus", "scientificName": "Hippopotamus amphibius", "importance": 4 },
+    { "name": "Impala", "scientificName": "Aepyceros melampus", "importance": 5 }
+  ]
+}

@@ -29,13 +29,13 @@
     "devices": [
       {
         "name": "iPhone 17 Pro Max",
-        "os": "26.2",
+        "os": "26.5",
         "displayType": "APP_IPHONE_67",
         "createIfMissing": true
       },
       {
         "name": "iPad Pro 13-inch (M5)",
-        "os": "26.2",
+        "os": "26.5",
         "displayType": "APP_IPAD_PRO_13",
         "createIfMissing": true
       }

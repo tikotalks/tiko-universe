@@ -1,0 +1,273 @@
+import type { SiteCopy } from '../..'
+
+/** La página `/apps`, la página de detalle de una app y la 404. */
+export const esAppsPage: SiteCopy['appsPage'] = {
+  intro: {
+    eyebrow: 'El universo de apps',
+    title: 'Apps pequeñas. Una tarea clara cada una.',
+    lede: 'Tiko no es una app enorme. Es un conjunto de herramientas pequeñas y concretas que se abren de inmediato y hacen bien una sola cosa. Elige la que encaje con el momento.',
+  },
+  media: {
+    eyebrow: 'De la biblioteca de Tiko',
+    title: 'Miles de imágenes claras y llenas de color.',
+  },
+  onTheWay: {
+    eyebrow: 'En camino',
+    title: 'Llegan más apps pequeñas.',
+    lede: 'Cards, Sequence y Timer se construyen sobre los mismos principios centrados en el niño que las apps de arriba. Cada una se abre rápido y hace una sola cosa.',
+    ctaTitle: 'Construidas sobre los mismos contratos.',
+    ctaBody: 'Todas las apps de Tiko cumplen las mismas promesas centradas en el niño: se abren rápido, hacen una cosa y hablan cualquier idioma.',
+    ctaLabel: 'Leer la documentación de arquitectura',
+  },
+}
+
+export const esAppDetail: SiteCopy['appDetail'] = {
+  notFound: {
+    eyebrow: 'No encontrada',
+    title: 'App no encontrada.',
+    body: 'No hay ninguna app de Tiko con ese nombre.',
+    backLabel: 'Volver a todas las apps',
+  },
+  hero: {
+    brandPrefix: 'Tiko',
+    openLabel: 'Abrir {app}',
+    comingSoon: 'Muy pronto',
+    iconAlt: 'Icono de la app {app}',
+  },
+  features: {
+    eyebrow: 'Qué hace',
+    title: 'Hecha para una tarea clara.',
+  },
+  screenshots: {
+    eyebrow: 'En el dispositivo',
+    title: '{app}, en una pantalla real.',
+    lede: 'Capturado en un iPhone, en modo claro y oscuro. Aquí no hay ningún montaje.',
+  },
+  moment: {
+    eyebrow: 'El momento humano',
+    imageAlt: 'Un momento tranquilo con {app}',
+    whySmallTitle: 'Por qué sigue siendo pequeña',
+    calmTitle: 'Cómo se mantiene en calma',
+  },
+  useWhen: {
+    eyebrow: 'Casos de uso',
+    title: 'Cuándo recurrir a {app}',
+  },
+  cta: {
+    openWeb: 'Ábrela ahora en la web.',
+    onAppStore: 'Ya en el App Store.',
+    comingSoon: 'Muy pronto.',
+    allAppsLabel: 'Todas las apps',
+  },
+  mediaLibrary: {
+    eyebrow: 'Biblioteca de imágenes integrada',
+    title: 'Imágenes de Tiko Media, listas para Cards.',
+    lede: 'Cards puede empezar con imágenes claras y reconocibles de Tiko Media. Explora la biblioteca pública o úsalas directamente dentro de tus juegos de tarjetas.',
+    browseLabel: 'Explorar Tiko Media',
+    fallbackImageTitle: 'Imagen de Tiko Media',
+  },
+  downloadLabel: 'Descargar {app} en el App Store',
+}
+
+export const esNotFound: SiteCopy['notFound'] = {
+  eyebrow: 'Página no encontrada',
+  title: 'Esta página no está aquí.',
+  lede: 'Puede que el enlace sea antiguo o que la página se haya movido. Todas las apps de Tiko están abajo, a un toque.',
+  primaryLabel: 'Descubrir las apps',
+  secondaryLabel: 'Volver al inicio',
+  appsEyebrow: 'Disponibles ahora',
+  appsTitle: 'Apps que puedes usar hoy.',
+}
+
+/** Por app, según su slug. Los nombres de las apps no se traducen. */
+export const esApps: SiteCopy['apps'] = {
+  'yes-no': {
+    shortSummary: 'Dos botones enormes. Una respuesta clara. Al instante.',
+    headline: 'Una pregunta clara. Una respuesta clara.',
+    description: 'Yes No ofrece a los niños dos opciones enormes e imposibles de pasar por alto en una sola pantalla. Sin ruido, sin desplazarse, sin cuenta. Se abre, se ve la pregunta, se toca la respuesta.',
+    platformNotes: 'Ya en la web y en el App Store para iPhone y iPad. Android mantendrá la misma forma sencilla de dos opciones.',
+    useWhen: [
+      'un niño necesita poder responder rápido',
+      'un cuidador quiere hacer una pregunta sencilla',
+      'hablar o tocar debe ocurrir sin una pantalla complicada',
+    ],
+    moment: 'El momento más simple posible: una pregunta, dos opciones enormes y nada entre el niño y la respuesta.',
+    whySmall: 'Yes No se mantiene diminuta porque dos opciones son todo el sentido. No debe convertirse en un cuestionario, un panel de control ni un registro de conducta.',
+    calmDetail: 'Zonas grandes, contraste fuerte, salida por voz y ningún paso de cuenta mantienen el momento de la respuesta centrado en el niño.',
+    features: [
+      { title: 'Dos botones enormes', body: 'Sí y No llenan la pantalla. Imposibles de pasar por alto, fáciles de tocar.' },
+      { title: 'Salida por voz', body: 'Cada respuesta se dice en voz alta para que todos en la sala la oigan.' },
+      { title: 'Historial de respuestas', body: 'Los cuidadores pueden revisar respuestas recientes sin molestar al niño.' },
+      { title: 'Funciona sin conexión', body: 'No hace falta red para el uso básico. Abrir y tocar, nada más.' },
+    ],
+    captions: [],
+  },
+  type: {
+    shortSummary: 'Escribe una idea y escúchala en voz alta al instante.',
+    headline: 'Escribe una idea. Escúchala dicha.',
+    description: 'Type es una entrada de texto sin distracciones para los momentos en que un niño quiere comunicarse por escrito. Cada mensaje se puede decir en voz alta con un toque.',
+    platformNotes: 'Ya en la web y en el App Store para iPhone y iPad. Android llegará con la misma experiencia tranquila y concentrada.',
+    useWhen: [
+      'un niño quiere escribir un mensaje',
+      'las frases guardadas serían de ayuda',
+      'la salida por voz debe seguir siendo simple y fácil de alcanzar',
+    ],
+    moment: 'Algunas ideas se escriben más fácil de lo que se dicen, y algunas ideas escritas merecen una voz en la sala.',
+    whySmall: 'Type mantiene escribir y hablar en un mismo sitio tranquilo en lugar de convertirse en un procesador de textos o una app de mensajería.',
+    calmDetail: 'La app hace evidente la escritura, mantiene la voz a un toque y evita controles que compitan con la frase.',
+    features: [
+      { title: 'Campo de texto limpio', body: 'Un campo, un botón. Escribe un mensaje y hazlo sonar, sin menús.' },
+      { title: 'Biblioteca de frases', body: 'Guarda las frases que se repiten para tenerlas a un toque.' },
+      { title: 'Elección de voz', body: 'Elige una voz que encaje con el niño y con el momento.' },
+      { title: 'Compatible con teclados', body: 'Funciona igual con teclados en pantalla y con teclados externos.' },
+    ],
+    captions: [],
+  },
+  cards: {
+    shortSummary: 'Tarjetas ilustradas preciosas. Toca una y la oirás hablar.',
+    headline: 'Imágenes que hablan por sí solas.',
+    description: 'Cards muestra imágenes familiares en una cuadrícula sencilla. Toca una tarjeta para oír su nombre. Elige entre las categorías incluidas o crea un juego propio para cualquier rutina o situación.',
+    platformNotes: 'Llegará como una experiencia de tarjetas concreta: imágenes bonitas, un toque para hablar.',
+    useWhen: [
+      'las imágenes comunican más rápido que el texto',
+      'las opciones deben verse y tocarse con facilidad',
+      'una biblioteca de imágenes lista ahorra tiempo de preparación',
+    ],
+    moment: 'Una imagen familiar hace fácil una elección. Se toca, se oye, se sigue adelante.',
+    whySmall: 'Cards se centra en opciones visibles, no en un sistema complejo de gestión de contenido delante del niño.',
+    calmDetail: 'Tarjetas cuadradas, etiquetas claras e imágenes reconocibles hacen que mirar y tocar resulte predecible.',
+    features: [
+      { title: 'Tarjetas con imagen', body: 'Toca una tarjeta para oír su nombre. Las imágenes hacen las opciones más rápidas de reconocer.' },
+      { title: 'Categorías incluidas', body: 'Animales, comida, emociones, cuerpo, formas, colores, transporte, números y letras, listos para usar.' },
+      { title: 'Tarjetas propias', body: 'Añade tarjetas con nombre, imagen y voz propia para cualquier palabra o frase.' },
+      { title: 'Sin conexión primero', body: 'Las tarjetas y las imágenes se cargan del almacenamiento local para que la app siga siendo útil sin red.' },
+    ],
+    captions: [],
+  },
+  sequence: {
+    shortSummary: 'Rutinas paso a paso. Siempre claras, siempre hacia delante.',
+    headline: 'Un paso cada vez, siempre claro.',
+    description: 'Sequence convierte cualquier rutina en una lista clara de pasos. El paso actual siempre está grande y en el centro. Toca para avanzar. Sin adivinar qué viene después.',
+    platformNotes: 'Llegará para web y nativo: el siguiente paso siempre visible, siempre a un toque.',
+    useWhen: [
+      'una rutina necesita un orden claro',
+      'el siguiente paso debe estar siempre visible',
+      'la previsibilidad facilita las transiciones',
+    ],
+    moment: 'Cualquier rutina es más fácil cuando el siguiente paso ya está a la vista en lugar de en la cabeza de otra persona.',
+    whySmall: 'Sequence no es un planificador de proyectos. Muestra el paso actual, el siguiente movimiento y el progreso justo para orientarse.',
+    calmDetail: 'Un paso se queda en el centro, el progreso sigue siendo simple y las imágenes hacen la rutina más fácil de reconocer.',
+    features: [
+      { title: 'Un paso a pantalla completa', body: 'El paso actual siempre es lo más grande de la pantalla.' },
+      { title: 'Barra de progreso', body: 'Un indicador visual sencillo muestra por dónde va la rutina.' },
+      { title: 'Rutinas propias', body: 'Crea cualquier secuencia: rutina de mañana, transición en clase, vestirse.' },
+      { title: 'Imagen por paso', body: 'Cada paso puede llevar una imagen para reconocerse al instante.' },
+    ],
+    captions: [],
+  },
+  timer: {
+    shortSummary: 'Una cuenta atrás grande y clara. Verás exactamente cuánto queda.',
+    headline: 'Tiempo que de verdad se ve.',
+    description: 'Timer hace visible y tranquilo el paso del tiempo. Una cuenta atrás grande muestra exactamente cuánto queda. Sin pitidos que sobresaltan, solo un final visual sereno.',
+    platformNotes: 'Llegará como una pantalla concreta: una sola cosa, bien hecha, en web, iOS y Android.',
+    useWhen: [
+      'las transiciones necesitan un final visible',
+      'esperar resulta menos abstracto cuando el tiempo está en pantalla',
+      'la pantalla solo debe hacer una cosa',
+    ],
+    moment: 'El tiempo se siente real cuando lo ves encogerse.',
+    whySmall: 'Timer se queda en la cuenta atrás en lugar de convertirse en un calendario, un despertador o una app de productividad.',
+    calmDetail: 'Un número grande, un progreso visible y un final suave hacen el tiempo concreto sin añadir ansiedad.',
+    features: [
+      { title: 'Cuenta atrás grande', body: 'El tiempo llena la pantalla. Sin números pequeños ni relojes escondidos.' },
+      { title: 'Progreso visual', body: 'Un anillo o una barra se encoge conforme pasa el tiempo, haciéndolo concreto.' },
+      { title: 'Señal de fin suave', body: 'Un aviso visual tranquilo y un sonido suave opcional indican que el tiempo se acabó.' },
+      { title: 'Ajustes rápidos', body: 'Fija duraciones habituales como 5, 10 o 15 minutos con un solo toque.' },
+    ],
+    captions: [],
+  },
+  talk: {
+    shortSummary: 'Toca palabras, construye una frase y escúchala en voz alta.',
+    headline: 'Construye frases. Encuentra tu voz.',
+    description: 'Talk es una app de comunicación tranquila, palabra a palabra. Toca palabras para construir una frase en una tira clara y luego escúchala en voz alta. Pensada para niños que están encontrando su voz, una palabra cada vez.',
+    platformNotes: 'Ya en la web. iOS y Android llegarán con la misma experiencia tranquila y concentrada.',
+    useWhen: [
+      'un niño construye lenguaje, palabra a palabra',
+      'decir una frase entera debe costar unos toques, no un teclado',
+      'una cuadrícula de palabras tranquila y previsible ayuda más que una pantalla recargada',
+    ],
+    moment: 'Cada palabra que un niño elige es un pequeño acto de decir quién es. Talk mantiene el camino del pensamiento a la voz tan corto y suave como puede.',
+    whySmall: 'Talk se queda en construir y decir una frase. No es una app de chat, ni un muro de contenidos, ni una tableta multiusos.',
+    calmDetail: 'Una cuadrícula de palabras previsible, una tira de frase clara y un único botón para hablar mantienen la atención en la voz del niño, no en la interfaz.',
+    features: [
+      { title: 'Cuadrícula de palabras', body: 'Toca palabras para añadirlas a la tira de la frase. Las categorías mantienen cerca lo relacionado.' },
+      { title: 'Tira de frase', body: 'Ve la frase formarse, palabra a palabra, antes de decirla.' },
+      { title: 'Decir en voz alta', body: 'Un botón dice la frase entera con una voz clara.' },
+      { title: 'Funciona sin conexión', body: 'Los paquetes de palabras principales se cargan en local para que Talk funcione sin red.' },
+    ],
+    captions: [],
+  },
+  say: {
+    shortSummary: 'Ver una tarjeta, oír la palabra, repetirla y celebrarlo.',
+    headline: 'Práctica del habla en calma, una palabra cada vez.',
+    description: 'Say es una app para practicar el habla. Elige una categoría, ve una tarjeta grande y amable, escucha su palabra y repítela. Una palabra correcta desencadena una celebración alegre y la siguiente tarjeta aparece sola.',
+    platformNotes: 'Ya en el App Store para iPhone y iPad. Android y la web llegarán con la misma experiencia tranquila y concentrada.',
+    useWhen: [
+      'un niño practica sus primeras palabras',
+      'una palabra fallada significa otro intento tranquilo, no un pitido',
+      'una imagen familiar hace la palabra más fácil de alcanzar',
+    ],
+    moment: 'Practicar una palabra debería sentirse como recibir ánimos, nunca como un examen.',
+    whySmall: 'Say practica palabras. No es un programa de terapia, ni un panel de progreso, ni un sistema de puntos: no hay pitido de error, ni cruz roja, ni puntuación en ninguna parte.',
+    calmDetail: 'Una tarjeta grande cada vez, la palabra dicha con voz amable y Saltar siempre al alcance para que ningún niño se quede atascado.',
+    features: [
+      { title: 'Seis categorías de imágenes', body: 'Animales, comida, vehículos, cuerpo, colores y números, listos para practicar.' },
+      { title: 'Cada tarjeta editable', body: 'Lo que se muestra, lo que se dice y qué palabras cuentan como correctas lo decides tú.' },
+      { title: 'Escucha en el dispositivo', body: 'El reconocimiento de voz se ejecuta en el dispositivo donde se admite. Las grabaciones no se guardan ni se envían.' },
+      { title: 'Seis idiomas hablados', body: 'Habla y escucha en inglés, neerlandés, francés, español, alemán y maltés.' },
+    ],
+    captions: ['Elegir una categoría', 'Una tarjeta, una palabra'],
+  },
+  sum: {
+    shortSummary: 'Matemáticas que hablan y nunca dicen «mal».',
+    headline: 'Cada número dicho. Cada respuesta, una elección.',
+    description: 'Sum es una app de matemáticas parlante para niños, y no es una calculadora: nunca muestra el resultado. Cada tecla se dice en voz alta y la respuesta siempre es una elección entre tres fichas grandes.',
+    platformNotes: 'Ya en el App Store para iPhone y iPad. Android y la web llegarán con la misma experiencia tranquila y concentrada.',
+    useWhen: [
+      'contar y sumar deben oírse, no solo verse',
+      'un toque equivocado significa volver a oír la operación, no un pitido',
+      'una familia quiere limitar cuánto crecen los números',
+    ],
+    moment: 'Una operación se retiene mejor cuando puedes oírla — «tres… más… cinco…» — en vez de leerla en una pantalla.',
+    whySmall: 'Sum enseña una operación cada vez. No es un currículo, ni un contador de rachas, ni un boletín de notas.',
+    calmDetail: 'Si eliges la ficha correcta, la pantalla lo celebra; si eliges otra, Sum simplemente repite la operación. Sin pitido, sin cruz roja, sin presión.',
+    features: [
+      { title: 'Un teclado que habla', body: 'Cada número y cada símbolo se lee en voz alta en el idioma del niño.' },
+      { title: 'La respuesta es una elección', body: 'Tres fichas: una correcta y dos parecidas bien elegidas. Nunca una casilla vacía en la que fallar.' },
+      { title: 'Las cuatro operaciones', body: 'Más, menos, por y dividido entre, con un número máximo que la familia puede fijar.' },
+      { title: 'Tres formas de responder', body: 'Elegir una ficha, escribir el número o decirlo en voz alta. Solo lo último usa el micrófono.' },
+    ],
+    captions: ['Elegir una dificultad', 'Tres fichas, una correcta', 'El teclado que habla'],
+  },
+  first: {
+    shortSummary: 'Primero, luego, hecho. Una rutina en imágenes que habla.',
+    headline: 'Un paso cada vez, dicho en voz alta.',
+    description: 'First convierte una rutina en imágenes que un niño puede seguir por su cuenta. Tú creas los pasos; tu hijo ve una imagen grande cada vez, la oye en voz alta y la marca con un toque.',
+    platformNotes: 'Ya en el App Store para iPhone y iPad. Android y la web llegarán con la misma experiencia tranquila y concentrada.',
+    useWhen: [
+      'una rutina debe seguirse sin que un adulto la vaya narrando',
+      'un niño debe ver qué pasa ahora y qué viene después',
+      'no se quiere ningún micrófono, cámara ni petición de permisos',
+    ],
+    moment: 'Una rutina deja de ser una negociación en cuanto el siguiente paso ya está en la pantalla en vez de en la cabeza de otra persona.',
+    whySmall: 'First muestra el paso en el que está el niño. No es una agenda, ni un reloj, ni una tabla de conducta: no hay temporizadores ni puntuaciones.',
+    calmDetail: 'Los pasos se marcan en orden, tocar hacia delante solo dice ese paso en voz alta, y la última marca siempre se puede deshacer.',
+    features: [
+      { title: 'Un paso grande cada vez', body: 'Una imagen, un título corto, dicho en el idioma del niño en cuanto le toca.' },
+      { title: 'Ocho rutinas listas', body: 'Mañana, hora de dormir, salir, comida, baño, recoger, día de cole y un tablero de primero/luego.' },
+      { title: 'Tus palabras, tus fotos', body: 'Cada rutina y cada paso son editables, incluidas fotos de los zapatos o la mochila reales del niño.' },
+      { title: 'Ningún permiso', body: 'Sin micrófono, sin cámara, sin publicidad, sin cuentas. Funciona sin conexión tras el primer uso.' },
+    ],
+    captions: ['Elegir una rutina', 'Un paso a pantalla completa', 'Terminar la rutina'],
+  },
+}

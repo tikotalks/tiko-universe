@@ -1,0 +1,116 @@
+name: TikoGlobe
+options:
+  bundleIdPrefix: mt.tiko
+  deploymentTarget:
+    iOS: "18.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 38MGF83L2L
+packages:
+  TikoKit:
+    path: ../../../packages/tikokit-ios
+targets:
+  TikoGlobe:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+      # The generated geography, bundled from its single source of truth. Globe
+      # has to open on a working Earth in airplane mode, so this ships in the app
+      # rather than being fetched.
+      - path: ../../../packages/geography/generated
+        name: Geography
+        buildPhase: resources
+        type: folder
+      # The authored packs behind Animals and Landmarks, bundled from the same
+      # place the validator reads them.
+      - path: ../../../packages/geography/content
+        name: GeographyContent
+        buildPhase: resources
+        type: folder
+      # Globe's own chrome: the mode icons, from the same media library the
+      # animals come from, so the buttons are made of the same stuff.
+      - path: Media
+        buildPhase: resources
+    dependencies:
+      - package: TikoKit
+        product: TikoKit
+    preBuildScripts:
+      - name: Generate Tiko app config
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          if ! command -v node >/dev/null 2>&1; then
+            for candidate in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
+              if [ -x "$candidate/node" ]; then export PATH="$candidate:$PATH"; break; fi
+            done
+          fi
+          if ! command -v node >/dev/null 2>&1; then
+            echo "error: node is required to generate Tiko app configs before an iOS build."
+            exit 1
+          fi
+          TIKO_APP_CONFIG_STRICT=1 node "${REPO_ROOT}/tools/generate-app-configs.mjs"
+      - name: Check the bundled geography
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          REPO_ROOT="${SRCROOT}/../../.."
+          if ! command -v node >/dev/null 2>&1; then
+            for candidate in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/.volta/bin"; do
+              if [ -x "$candidate/node" ]; then export PATH="$candidate:$PATH"; break; fi
+            done
+          fi
+          if ! command -v node >/dev/null 2>&1; then
+            echo "error: node is required to validate the bundled geography before an iOS build."
+            exit 1
+          fi
+          node "${REPO_ROOT}/tools/geography/build-geography.mjs" --check
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: mt.tiko.globe
+        INFOPLIST_FILE: Sources/Info.plist
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        CODE_SIGN_ENTITLEMENTS: Sources/TikoGlobe.entitlements
+  TikoGlobeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - Tests
+    dependencies:
+      - target: TikoGlobe
+      - package: TikoKit
+        product: TikoKit
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  TikoGlobeUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - UITests
+    dependencies:
+      - target: TikoGlobe
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: TikoGlobe
+schemes:
+  TikoGlobe:
+    build:
+      targets:
+        TikoGlobe: all
+    test:
+      targets:
+        - TikoGlobeTests
+        - TikoGlobeUITests
+      gatherCoverageData: false
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

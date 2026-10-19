@@ -51,6 +51,7 @@ const APPS = [
   { key: 'sum', prefix: 'sum' },
   { key: 'first', prefix: 'first' },
   { key: 'write', prefix: 'write' },
+  { key: 'globe', prefix: 'globe' },
 ]
 
 /** Reads a `static let <name>: [String: String] = [ ... ]` dictionary from Swift. */
@@ -211,7 +212,7 @@ swiftLines.push('        switch app {')
 const APP_CASES = {
   radio: '.radio', yesNo: '.yesNo', cards: '.cards', timer: '.timer', type: '.type',
   sequence: '.sequence', todo: '.todo', say: '.say', sum: '.sum', first: '.first',
-  write: '.write',
+  write: '.write', globe: '.globe',
 }
 // Emit a case for EVERY registered app, not only those with translations. An app
 // that has none yet would otherwise leave the switch non-exhaustive and break the

@@ -118,6 +118,7 @@ struct RadioView: View {
                 // populate the collection grid and track tiles from the built-in
                 // sample library with no network or account dependency.
                 library.loadOfflineDefaults()
+                applyScreenshotScene()
                 return
             }
             library.load()
@@ -139,6 +140,20 @@ struct RadioView: View {
             collectionDetail
         } else {
             collectionsHome
+        }
+    }
+
+    /// Renders the fixed state named by `--screenshot <scene>`. Without this every
+    /// scene captures the same collections grid.
+    private func applyScreenshotScene() {
+        switch TikoScreenshotMode.scene {
+        case "playing":
+            // Open the first collection that actually has songs, so the shot shows
+            // the track tiles instead of a second copy of the collections grid.
+            library.selectedCategoryID = library.categories
+                .first { !library.tracks(in: $0.id).isEmpty }?.id
+        default:
+            break
         }
     }
 

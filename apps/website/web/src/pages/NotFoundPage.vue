@@ -1,27 +1,30 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { tikoApps } from '../content/appUniverse'
+import { useApps } from '../content/useApps'
+import { useCopy } from '../i18n'
 import PageSection from '../components/sections/PageSection.vue'
 import AppCardGrid from '../components/sections/AppCardGrid.vue'
 
-const availableApps = tikoApps.filter((app) => app.status === 'available')
+const copy = useCopy()
+const apps = useApps()
+const page = computed(() => copy.value.notFound)
+const availableApps = computed(() => apps.value.filter((app) => app.status === 'available'))
 </script>
 
 <template>
   <div class="not-found">
     <PageSection width="narrow">
-      <p class="eyebrow">Page not found</p>
-      <h1 class="display-2 not-found__title">That page isn't here.</h1>
-      <p class="body-lg not-found__lede">
-        The link may be old, or the page may have moved. Every Tiko app is one tap away below.
-      </p>
+      <p class="eyebrow">{{ page.eyebrow }}</p>
+      <h1 class="display-2 not-found__title">{{ page.title }}</h1>
+      <p class="body-lg not-found__lede">{{ page.lede }}</p>
       <div class="not-found__actions">
-        <RouterLink class="btn btn--primary" to="/apps">Explore the apps</RouterLink>
-        <RouterLink class="btn btn--ghost" to="/">Back to the homepage</RouterLink>
+        <RouterLink class="btn btn--primary" to="/apps">{{ page.primaryLabel }}</RouterLink>
+        <RouterLink class="btn btn--ghost" to="/">{{ page.secondaryLabel }}</RouterLink>
       </div>
     </PageSection>
 
-    <PageSection eyebrow="Open now" title="Apps you can use today.">
+    <PageSection :eyebrow="page.appsEyebrow" :title="page.appsTitle">
       <AppCardGrid :apps="availableApps" />
     </PageSection>
   </div>

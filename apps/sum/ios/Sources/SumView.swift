@@ -9,6 +9,9 @@ enum SumSettings {
     static let divideEnabledKey = "tiko.sum.op.dividedBy"
     static let minusEnabledKey = "tiko.sum.op.minus"
     static let answerModeKey = "tiko.sum.answerMode"
+    /// The operator picked in the home header — remembered between launches so
+    /// the child lands back on whatever they are working on.
+    static let operatorChoiceKey = "tiko.sum.operatorChoice"
 }
 
 struct SumView: View {
@@ -21,16 +24,35 @@ struct SumView: View {
     @AppStorage(SumSettings.minusEnabledKey) private var minusEnabled = true
     @AppStorage(SumSettings.timesEnabledKey) private var timesEnabled = true
     @AppStorage(SumSettings.divideEnabledKey) private var divideEnabled = true
+    @AppStorage(SumSettings.operatorChoiceKey) private var operatorChoiceRaw = SumOperator.plus.rawValue
 
-    /// Home → pick a difficulty → pick what to practise → play ten.
+    /// Home → tap a mode → play ten. The operator is already chosen, sitting in
+    /// the home header where it stays put between rounds.
     enum Selection: Equatable {
         case freePlay
-        case operators(SumPreset)
         case play(game: SumGame, spec: SumRunSpec?)
     }
 
     private var enabledOperators: [SumOperator] {
         SumOperator.enabled(minus: minusEnabled, times: timesEnabled, divide: divideEnabled)
+    }
+
+    /// The remembered choice, resolved against what the parent still allows —
+    /// switching × off in settings must not leave × selected in the header.
+    private var operatorChoice: Binding<SumOperatorChoice> {
+        Binding(
+            get: {
+                let stored = SumOperatorChoice(storageValue: operatorChoiceRaw)
+                if case .single(let op) = stored, !enabledOperators.contains(op) {
+                    return .single(enabledOperators.first ?? .plus)
+                }
+                if case .mixed = stored, enabledOperators.count < 2 {
+                    return .single(enabledOperators.first ?? .plus)
+                }
+                return stored
+            },
+            set: { operatorChoiceRaw = $0.storageValue }
+        )
     }
 
     var body: some View {
@@ -63,15 +85,6 @@ struct SumView: View {
                             speech: screenshotSpeech
                         )
                         .id("free-\(languageCode)-\(store.revision)")
-                    case .operators(let preset):
-                        SumOperatorPickerView(
-                            preset: preset,
-                            operators: enabledOperators,
-                            onPick: { ops in
-                                let spec = SumRunSpec(preset: preset, operators: ops)
-                                selection = .play(game: spec.makeGame(), spec: spec)
-                            }
-                        )
                     case .play(let game, let spec):
                         SumPlayView(
                             game: game,
@@ -88,6 +101,8 @@ struct SumView: View {
                             store: store,
                             i18n: i18n,
                             languageCode: languageCode,
+                            operatorChoice: operatorChoice,
+                            enabledOperators: enabledOperators,
                             onSelect: { selection = $0 }
                         )
                     }
@@ -130,11 +145,9 @@ struct SumView: View {
         guard TikoScreenshotMode.isActive else { return }
         switch TikoScreenshotMode.scene {
         case "practice", "celebrate":
-            guard let preset = SumCatalog.presets.first else { return }
+            guard let preset = SumCatalog.ranges.first(where: { $0.id == "to10" }) ?? SumCatalog.presets.first else { return }
             let spec = SumRunSpec(preset: preset, operators: [.plus])
             selection = .play(game: spec.makeGame(), spec: spec)
-        case "operators":
-            selection = SumCatalog.presets.first.map(Selection.operators)
         case "keypad":
             selection = .freePlay
         default:
@@ -145,49 +158,170 @@ struct SumView: View {
 
 // MARK: - Home
 
-/// Difficulty first, nothing else. The operators used to split this grid into
-/// a dozen near-identical tiles; now they are picked one screen later.
+/// The operator sits in the header and is remembered; everything below it is a
+/// mode. Tapping a mode starts the ten straight away — there is no second
+/// question to answer, because the answer to it is already on screen.
 struct SumHomeView: View {
     @ObservedObject var store: SumPathStore
     @ObservedObject var i18n: TikoI18n
     let languageCode: String
+    @Binding var operatorChoice: SumOperatorChoice
+    let enabledOperators: [SumOperator]
     let onSelect: (SumView.Selection) -> Void
 
-    private let columns = [GridItem(.adaptive(minimum: 150, maximum: 240), spacing: 16)]
+    private let columns = [GridItem(.adaptive(minimum: 132, maximum: 200), spacing: 14)]
     private let appColor = SumAppConfig.app.appColor
 
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(SumCatalog.presets) { preset in
-                    presetTile(preset)
+        VStack(spacing: 0) {
+            operatorBar
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    section(i18n.t("sum.home.sectionRanges"), presets: SumCatalog.ranges)
+                    section(i18n.t("sum.home.sectionBands"), presets: SumCatalog.bands)
+                    section(i18n.t("sum.home.sectionFamilies"), presets: SumCatalog.families)
+                    pathSection
+                    freePlaySection
                 }
-                ForEach(store.visiblePaths(language: languageCode)) { path in
-                    pathTile(path)
-                }
-                freePlayTile
+                .padding(20)
             }
-            .padding(20)
         }
     }
 
+    // MARK: Operator header
+
+    /// What we are practising, kept where the child can change it without
+    /// leaving home. One tap, remembered for next time.
+    private var operatorBar: some View {
+        HStack(spacing: 10) {
+            ForEach(enabledOperators, id: \.self) { op in
+                operatorButton(
+                    .single(op),
+                    systemImage: op.systemImage,
+                    identifier: "sum.op.\(op.rawValue)",
+                    label: op.symbol
+                )
+            }
+            if enabledOperators.count > 1 {
+                operatorButton(
+                    .mixed,
+                    systemImage: "shuffle",
+                    identifier: "sum.op.mixed",
+                    label: i18n.t("sum.home.mixed")
+                )
+            }
+        }
+        .frame(maxWidth: 560)
+        .padding(.horizontal, 20)
+        .padding(.top, 4)
+        .padding(.bottom, 14)
+        .frame(maxWidth: .infinity)
+        .accessibilityLabel(i18n.t("sum.home.operator"))
+    }
+
+    private func operatorButton(
+        _ choice: SumOperatorChoice,
+        systemImage: String,
+        identifier: String,
+        label: String
+    ) -> some View {
+        let isSelected = operatorChoice == choice
+        return Button {
+            operatorChoice = choice
+        } label: {
+            Image(systemName: systemImage)
+                .font(.system(size: 24, weight: .heavy))
+                .foregroundStyle(isSelected ? .white : appColor.palette.primary)
+                .frame(maxWidth: .infinity, minHeight: 54)
+                .background(isSelected ? appColor.palette.primary : appColor.palette.primary.opacity(0.14))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(identifier)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+    }
+
+    // MARK: Sections
+
+    @ViewBuilder
+    private func section(_ title: String, presets: [SumPreset]) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader(title)
+            LazyVGrid(columns: columns, spacing: 14) {
+                ForEach(presets) { preset in
+                    presetTile(preset)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var pathSection: some View {
+        let paths = store.visiblePaths(language: languageCode)
+        if !paths.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                sectionHeader(i18n.t("sum.home.sectionPaths"))
+                LazyVGrid(columns: columns, spacing: 14) {
+                    ForEach(paths) { path in
+                        pathTile(path)
+                    }
+                }
+            }
+        }
+    }
+
+    private var freePlaySection: some View {
+        LazyVGrid(columns: columns, spacing: 14) {
+            freePlayTile
+        }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.system(.subheadline, design: .rounded).weight(.heavy))
+            .foregroundStyle(.secondary)
+            .textCase(.uppercase)
+            .accessibilityAddTraits(.isHeader)
+    }
+
+    // MARK: Tiles
+
     private func presetTile(_ preset: SumPreset) -> some View {
         Button {
-            onSelect(.operators(preset))
+            let spec = SumRunSpec(
+                preset: preset,
+                operators: operatorChoice.operators(allowed: enabledOperators)
+            )
+            onSelect(.play(game: spec.makeGame(), spec: spec))
         } label: {
             VStack(spacing: 8) {
                 tileImage(id: preset.id, emoji: preset.emoji)
-                Text(preset.label)
-                    .font(.system(size: 40, weight: .heavy, design: .rounded))
+                Text(preset.label(for: operatorChoice, familyFormat: i18n.t("sum.home.familyMixed")))
+                    .font(.system(size: 32, weight: .heavy, design: .rounded))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
                     .foregroundStyle(.primary)
             }
-            .frame(maxWidth: .infinity, minHeight: 150)
+            .padding(.horizontal, 8)
+            .frame(maxWidth: .infinity, minHeight: 142)
             .background(appColor.palette.primary.opacity(0.14))
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("sum.preset.\(preset.id)")
-        .accessibilityLabel(i18n.t("sum.home.upTo", ["n": preset.maxNumber]))
+        .accessibilityLabel(presetAccessibilityLabel(preset))
+    }
+
+    private func presetAccessibilityLabel(_ preset: SumPreset) -> String {
+        switch preset.kind {
+        case .range(let low, let high) where low <= 1:
+            return i18n.t("sum.home.upTo", ["n": high])
+        case .range(let low, let high):
+            return i18n.t("sum.home.range", ["min": low, "max": high])
+        case .family:
+            return preset.label(for: operatorChoice, familyFormat: i18n.t("sum.home.familyMixed"))
+        }
     }
 
     private func pathTile(_ path: SumPath) -> some View {
@@ -201,7 +335,7 @@ struct SumHomeView: View {
                     .foregroundStyle(.primary)
                     .multilineTextAlignment(.center)
             }
-            .frame(maxWidth: .infinity, minHeight: 150)
+            .frame(maxWidth: .infinity, minHeight: 142)
             .padding(.horizontal, 8)
             .background(appColor.palette.primary.opacity(0.14))
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
@@ -224,7 +358,7 @@ struct SumHomeView: View {
                     .font(.system(.title3, design: .rounded).weight(.heavy))
                     .foregroundStyle(.primary)
             }
-            .frame(maxWidth: .infinity, minHeight: 150)
+            .frame(maxWidth: .infinity, minHeight: 142)
             .background(appColor.palette.primary.opacity(0.22))
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
@@ -247,56 +381,6 @@ struct SumHomeView: View {
         .frame(width: 62, height: 62)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .accessibilityHidden(true)
-    }
-}
-
-// MARK: - Operator picker
-
-/// The second and last question: what are we practising? One tap starts the
-/// ten — icon-only, no text, exactly like every other child-facing choice.
-struct SumOperatorPickerView: View {
-    let preset: SumPreset
-    let operators: [SumOperator]
-    let onPick: ([SumOperator]) -> Void
-
-    private let columns = [GridItem(.adaptive(minimum: 130, maximum: 200), spacing: 16)]
-    private let appColor = SumAppConfig.app.appColor
-
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(operators, id: \.self) { op in
-                    tile(systemImage: op.systemImage, identifier: "sum.op.\(op.rawValue)", label: op.symbol) {
-                        onPick([op])
-                    }
-                }
-                if operators.count > 1 {
-                    tile(systemImage: "shuffle", identifier: "sum.op.mixed", label: "+ − × ÷") {
-                        onPick(operators)
-                    }
-                }
-            }
-            .padding(20)
-        }
-    }
-
-    private func tile(
-        systemImage: String,
-        identifier: String,
-        label: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Image(systemName: systemImage)
-                .font(.system(size: 54, weight: .heavy))
-                .foregroundStyle(appColor.palette.primary)
-                .frame(maxWidth: .infinity, minHeight: 140)
-                .background(appColor.palette.primary.opacity(0.14))
-                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier(identifier)
-        .accessibilityLabel(label)
     }
 }
 

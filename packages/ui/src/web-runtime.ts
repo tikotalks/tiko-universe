@@ -1,5 +1,6 @@
 import { onMounted, onUnmounted, watch, type Ref } from 'vue'
 import type { TikoColorMode } from './index'
+import { applyTikoSurfaceColors, type TikoSurfaceColors, type TikoSurfaceTarget } from './TikoSurfaceTheme'
 
 export type TikoRuntimeEnv = Record<string, string | undefined>
 
@@ -64,7 +65,10 @@ export function resolveTikoColorMode(mode: TikoColorMode, mediaMatcher: Pick<Win
 }
 
 export interface TikoColorModeDocument {
-  documentElement: { dataset: { colorMode?: string; theme?: string } }
+  documentElement: {
+    dataset: { colorMode?: string; theme?: string }
+    style?: { setProperty: (property: string, value: string) => void }
+  }
 }
 
 export interface TikoColorModeMediaQuery {
@@ -79,13 +83,16 @@ export interface TikoColorModeWindow {
   matchMedia?: (query: string) => TikoColorModeMediaQuery
 }
 
-export function applyTikoColorMode(mode: TikoColorMode, documentTarget: TikoColorModeDocument | undefined = typeof document === 'undefined' ? undefined : document, windowTarget: TikoColorModeWindow | undefined = typeof window === 'undefined' ? undefined : window): 'light' | 'dark' {
+export function applyTikoColorMode(mode: TikoColorMode, documentTarget: TikoColorModeDocument | undefined = typeof document === 'undefined' ? undefined : document, windowTarget: TikoColorModeWindow | undefined = typeof window === 'undefined' ? undefined : window, surfaces?: Partial<TikoSurfaceColors>): 'light' | 'dark' {
   const effective = mode === 'system'
     ? (windowTarget?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
     : mode
   if (documentTarget) {
     documentTarget.documentElement.dataset.colorMode = effective
     documentTarget.documentElement.dataset.theme = effective
+    if (documentTarget.documentElement.style) {
+      applyTikoSurfaceColors(effective, surfaces, documentTarget as TikoSurfaceTarget)
+    }
   }
   return effective
 }

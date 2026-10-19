@@ -5,6 +5,7 @@ import App from './App.vue'
 import SiteHeader from './components/SiteHeader.vue'
 import { appUniverse } from './content/appUniverse'
 import { docsPages } from './siteContent'
+import { setLocale } from './i18n'
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
@@ -44,6 +45,8 @@ async function mountAt(path: string) {
       { path: '/faq', component: () => import('./pages/FaqPage.vue') },
       { path: '/docs', component: () => import('./pages/DocsPage.vue') },
       { path: '/docs/:section', component: () => import('./pages/DocsPage.vue') },
+      { path: '/privacy-policy', component: () => import('./pages/PrivacyPolicyPage.vue') },
+      { path: '/:pathMatch(.*)*', component: () => import('./pages/NotFoundPage.vue') },
     ],
   })
   await router.push(path)
@@ -57,6 +60,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  setLocale('en')
   vi.unstubAllGlobals()
   vi.restoreAllMocks()
 })
@@ -172,6 +176,76 @@ describe('TikoTalks website', () => {
     expect(wrapper.text()).toContain('One clear question. One clear answer.')
     expect(wrapper.text()).not.toContain('Built-in image library')
     expect(wrapper.find('.app-detail__media').exists()).toBe(false)
+  })
+
+  // The bug these guard: the language picker offered nine languages while only
+  // the header, footer and six explainer pages read from the locale bundle, so
+  // switching language changed the menu and left every other page in English.
+  it('renders the whole home page in the chosen language, not just the menu', async () => {
+    setLocale('nl')
+    const wrapper = await mountAt('/')
+    const text = wrapper.text()
+
+    expect(text).toContain('Kleine apps voor alledaagse momenten')
+    expect(text).toContain('Bekijk de apps')
+    // The trust principles, the pillars and the closing CTA are all page body,
+    // not chrome — each one used to stay English.
+    expect(text).toContain('Geen advertenties. Nooit.')
+    expect(text).toContain('Meteen open. Niets instellen.')
+    expect(text).toContain('Zin om het te proberen?')
+    expect(text).not.toContain('Tiny apps for everyday moments')
+    expect(text).not.toContain('Ready to try?')
+  })
+
+  it('translates an app detail page, including the app\'s own copy', async () => {
+    setLocale('nl')
+    const wrapper = await mountAt('/apps/yes-no')
+    const text = wrapper.text()
+
+    // The app's name is a product name and stays; everything around it moves.
+    expect(text).toContain('Yes No')
+    expect(text).toContain('Eén duidelijke vraag. Eén duidelijk antwoord.')
+    expect(text).toContain('Gemaakt voor één duidelijke taak.')
+    expect(text).toContain('Waarom het klein blijft')
+    expect(text).not.toContain('One clear question. One clear answer.')
+    expect(text).not.toContain('Built for one clear job.')
+  })
+
+  it('translates the apps index, the privacy policy and the 404', async () => {
+    setLocale('de')
+
+    const apps = await mountAt('/apps')
+    expect(apps.text()).toContain('Kleine Apps. Je eine klare Aufgabe.')
+    expect(apps.text()).not.toContain('Tiny apps. One clear job each.')
+
+    const privacy = await mountAt('/privacy-policy')
+    expect(privacy.text()).toContain('Was wir erheben — und was nicht.')
+    expect(privacy.text()).toContain('support@tikotalks.com')
+    expect(privacy.text()).not.toContain('What we collect, and what we don')
+
+    const missing = await mountAt('/nope')
+    expect(missing.text()).toContain('Diese Seite gibt es hier nicht.')
+  })
+
+  it('moves the document title and meta description with the language', async () => {
+    setLocale('nl')
+    await mountAt('/why-tiko')
+
+    expect(document.title).toBe('Waarom Tiko bestaat — TikoTalks')
+    expect(document.querySelector('meta[name="description"]')?.getAttribute('content')).toContain(
+      'Waarom Tiko een familie van kleine',
+    )
+  })
+
+  it('translates the builder docs while leaving paths and identifiers alone', async () => {
+    setLocale('nl')
+    const wrapper = await mountAt('/docs/architecture')
+    const text = wrapper.text()
+
+    expect(text).toContain('Op hoofdlijnen')
+    // Service names are addresses, not prose — they must survive translation.
+    expect(text).toContain('identity-api')
+    expect(text).not.toContain('High-level flow')
   })
 
   it('shows the Cards media section with Tiko Media images and no emoji fallback', async () => {

@@ -1,12 +1,12 @@
 {
   "name": "Tiko Timer",
-  "subtitle": "A visual timer for children",
-  "promotional_text": "See time pass. A calm, visual countdown timer that helps children understand how long is left.",
-  "description": "Tiko Timer is a visual countdown timer built for children. A clear, shrinking arc shows exactly how much time is left — making 'five more minutes' something a child can actually see and understand.\n\nGreat for routines, transitions, turn-taking and focus.\n\n- Big, friendly visual countdown\n- Set a time in seconds\n- Clear, calm alerts when time is up\n- No ads, no distractions\n\nPart of Tiko, a child-first universe of small, focused AAC tools.",
-  "keywords": "timer,visual timer,countdown,children,kids,routines,autism,special needs,education,accessibility",
+  "subtitle": "A calm visual countdown",
+  "promotional_text": "Turn waiting into something you can see. A big, colourful countdown ring makes transitions and routines calmer for everyone.",
+  "description": "Tiko Timer turns waiting into something a child can see. A big, colourful ring counts down so kids always know how much time is left.\n\nThere is just one calm screen. Pick a preset or set your own time, watch the ring shrink, and get a gentle cue when time is up. No numbers to decode, no clutter to distract.\n\nIt is a friendly helper for transitions and routines — tidying up, taking turns, screen time, brushing teeth, or a quiet countdown before the next activity.\n\n• A large, easy-to-read visual countdown ring\n• Quick presets: 1, 3, 5 and 10 minutes\n• Pause, resume and reset at any time\n• A gentle cue when the timer finishes\n• A clean, calm, single-screen design\n\nTiko Timer opens ready to go, so you can start a countdown the moment you need one.",
+  "keywords": "timer,countdown,visual timer,kids,routine,transitions,autism,focus,child,calm,special needs",
   "release_notes": "Initial release.",
-  "support_url": "https://tikoapps.org/support",
-  "privacy_url": "https://tikoapps.org/privacy",
-  "marketing_url": "https://tikoapps.org/timer",
+  "support_url": "https://tiko.mt/support",
+  "privacy_url": "https://tiko.mt/privacy-policy",
+  "marketing_url": "https://tiko.mt/apps/timer",
   "copyright": "© 2026 Tiko"
 }

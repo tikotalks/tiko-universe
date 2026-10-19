@@ -1,3 +1,4 @@
+import SwiftUI
 import XCTest
 @testable import TikoKit
 
@@ -97,6 +98,43 @@ final class TikoKitTests: XCTestCase {
         XCTAssertFalse(source.contains("loadHTMLString"))
     }
 
+    /// The user picks the backgrounds; the text colour is derived. These
+    /// assert that no pair of choices can produce unreadable text — including
+    /// picking a pale colour for "dark".
+    func testForegroundIsDerivedFromWhateverBackgroundIsChosen() {
+        XCTAssertEqual(Color(hex: 0xffffff).tikoForeground, Color(hex: 0x17131c))
+        XCTAssertEqual(Color(hex: 0x000000).tikoForeground, Color(hex: 0xf6f4ef))
+        // A pale "dark" surface flips the text dark rather than leaving it light.
+        XCTAssertEqual(Color(hex: 0xf2f2f2).tikoForeground, Color(hex: 0x17131c))
+    }
+
+    func testSurfacesFallBackThroughUserThenAppThenDefault() {
+        let appLight = Color(hex: 0x112233)
+        let appDark = Color(hex: 0x445566)
+
+        // Nothing chosen: the app's own values stand.
+        let untouched = TikoSurfaceResolver.surfaces(lightHex: "", darkHex: "", appLight: appLight, appDark: appDark)
+        XCTAssertEqual(untouched.light, appLight)
+        XCTAssertEqual(untouched.dark, appDark)
+
+        // Chosen: the user wins.
+        let chosen = TikoSurfaceResolver.surfaces(lightHex: "#fffdf7", darkHex: "#101014", appLight: appLight, appDark: appDark)
+        XCTAssertEqual(chosen.light, Color(hex: 0xfffdf7))
+        XCTAssertEqual(chosen.dark, Color(hex: 0x101014))
+
+        // Garbage in storage must not blank the screen.
+        let broken = TikoSurfaceResolver.surfaces(lightHex: "nope", darkHex: "#zz", appLight: appLight, appDark: appDark)
+        XCTAssertEqual(broken.light, appLight)
+        XCTAssertEqual(broken.dark, appDark)
+    }
+
+    func testHexRoundTripsSoAColorPickerChoiceSurvivesRelaunch() {
+        XCTAssertEqual(Color(hex: 0xf8f6f1).tikoHexString, "#f8f6f1")
+        XCTAssertEqual(Color(hex: 0x140e18).tikoHexString, "#140e18")
+        let picked = Color(hex: 0x3a7bd5)
+        XCTAssertEqual(Color(hexString: picked.tikoHexString), picked)
+    }
+
     func testColorModeIsExplicitLightDarkOnly() {
         XCTAssertEqual(TikoColorMode.allCases, [.system, .light, .dark])
         XCTAssertEqual(TikoColorMode.light.title, "Light")
@@ -155,24 +193,62 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(TikoSpeech.languageCode(for: "en"), "en-US")
         XCTAssertEqual(TikoSpeech.languageCode(for: "nl"), "nl-NL")
         XCTAssertEqual(TikoSpeech.languageCode(for: "mt"), "mt-MT")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "hy"), "hy-AM")
         XCTAssertEqual(TikoSpeech.languageCode(for: "pt-BR"), "pt-BR")
     }
 
-    @MainActor
-    func testAtlasSpeechServiceIgnoresBlankSpeech() {
-        let speech = TikoAtlasSpeechService(app: "test")
+    /// Every language Tiko offers in its picker must have a speech locale.
+    /// Without this a language can be added to the picker and quietly speak
+    /// English, which is exactly what happened to Armenian.
+    func testEveryOfferedLanguageHasASpeechLocale() {
+        let offered = Set(TikoLanguage.supportedLanguageCodes)
+        let mapped = Set(TikoSpeechLanguage.allCases.map(\.rawValue))
+        XCTAssertEqual(offered, mapped, "TikoSpeechLanguage and the language picker have drifted apart")
 
-        speech.speak("   ", languageCode: "en")
-        speech.stop()
+        for code in TikoLanguage.supportedLanguageCodes {
+            let locale = TikoSpeech.languageCode(for: code)
+            XCTAssertTrue(locale.hasPrefix("\(code)-"), "\(code) resolved to \(locale)")
+        }
+    }
+
+    /// An unmapped language must be passed through as itself. Inventing a
+    /// locale is how Armenian text ended up at an American English voice.
+    func testUnmappedLanguageIsNotRewrittenToEnglish() {
+        XCTAssertEqual(TikoSpeech.languageCode(for: "sw"), "sw")
+        XCTAssertEqual(TikoSpeech.languageCode(for: "xx"), "xx")
+        XCTAssertNotEqual(TikoSpeech.languageCode(for: "sw"), "en-US")
+    }
+
+    /// Apple has never shipped a Maltese or Armenian voice, so the synthesizer
+    /// must report that it cannot speak them rather than reading the text in
+    /// whatever voice it defaults to.
+    func testMalteseAndArmenianHaveNoSystemVoice() {
+        XCTAssertFalse(TikoSpeech.hasSystemVoice(for: "mt"))
+        XCTAssertFalse(TikoSpeech.hasSystemVoice(for: "hy"))
+        XCTAssertTrue(TikoSpeech.hasSystemVoice(for: "en"))
+    }
+
+    /// Arabic is published as `ar-001` on iOS 26 and was `ar-SA` before, so
+    /// the voice lookup has to try both instead of trusting one tag.
+    func testArabicResolvesAcrossAppleRegionalRenames() {
+        XCTAssertEqual(TikoSpeechLanguage.ar.localeCandidates, ["ar-001", "ar-SA"])
+        XCTAssertTrue(TikoSpeech.hasSystemVoice(for: "ar"))
+    }
+
+    @MainActor
+    func testVoiceServiceIgnoresBlankSpeech() async {
+        let voice = TikoVoiceService()
+
+        await voice.speak("   ", languageCode: "en")
+        voice.stop()
     }
 
     @MainActor
     func testAtlasSpeechRequestUsesBearerSessionToken() throws {
-        let request = try TikoAtlasSpeechService.makeAtlasSpeechRequest(
+        let request = try TikoVoiceService.makeAtlasSpeechRequest(
             text: "Hello",
-            languageCode: "en-US",
+            locale: "en-US",
             app: "test",
-            purpose: "speech-playback",
             atlasSpeechURL: URL(string: "https://api.tikotalks.com/v1/atlas/speech")!,
             accessToken: "session-token"
         )
@@ -180,7 +256,13 @@ final class TikoKitTests: XCTestCase {
         XCTAssertEqual(request.httpMethod, "POST")
         XCTAssertEqual(request.value(forHTTPHeaderField: "Authorization"), "Bearer session-token")
         XCTAssertEqual(request.value(forHTTPHeaderField: "Content-Type"), "application/json")
-        XCTAssertNotNil(request.httpBody)
+
+        let body = try XCTUnwrap(request.httpBody)
+        let decoded = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        // The Atlas capability registry only allows this purpose; anything
+        // else is a 403 that silently degrades the app to the device voice.
+        XCTAssertEqual(decoded["purpose"] as? String, "speech-playback")
+        XCTAssertEqual(decoded["locale"] as? String, "en-US")
     }
 
     func testRecoverableIdentityRequiresVerifiedAccount() {

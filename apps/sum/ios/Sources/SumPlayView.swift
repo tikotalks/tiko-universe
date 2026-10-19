@@ -99,6 +99,23 @@ struct SumPlayView: View {
                 TikoFeedback.playSuccess()
             }
         }
+        // The burst belongs to the whole window, not to the tile that earned it.
+        // Pinned to a box around the tile it was clipped at the box edge, which
+        // read as fireworks going off inside a picture frame.
+        .overlay {
+            if viewModel.wonValue != nil || viewModel.state == .celebrating {
+                TikoCelebrationOverlay(
+                    trigger: celebrationTrigger,
+                    variant: celebrationVariant,
+                    emoji: viewModel.session.game?.emoji ?? "🎉",
+                    appColor: appColor,
+                    // Ten of these per round, so the burst is trimmed to fit
+                    // inside the hold rather than outliving it.
+                    duration: 1.0
+                )
+                .allowsHitTesting(false)
+            }
+        }
         .overlay {
             if viewModel.isPausedForInterruption {
                 interruptionOverlay
@@ -237,9 +254,7 @@ struct SumPlayView: View {
                     isPulsing: viewModel.pulseCorrect && choice.isCorrect && viewModel.wonValue == nil,
                     isAnswerable: viewModel.isAnswerable,
                     celebrationTrigger: celebrationTrigger,
-                    celebrationVariant: celebrationVariant,
-                    winStyle: winStyle,
-                    celebrationEmoji: viewModel.session.game?.emoji ?? "🎉"
+                    winStyle: winStyle
                 ) {
                     viewModel.choose(choice)
                 }
@@ -387,8 +402,9 @@ struct SumPlayView: View {
 
 /// One answer tile through its whole life: waiting, wrongly picked (stays put,
 /// flashes red, wobbles), switched off (dimmed but still readable), or the
-/// winner (dances inside its own fireworks). Owns its shake counter so a miss
-/// on one tile never twitches the others.
+/// winner (which dances where it stands, while the fireworks go off across the
+/// whole window). Owns its shake counter so a miss on one tile never twitches
+/// the others.
 private struct AnswerTileView: View {
     let choice: AnswerChoice
     let side: CGFloat
@@ -400,9 +416,7 @@ private struct AnswerTileView: View {
     let isPulsing: Bool
     let isAnswerable: Bool
     let celebrationTrigger: Int
-    let celebrationVariant: TikoCelebrationVariant
     let winStyle: TikoCardWinStyle
-    let celebrationEmoji: String
     let onTap: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -435,7 +449,8 @@ private struct AnswerTileView: View {
                 } animation: { _ in
                     .easeInOut(duration: 0.06)
                 }
-                // The winning tile dances where it stands…
+                // The winning tile dances where it stands; the burst that goes
+                // with it is a full-window overlay owned by the play view.
                 .phaseAnimator(
                     reduceMotion ? [TikoCardWinStyle.Phase()] : winStyle.phases,
                     trigger: hasWon ? celebrationTrigger : 0
@@ -446,19 +461,6 @@ private struct AnswerTileView: View {
                         .offset(y: phase.y)
                 } animation: { _ in
                     .spring(response: 0.34, dampingFraction: 0.44)
-                }
-                // …inside its own burst of fireworks.
-                .overlay {
-                    if hasWon {
-                        TikoCelebrationOverlay(
-                            trigger: celebrationTrigger,
-                            variant: celebrationVariant,
-                            emoji: celebrationEmoji,
-                            appColor: appColor
-                        )
-                        .frame(width: side * 3.6, height: side * 3.6)
-                        .allowsHitTesting(false)
-                    }
                 }
         }
         .buttonStyle(.plain)

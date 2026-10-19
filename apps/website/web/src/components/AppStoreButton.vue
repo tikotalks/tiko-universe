@@ -4,9 +4,17 @@
  * lockup as accessible HTML/CSS (crisp, translatable) rather than a text-in-SVG
  * image. Apple black badge per App Store marketing guidelines.
  */
-withDefaults(defineProps<{ href: string; label?: string }>(), {
-  label: 'Download on the App Store',
+import { computed } from 'vue'
+import { useCopy } from '../i18n'
+
+const props = withDefaults(defineProps<{ href: string; label?: string }>(), {
+  label: '',
 })
+
+const copy = useCopy()
+// Apple ships the badge in each language with its own wording, so the lockup is
+// translated rather than left in English beside translated copy.
+const ariaLabel = computed(() => props.label || copy.value.common.downloadAppStore)
 </script>
 
 <template>
@@ -15,7 +23,7 @@ withDefaults(defineProps<{ href: string; label?: string }>(), {
     :href="href"
     target="_blank"
     rel="noopener"
-    :aria-label="label"
+    :aria-label="ariaLabel"
   >
     <svg class="app-store-btn__logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path
@@ -23,8 +31,8 @@ withDefaults(defineProps<{ href: string; label?: string }>(), {
       />
     </svg>
     <span class="app-store-btn__text">
-      <span class="app-store-btn__caption">Download on the</span>
-      <span class="app-store-btn__name">App Store</span>
+      <span class="app-store-btn__caption">{{ copy.common.downloadOnCaption }}</span>
+      <span class="app-store-btn__name">{{ copy.common.appStore }}</span>
     </span>
   </a>
 </template>

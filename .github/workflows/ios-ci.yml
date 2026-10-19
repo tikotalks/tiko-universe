@@ -5,17 +5,19 @@ on:
     paths:
       - 'apps/*/ios/**'
       - 'packages/tikokit-ios/**'
+      - 'scripts/ci/pick-ios-simulator.sh'
       - '.github/workflows/ios-ci.yml'
   push:
     branches: [development, main]
     paths:
       - 'apps/*/ios/**'
       - 'packages/tikokit-ios/**'
+      - 'scripts/ci/pick-ios-simulator.sh'
       - '.github/workflows/ios-ci.yml'
   workflow_dispatch:
     inputs:
       app:
-        description: 'App to build: changed, all, yes-no, cards, radio, talk, timer, type, say, sum, first, write'
+        description: 'App to build: changed, all, yes-no, cards, radio, talk, timer, type, say, sum, first, write, globe'
         required: false
         default: changed
 
@@ -37,22 +39,14 @@ jobs:
 
       - name: Pick simulator
         id: simulator
-        shell: bash
-        run: |
-          set -euo pipefail
-          device=$(xcrun simctl list devices available | grep -E 'iPhone (15|16)' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
-          if [[ -z "$device" ]]; then
-            device=$(xcrun simctl list devices available | grep -E 'iPhone' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
-          fi
-          echo "device=$device" >> "$GITHUB_OUTPUT"
-          echo "Using simulator: $device"
+        run: scripts/ci/pick-ios-simulator.sh
 
       - name: Run Swift package tests
         working-directory: packages/tikokit-ios
         run: |
           xcodebuild test \
             -scheme TikoKit-Package \
-            -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
+            -destination 'id=${{ steps.simulator.outputs.udid }}' \
             CODE_SIGNING_ALLOWED=NO
 
   discover:
@@ -85,11 +79,12 @@ jobs:
               sum) printf '{"app":"sum","path":"apps/sum/ios","scheme":"TikoSum"}' ;;
               first) printf '{"app":"first","path":"apps/first/ios","scheme":"TikoFirst"}' ;;
               write) printf '{"app":"write","path":"apps/write/ios","scheme":"TikoWrite"}' ;;
+              globe) printf '{"app":"globe","path":"apps/globe/ios","scheme":"TikoGlobe"}' ;;
               *) return 1 ;;
             esac
           }
 
-          all_apps=(yes-no cards radio talk timer type say sum first write)
+          all_apps=(yes-no cards radio talk timer type say sum first write globe)
 
           if [[ "$requested" != "changed" && "$requested" != "all" ]]; then
             apps=("$requested")
@@ -108,7 +103,7 @@ jobs:
             changed_files="$(git diff --name-only "$base" HEAD || true)"
             apps=()
 
-            if echo "$changed_files" | grep -qE '^(packages/tikokit-ios/|\.github/workflows/ios-ci\.yml)'; then
+            if echo "$changed_files" | grep -qE '^(packages/tikokit-ios/|scripts/ci/pick-ios-simulator\.sh|\.github/workflows/ios-ci\.yml)'; then
               apps=("${all_apps[@]}")
             else
               for app in "${all_apps[@]}"; do
@@ -155,26 +150,38 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      # TikoCore is built from Kotlin and never committed, so an app that links it
+      # (today: Write) needs it built before its project can resolve.
+      - name: Check for TikoCore
+        id: tikocore
+        run: |
+          if grep -q 'tikokotlinkit' '${{ matrix.path }}/Project.yml'; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Java
+        if: steps.tikocore.outputs.needed == 'true'
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build TikoCore
+        if: steps.tikocore.outputs.needed == 'true'
+        run: ./gradlew --no-daemon :tikokotlinkit:assembleTikoCoreReleaseXCFramework
+
       - name: Generate project
         working-directory: ${{ matrix.path }}
         run: xcodegen generate
 
       - name: Pick simulator
         id: simulator
-        shell: bash
-        run: |
-          set -euo pipefail
-          device=$(xcrun simctl list devices available | grep -E 'iPhone (15|16)' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
-          if [[ -z "$device" ]]; then
-            device=$(xcrun simctl list devices available | grep -E 'iPhone' | grep -v unavailable | head -1 | sed -E 's/^[[:space:]]*([^\(]+).*/\1/' | xargs)
-          fi
-          echo "device=$device" >> "$GITHUB_OUTPUT"
-          echo "Using simulator: $device"
+        run: scripts/ci/pick-ios-simulator.sh
 
       - name: Build and test
         working-directory: ${{ matrix.path }}
         run: |
           xcodebuild test \
             -scheme '${{ matrix.scheme }}' \
-            -destination 'platform=iOS Simulator,name=${{ steps.simulator.outputs.device }}' \
+            -destination 'id=${{ steps.simulator.outputs.udid }}' \
             CODE_SIGNING_ALLOWED=NO

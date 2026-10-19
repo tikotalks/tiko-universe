@@ -1,0 +1,13 @@
+{
+  "note": "A second entry for countries where the media library already holds the picture — so a child meets a painted person rather than a symbol.",
+  "countries": {
+    "PER": { "id": "inca", "name": "Inca", "era": "historical", "importance": 2, "glyph": "☀️", "lat": -13.53, "lon": -71.97, "note": "Builders of Cusco and of roads over the whole Andes." },
+    "MEX": { "id": "aztec", "name": "Aztec", "era": "historical", "importance": 2, "glyph": "🌋", "lat": 19.43, "lon": -99.13, "note": "A city built on a lake, with floating gardens for fields." },
+    "IRL": { "id": "celt", "name": "Celt", "era": "historical", "importance": 3, "glyph": "🌀", "lat": 53.58, "lon": -6.61, "note": "Iron-age people of spirals, torcs and hilltop kings." },
+    "NLD": { "id": "volendam", "name": "Volendam fisherfolk", "era": "living", "importance": 4, "glyph": "👒", "lat": 52.49, "lon": 5.07, "note": "Lace caps, wooden shoes, and a harbour that lost its sea." },
+    "BHS": { "id": "pirate", "name": "Pirate", "era": "historical", "importance": 2, "glyph": "🏴‍☠️", "lat": 25.08, "lon": -77.34, "note": "For a few years Nassau was run by pirates and nobody else." },
+    "FRA": { "id": "joan-of-arc", "name": "Joan of Arc", "era": "historical", "importance": 2, "glyph": "⚔️", "lat": 47.9, "lon": 1.9, "note": "A farm girl of seventeen who led an army and lifted a siege." },
+    "MNG": { "id": "genghis-khan", "name": "Genghis Khan", "era": "historical", "importance": 2, "glyph": "🐎", "lat": 48.5, "lon": 109.0, "note": "From one camp on the steppe to the largest land empire there has been." },
+    "GRC": { "id": "alexander", "name": "Alexander the Great", "era": "historical", "importance": 2, "glyph": "🐎", "lat": 40.76, "lon": 22.52, "note": "Born at Pella; by thirty he had ridden as far as India." }
+  }
+}

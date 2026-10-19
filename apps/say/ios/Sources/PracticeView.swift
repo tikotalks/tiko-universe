@@ -49,10 +49,10 @@ struct PracticeScreen: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .permissionRequired:
-                SpeechPermissionView(i18n: i18n, denied: viewModel.permissionDenied) {
-                    viewModel.requestPermissions()
-                } onBack: {
+            case .requestingPermission:
+                SpeechPermissionRequestView(i18n: i18n)
+            case .permissionDenied:
+                SpeechPermissionDeniedView(i18n: i18n) {
                     onClose()
                 }
             case .recognitionUnavailable:
@@ -81,7 +81,12 @@ struct PracticeScreen: View {
             SayFeedback.stop()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active {
+            if phase == .active {
+                // Returning from Settings with the microphone switched on
+                // should resume practice, not strand the parent on the
+                // recovery screen.
+                viewModel.recheckPermissionsAfterSettings()
+            } else {
                 viewModel.pauseForInterruption()
                 SayFeedback.stop()
             }
@@ -449,14 +454,38 @@ struct PracticeControls: View {
     }
 }
 
-// MARK: - Permission explanation / recovery
+// MARK: - Permission request / recovery
 
-/// Parent-facing, short: icon, one line, continue. The recovery variant links
-/// straight to Settings.
-struct SpeechPermissionView: View {
+/// Shown underneath the system microphone and speech-recognition prompts. It
+/// explains what is about to be asked, but it never gates the prompt: there is
+/// no button to press and no way to dismiss it instead of answering.
+struct SpeechPermissionRequestView: View {
     @ObservedObject var i18n: TikoI18n
-    let denied: Bool
-    let onContinue: () -> Void
+
+    private let appColor = SayAppConfig.app.appColor
+
+    var body: some View {
+        VStack(spacing: 18) {
+            Spacer()
+            Image(systemName: "mic.fill")
+                .font(.system(size: 56, weight: .bold))
+                .foregroundStyle(appColor.palette.primary)
+                .accessibilityHidden(true)
+            Text(i18n.t("say.permission.body"))
+                .font(.title3.weight(.bold))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 12)
+                .accessibilityIdentifier("say.permission.requesting")
+            Spacer()
+        }
+        .padding(.horizontal, 28)
+        .frame(maxWidth: 560)
+    }
+}
+
+/// Recovery after a refusal: say what is missing and link straight to Settings.
+struct SpeechPermissionDeniedView: View {
+    @ObservedObject var i18n: TikoI18n
     let onBack: () -> Void
 
     private let appColor = SayAppConfig.app.appColor
@@ -464,32 +493,29 @@ struct SpeechPermissionView: View {
     var body: some View {
         VStack(spacing: 18) {
             Spacer()
-            Image(systemName: denied ? "mic.slash.fill" : "mic.fill")
+            Image(systemName: "mic.slash.fill")
                 .font(.system(size: 56, weight: .bold))
                 .foregroundStyle(appColor.palette.primary)
                 .accessibilityHidden(true)
-            Text(i18n.t(denied ? "say.permission.deniedTitle" : "say.permission.body"))
+            Text(i18n.t("say.permission.deniedTitle"))
                 .font(.title3.weight(.bold))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 12)
             Spacer()
-            if denied {
-                Button {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                } label: {
-                    primaryLabel(i18n.t("say.permission.openSettings"))
+            Button {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
                 }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("say.permission.openSettings")
-            } else {
-                Button(action: onContinue) {
-                    primaryLabel(i18n.t("say.permission.continue"))
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("say.permission.continue")
+            } label: {
+                Text(i18n.t("say.permission.openSettings"))
+                    .font(.system(.body, design: .rounded).weight(.heavy))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, minHeight: 54)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("say.permission.openSettings")
             Button(action: onBack) {
                 Text(i18n.t("say.practice.back"))
                     .font(.system(.body, design: .rounded).weight(.bold))
@@ -501,15 +527,6 @@ struct SpeechPermissionView: View {
         }
         .padding(.horizontal, 28)
         .frame(maxWidth: 560)
-    }
-
-    private func primaryLabel(_ text: String) -> some View {
-        Text(text)
-            .font(.system(.body, design: .rounded).weight(.heavy))
-            .foregroundStyle(.white)
-            .frame(maxWidth: .infinity, minHeight: 54)
-            .background(appColor.palette.primary)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 }
 

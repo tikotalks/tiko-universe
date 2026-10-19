@@ -15,6 +15,7 @@ public enum TikoAppKey: String, Sendable {
     case sum = "sum"
     case first = "first"
     case write = "write"
+    case globe = "globe"
 }
 
 // MARK: - TikoI18n
@@ -145,6 +146,7 @@ enum TikoLocalTranslations {
         case .sum:      return sumBundles
         case .first:    return firstBundles
         case .write:    return writeBundles
+        case .globe:    return globeBundles
         }
     }
 

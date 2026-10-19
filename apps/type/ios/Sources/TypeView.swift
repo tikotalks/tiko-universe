@@ -355,21 +355,23 @@ private struct KeyCap: View {
     }
 }
 
-// MARK: - Local letter speech (instant, no network)
+// MARK: - Letter speech
 
+/// Letters go through the shared voice service like everything else, on their
+/// own instance so a keypress does not cut off sentence playback. The keyboard
+/// is a fixed vocabulary, so `prefetch` warms every key up front and each
+/// letter is served from the disk cache from then on — including in languages
+/// the device has no voice for.
+@MainActor
 private final class LetterSpeaker {
-    private let synthesizer = AVSpeechSynthesizer()
+    private let voice = TikoVoiceService()
 
     func speak(_ letter: String, languageCode: String) {
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-        TikoSpeech.configurePlaybackSession()
-        let utterance = AVSpeechUtterance(string: letter)
-        utterance.voice = AVSpeechSynthesisVoice(language: TikoSpeech.languageCode(for: languageCode))
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.82
-        utterance.pitchMultiplier = 1.05
-        synthesizer.speak(utterance)
+        voice.speakDetached(letter, languageCode: languageCode)
+    }
+
+    func warm(keys: [String], languageCode: String) {
+        Task { await voice.prefetch(texts: keys, languageCode: languageCode) }
     }
 }
 
@@ -577,7 +579,7 @@ struct TypeView: View {
     private let coordSpace = "typeRoot"
     private let currentWordColor = Color(hex: 0x4dabf7)
 
-    private let speechService = TikoAtlasSpeechService(app: "type", purpose: "typed-speech")
+    private let speechService = TikoVoiceService()
     private let letterSpeaker = LetterSpeaker()
 
     @Environment(\.colorScheme) private var scheme
@@ -745,8 +747,13 @@ struct TypeView: View {
             }
             loadWords()
             migrateOldText()
+            warmLetterVoices()
         }
-        .onChange(of: languageCode) { _, code in i18n.setLanguage(code) }
+        .onChange(of: languageCode) { _, code in
+            i18n.setLanguage(code)
+            warmLetterVoices()
+        }
+        .onChange(of: keyboardLayoutID) { _, _ in warmLetterVoices() }
     }
 
     // MARK: - Type bar (word chips)
@@ -883,13 +890,20 @@ struct TypeView: View {
     private func speakAll() {
         let full = TypeText.speechString(words: words, currentWord: currentWord)
         guard !full.isEmpty else { return }
-        speechService.speak(full, languageCode: languageCode) { state in
+        speechService.speakDetached(full, languageCode: languageCode) { state in
             isSpeaking = state == .playing
         }
     }
 
+    /// Caches every key of the current layout so typed letters play instantly
+    /// and keep working offline.
+    private func warmLetterVoices() {
+        guard speakLetters else { return }
+        letterSpeaker.warm(keys: currentLayout.rows.flatMap { $0 }, languageCode: languageCode)
+    }
+
     private func speakWord(_ word: String) {
-        speechService.speak(word, languageCode: languageCode) { state in
+        speechService.speakDetached(word, languageCode: languageCode) { state in
             isSpeaking = state == .playing
         }
     }

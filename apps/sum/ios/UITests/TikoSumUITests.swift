@@ -13,37 +13,83 @@ final class TikoSumUITests: XCTestCase {
         return app
     }
 
-    /// Home → difficulty → operator → ten sums.
+    /// Free play sits at the very bottom of the home screen, below the ranges,
+    /// the in-between bands, the number families and any saved paths. Those grids
+    /// are lazy, so the tile does not exist until it is scrolled near — asserting
+    /// on it without scrolling tests the scroll position, not the app.
+    @discardableResult
+    private func scrollToFreePlay(_ app: XCUIApplication) -> XCUIElement {
+        let freePlay = app.buttons["sum.home.freePlay"]
+        for _ in 0..<8 {
+            if freePlay.exists { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(freePlay.waitForExistence(timeout: 5), "free play should be reachable at the foot of the home screen")
+        return freePlay
+    }
+
+    /// Home → pick the operator in the header → tap a mode → ten sums. There is
+    /// no screen in between any more.
     private func startPresetGame(_ app: XCUIApplication, operatorID: String = "sum.op.plus") {
+        let op = app.buttons[operatorID]
+        XCTAssertTrue(op.waitForExistence(timeout: 10), "the operator lives in the home header")
+        op.tap()
+
         let preset = app.buttons["sum.preset.to10"]
         XCTAssertTrue(preset.waitForExistence(timeout: 10))
         preset.tap()
-
-        let op = app.buttons[operatorID]
-        XCTAssertTrue(op.waitForExistence(timeout: 10), "the operator picker should follow the preset")
-        op.tap()
     }
 
-    func testHomeShowsDifficultyPresetsNotOperatorModes() {
+    func testHomeShowsTheWholeLadderOfModes() {
         let app = launchApp()
-        XCTAssertTrue(app.buttons["sum.preset.to10"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["sum.preset.to20"].exists)
-        XCTAssertTrue(app.buttons["sum.preset.to50"].exists)
-        XCTAssertTrue(app.buttons["sum.preset.to100"].exists)
-        XCTAssertTrue(app.buttons["sum.home.freePlay"].exists)
+        XCTAssertTrue(app.buttons["sum.preset.to5"].waitForExistence(timeout: 10))
+        for id in ["to5", "to10", "to20", "to50", "to100"] {
+            XCTAssertTrue(app.buttons["sum.preset.\(id)"].exists, "range \(id) should be on the home grid")
+        }
+        scrollToFreePlay(app)
     }
 
-    func testPresetOffersEveryOperatorPlusMixed() {
+    func testHomeShowsBandsAndNumberFamilies() {
         let app = launchApp()
-        let preset = app.buttons["sum.preset.to20"]
-        XCTAssertTrue(preset.waitForExistence(timeout: 10))
-        preset.tap()
+        XCTAssertTrue(app.buttons["sum.preset.to5"].waitForExistence(timeout: 10))
 
+        let band = app.buttons["sum.preset.band10to20"]
+        XCTAssertTrue(band.exists, "the in-between bands should be offered too")
+
+        // The families sit below the fold on smaller screens.
+        let tens = app.buttons["sum.preset.family10"]
+        if !tens.exists {
+            app.swipeUp()
+        }
+        XCTAssertTrue(tens.waitForExistence(timeout: 5), "the 10s should be a mode of its own")
+        XCTAssertTrue(app.buttons["sum.preset.family2"].exists, "so should the 2s")
+        XCTAssertTrue(app.buttons["sum.preset.family5"].exists, "and the 5s")
+    }
+
+    func testTheHeaderOffersEveryOperatorPlusMixed() {
+        let app = launchApp()
         XCTAssertTrue(app.buttons["sum.op.plus"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["sum.op.minus"].exists)
         XCTAssertTrue(app.buttons["sum.op.times"].exists)
         XCTAssertTrue(app.buttons["sum.op.dividedBy"].exists)
-        XCTAssertTrue(app.buttons["sum.op.mixed"].exists, "one tile plays them all")
+        XCTAssertTrue(app.buttons["sum.op.mixed"].exists, "one tab plays them all")
+    }
+
+    /// Whatever the child was practising is what they come back to.
+    func testTheChosenOperatorIsRememberedAcrossLaunches() {
+        let app = launchApp()
+        let times = app.buttons["sum.op.times"]
+        XCTAssertTrue(times.waitForExistence(timeout: 10))
+        times.tap()
+        XCTAssertTrue(times.isSelected, "the tapped operator should read as selected")
+
+        // Relaunch without the reset flag so stored settings survive.
+        app.terminate()
+        let relaunched = XCUIApplication()
+        relaunched.launch()
+        let timesAgain = relaunched.buttons["sum.op.times"]
+        XCTAssertTrue(timesAgain.waitForExistence(timeout: 10))
+        XCTAssertTrue(timesAgain.isSelected, "× should still be the one in use")
     }
 
     func testPresetGameDealsAnsweredSums() {
@@ -72,8 +118,7 @@ final class TikoSumUITests: XCTestCase {
 
     func testFreePlayKeypadProducesAnswerTiles() {
         let app = launchApp()
-        let freePlay = app.buttons["sum.home.freePlay"]
-        XCTAssertTrue(freePlay.waitForExistence(timeout: 10))
+        let freePlay = scrollToFreePlay(app)
         freePlay.tap()
 
         XCTAssertTrue(app.buttons["sum.key.3"].waitForExistence(timeout: 10))
@@ -88,8 +133,7 @@ final class TikoSumUITests: XCTestCase {
 
     func testFreePlayOffersAllFourOperators() {
         let app = launchApp()
-        let freePlay = app.buttons["sum.home.freePlay"]
-        XCTAssertTrue(freePlay.waitForExistence(timeout: 10))
+        let freePlay = scrollToFreePlay(app)
         freePlay.tap()
 
         XCTAssertTrue(app.buttons["sum.key.plus"].waitForExistence(timeout: 10))
@@ -100,8 +144,7 @@ final class TikoSumUITests: XCTestCase {
 
     func testFreePlayMultiplyProducesAnswerTiles() {
         let app = launchApp()
-        let freePlay = app.buttons["sum.home.freePlay"]
-        XCTAssertTrue(freePlay.waitForExistence(timeout: 10))
+        let freePlay = scrollToFreePlay(app)
         freePlay.tap()
 
         XCTAssertTrue(app.buttons["sum.key.3"].waitForExistence(timeout: 10))
@@ -115,8 +158,7 @@ final class TikoSumUITests: XCTestCase {
 
     func testFreePlayDivideProducesAnswerTiles() {
         let app = launchApp()
-        let freePlay = app.buttons["sum.home.freePlay"]
-        XCTAssertTrue(freePlay.waitForExistence(timeout: 10))
+        let freePlay = scrollToFreePlay(app)
         freePlay.tap()
 
         XCTAssertTrue(app.buttons["sum.key.1"].waitForExistence(timeout: 10))

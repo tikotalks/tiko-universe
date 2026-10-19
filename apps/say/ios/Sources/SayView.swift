@@ -205,7 +205,7 @@ struct CategoryGridView: View {
             LongPressGesture(minimumDuration: 0.6).onEnded { _ in
                 // Parent-only shortcut into the card editor; Child Mode never
                 // exposes editing.
-                let isChild = (try? TikoDeviceSessionStore().load())?.isChildMode ?? false
+                let isChild = TikoParentGate.isChildModeActive
                 guard !isChild else { return }
                 UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 onEdit(category)

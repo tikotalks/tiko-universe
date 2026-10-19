@@ -1,12 +1,12 @@
 {
   "name": "Tiko Talk",
-  "subtitle": "Sentences, one tile at a time",
-  "promotional_text": "A full AAC communicator: build sentences from word tiles and hear them spoken. Designed for children.",
-  "description": "Tiko Talk is an augmentative and alternative communication (AAC) app that helps children build and speak sentences, one word tile at a time.\n\nArrange words into a sentence strip, tap to speak the whole phrase, and save frequently used sentences for quick access. Talk grows with the child — from single words to full expressions.\n\n- Build sentences from a grid of word tiles\n- Tap to speak a word or the whole sentence\n- Save and reuse favourite phrases\n- Works offline; opens ready to communicate\n- No ads, child-focused design\n\nPart of Tiko, a child-first universe of small, focused AAC tools.",
-  "keywords": "aac,speech,communication,sentences,words,nonverbal,autism,special needs,voice,accessibility,aphasia",
+  "subtitle": "Build sentences, tap to talk",
+  "promotional_text": "From single words to full sentences. Tap word tiles to build a sentence, then tap speak to say the whole thing out loud.",
+  "description": "Tiko Talk helps children go from single words to full sentences. Tap word tiles to build a sentence in the strip at the top, then tap speak to say the whole thing out loud.\n\nIt is made for children who can recognise words but need help putting them together — including AAC users, children with speech delays, and young learners building a second language. Tiles are grouped so the next word is always easy to find, and gentle suggestions help each sentence grow.\n\nEvery child should be able to express a complete thought — not just label things, but say what they mean. Tiko Talk makes that as easy as tapping tiles.\n\n• Tap word tiles to build a sentence step by step\n• Speak the whole sentence, or tap a single word to hear it\n• Choose a word cloud or grid layout\n• Helpful word suggestions that guide the sentence forward\n• Search for a word, or add your own\n• Speaks in multiple languages\n\nTiko Talk opens straight into the board so a child can start building sentences right away.",
+  "keywords": "aac,communication,sentences,speech,nonverbal,autism,special needs,words,talk,tts,language,kids",
   "release_notes": "Initial release.",
-  "support_url": "https://tikoapps.org/support",
-  "privacy_url": "https://tikoapps.org/privacy",
-  "marketing_url": "https://tikoapps.org/talk",
+  "support_url": "https://tiko.mt/support",
+  "privacy_url": "https://tiko.mt/privacy-policy",
+  "marketing_url": "https://tiko.mt/apps/talk",
   "copyright": "© 2026 Tiko"
 }

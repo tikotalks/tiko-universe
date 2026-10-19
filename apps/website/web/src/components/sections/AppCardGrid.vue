@@ -1,21 +1,26 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useBemm } from 'bemm'
-import { tikoApps, type TikoAppInfo } from '../../content/appUniverse'
+import { computed } from 'vue'
+import { type TikoAppInfo } from '../../content/appUniverse'
+import { useApps } from '../../content/useApps'
+import { useCopy } from '../../i18n'
 
 /** Grid of Tiko app cards: whole card in the app colour, big icon, name + status. */
-withDefaults(defineProps<{ apps?: TikoAppInfo[]; min?: string }>(), {
+const props = withDefaults(defineProps<{ apps?: TikoAppInfo[]; min?: string }>(), {
   min: '200px',
 })
 
 const bemm = useBemm('app-card-grid', { return: 'string', includeBaseClass: true })
-const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
+const copy = useCopy()
+const allApps = useApps()
+const items = computed(() => props.apps ?? allApps.value)
 </script>
 
 <template>
   <div :class="bemm()" :style="{ '--grid-min': min }">
     <RouterLink
-      v-for="app in (apps ?? tikoApps)"
+      v-for="app in items"
       :key="app.id"
       :to="app.path"
       :class="bemm('card')"
@@ -35,8 +40,8 @@ const items = (p: { apps?: TikoAppInfo[] }) => p.apps ?? tikoApps
           the detail page, and nesting an anchor inside one is invalid.
         -->
         <span v-if="app.status === 'available'" :class="bemm('platforms')">
-          <span v-if="app.appUrl" :class="bemm('platform')">Web</span>
-          <span v-if="app.appStoreUrl" :class="bemm('platform')">App Store</span>
+          <span v-if="app.appUrl" :class="bemm('platform')">{{ copy.common.web }}</span>
+          <span v-if="app.appStoreUrl" :class="bemm('platform')">{{ copy.common.appStore }}</span>
         </span>
         <span v-else :class="bemm('status')">{{ app.statusLabel }}</span>
       </div>

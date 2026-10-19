@@ -6722,7 +6722,6 @@ extension TikoLocalTranslations {
         "say.session.restart": "Nog een keer oefenen",
         "say.session.chooseCategory": "Kies een categorie",
         "say.permission.body": "Say luistert terwijl je kind elk woord nazegt. Er wordt nooit iets opgenomen.",
-        "say.permission.continue": "Doorgaan",
         "say.permission.deniedTitle": "Zet de microfoon en spraakherkenning aan in Instellingen.",
         "say.permission.openSettings": "Open Instellingen",
         "say.language.unsupportedTitle": "Spraakherkenning is niet beschikbaar in het {language}",
@@ -6774,7 +6773,6 @@ extension TikoLocalTranslations {
         "say.session.restart": "Nochmal üben",
         "say.session.chooseCategory": "Kategorie wählen",
         "say.permission.body": "Say hört zu, während dein Kind jedes Wort nachspricht. Es wird nie etwas aufgenommen.",
-        "say.permission.continue": "Weiter",
         "say.permission.deniedTitle": "Aktiviere Mikrofon und Spracherkennung in den Einstellungen.",
         "say.permission.openSettings": "Einstellungen öffnen",
         "say.language.unsupportedTitle": "Spracherkennung ist auf {language} nicht verfügbar",
@@ -6826,7 +6824,6 @@ extension TikoLocalTranslations {
         "say.session.restart": "Recommencer",
         "say.session.chooseCategory": "Choisir une catégorie",
         "say.permission.body": "Say écoute pendant que votre enfant répète chaque mot. Rien n'est jamais enregistré.",
-        "say.permission.continue": "Continuer",
         "say.permission.deniedTitle": "Activez le micro et la reconnaissance vocale dans Réglages.",
         "say.permission.openSettings": "Ouvrir Réglages",
         "say.language.unsupportedTitle": "La reconnaissance vocale n'est pas disponible en {language}",
@@ -6878,7 +6875,6 @@ extension TikoLocalTranslations {
         "say.session.restart": "Practicar otra vez",
         "say.session.chooseCategory": "Elegir una categoría",
         "say.permission.body": "Say escucha mientras tu hijo repite cada palabra. Nunca se graba nada.",
-        "say.permission.continue": "Continuar",
         "say.permission.deniedTitle": "Activa el micrófono y el reconocimiento de voz en Ajustes.",
         "say.permission.openSettings": "Abrir Ajustes",
         "say.language.unsupportedTitle": "El reconocimiento de voz no está disponible en {language}",
@@ -6921,7 +6917,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Seguinte",
         "say.practice.back": "Voltar",
         "say.practice.listening": "A escutar",
-        "say.permission.continue": "Continuar",
         "say.permission.openSettings": "Abrir definições",
         "say.edit.cardsTitle": "Cartões",
         "say.edit.cardTitle": "Título",
@@ -6949,7 +6944,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Avanti",
         "say.practice.back": "Indietro",
         "say.practice.listening": "In ascolto",
-        "say.permission.continue": "Continua",
         "say.permission.openSettings": "Apri le impostazioni",
         "say.edit.cardsTitle": "Carte",
         "say.edit.cardTitle": "Titolo",
@@ -6986,7 +6980,6 @@ extension TikoLocalTranslations {
         "say.session.restart": "Erġa' ipprattika",
         "say.session.chooseCategory": "Agħżel kategorija",
         "say.permission.body": "Say jisma' waqt li t-tifel jew tifla jirrepetu kull kelma. Qatt ma jiġi rrekordjat xejn.",
-        "say.permission.continue": "Kompli",
         "say.permission.deniedTitle": "Ixgħel il-mikrofonu u l-għarfien tat-taħdit fis-Settings.",
         "say.permission.openSettings": "Iftaħ is-Settings",
         "say.language.unsupportedTitle": "L-għarfien tat-taħdit mhux disponibbli bil-{language}",
@@ -7029,7 +7022,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "次へ",
         "say.practice.back": "戻る",
         "say.practice.listening": "聞いています",
-        "say.permission.continue": "続ける",
         "say.permission.openSettings": "設定を開く",
         "say.edit.cardsTitle": "カード",
         "say.edit.cardTitle": "タイトル",
@@ -7057,7 +7049,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "下一个",
         "say.practice.back": "返回",
         "say.practice.listening": "正在听",
-        "say.permission.continue": "继续",
         "say.permission.openSettings": "打开设置",
         "say.edit.cardsTitle": "卡片",
         "say.edit.cardTitle": "标题",
@@ -7085,7 +7076,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "다음",
         "say.practice.back": "뒤로",
         "say.practice.listening": "듣고 있습니다",
-        "say.permission.continue": "계속",
         "say.permission.openSettings": "설정 열기",
         "say.edit.cardsTitle": "카드",
         "say.edit.cardTitle": "제목",
@@ -7113,7 +7103,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "التالي",
         "say.practice.back": "رجوع",
         "say.practice.listening": "يستمع",
-        "say.permission.continue": "متابعة",
         "say.permission.openSettings": "فتح الإعدادات",
         "say.edit.cardsTitle": "البطاقات",
         "say.edit.cardTitle": "العنوان",
@@ -7141,7 +7130,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Հաջորդը",
         "say.practice.back": "Հետ",
         "say.practice.listening": "Լսում է",
-        "say.permission.continue": "Շարունակել",
         "say.permission.openSettings": "Բացել կարգավորումները",
         "say.edit.cardsTitle": "Քարտեր",
         "say.edit.cardTitle": "Վերնագիր",
@@ -7169,7 +7157,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Berikutnya",
         "say.practice.back": "Kembali",
         "say.practice.listening": "Mendengarkan",
-        "say.permission.continue": "Lanjutkan",
         "say.permission.openSettings": "Buka pengaturan",
         "say.edit.cardsTitle": "Kartu",
         "say.edit.cardTitle": "Judul",
@@ -7197,7 +7184,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Seterusnya",
         "say.practice.back": "Kembali",
         "say.practice.listening": "Mendengar",
-        "say.permission.continue": "Teruskan",
         "say.permission.openSettings": "Buka tetapan",
         "say.edit.cardsTitle": "Kad",
         "say.edit.cardTitle": "Tajuk",
@@ -7225,7 +7211,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Tiếp",
         "say.practice.back": "Quay lại",
         "say.practice.listening": "Đang nghe",
-        "say.permission.continue": "Tiếp tục",
         "say.permission.openSettings": "Mở cài đặt",
         "say.edit.cardsTitle": "Thẻ",
         "say.edit.cardTitle": "Tiêu đề",
@@ -7253,7 +7238,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Volgende",
         "say.practice.back": "Terug",
         "say.practice.listening": "Luister",
-        "say.permission.continue": "Gaan voort",
         "say.permission.openSettings": "Maak instellings oop",
         "say.edit.cardsTitle": "Kaarte",
         "say.edit.cardTitle": "Titel",
@@ -7281,7 +7265,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Nästa",
         "say.practice.back": "Tillbaka",
         "say.practice.listening": "Lyssnar",
-        "say.permission.continue": "Fortsätt",
         "say.permission.openSettings": "Öppna inställningar",
         "say.edit.cardsTitle": "Kort",
         "say.edit.cardTitle": "Titel",
@@ -7309,7 +7292,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Næste",
         "say.practice.back": "Tilbage",
         "say.practice.listening": "Lytter",
-        "say.permission.continue": "Fortsæt",
         "say.permission.openSettings": "Åbn indstillinger",
         "say.edit.cardsTitle": "Kort",
         "say.edit.cardTitle": "Titel",
@@ -7337,7 +7319,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Neste",
         "say.practice.back": "Tilbake",
         "say.practice.listening": "Lytter",
-        "say.permission.continue": "Fortsett",
         "say.permission.openSettings": "Åpne innstillinger",
         "say.edit.cardsTitle": "Kort",
         "say.edit.cardTitle": "Tittel",
@@ -7365,7 +7346,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Næsta",
         "say.practice.back": "Til baka",
         "say.practice.listening": "Hlustar",
-        "say.permission.continue": "Halda áfram",
         "say.permission.openSettings": "Opna stillingar",
         "say.edit.cardsTitle": "Kort",
         "say.edit.cardTitle": "Titill",
@@ -7393,7 +7373,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Folgjende",
         "say.practice.back": "Werom",
         "say.practice.listening": "Harket",
-        "say.permission.continue": "Trochgean",
         "say.permission.openSettings": "Ynstellings iepenje",
         "say.edit.cardsTitle": "Kaarten",
         "say.edit.cardTitle": "Titel",
@@ -7421,7 +7400,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Weider",
         "say.practice.back": "Zréck",
         "say.practice.listening": "Lauschtert",
-        "say.permission.continue": "Weidermaachen",
         "say.permission.openSettings": "Astellungen opmaachen",
         "say.edit.cardsTitle": "Kaarten",
         "say.edit.cardTitle": "Titel",
@@ -7449,7 +7427,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Següent",
         "say.practice.back": "Enrere",
         "say.practice.listening": "Escoltant",
-        "say.permission.continue": "Continua",
         "say.permission.openSettings": "Obre la configuració",
         "say.edit.cardsTitle": "Fitxes",
         "say.edit.cardTitle": "Títol",
@@ -7477,7 +7454,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Seguinte",
         "say.practice.back": "Atrás",
         "say.practice.listening": "Escoitando",
-        "say.permission.continue": "Continuar",
         "say.permission.openSettings": "Abrir axustes",
         "say.edit.cardsTitle": "Fichas",
         "say.edit.cardTitle": "Título",
@@ -7505,7 +7481,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Următor",
         "say.practice.back": "Înapoi",
         "say.practice.listening": "Ascultă",
-        "say.permission.continue": "Continuă",
         "say.permission.openSettings": "Deschide setările",
         "say.edit.cardsTitle": "Carduri",
         "say.edit.cardTitle": "Titlu",
@@ -7533,7 +7508,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Siguiente",
         "say.practice.back": "Bèk",
         "say.practice.listening": "Ta skucha",
-        "say.permission.continue": "Sigui",
         "say.permission.openSettings": "Habri konfigurashon",
         "say.edit.cardsTitle": "Kartanan",
         "say.edit.cardTitle": "Título",
@@ -7561,7 +7535,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Далее",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слушаю",
-        "say.permission.continue": "Продолжить",
         "say.permission.openSettings": "Открыть настройки",
         "say.edit.cardsTitle": "Карточки",
         "say.edit.cardTitle": "Заголовок",
@@ -7589,7 +7562,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Далі",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слухаю",
-        "say.permission.continue": "Продовжити",
         "say.permission.openSettings": "Відкрити налаштування",
         "say.edit.cardsTitle": "Картки",
         "say.edit.cardTitle": "Заголовок",
@@ -7617,7 +7589,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Далей",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слухаю",
-        "say.permission.continue": "Працягнуць",
         "say.permission.openSettings": "Адкрыць налады",
         "say.edit.cardsTitle": "Карткі",
         "say.edit.cardTitle": "Назва",
@@ -7645,7 +7616,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Dalej",
         "say.practice.back": "Wstecz",
         "say.practice.listening": "Słucham",
-        "say.permission.continue": "Kontynuuj",
         "say.permission.openSettings": "Otwórz ustawienia",
         "say.edit.cardsTitle": "Karty",
         "say.edit.cardTitle": "Tytuł",
@@ -7673,7 +7643,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Další",
         "say.practice.back": "Zpět",
         "say.practice.listening": "Poslouchám",
-        "say.permission.continue": "Pokračovat",
         "say.permission.openSettings": "Otevřít nastavení",
         "say.edit.cardsTitle": "Kartičky",
         "say.edit.cardTitle": "Název",
@@ -7701,7 +7670,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Ďalej",
         "say.practice.back": "Späť",
         "say.practice.listening": "Počúvam",
-        "say.permission.continue": "Pokračovať",
         "say.permission.openSettings": "Otvoriť nastavenia",
         "say.edit.cardsTitle": "Kartičky",
         "say.edit.cardTitle": "Názov",
@@ -7729,7 +7697,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Naprej",
         "say.practice.back": "Nazaj",
         "say.practice.listening": "Poslušam",
-        "say.permission.continue": "Nadaljuj",
         "say.permission.openSettings": "Odpri nastavitve",
         "say.edit.cardsTitle": "Kartice",
         "say.edit.cardTitle": "Naslov",
@@ -7757,7 +7724,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Sljedeće",
         "say.practice.back": "Natrag",
         "say.practice.listening": "Slušam",
-        "say.permission.continue": "Nastavi",
         "say.permission.openSettings": "Otvori postavke",
         "say.edit.cardsTitle": "Kartice",
         "say.edit.cardTitle": "Naslov",
@@ -7785,7 +7751,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Следеће",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слушам",
-        "say.permission.continue": "Настави",
         "say.permission.openSettings": "Отвори подешавања",
         "say.edit.cardsTitle": "Картице",
         "say.edit.cardTitle": "Наслов",
@@ -7813,7 +7778,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Sljedeće",
         "say.practice.back": "Natrag",
         "say.practice.listening": "Slušam",
-        "say.permission.continue": "Nastavi",
         "say.permission.openSettings": "Otvori postavke",
         "say.edit.cardsTitle": "Kartice",
         "say.edit.cardTitle": "Naslov",
@@ -7841,7 +7805,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Sljedeće",
         "say.practice.back": "Natrag",
         "say.practice.listening": "Slušam",
-        "say.permission.continue": "Nastavi",
         "say.permission.openSettings": "Otvori postavke",
         "say.edit.cardsTitle": "Kartice",
         "say.edit.cardTitle": "Naslov",
@@ -7869,7 +7832,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Напред",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слуша",
-        "say.permission.continue": "Продължи",
         "say.permission.openSettings": "Отвори настройките",
         "say.edit.cardsTitle": "Карти",
         "say.edit.cardTitle": "Заглавие",
@@ -7897,7 +7859,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Следно",
         "say.practice.back": "Назад",
         "say.practice.listening": "Слушам",
-        "say.permission.continue": "Продолжи",
         "say.permission.openSettings": "Отвори поставки",
         "say.edit.cardsTitle": "Картички",
         "say.edit.cardTitle": "Наслов",
@@ -7925,7 +7886,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Toliau",
         "say.practice.back": "Atgal",
         "say.practice.listening": "Klausosi",
-        "say.permission.continue": "Tęsti",
         "say.permission.openSettings": "Atidaryti nustatymus",
         "say.edit.cardsTitle": "Kortelės",
         "say.edit.cardTitle": "Pavadinimas",
@@ -7953,7 +7913,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Tālāk",
         "say.practice.back": "Atpakaļ",
         "say.practice.listening": "Klausās",
-        "say.permission.continue": "Turpināt",
         "say.permission.openSettings": "Atvērt iestatījumus",
         "say.edit.cardsTitle": "Kartītes",
         "say.edit.cardTitle": "Nosaukums",
@@ -7981,7 +7940,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Seuraava",
         "say.practice.back": "Takaisin",
         "say.practice.listening": "Kuuntelee",
-        "say.permission.continue": "Jatka",
         "say.permission.openSettings": "Avaa asetukset",
         "say.edit.cardsTitle": "Kortit",
         "say.edit.cardTitle": "Otsikko",
@@ -8009,7 +7967,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Järgmine",
         "say.practice.back": "Tagasi",
         "say.practice.listening": "Kuulab",
-        "say.permission.continue": "Jätka",
         "say.permission.openSettings": "Ava seaded",
         "say.edit.cardsTitle": "Kaardid",
         "say.edit.cardTitle": "Pealkiri",
@@ -8037,7 +7994,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Következő",
         "say.practice.back": "Vissza",
         "say.practice.listening": "Hallgat",
-        "say.permission.continue": "Folytatás",
         "say.permission.openSettings": "Beállítások megnyitása",
         "say.edit.cardsTitle": "Kártyák",
         "say.edit.cardTitle": "Cím",
@@ -8065,7 +8021,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Nesaf",
         "say.practice.back": "Nôl",
         "say.practice.listening": "Yn gwrando",
-        "say.permission.continue": "Parhau",
         "say.permission.openSettings": "Agor gosodiadau",
         "say.edit.cardsTitle": "Cardiau",
         "say.edit.cardTitle": "Teitl",
@@ -8093,7 +8048,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Ar aghaidh",
         "say.practice.back": "Ar ais",
         "say.practice.listening": "Ag éisteacht",
-        "say.permission.continue": "Lean ar aghaidh",
         "say.permission.openSettings": "Oscail socruithe",
         "say.edit.cardsTitle": "Cártaí",
         "say.edit.cardTitle": "Teideal",
@@ -8121,7 +8075,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "পরবর্তী",
         "say.practice.back": "পিছনে",
         "say.practice.listening": "শুনছে",
-        "say.permission.continue": "চালিয়ে যান",
         "say.permission.openSettings": "সেটিংস খুলুন",
         "say.edit.cardsTitle": "কার্ড",
         "say.edit.cardTitle": "শিরোনাম",
@@ -8149,7 +8102,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "आगे",
         "say.practice.back": "पीछे",
         "say.practice.listening": "सुन रहा है",
-        "say.permission.continue": "जारी रखें",
         "say.permission.openSettings": "सेटिंग्स खोलें",
         "say.edit.cardsTitle": "कार्ड",
         "say.edit.cardTitle": "शीर्षक",
@@ -8177,7 +8129,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Επόμενο",
         "say.practice.back": "Πίσω",
         "say.practice.listening": "Ακούει",
-        "say.permission.continue": "Συνέχεια",
         "say.permission.openSettings": "Άνοιγμα ρυθμίσεων",
         "say.edit.cardsTitle": "Κάρτες",
         "say.edit.cardTitle": "Τίτλος",
@@ -8205,7 +8156,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Tjetra",
         "say.practice.back": "Kthehu",
         "say.practice.listening": "Po dëgjon",
-        "say.permission.continue": "Vazhdo",
         "say.permission.openSettings": "Hap cilësimet",
         "say.edit.cardsTitle": "Karta",
         "say.edit.cardTitle": "Titulli",
@@ -8233,7 +8183,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "İleri",
         "say.practice.back": "Geri",
         "say.practice.listening": "Dinliyor",
-        "say.permission.continue": "Devam",
         "say.permission.openSettings": "Ayarları aç",
         "say.edit.cardsTitle": "Kartlar",
         "say.edit.cardTitle": "Başlık",
@@ -8261,7 +8210,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "Hurrengoa",
         "say.practice.back": "Atzera",
         "say.practice.listening": "Entzuten",
-        "say.permission.continue": "Jarraitu",
         "say.permission.openSettings": "Ireki ezarpenak",
         "say.edit.cardsTitle": "Txartelak",
         "say.edit.cardTitle": "Izenburua",
@@ -8289,7 +8237,6 @@ extension TikoLocalTranslations {
         "say.practice.skip": "შემდეგი",
         "say.practice.back": "უკან",
         "say.practice.listening": "უსმენს",
-        "say.permission.continue": "გაგრძელება",
         "say.permission.openSettings": "პარამეტრების გახსნა",
         "say.edit.cardsTitle": "ბარათები",
         "say.edit.cardTitle": "სათაური",
@@ -11552,6 +11499,334 @@ extension TikoLocalTranslations {
         "write.action.next": "შემდეგი",
     ]
 
+    static let globe_nl: [String: String] = [
+        "globe.mode.animals": "Dieren",
+        "globe.action.sayAgain": "Zeg het nog eens",
+        "globe.list.search": "Zoeken",
+        "common.done": "Klaar",
+        "common.settings": "Instellingen",
+    ]
+
+    static let globe_de: [String: String] = [
+        "globe.mode.animals": "Tiere",
+        "globe.action.sayAgain": "Sag es nochmal",
+        "globe.list.search": "Suchen",
+        "common.done": "Fertig",
+        "common.settings": "Einstellungen",
+    ]
+
+    static let globe_fr: [String: String] = [
+        "globe.mode.animals": "Animaux",
+        "globe.action.sayAgain": "Répète-le",
+        "globe.list.search": "Rechercher",
+        "common.done": "Terminé",
+        "common.settings": "Paramètres",
+    ]
+
+    static let globe_es: [String: String] = [
+        "globe.mode.animals": "Animales",
+        "globe.action.sayAgain": "Dilo otra vez",
+        "globe.list.search": "Buscar",
+        "common.done": "Hecho",
+        "common.settings": "Ajustes",
+    ]
+
+    static let globe_pt: [String: String] = [
+        "globe.list.search": "Procurar",
+        "common.done": "Concluído",
+        "common.settings": "Definições",
+    ]
+
+    static let globe_it: [String: String] = [
+        "globe.list.search": "Cerca",
+        "common.done": "Fatto",
+        "common.settings": "Impostazioni",
+    ]
+
+    static let globe_mt: [String: String] = [
+        "globe.mode.animals": "Annimali",
+        "globe.action.sayAgain": "Erġa' għidha",
+        "globe.list.search": "Fittex",
+        "common.done": "Lest",
+        "common.settings": "Impostazzjonijiet",
+    ]
+
+    static let globe_ja: [String: String] = [
+        "globe.list.search": "検索",
+        "common.done": "完了",
+        "common.settings": "設定",
+    ]
+
+    static let globe_zh: [String: String] = [
+        "globe.list.search": "搜索",
+        "common.done": "完成",
+        "common.settings": "设置",
+    ]
+
+    static let globe_ko: [String: String] = [
+        "globe.list.search": "검색",
+        "common.done": "완료",
+        "common.settings": "설정",
+    ]
+
+    static let globe_ar: [String: String] = [
+        "globe.list.search": "بحث",
+        "common.done": "تم",
+        "common.settings": "الإعدادات",
+    ]
+
+    static let globe_hy: [String: String] = [
+        "globe.list.search": "Որոնել",
+        "common.done": "Պատրաստ է",
+        "common.settings": "Կարգավորումներ",
+    ]
+
+    static let globe_id: [String: String] = [
+        "globe.list.search": "Cari",
+        "common.done": "Selesai",
+        "common.settings": "Pengaturan",
+    ]
+
+    static let globe_ms: [String: String] = [
+        "globe.list.search": "Cari",
+        "common.done": "Selesai",
+        "common.settings": "Tetapan",
+    ]
+
+    static let globe_vi: [String: String] = [
+        "globe.list.search": "Tìm kiếm",
+        "common.done": "Xong",
+        "common.settings": "Cài đặt",
+    ]
+
+    static let globe_af: [String: String] = [
+        "globe.list.search": "Soek",
+        "common.done": "Klaar",
+        "common.settings": "Instellings",
+    ]
+
+    static let globe_sv: [String: String] = [
+        "globe.list.search": "Sök",
+        "common.done": "Klar",
+        "common.settings": "Inställningar",
+    ]
+
+    static let globe_da: [String: String] = [
+        "globe.list.search": "Søg",
+        "common.done": "Færdig",
+        "common.settings": "Indstillinger",
+    ]
+
+    static let globe_nb: [String: String] = [
+        "globe.list.search": "Søk",
+        "common.done": "Ferdig",
+        "common.settings": "Innstillinger",
+    ]
+
+    static let globe_is: [String: String] = [
+        "globe.list.search": "Leita",
+        "common.done": "Búið",
+        "common.settings": "Stillingar",
+    ]
+
+    static let globe_fy: [String: String] = [
+        "globe.list.search": "Sykje",
+        "common.done": "Klear",
+        "common.settings": "Ynstellings",
+    ]
+
+    static let globe_lb: [String: String] = [
+        "globe.list.search": "Sichen",
+        "common.done": "Fäerdeg",
+        "common.settings": "Astellungen",
+    ]
+
+    static let globe_ca: [String: String] = [
+        "globe.list.search": "Cerca",
+        "common.done": "Fet",
+        "common.settings": "Configuració",
+    ]
+
+    static let globe_gl: [String: String] = [
+        "globe.list.search": "Buscar",
+        "common.done": "Feito",
+        "common.settings": "Axustes",
+    ]
+
+    static let globe_ro: [String: String] = [
+        "globe.list.search": "Caută",
+        "common.done": "Gata",
+        "common.settings": "Setări",
+    ]
+
+    static let globe_pap: [String: String] = [
+        "globe.list.search": "Buska",
+        "common.done": "Klar",
+        "common.settings": "Konfigurashon",
+    ]
+
+    static let globe_ru: [String: String] = [
+        "globe.list.search": "Поиск",
+        "common.done": "Готово",
+        "common.settings": "Настройки",
+    ]
+
+    static let globe_uk: [String: String] = [
+        "globe.list.search": "Пошук",
+        "common.done": "Готово",
+        "common.settings": "Налаштування",
+    ]
+
+    static let globe_be: [String: String] = [
+        "globe.list.search": "Пошук",
+        "common.done": "Гатова",
+        "common.settings": "Налады",
+    ]
+
+    static let globe_pl: [String: String] = [
+        "globe.list.search": "Szukaj",
+        "common.done": "Gotowe",
+        "common.settings": "Ustawienia",
+    ]
+
+    static let globe_cs: [String: String] = [
+        "globe.list.search": "Hledat",
+        "common.done": "Hotovo",
+        "common.settings": "Nastavení",
+    ]
+
+    static let globe_sk: [String: String] = [
+        "globe.list.search": "Hľadať",
+        "common.done": "Hotovo",
+        "common.settings": "Nastavenia",
+    ]
+
+    static let globe_sl: [String: String] = [
+        "globe.list.search": "Iskanje",
+        "common.done": "Končano",
+        "common.settings": "Nastavitve",
+    ]
+
+    static let globe_hr: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_sr: [String: String] = [
+        "globe.list.search": "Тражи",
+        "common.done": "Готово",
+        "common.settings": "Подешавања",
+    ]
+
+    static let globe_bs: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_cnr: [String: String] = [
+        "globe.list.search": "Traži",
+        "common.done": "Gotovo",
+        "common.settings": "Postavke",
+    ]
+
+    static let globe_bg: [String: String] = [
+        "globe.list.search": "Търсене",
+        "common.done": "Готово",
+        "common.settings": "Настройки",
+    ]
+
+    static let globe_mk: [String: String] = [
+        "globe.list.search": "Барај",
+        "common.done": "Готово",
+        "common.settings": "Поставки",
+    ]
+
+    static let globe_lt: [String: String] = [
+        "globe.list.search": "Paieška",
+        "common.done": "Baigta",
+        "common.settings": "Nustatymai",
+    ]
+
+    static let globe_lv: [String: String] = [
+        "globe.list.search": "Meklēt",
+        "common.done": "Gatavs",
+        "common.settings": "Iestatījumi",
+    ]
+
+    static let globe_fi: [String: String] = [
+        "globe.list.search": "Etsi",
+        "common.done": "Valmis",
+        "common.settings": "Asetukset",
+    ]
+
+    static let globe_et: [String: String] = [
+        "globe.list.search": "Otsi",
+        "common.done": "Valmis",
+        "common.settings": "Seaded",
+    ]
+
+    static let globe_hu: [String: String] = [
+        "globe.list.search": "Keresés",
+        "common.done": "Kész",
+        "common.settings": "Beállítások",
+    ]
+
+    static let globe_cy: [String: String] = [
+        "globe.list.search": "Chwilio",
+        "common.done": "Wedi gorffen",
+        "common.settings": "Gosodiadau",
+    ]
+
+    static let globe_ga: [String: String] = [
+        "globe.list.search": "Cuardaigh",
+        "common.done": "Déanta",
+        "common.settings": "Socruithe",
+    ]
+
+    static let globe_bn: [String: String] = [
+        "globe.list.search": "খুঁজুন",
+        "common.done": "সম্পন্ন",
+        "common.settings": "সেটিংস",
+    ]
+
+    static let globe_hi: [String: String] = [
+        "globe.list.search": "खोजें",
+        "common.done": "पूरा हुआ",
+        "common.settings": "सेटिंग्स",
+    ]
+
+    static let globe_el: [String: String] = [
+        "globe.list.search": "Αναζήτηση",
+        "common.done": "Έτοιμο",
+        "common.settings": "Ρυθμίσεις",
+    ]
+
+    static let globe_sq: [String: String] = [
+        "globe.list.search": "Kërko",
+        "common.done": "U krye",
+        "common.settings": "Cilësimet",
+    ]
+
+    static let globe_tr: [String: String] = [
+        "globe.list.search": "Ara",
+        "common.done": "Tamam",
+        "common.settings": "Ayarlar",
+    ]
+
+    static let globe_eu: [String: String] = [
+        "globe.list.search": "Bilatu",
+        "common.done": "Eginda",
+        "common.settings": "Ezarpenak",
+    ]
+
+    static let globe_ka: [String: String] = [
+        "globe.list.search": "ძებნა",
+        "common.done": "დასრულდა",
+        "common.settings": "პარამეტრები",
+    ]
+
     /// The generated bundles for one app, in locale order.
     static func generatedBundles(for app: TikoAppKey) -> [(String, [String: String])] {
         switch app {
@@ -11566,6 +11841,7 @@ extension TikoLocalTranslations {
         case .sum: return [("nl", sum_nl), ("de", sum_de), ("fr", sum_fr), ("es", sum_es), ("pt", sum_pt), ("it", sum_it), ("mt", sum_mt), ("ja", sum_ja), ("zh", sum_zh), ("ko", sum_ko), ("ar", sum_ar), ("hy", sum_hy), ("id", sum_id), ("ms", sum_ms), ("vi", sum_vi), ("af", sum_af), ("sv", sum_sv), ("da", sum_da), ("nb", sum_nb), ("is", sum_is), ("fy", sum_fy), ("lb", sum_lb), ("ca", sum_ca), ("gl", sum_gl), ("ro", sum_ro), ("pap", sum_pap), ("ru", sum_ru), ("uk", sum_uk), ("be", sum_be), ("pl", sum_pl), ("cs", sum_cs), ("sk", sum_sk), ("sl", sum_sl), ("hr", sum_hr), ("sr", sum_sr), ("bs", sum_bs), ("cnr", sum_cnr), ("bg", sum_bg), ("mk", sum_mk), ("lt", sum_lt), ("lv", sum_lv), ("fi", sum_fi), ("et", sum_et), ("hu", sum_hu), ("cy", sum_cy), ("ga", sum_ga), ("bn", sum_bn), ("hi", sum_hi), ("el", sum_el), ("sq", sum_sq), ("tr", sum_tr), ("eu", sum_eu), ("ka", sum_ka)]
         case .first: return [("nl", first_nl), ("de", first_de), ("fr", first_fr), ("es", first_es), ("pt", first_pt), ("it", first_it), ("mt", first_mt), ("ja", first_ja), ("zh", first_zh), ("ko", first_ko), ("ar", first_ar), ("hy", first_hy), ("id", first_id), ("ms", first_ms), ("vi", first_vi), ("af", first_af), ("sv", first_sv), ("da", first_da), ("nb", first_nb), ("is", first_is), ("fy", first_fy), ("lb", first_lb), ("ca", first_ca), ("gl", first_gl), ("ro", first_ro), ("pap", first_pap), ("ru", first_ru), ("uk", first_uk), ("be", first_be), ("pl", first_pl), ("cs", first_cs), ("sk", first_sk), ("sl", first_sl), ("hr", first_hr), ("sr", first_sr), ("bs", first_bs), ("cnr", first_cnr), ("bg", first_bg), ("mk", first_mk), ("lt", first_lt), ("lv", first_lv), ("fi", first_fi), ("et", first_et), ("hu", first_hu), ("cy", first_cy), ("ga", first_ga), ("bn", first_bn), ("hi", first_hi), ("el", first_el), ("sq", first_sq), ("tr", first_tr), ("eu", first_eu), ("ka", first_ka)]
         case .write: return [("nl", write_nl), ("de", write_de), ("fr", write_fr), ("es", write_es), ("pt", write_pt), ("it", write_it), ("mt", write_mt), ("ja", write_ja), ("zh", write_zh), ("ko", write_ko), ("ar", write_ar), ("hy", write_hy), ("id", write_id), ("ms", write_ms), ("vi", write_vi), ("af", write_af), ("sv", write_sv), ("da", write_da), ("nb", write_nb), ("is", write_is), ("fy", write_fy), ("lb", write_lb), ("ca", write_ca), ("gl", write_gl), ("ro", write_ro), ("pap", write_pap), ("ru", write_ru), ("uk", write_uk), ("be", write_be), ("pl", write_pl), ("cs", write_cs), ("sk", write_sk), ("sl", write_sl), ("hr", write_hr), ("sr", write_sr), ("bs", write_bs), ("cnr", write_cnr), ("bg", write_bg), ("mk", write_mk), ("lt", write_lt), ("lv", write_lv), ("fi", write_fi), ("et", write_et), ("hu", write_hu), ("cy", write_cy), ("ga", write_ga), ("bn", write_bn), ("hi", write_hi), ("el", write_el), ("sq", write_sq), ("tr", write_tr), ("eu", write_eu), ("ka", write_ka)]
+        case .globe: return [("nl", globe_nl), ("de", globe_de), ("fr", globe_fr), ("es", globe_es), ("pt", globe_pt), ("it", globe_it), ("mt", globe_mt), ("ja", globe_ja), ("zh", globe_zh), ("ko", globe_ko), ("ar", globe_ar), ("hy", globe_hy), ("id", globe_id), ("ms", globe_ms), ("vi", globe_vi), ("af", globe_af), ("sv", globe_sv), ("da", globe_da), ("nb", globe_nb), ("is", globe_is), ("fy", globe_fy), ("lb", globe_lb), ("ca", globe_ca), ("gl", globe_gl), ("ro", globe_ro), ("pap", globe_pap), ("ru", globe_ru), ("uk", globe_uk), ("be", globe_be), ("pl", globe_pl), ("cs", globe_cs), ("sk", globe_sk), ("sl", globe_sl), ("hr", globe_hr), ("sr", globe_sr), ("bs", globe_bs), ("cnr", globe_cnr), ("bg", globe_bg), ("mk", globe_mk), ("lt", globe_lt), ("lv", globe_lv), ("fi", globe_fi), ("et", globe_et), ("hu", globe_hu), ("cy", globe_cy), ("ga", globe_ga), ("bn", globe_bn), ("hi", globe_hi), ("el", globe_el), ("sq", globe_sq), ("tr", globe_tr), ("eu", globe_eu), ("ka", globe_ka)]
         }
     }
 }

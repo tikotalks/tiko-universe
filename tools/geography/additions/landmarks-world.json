@@ -1,0 +1,156 @@
+{
+  "USA": [
+    { "name": "Statue of Liberty", "lat": 40.6892, "lon": -74.0445, "importance": 2, "glyph": "🗽" },
+    { "name": "Golden Gate Bridge", "lat": 37.8199, "lon": -122.4783, "importance": 2, "glyph": "🌉" },
+    { "name": "Times Square", "lat": 40.7580, "lon": -73.9855, "importance": 4, "glyph": "🌃" },
+    { "name": "Empire State Building", "lat": 40.7484, "lon": -73.9857, "importance": 3, "glyph": "🏙️" },
+    { "name": "Niagara Falls", "lat": 43.0828, "lon": -79.0742, "importance": 3, "glyph": "💦" },
+    { "name": "Monument Valley", "lat": 36.9980, "lon": -110.0985, "importance": 4, "glyph": "🏜️" },
+    { "name": "Alcatraz", "lat": 37.8270, "lon": -122.4230, "importance": 5, "glyph": "🏝️" },
+    { "name": "Space Needle", "lat": 47.6205, "lon": -122.3493, "importance": 5, "glyph": "🗼" }
+  ],
+  "CAN": [
+    { "name": "CN Tower", "lat": 43.6426, "lon": -79.3871, "importance": 3, "glyph": "🗼" },
+    { "name": "Lake Louise", "lat": 51.4254, "lon": -116.1773, "importance": 3, "glyph": "🏞️" },
+    { "name": "Old Quebec", "lat": 46.8123, "lon": -71.2145, "importance": 4, "glyph": "🏘️" },
+    { "name": "Bay of Fundy", "lat": 45.2000, "lon": -65.0000, "importance": 4, "glyph": "🌊" },
+    { "name": "Parliament Hill", "lat": 45.4236, "lon": -75.7009, "importance": 4, "glyph": "🏛️" },
+    { "name": "Moraine Lake", "lat": 51.3217, "lon": -116.1860, "importance": 5, "glyph": "🏞️" }
+  ],
+  "MEX": [
+    { "name": "Teotihuacan", "lat": 19.6925, "lon": -98.8438, "importance": 3, "glyph": "🔺" },
+    { "name": "Tulum", "lat": 20.2144, "lon": -87.4291, "importance": 4, "glyph": "🏺" },
+    { "name": "Cenote Ik Kil", "lat": 20.6600, "lon": -88.5686, "importance": 5, "glyph": "💧" },
+    { "name": "Copper Canyon", "lat": 27.3000, "lon": -107.7000, "importance": 4, "glyph": "🏞️" },
+    { "name": "Monte Albán", "lat": 17.0439, "lon": -96.7678, "importance": 5, "glyph": "🏺" },
+    { "name": "Angel of Independence", "lat": 19.4270, "lon": -99.1677, "importance": 5, "glyph": "🗽" }
+  ],
+  "BRA": [
+    { "name": "Copacabana", "lat": -22.9711, "lon": -43.1822, "importance": 4, "glyph": "🏖️" },
+    { "name": "Amazon River", "lat": -3.1190, "lon": -60.0217, "importance": 2, "glyph": "🏞️" },
+    { "name": "Pantanal", "lat": -17.6000, "lon": -57.0000, "importance": 3, "glyph": "🐊" },
+    { "name": "Lençóis Maranhenses", "lat": -2.4860, "lon": -43.1280, "importance": 4, "glyph": "🏜️" },
+    { "name": "Ouro Preto", "lat": -20.3856, "lon": -43.5035, "importance": 5, "glyph": "🏘️" },
+    { "name": "Maracanã", "lat": -22.9121, "lon": -43.2302, "importance": 5, "glyph": "🏟️" }
+  ],
+  "ARG": [
+    { "name": "Perito Moreno Glacier", "lat": -50.4967, "lon": -73.1377, "importance": 3, "glyph": "🧊" },
+    { "name": "Obelisco", "lat": -34.6037, "lon": -58.3816, "importance": 4, "glyph": "🗼" },
+    { "name": "Fitz Roy", "lat": -49.2717, "lon": -73.0439, "importance": 4, "glyph": "🏔️" },
+    { "name": "Quebrada de Humahuaca", "lat": -23.2000, "lon": -65.3500, "importance": 5, "glyph": "🏜️" },
+    { "name": "Valdés Peninsula", "lat": -42.5000, "lon": -63.9000, "importance": 4, "glyph": "🐋" },
+    { "name": "Caminito", "lat": -34.6395, "lon": -58.3626, "importance": 6, "glyph": "🎨" }
+  ],
+  "PER": [
+    { "name": "Machu Picchu", "lat": -13.1631, "lon": -72.5450, "importance": 2, "glyph": "🏔️" },
+    { "name": "Nazca Lines", "lat": -14.7390, "lon": -75.1300, "importance": 3, "glyph": "🛸" },
+    { "name": "Lake Titicaca", "lat": -15.7500, "lon": -69.5000, "importance": 3, "glyph": "🏞️" },
+    { "name": "Rainbow Mountain", "lat": -13.8697, "lon": -71.3030, "importance": 5, "glyph": "🌈" },
+    { "name": "Colca Canyon", "lat": -15.6100, "lon": -71.8600, "importance": 5, "glyph": "🏞️" },
+    { "name": "Sacsayhuamán", "lat": -13.5089, "lon": -71.9819, "importance": 5, "glyph": "🏺" }
+  ],
+  "CHN": [
+    { "name": "Terracotta Army", "lat": 34.3841, "lon": 109.2785, "importance": 2, "glyph": "🗿" },
+    { "name": "Li River", "lat": 24.9500, "lon": 110.4500, "importance": 4, "glyph": "🏞️" },
+    { "name": "Zhangjiajie", "lat": 29.3150, "lon": 110.4350, "importance": 4, "glyph": "⛰️" },
+    { "name": "Summer Palace", "lat": 39.9990, "lon": 116.2755, "importance": 4, "glyph": "🏯" },
+    { "name": "Temple of Heaven", "lat": 39.8822, "lon": 116.4066, "importance": 4, "glyph": "🏯" },
+    { "name": "Leshan Giant Buddha", "lat": 29.5450, "lon": 103.7717, "importance": 4, "glyph": "🗿" }
+  ],
+  "IND": [
+    { "name": "Taj Mahal", "lat": 27.1751, "lon": 78.0421, "importance": 1, "glyph": "🕌" },
+    { "name": "Amber Fort", "lat": 26.9855, "lon": 75.8513, "importance": 4, "glyph": "🏰" },
+    { "name": "Varanasi Ghats", "lat": 25.3109, "lon": 83.0104, "importance": 4, "glyph": "🛕" },
+    { "name": "Gateway of India", "lat": 18.9220, "lon": 72.8347, "importance": 4, "glyph": "🏛️" },
+    { "name": "Konark Sun Temple", "lat": 19.8876, "lon": 86.0945, "importance": 5, "glyph": "🛕" },
+    { "name": "Backwaters of Kerala", "lat": 9.5000, "lon": 76.4000, "importance": 5, "glyph": "🛶" }
+  ],
+  "JPN": [
+    { "name": "Mount Fuji", "lat": 35.3606, "lon": 138.7274, "importance": 2, "glyph": "🗻" },
+    { "name": "Senso-ji", "lat": 35.7148, "lon": 139.7967, "importance": 4, "glyph": "⛩️" },
+    { "name": "Himeji Castle", "lat": 34.8394, "lon": 134.6939, "importance": 3, "glyph": "🏯" },
+    { "name": "Todai-ji", "lat": 34.6890, "lon": 135.8398, "importance": 4, "glyph": "🛕" },
+    { "name": "Shibuya Crossing", "lat": 35.6595, "lon": 139.7004, "importance": 5, "glyph": "🚦" },
+    { "name": "Hiroshima Peace Memorial", "lat": 34.3955, "lon": 132.4536, "importance": 3, "glyph": "🕊️" }
+  ],
+  "EGY": [
+    { "name": "Valley of the Kings", "lat": 25.7402, "lon": 32.6014, "importance": 3, "glyph": "⚰️" },
+    { "name": "Luxor Temple", "lat": 25.6997, "lon": 32.6392, "importance": 3, "glyph": "🏛️" },
+    { "name": "Abu Simbel", "lat": 22.3372, "lon": 31.6258, "importance": 3, "glyph": "🗿" },
+    { "name": "Egyptian Museum", "lat": 30.0478, "lon": 31.2336, "importance": 4, "glyph": "🏺" },
+    { "name": "Suez Canal", "lat": 30.5852, "lon": 32.2654, "importance": 4, "glyph": "🚢" },
+    { "name": "Siwa Oasis", "lat": 29.2032, "lon": 25.5195, "importance": 5, "glyph": "🌴" }
+  ],
+  "ZAF": [
+    { "name": "Robben Island", "lat": -33.8067, "lon": 18.3667, "importance": 3, "glyph": "🏝️" },
+    { "name": "Cape of Good Hope", "lat": -34.3568, "lon": 18.4740, "importance": 3, "glyph": "🌊" },
+    { "name": "Kruger National Park", "lat": -23.9884, "lon": 31.5547, "importance": 3, "glyph": "🦁" },
+    { "name": "Blyde River Canyon", "lat": -24.5900, "lon": 30.8000, "importance": 5, "glyph": "🏞️" },
+    { "name": "Drakensberg", "lat": -29.4000, "lon": 29.4000, "importance": 4, "glyph": "🏔️" },
+    { "name": "Boulders Beach", "lat": -34.1975, "lon": 18.4508, "importance": 5, "glyph": "🐧" }
+  ],
+  "AUS": [
+    { "name": "Sydney Opera House", "lat": -33.8568, "lon": 151.2153, "importance": 2, "glyph": "🎭" },
+    { "name": "Sydney Harbour Bridge", "lat": -33.8523, "lon": 151.2108, "importance": 3, "glyph": "🌉" },
+    { "name": "Twelve Apostles", "lat": -38.6650, "lon": 143.1050, "importance": 4, "glyph": "🪨" },
+    { "name": "Blue Mountains", "lat": -33.7000, "lon": 150.3000, "importance": 4, "glyph": "⛰️" },
+    { "name": "Kakadu National Park", "lat": -12.8375, "lon": 132.8380, "importance": 4, "glyph": "🐊" },
+    { "name": "Bondi Beach", "lat": -33.8908, "lon": 151.2743, "importance": 5, "glyph": "🏖️" }
+  ],
+  "NZL": [
+    { "name": "Milford Sound", "lat": -44.6414, "lon": 167.8974, "importance": 3, "glyph": "🏞️" },
+    { "name": "Hobbiton", "lat": -37.8721, "lon": 175.6829, "importance": 4, "glyph": "🏡" },
+    { "name": "Sky Tower", "lat": -36.8485, "lon": 174.7622, "importance": 4, "glyph": "🗼" },
+    { "name": "Tongariro Crossing", "lat": -39.1333, "lon": 175.6500, "importance": 4, "glyph": "🌋" },
+    { "name": "Rotorua geysers", "lat": -38.1368, "lon": 176.2497, "importance": 4, "glyph": "♨️" },
+    { "name": "Franz Josef Glacier", "lat": -43.4667, "lon": 170.1833, "importance": 5, "glyph": "🧊" }
+  ],
+  "RUS": [
+    { "name": "Red Square", "lat": 55.7539, "lon": 37.6208, "importance": 2, "glyph": "🏛️" },
+    { "name": "Hermitage Museum", "lat": 59.9398, "lon": 30.3146, "importance": 3, "glyph": "🖼️" },
+    { "name": "Lake Baikal", "lat": 53.5587, "lon": 108.1650, "importance": 3, "glyph": "🏞️" },
+    { "name": "Trans-Siberian Railway", "lat": 56.0000, "lon": 92.8700, "importance": 4, "glyph": "🚂" },
+    { "name": "Church of the Savior on Blood", "lat": 59.9400, "lon": 30.3286, "importance": 4, "glyph": "⛪" },
+    { "name": "Valley of Geysers", "lat": 54.4333, "lon": 160.1400, "importance": 5, "glyph": "♨️" }
+  ],
+  "TUR": [
+    { "name": "Hagia Sophia", "lat": 41.0086, "lon": 28.9802, "importance": 2, "glyph": "🕌" },
+    { "name": "Cappadocia", "lat": 38.6431, "lon": 34.8289, "importance": 3, "glyph": "🎈" },
+    { "name": "Pamukkale", "lat": 37.9203, "lon": 29.1206, "importance": 3, "glyph": "♨️" },
+    { "name": "Blue Mosque", "lat": 41.0054, "lon": 28.9768, "importance": 3, "glyph": "🕌" },
+    { "name": "Topkapi Palace", "lat": 41.0115, "lon": 28.9834, "importance": 4, "glyph": "🏰" },
+    { "name": "Mount Nemrut", "lat": 37.9806, "lon": 38.7411, "importance": 4, "glyph": "🗿" }
+  ],
+  "THA": [
+    { "name": "Wat Pho", "lat": 13.7465, "lon": 100.4927, "importance": 4, "glyph": "🛕" },
+    { "name": "Ayutthaya", "lat": 14.3532, "lon": 100.5689, "importance": 4, "glyph": "🏺" },
+    { "name": "Phi Phi Islands", "lat": 7.7407, "lon": 98.7784, "importance": 4, "glyph": "🏝️" },
+    { "name": "White Temple", "lat": 19.8242, "lon": 99.7631, "importance": 4, "glyph": "🛕" },
+    { "name": "Railay Beach", "lat": 8.0110, "lon": 98.8378, "importance": 5, "glyph": "🏖️" },
+    { "name": "Sukhothai", "lat": 17.0206, "lon": 99.7036, "importance": 5, "glyph": "🏺" }
+  ],
+  "IDN": [
+    { "name": "Borobudur", "lat": -7.6079, "lon": 110.2038, "importance": 3, "glyph": "🛕" },
+    { "name": "Mount Bromo", "lat": -7.9425, "lon": 112.9530, "importance": 3, "glyph": "🌋" },
+    { "name": "Komodo National Park", "lat": -8.5500, "lon": 119.4500, "importance": 3, "glyph": "🦎" },
+    { "name": "Tanah Lot", "lat": -8.6212, "lon": 115.0868, "importance": 4, "glyph": "🛕" },
+    { "name": "Raja Ampat", "lat": -0.5000, "lon": 130.5000, "importance": 4, "glyph": "🐠" },
+    { "name": "Lake Toba", "lat": 2.6845, "lon": 98.8756, "importance": 4, "glyph": "🏞️" }
+  ],
+  "KEN": [
+    { "name": "Maasai Mara", "lat": -1.4061, "lon": 35.0080, "importance": 2, "glyph": "🦓" },
+    { "name": "Mount Kenya", "lat": -0.1521, "lon": 37.3084, "importance": 3, "glyph": "🏔️" },
+    { "name": "Lake Nakuru", "lat": -0.3667, "lon": 36.0833, "importance": 4, "glyph": "🦩" },
+    { "name": "Amboseli", "lat": -2.6527, "lon": 37.2606, "importance": 4, "glyph": "🐘" },
+    { "name": "Diani Beach", "lat": -4.2800, "lon": 39.5900, "importance": 5, "glyph": "🏖️" },
+    { "name": "Great Rift Valley", "lat": -0.5000, "lon": 36.0000, "importance": 4, "glyph": "🏞️" }
+  ],
+  "TZA": [
+    { "name": "Mount Kilimanjaro", "lat": -3.0674, "lon": 37.3556, "importance": 2, "glyph": "🏔️" },
+    { "name": "Serengeti", "lat": -2.3333, "lon": 34.8333, "importance": 2, "glyph": "🦁" },
+    { "name": "Ngorongoro Crater", "lat": -3.2000, "lon": 35.5000, "importance": 3, "glyph": "🌋" },
+    { "name": "Stone Town", "lat": -6.1620, "lon": 39.1892, "importance": 4, "glyph": "🏘️" },
+    { "name": "Olduvai Gorge", "lat": -2.9930, "lon": 35.3500, "importance": 5, "glyph": "🦴" },
+    { "name": "Selous Game Reserve", "lat": -8.5000, "lon": 37.5000, "importance": 5, "glyph": "🐘" }
+  ]
+}

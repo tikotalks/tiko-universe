@@ -1,0 +1,8 @@
+{
+  "name": "@tiko/geography",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Generated canonical geography: country records and globe geometry shared by Tiko Globe, Flags, Map and Map Puzzle.",
+  "license": "MIT"
+}

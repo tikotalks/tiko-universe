@@ -25,7 +25,10 @@ final class SumPathStoreTests: XCTestCase {
     func testStartsWithNoPathsBecausePresetsCoverTheLadder() {
         let store = makeStore()
         XCTAssertTrue(store.allPaths(language: "en").isEmpty)
-        XCTAssertEqual(SumCatalog.presets.map(\.maxNumber), [10, 20, 50, 100])
+        XCTAssertEqual(SumCatalog.ranges.map(\.maxNumber), [5, 10, 20, 50, 100])
+        XCTAssertEqual(SumCatalog.bands.map(\.minNumber), [10, 20, 50])
+        XCTAssertEqual(SumCatalog.families.count, 9, "the 2s through the 10s")
+        XCTAssertEqual(Set(SumCatalog.presets.map(\.id)).count, SumCatalog.presets.count, "ids must be unique")
     }
 
     func testAddEditAndDeletePath() {

@@ -1,0 +1,130 @@
+{
+  "ITA": [
+    { "name": "Pantheon", "lat": 41.8986, "lon": 12.4769, "importance": 3, "glyph": "🏛️" },
+    { "name": "Roman Forum", "lat": 41.8925, "lon": 12.4853, "importance": 3, "glyph": "🏛️" },
+    { "name": "Vatican Museums", "lat": 41.9065, "lon": 12.4536, "importance": 3, "glyph": "🖼️" },
+    { "name": "Spanish Steps", "lat": 41.9058, "lon": 12.4823, "importance": 5, "glyph": "🪜" },
+    { "name": "Castel Sant'Angelo", "lat": 41.9031, "lon": 12.4663, "importance": 5, "glyph": "🏰" },
+    { "name": "Circus Maximus", "lat": 41.8860, "lon": 12.4853, "importance": 6, "glyph": "🏟️" },
+    { "name": "Pompeii", "lat": 40.7497, "lon": 14.4869, "importance": 3, "glyph": "🏺" },
+    { "name": "Grand Canal", "lat": 45.4361, "lon": 12.3330, "importance": 4, "glyph": "🛶" },
+    { "name": "Milan Cathedral", "lat": 45.4642, "lon": 9.1919, "importance": 4, "glyph": "⛪" },
+    { "name": "Colosseum Arch of Constantine", "lat": 41.8898, "lon": 12.4906, "importance": 6, "glyph": "🏛️" }
+  ],
+  "FRA": [
+    { "name": "Champs-Élysées", "lat": 48.8698, "lon": 2.3078, "importance": 4, "glyph": "🌳" },
+    { "name": "Musée d'Orsay", "lat": 48.8600, "lon": 2.3266, "importance": 5, "glyph": "🖼️" },
+    { "name": "Sainte-Chapelle", "lat": 48.8554, "lon": 2.3450, "importance": 5, "glyph": "⛪" },
+    { "name": "Mont Blanc", "lat": 45.8326, "lon": 6.8652, "importance": 3, "glyph": "🏔️" },
+    { "name": "Carcassonne", "lat": 43.2061, "lon": 2.3639, "importance": 4, "glyph": "🏰" },
+    { "name": "Chambord", "lat": 47.6161, "lon": 1.5170, "importance": 5, "glyph": "🏰" },
+    { "name": "Verdon Gorge", "lat": 43.7494, "lon": 6.3269, "importance": 6, "glyph": "🏞️" }
+  ],
+  "GBR": [
+    { "name": "Tower of London", "lat": 51.5081, "lon": -0.0759, "importance": 3, "glyph": "🏰" },
+    { "name": "Westminster Abbey", "lat": 51.4994, "lon": -0.1273, "importance": 3, "glyph": "⛪" },
+    { "name": "St Paul's Cathedral", "lat": 51.5138, "lon": -0.0984, "importance": 4, "glyph": "⛪" },
+    { "name": "Hadrian's Wall", "lat": 55.0246, "lon": -2.2900, "importance": 4, "glyph": "🧱" },
+    { "name": "Loch Ness", "lat": 57.3229, "lon": -4.4244, "importance": 3, "glyph": "🐉" },
+    { "name": "Windsor Castle", "lat": 51.4839, "lon": -0.6044, "importance": 5, "glyph": "🏰" },
+    { "name": "Snowdon", "lat": 53.0685, "lon": -4.0763, "importance": 5, "glyph": "🏔️" }
+  ],
+  "ESP": [
+    { "name": "Prado Museum", "lat": 40.4138, "lon": -3.6921, "importance": 4, "glyph": "🖼️" },
+    { "name": "Mezquita of Córdoba", "lat": 37.8790, "lon": -4.7794, "importance": 4, "glyph": "🕌" },
+    { "name": "Santiago de Compostela Cathedral", "lat": 42.8806, "lon": -8.5446, "importance": 4, "glyph": "⛪" },
+    { "name": "Guggenheim Bilbao", "lat": 43.2687, "lon": -2.9340, "importance": 5, "glyph": "🖼️" },
+    { "name": "Segovia Aqueduct", "lat": 40.9481, "lon": -4.1184, "importance": 5, "glyph": "🌉" },
+    { "name": "Royal Palace of Madrid", "lat": 40.4180, "lon": -3.7143, "importance": 5, "glyph": "🏰" }
+  ],
+  "DEU": [
+    { "name": "Reichstag", "lat": 52.5186, "lon": 13.3761, "importance": 4, "glyph": "🏛️" },
+    { "name": "Berlin Wall Memorial", "lat": 52.5351, "lon": 13.3901, "importance": 4, "glyph": "🧱" },
+    { "name": "Zugspitze", "lat": 47.4211, "lon": 10.9853, "importance": 4, "glyph": "🏔️" },
+    { "name": "Heidelberg Castle", "lat": 49.4106, "lon": 8.7154, "importance": 5, "glyph": "🏰" },
+    { "name": "Black Forest", "lat": 48.2000, "lon": 8.2000, "importance": 4, "glyph": "🌲" },
+    { "name": "Museum Island", "lat": 52.5169, "lon": 13.4019, "importance": 5, "glyph": "🖼️" },
+    { "name": "Rhine Valley", "lat": 50.1500, "lon": 7.7000, "importance": 5, "glyph": "🏞️" }
+  ],
+  "NLD": [
+    { "name": "Keukenhof", "lat": 52.2697, "lon": 4.5461, "importance": 4, "glyph": "🌷" },
+    { "name": "Van Gogh Museum", "lat": 52.3584, "lon": 4.8811, "importance": 4, "glyph": "🖼️" },
+    { "name": "Zaanse Schans", "lat": 52.4746, "lon": 4.8175, "importance": 5, "glyph": "🌬️" },
+    { "name": "Afsluitdijk", "lat": 53.0680, "lon": 5.1600, "importance": 5, "glyph": "🌊" },
+    { "name": "Peace Palace", "lat": 52.0866, "lon": 4.2955, "importance": 5, "glyph": "🏛️" },
+    { "name": "Wadden Sea", "lat": 53.4000, "lon": 5.6000, "importance": 4, "glyph": "🐚" },
+    { "name": "Binnenhof", "lat": 52.0799, "lon": 4.3113, "importance": 5, "glyph": "🏛️" }
+  ],
+  "GRC": [
+    { "name": "Delphi", "lat": 38.4824, "lon": 22.5010, "importance": 3, "glyph": "🏛️" },
+    { "name": "Knossos", "lat": 35.2980, "lon": 25.1630, "importance": 4, "glyph": "🏺" },
+    { "name": "Santorini caldera", "lat": 36.4050, "lon": 25.4350, "importance": 3, "glyph": "🌋" },
+    { "name": "Temple of Poseidon", "lat": 37.6503, "lon": 24.0253, "importance": 5, "glyph": "🏛️" },
+    { "name": "Olympia", "lat": 37.6383, "lon": 21.6300, "importance": 4, "glyph": "🏛️" },
+    { "name": "Mount Athos", "lat": 40.1572, "lon": 24.3266, "importance": 5, "glyph": "⛪" }
+  ],
+  "PRT": [
+    { "name": "Tower of Belém", "lat": 38.6916, "lon": -9.2160, "importance": 3, "glyph": "🗼" },
+    { "name": "Pena Palace", "lat": 38.7876, "lon": -9.3904, "importance": 3, "glyph": "🏰" },
+    { "name": "Douro Valley", "lat": 41.1000, "lon": -7.7900, "importance": 4, "glyph": "🍇" },
+    { "name": "Cabo da Roca", "lat": 38.7805, "lon": -9.4989, "importance": 5, "glyph": "🌊" },
+    { "name": "Bom Jesus do Monte", "lat": 41.5545, "lon": -8.3776, "importance": 5, "glyph": "⛪" },
+    { "name": "Óbidos", "lat": 39.3606, "lon": -9.1573, "importance": 6, "glyph": "🏰" }
+  ],
+  "CHE": [
+    { "name": "Jungfraujoch", "lat": 46.5474, "lon": 7.9806, "importance": 3, "glyph": "🏔️" },
+    { "name": "Lake Geneva", "lat": 46.4500, "lon": 6.5000, "importance": 4, "glyph": "🏞️" },
+    { "name": "Chillon Castle", "lat": 46.4142, "lon": 6.9275, "importance": 5, "glyph": "🏰" },
+    { "name": "Kapellbrücke", "lat": 47.0516, "lon": 8.3076, "importance": 5, "glyph": "🌉" },
+    { "name": "Aletsch Glacier", "lat": 46.5008, "lon": 8.0503, "importance": 4, "glyph": "🧊" },
+    { "name": "Bern Old Town", "lat": 46.9480, "lon": 7.4474, "importance": 5, "glyph": "🏘️" }
+  ],
+  "AUT": [
+    { "name": "Hofburg", "lat": 48.2069, "lon": 16.3656, "importance": 4, "glyph": "🏰" },
+    { "name": "Melk Abbey", "lat": 48.2280, "lon": 15.3330, "importance": 5, "glyph": "⛪" },
+    { "name": "Grossglockner", "lat": 47.0745, "lon": 12.6939, "importance": 4, "glyph": "🏔️" },
+    { "name": "Hallstatt Lake", "lat": 47.5622, "lon": 13.6493, "importance": 4, "glyph": "🏞️" },
+    { "name": "Salzburg Old Town", "lat": 47.7994, "lon": 13.0439, "importance": 5, "glyph": "🏘️" },
+    { "name": "Eisriesenwelt", "lat": 47.5033, "lon": 13.1900, "importance": 6, "glyph": "🧊" }
+  ],
+  "IRL": [
+    { "name": "Cliffs of Moher", "lat": 52.9715, "lon": -9.4309, "importance": 3, "glyph": "🌊" },
+    { "name": "Rock of Cashel", "lat": 52.5199, "lon": -7.8907, "importance": 4, "glyph": "🏰" },
+    { "name": "Ring of Kerry", "lat": 51.9000, "lon": -9.8000, "importance": 5, "glyph": "🏞️" },
+    { "name": "Trinity College Library", "lat": 53.3444, "lon": -6.2567, "importance": 5, "glyph": "📚" },
+    { "name": "Skellig Michael", "lat": 51.7711, "lon": -10.5397, "importance": 4, "glyph": "⛪" },
+    { "name": "Blarney Castle", "lat": 51.9291, "lon": -8.5706, "importance": 5, "glyph": "🏰" }
+  ],
+  "NOR": [
+    { "name": "Geirangerfjord", "lat": 62.1010, "lon": 7.0060, "importance": 3, "glyph": "🏞️" },
+    { "name": "Preikestolen", "lat": 58.9864, "lon": 6.1904, "importance": 3, "glyph": "🪨" },
+    { "name": "Nidaros Cathedral", "lat": 63.4269, "lon": 10.3969, "importance": 5, "glyph": "⛪" },
+    { "name": "Lofoten", "lat": 68.2100, "lon": 13.6100, "importance": 4, "glyph": "🏝️" },
+    { "name": "North Cape", "lat": 71.1709, "lon": 25.7836, "importance": 4, "glyph": "🌊" },
+    { "name": "Bryggen", "lat": 60.3975, "lon": 5.3241, "importance": 5, "glyph": "🏘️" }
+  ],
+  "SWE": [
+    { "name": "Vasa Museum", "lat": 59.3280, "lon": 18.0915, "importance": 4, "glyph": "⛵" },
+    { "name": "Gamla Stan", "lat": 59.3251, "lon": 18.0711, "importance": 4, "glyph": "🏘️" },
+    { "name": "Icehotel", "lat": 67.8497, "lon": 20.5919, "importance": 4, "glyph": "🧊" },
+    { "name": "Visby city wall", "lat": 57.6404, "lon": 18.2960, "importance": 5, "glyph": "🧱" },
+    { "name": "Abisko National Park", "lat": 68.3500, "lon": 18.8300, "importance": 5, "glyph": "🌌" },
+    { "name": "Drottningholm Palace", "lat": 59.3217, "lon": 17.8862, "importance": 5, "glyph": "🏰" }
+  ],
+  "POL": [
+    { "name": "Wawel Castle", "lat": 50.0544, "lon": 19.9354, "importance": 3, "glyph": "🏰" },
+    { "name": "Wieliczka Salt Mine", "lat": 49.9831, "lon": 20.0544, "importance": 4, "glyph": "⛏️" },
+    { "name": "Kraków Old Town", "lat": 50.0619, "lon": 19.9370, "importance": 4, "glyph": "🏘️" },
+    { "name": "Malbork Castle", "lat": 54.0396, "lon": 19.0279, "importance": 4, "glyph": "🏰" },
+    { "name": "Tatra Mountains", "lat": 49.2333, "lon": 20.0000, "importance": 4, "glyph": "🏔️" },
+    { "name": "Warsaw Old Town", "lat": 52.2497, "lon": 21.0122, "importance": 5, "glyph": "🏘️" }
+  ],
+  "CZE": [
+    { "name": "Charles Bridge", "lat": 50.0865, "lon": 14.4114, "importance": 3, "glyph": "🌉" },
+    { "name": "Prague Castle", "lat": 50.0910, "lon": 14.4016, "importance": 3, "glyph": "🏰" },
+    { "name": "Český Krumlov", "lat": 48.8127, "lon": 14.3175, "importance": 4, "glyph": "🏘️" },
+    { "name": "Astronomical Clock", "lat": 50.0870, "lon": 14.4208, "importance": 4, "glyph": "🕰️" },
+    { "name": "Bohemian Switzerland", "lat": 50.8800, "lon": 14.3000, "importance": 6, "glyph": "🏞️" },
+    { "name": "Karlštejn Castle", "lat": 49.9394, "lon": 14.1881, "importance": 5, "glyph": "🏰" }
+  ]
+}

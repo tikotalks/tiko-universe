@@ -90,20 +90,95 @@ struct AnswerChoice: Hashable, Identifiable {
 
 // MARK: - Presets
 
-/// A difficulty preset — nothing but "how big do the numbers get". Which
-/// operators to practise is picked inside the game, so + − × ÷ never fragment
-/// the home screen into a dozen near-identical tiles.
+/// What a preset actually constrains. The operator is picked in the home
+/// header, so a preset never names one — it says how big the numbers get, or
+/// which number every sum is built around.
+enum SumPresetKind: Hashable {
+    /// A rung or a band. `max` bounds the answer for + and −, and the factors
+    /// for × and ÷ — "1-5" means sums that answer up to five, and the five
+    /// times table, which is what those two ranges mean to a child. `min` puts
+    /// a floor under the answer so a band like 10-20 stays a band.
+    case range(min: Int, max: Int)
+    /// One operand is always `n`: the n times table for ×, counting on by n for
+    /// +, counting back for −, sharing into n for ÷. One mode, four meanings.
+    case family(n: Int)
+}
+
+/// A practice mode — nothing but "how big do the numbers get" or "which number
+/// are we working around". Which operator to practise is picked in the home
+/// header, so + − × ÷ never fragment the grid into near-identical tiles.
 struct SumPreset: Identifiable, Hashable {
     let id: String
-    let maxNumber: Int
+    let kind: SumPresetKind
     let emoji: String
     /// English noun used to match a Tiko media-library image for the tile.
     let mediaMatchKey: String
 
-    var label: String { "\(maxNumber)" }
+    /// The biggest number in play — the ceiling passed to the generator.
+    var maxNumber: Int {
+        switch kind {
+        case .range(_, let max): return max
+        case .family: return 100
+        }
+    }
+
+    var minNumber: Int {
+        switch kind {
+        case .range(let min, _): return min
+        case .family: return 1
+        }
+    }
+
+    /// Ranges spell themselves out ("1-10", never a bare "10" that could mean
+    /// either "ten sums" or "up to ten"). Families borrow the chosen operator,
+    /// so the same tile reads "×2" while practising tables and "+2" while
+    /// counting on.
+    func label(for choice: SumOperatorChoice, familyFormat: String) -> String {
+        switch kind {
+        case .range(let low, let high):
+            return "\(low)-\(high)"
+        case .family(let n):
+            switch choice {
+            case .single(let op): return "\(op.symbol)\(n)"
+            case .mixed: return familyFormat.replacingOccurrences(of: "{n}", with: "\(n)")
+            }
+        }
+    }
 }
 
-/// Difficulty plus the operators the child picked — kept for the whole run so
+/// What the child picked in the header: one operator, or a shuffle of every
+/// operator the parent left switched on.
+enum SumOperatorChoice: Equatable, Hashable {
+    case single(SumOperator)
+    case mixed
+
+    /// Persisted as the operator's raw value, or "mixed".
+    var storageValue: String {
+        switch self {
+        case .single(let op): return op.rawValue
+        case .mixed: return "mixed"
+        }
+    }
+
+    init(storageValue: String) {
+        if let op = SumOperator(rawValue: storageValue) {
+            self = .single(op)
+        } else {
+            self = .mixed
+        }
+    }
+
+    /// Resolved against what the parent allows, so a remembered `×` cannot
+    /// survive the parent switching × off.
+    func operators(allowed: [SumOperator]) -> [SumOperator] {
+        switch self {
+        case .single(let op): return allowed.contains(op) ? [op] : [allowed.first ?? .plus]
+        case .mixed: return allowed
+        }
+    }
+}
+
+/// Mode plus the operators it is being played with — kept for the whole run so
 /// "play again" deals a brand-new ten instead of repeating the same sums.
 struct SumRunSpec: Equatable, Hashable {
     let preset: SumPreset
@@ -113,7 +188,7 @@ struct SumRunSpec: Equatable, Hashable {
         SumGame(
             id: "\(preset.id)-\(operators.map(\.rawValue).joined(separator: "-"))",
             emoji: preset.emoji,
-            formulas: SumGenerator.round(maxNumber: preset.maxNumber, operators: operators)
+            formulas: SumGenerator.round(kind: preset.kind, operators: operators)
         )
     }
 }

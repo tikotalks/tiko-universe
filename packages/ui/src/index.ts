@@ -70,3 +70,14 @@ export const tikoKitComponents = [
   'tikoAppColors',
   'tikoAppConfigs'
 ]
+
+export {
+  applyTikoSurfaceColors,
+  normalizeSurfaceColor,
+  resolveTikoSurfaces,
+  surfaceLuminance,
+  tikoDefaultSurfaces,
+  tikoForegroundFor,
+  type TikoSurfaceColors,
+  type TikoSurfaceTarget,
+} from './TikoSurfaceTheme'

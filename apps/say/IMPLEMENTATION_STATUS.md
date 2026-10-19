@@ -165,7 +165,7 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 | S1 | Single `@MainActor` service owning all Apple audio/speech objects; protocol-mockable | VERIFIED | `SpeechPracticeService.swift` | builds; VM tests run on mock |
 | S2 | Full documented pre-listen cleanup sequence (12 steps incl. taskHint `.confirmation`, contextualStrings, on-device pref) | VERIFIED | `listen(...)` | line-by-line inspection vs plan checklist |
 | S3 | Never listen during TTS; replay cancels recognition first | VERIFIED | `speak()` stops listening; `listen()` guards `synthesizer.isSpeaking` | inspection + VM replay path |
-| S4 | Permission only at activity start after parent explanation; denial → recovery with Settings link | VERIFIED | `SpeechPermissionView`, VM `begin/requestPermissions` | VM permission tests + UI test reaches explanation |
+| S4 | Permission only at activity start, and asked directly — no dismissible screen in front of the system prompt (guideline 5.1.1(iv)); denial → recovery with Settings link; granting in Settings resumes on return | VERIFIED | `SpeechPermissionRequestView`, `SpeechPermissionDeniedView`, VM `begin/requestPermissions/recheckPermissionsAfterSettings` | VM permission tests + UI tests (`testNoDismissiblePromptPrecedesThePermissionRequest`) + simulator screenshot of the prompt |
 | S5 | Info.plist usage strings exactly per plan | VERIFIED | `Sources/Info.plist` | validator + diff vs plan text |
 | S6 | No stored audio; transcripts per attempt; stop on background/navigation | VERIFIED | service teardown, VM `cancel`/`pauseForInterruption`, `onDisappear` | inspection + interruption test |
 | S7 | Timeout/silence values configurable | VERIFIED | `Timings` | VM tests |
@@ -213,7 +213,7 @@ Statuses: `NOT STARTED` · `IN PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `VERIF
 | T3 | `SayCardStoreTests` | VERIFIED | 17 tests pass |
 | T4 | `SayCatalogTests` | VERIFIED | 7 tests pass |
 | T5 | TikoKit `.say` assertions | VERIFIED | TikoKit test suite passes |
-| T6 | UI tests (launch, category→permission flow, parent editor) | VERIFIED | 3 UI tests pass |
+| T6 | UI tests (launch, category→permission flow, no pre-prompt gate, parent editor) | VERIFIED | 4 UI tests pass |
 | T7 | `scripts/validate-local.sh` → shared `validate-ios.sh say` | VERIFIED | passes |
 | T8 | `README.md` build/test instructions | VERIFIED | written |
 | T9 | Assets: AppIcon (generated violet waveform, opaque, all sizes), TikoLogo, LaunchBg/Accent (Say violet), success chime | VERIFIED | build + icon visual check |

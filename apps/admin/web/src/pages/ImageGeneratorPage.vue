@@ -360,9 +360,9 @@ onMounted(async () => {
     </div>
     <header :class="page('header')">
       <div :class="page('intro')">
-        <h1 :class="page('title')">Images</h1>
+        <h1 :class="page('title')">Image creator</h1>
         <p :class="page('subtitle')">
-          Browse the Tiko image library, review drafts from the generator, and create new images.
+          Generate new images and review the drafts. Promoting one files it in the library.
         </p>
       </div>
       <div :class="page('header-actions')">

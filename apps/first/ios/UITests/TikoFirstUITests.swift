@@ -6,6 +6,19 @@ final class TikoFirstUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Child mode is visible as the absence of the parent-only header actions.
+    private func waitForChildMode(_ app: XCUIApplication) {
+        let hidden = expectation(description: "parent actions hidden in child mode")
+        let poll = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: true) { timer in
+            if !app.buttons["Edit routines"].exists {
+                timer.invalidate()
+                hidden.fulfill()
+            }
+        }
+        wait(for: [hidden], timeout: 15)
+        poll.invalidate()
+    }
+
     private func launchApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = ["--uitest-reset"]
@@ -73,6 +86,83 @@ final class TikoFirstUITests: XCTestCase {
         // Previewing speaks it and changes nothing.
         Thread.sleep(forTimeInterval: 2)
         XCTAssertEqual(app.buttons["first.step.current"].label, firstLabel, "tapping ahead must never cross a step off")
+    }
+
+    /// Guideline 2.3.6: the age rating declares Parental Controls, so a
+    /// reviewer with no account must be able to find them. Child Mode used to
+    /// demand a verified email and dead-ended on "Verify your email".
+    func testAGuestCanSetAParentPinAndEnterChildMode() {
+        let app = launchApp()
+        XCTAssertTrue(app.buttons["first.routine.morning"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Edit routines"].exists, "starts in parent mode")
+
+        app.buttons["Account"].tap()
+        let childMode = app.buttons["Child mode"]
+        XCTAssertTrue(childMode.waitForExistence(timeout: 5), "the profile menu offers Child mode")
+        childMode.tap()
+
+        let newPin = app.textFields["tiko.parentPin.new"]
+        XCTAssertTrue(newPin.waitForExistence(timeout: 5), "a guest reaches the PIN sheet, not an email wall")
+        newPin.tap()
+        newPin.typeText("1234")
+        let confirmPin = app.textFields["tiko.parentPin.confirm"]
+        confirmPin.tap()
+        confirmPin.typeText("1234")
+        app.buttons["tiko.parentPin.save"].tap()
+
+        // Child mode hides every parent-facing header action.
+        waitForChildMode(app)
+
+        // And the PIN is what gets back out.
+        app.buttons["Account"].tap()
+        let entry = app.textFields["tiko.parentPin.entry"]
+        XCTAssertTrue(entry.waitForExistence(timeout: 5), "the account button asks for the PIN while in child mode")
+        entry.tap()
+        entry.typeText("1234")
+        app.buttons["tiko.parentPin.submit"].tap()
+
+        XCTAssertTrue(app.buttons["Edit routines"].waitForExistence(timeout: 15), "the correct PIN restores parent mode")
+    }
+
+    /// A local PIN must never be a dead end: three wrong tries offer recovery
+    /// by email, not a reinstall.
+    func testAForgottenLocalPinOffersEmailRecovery() {
+        let app = launchApp()
+        XCTAssertTrue(app.buttons["first.routine.morning"].waitForExistence(timeout: 10))
+
+        app.buttons["Account"].tap()
+        app.buttons["Child mode"].tap()
+        let newPin = app.textFields["tiko.parentPin.new"]
+        XCTAssertTrue(newPin.waitForExistence(timeout: 5))
+        newPin.tap()
+        newPin.typeText("1234")
+        let confirmPin = app.textFields["tiko.parentPin.confirm"]
+        confirmPin.tap()
+        confirmPin.typeText("1234")
+        app.buttons["tiko.parentPin.save"].tap()
+
+        // Child mode has to have taken hold before the account button asks for
+        // the PIN instead of opening the profile menu.
+        waitForChildMode(app)
+
+        let entry = app.textFields["tiko.parentPin.entry"]
+        let forgot = app.buttons["tiko.parentPin.forgot"]
+        app.buttons["Account"].tap()
+        XCTAssertTrue(entry.waitForExistence(timeout: 5))
+
+        for _ in 0..<3 {
+            entry.tap()
+            entry.typeText("9999")
+            app.buttons["tiko.parentPin.submit"].tap()
+            _ = forgot.waitForExistence(timeout: 3)
+        }
+
+        XCTAssertTrue(forgot.exists, "three wrong tries must surface the recovery route")
+        forgot.tap()
+        XCTAssertTrue(
+            app.textFields["tiko.parentPin.resetEmail"].waitForExistence(timeout: 5),
+            "recovery asks for an inbox, because a local PIN was never mailed anywhere"
+        )
     }
 
     func testParentModeOpensRoutineEditor() {

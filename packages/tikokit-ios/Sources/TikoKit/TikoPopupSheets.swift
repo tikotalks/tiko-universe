@@ -6,14 +6,20 @@ public struct TikoPopupCard<Content: View>: View {
     private let subtitle: String?
     private let icon: String
     private let appColor: TikoAppColor
+    private let opaque: Bool
     private let onClose: () -> Void
     private let content: Content
 
+    /// `opaque` puts a solid surface behind the card instead of the frosted
+    /// one. Over a plain screen the two look the same; over something busy —
+    /// Globe's Earth, say — the frost picks up whatever is behind it and the
+    /// card stops looking like a card.
     public init(
         title: String,
         subtitle: String? = nil,
         icon: String = "slider.horizontal.3",
         appColor: TikoAppColor,
+        opaque: Bool = false,
         onClose: @escaping () -> Void,
         @ViewBuilder content: () -> Content
     ) {
@@ -21,6 +27,7 @@ public struct TikoPopupCard<Content: View>: View {
         self.subtitle = subtitle
         self.icon = icon
         self.appColor = appColor
+        self.opaque = opaque
         self.onClose = onClose
         self.content = content()
     }
@@ -71,7 +78,7 @@ public struct TikoPopupCard<Content: View>: View {
         .padding(.top, 12)
         .padding(.bottom, 22)
         .frame(maxWidth: 390, alignment: .top)
-        .background(.regularMaterial)
+        .background(opaque ? AnyShapeStyle(Color(.systemBackground)) : AnyShapeStyle(.regularMaterial))
         .clipShape(RoundedRectangle(cornerRadius: 34, style: .continuous))
         .shadow(color: .black.opacity(0.12), radius: 28, x: 0, y: 16)
         .padding(.horizontal, 18)
@@ -259,6 +266,22 @@ public struct TikoSettingsLabels {
     public let dark: String
     // Defaulted so the per-locale memberwise initializers don't all need updating.
     public var system: String = "System"
+    // The parent section. Every app that uses `TikoAppShell` shows it, because
+    // Settings is where App Review looks for the parental control the age
+    // rating declares — and where a parent looks for the account they can
+    // delete (guidelines 2.3.6 and 5.1.1(v)).
+    public var parent: String = "Parent"
+    public var childMode: String = "Child mode"
+    public var childModeSubtitle: String = "Parental controls — lock the app with a 4-digit PIN"
+    public var account: String = "Account"
+    public var notSignedIn: String = "Not signed in"
+    public var deleteAccount: String = "Delete account"
+    public var surfaceColors: String = "Colors"
+    public var surfaceColorsSubtitle: String = "Choose exactly how light and how dark."
+    public var lightColor: String = "Light color"
+    public var darkColor: String = "Dark color"
+    public var resetColors: String = "Reset to default"
+    public var colorPreview: String = "Preview"
 
     public static func forLanguage(_ languageID: String) -> TikoSettingsLabels {
         switch languageID {
@@ -272,7 +295,13 @@ public struct TikoSettingsLabels {
                 searchLanguages: "Zoek talen",
                 colorModeSubtitle: "Kies een duidelijke lichte of donkere weergave.",
                 light: "Licht",
-                dark: "Donker"
+                dark: "Donker",
+                parent: "Ouder",
+                childMode: "Kindmodus",
+                childModeSubtitle: "Ouderlijk toezicht — vergrendel de app met een pincode van 4 cijfers",
+                account: "Account",
+                notSignedIn: "Niet ingelogd",
+                deleteAccount: "Account verwijderen"
             )
         case "fr":
             TikoSettingsLabels(
@@ -284,7 +313,13 @@ public struct TikoSettingsLabels {
                 searchLanguages: "Rechercher des langues",
                 colorModeSubtitle: "Choisissez une apparence claire ou sombre.",
                 light: "Clair",
-                dark: "Sombre"
+                dark: "Sombre",
+                parent: "Parent",
+                childMode: "Mode enfant",
+                childModeSubtitle: "Contrôle parental — verrouillez l'app avec un code à 4 chiffres",
+                account: "Compte",
+                notSignedIn: "Non connecté",
+                deleteAccount: "Supprimer le compte"
             )
         case "es":
             TikoSettingsLabels(
@@ -296,7 +331,13 @@ public struct TikoSettingsLabels {
                 searchLanguages: "Buscar idiomas",
                 colorModeSubtitle: "Elige una apariencia clara u oscura.",
                 light: "Claro",
-                dark: "Oscuro"
+                dark: "Oscuro",
+                parent: "Familia",
+                childMode: "Modo infantil",
+                childModeSubtitle: "Control parental — bloquea la app con un PIN de 4 dígitos",
+                account: "Cuenta",
+                notSignedIn: "Sin sesión iniciada",
+                deleteAccount: "Eliminar cuenta"
             )
         case "mt":
             TikoSettingsLabels(
@@ -308,7 +349,13 @@ public struct TikoSettingsLabels {
                 searchLanguages: "Fittex lingwi",
                 colorModeSubtitle: "Agħżel dehra ċara jew skura.",
                 light: "Ċar",
-                dark: "Skur"
+                dark: "Skur",
+                parent: "Ġenituri",
+                childMode: "Modalità tat-tfal",
+                childModeSubtitle: "Kontroll tal-ġenituri — issakkar l-app b'PIN ta' 4 ċifri",
+                account: "Kont",
+                notSignedIn: "Mhux imdaħħal",
+                deleteAccount: "Ħassar il-kont"
             )
         case "de":
             TikoSettingsLabels(
@@ -320,7 +367,13 @@ public struct TikoSettingsLabels {
                 searchLanguages: "Sprachen suchen",
                 colorModeSubtitle: "Wähle eine klare helle oder dunkle Darstellung.",
                 light: "Hell",
-                dark: "Dunkel"
+                dark: "Dunkel",
+                parent: "Eltern",
+                childMode: "Kindermodus",
+                childModeSubtitle: "Kindersicherung — App mit einer 4-stelligen PIN sperren",
+                account: "Konto",
+                notSignedIn: "Nicht angemeldet",
+                deleteAccount: "Konto löschen"
             )
         default:
             TikoSettingsLabels(
@@ -381,6 +434,8 @@ public struct TikoIdentityLabels {
     public let childMode: String
     public let parentMode: String
     public let parentModeSubtitle: String
+    // Defaulted so the per-locale initializers above stay valid.
+    public var manageAccount: String = "Sign out or delete account"
 
     public static func forLanguage(_ languageID: String) -> TikoIdentityLabels {
         switch languageID {
@@ -419,7 +474,8 @@ public struct TikoIdentityLabels {
                 profile: "Profil",
                 childMode: "Modalità tat-tfal",
                 parentMode: "Modalità tal-ġenituri",
-                parentModeSubtitle: "Daħħal il-PIN b’4 ċifri biex tattiva l-modalità tal-ġenituri."
+                parentModeSubtitle: "Daħħal il-PIN b’4 ċifri biex tattiva l-modalità tal-ġenituri.",
+                manageAccount: "Oħroġ jew ħassar il-kont"
             )
         default:
             TikoIdentityLabels(
@@ -489,6 +545,8 @@ public struct TikoSettingsActionRow: View {
     private let value: String?
     private let icon: String
     private let appColor: TikoAppColor
+    private let identifier: String?
+    private let isDestructive: Bool
     private let action: () -> Void
 
     public init(
@@ -496,29 +554,35 @@ public struct TikoSettingsActionRow: View {
         value: String? = nil,
         icon: String,
         appColor: TikoAppColor,
+        identifier: String? = nil,
+        isDestructive: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.value = value
         self.icon = icon
         self.appColor = appColor
+        self.identifier = identifier
+        self.isDestructive = isDestructive
         self.action = action
     }
+
+    private var tint: Color { isDestructive ? .red : appColor.palette.primary }
 
     public var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
                 Image(systemName: icon)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(appColor.palette.primary)
+                    .foregroundStyle(tint)
                     .frame(width: 40, height: 40)
-                    .background(appColor.palette.primary.opacity(0.12))
+                    .background(tint.opacity(0.12))
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.system(size: 16, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(isDestructive ? Color.red : Color.primary)
                     if let value, !value.isEmpty {
                         Text(value)
                             .font(.system(size: 13, weight: .semibold, design: .rounded))
@@ -535,6 +599,7 @@ public struct TikoSettingsActionRow: View {
             .tikoSettingsRowSurface()
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(identifier ?? "")
     }
 }
 
@@ -749,21 +814,36 @@ public struct TikoSettingsSizeRow: View {
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
     private let onClose: () -> Void
+    /// The signed-in address, or nil for a guest. Decides whether the parent
+    /// section can offer account deletion.
+    private let accountEmail: String?
+    private let onChildMode: (() -> Void)?
+    private let onAccount: (() -> Void)?
+    private let onDeleteAccount: (() -> Void)?
     private let appSettings: AppSettings
 
     @AppStorage("tiko.language") private var languageID = "en"
     @AppStorage("tiko.colorMode") private var colorModeRawValue = TikoColorMode.system.rawValue
     @State private var showingLanguagePicker = false
     @State private var showingColorModePicker = false
+    @State private var showingSurfacePicker = false
     @State private var showingSupport = false
 
     public init(
         appColor: TikoAppColor,
         onClose: @escaping () -> Void,
+        accountEmail: String? = nil,
+        onChildMode: (() -> Void)? = nil,
+        onAccount: (() -> Void)? = nil,
+        onDeleteAccount: (() -> Void)? = nil,
         @ViewBuilder appSettings: () -> AppSettings
     ) {
         self.appColor = appColor
         self.onClose = onClose
+        self.accountEmail = accountEmail
+        self.onChildMode = onChildMode
+        self.onAccount = onAccount
+        self.onDeleteAccount = onDeleteAccount
         self.appSettings = appSettings()
     }
 
@@ -793,6 +873,12 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                         appColor: appColor
                     ) { showingColorModePicker = true }
 
+                    TikoSettingsActionRow(
+                        title: labels.surfaceColors,
+                        value: "",
+                        icon: "paintpalette.fill",
+                        appColor: appColor
+                    ) { showingSurfacePicker = true }
                     // Settings are already behind Parent Mode, so Support is
                     // reachable by a grown-up and by no child. Hidden entirely
                     // when this app has no Arlez project, rather than offering a
@@ -806,6 +892,8 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                         ) { showingSupport = true }
                     }
                 }
+
+                parentSection(labels: labels)
 
                 appSettings
             }
@@ -837,6 +925,58 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
                 },
                 onClose: { showingColorModePicker = false }
             )
+        }
+        .tikoPopup(isPresented: $showingSurfacePicker) {
+            TikoSurfacePickerSheet(
+                appColor: appColor,
+                labels: labels,
+                onClose: { showingSurfacePicker = false }
+            )
+        }
+    }
+
+    /// Child mode and the account, one tap inside Settings.
+    ///
+    /// Both already existed behind the header avatar, and App Review still
+    /// could not find either — Talk and Timer were rejected under 2.3.6 for a
+    /// parental control they had been told how to reach, Radio under 5.1.1(v)
+    /// for a delete-account button three sheets further in. Settings is the
+    /// first place anyone looks, so the routes start here now.
+    @ViewBuilder
+    private func parentSection(labels: TikoSettingsLabels) -> some View {
+        if onChildMode != nil || onAccount != nil {
+            TikoSettingsSection(title: labels.parent) {
+                if let onChildMode {
+                    TikoSettingsActionRow(
+                        title: labels.childMode,
+                        value: labels.childModeSubtitle,
+                        icon: "figure.child",
+                        appColor: appColor,
+                        identifier: "tiko.settings.childMode",
+                        action: onChildMode
+                    )
+                }
+                if let onAccount {
+                    TikoSettingsActionRow(
+                        title: labels.account,
+                        value: accountEmail ?? labels.notSignedIn,
+                        icon: "person.crop.circle",
+                        appColor: appColor,
+                        identifier: "tiko.settings.account",
+                        action: onAccount
+                    )
+                }
+                if accountEmail != nil, let onDeleteAccount {
+                    TikoSettingsActionRow(
+                        title: labels.deleteAccount,
+                        icon: "trash.fill",
+                        appColor: appColor,
+                        identifier: "tiko.settings.deleteAccount",
+                        isDestructive: true,
+                        action: onDeleteAccount
+                    )
+                }
+            }
         }
     }
 
@@ -1028,6 +1168,9 @@ public struct TikoAccountSheet: View {
     private let onIdentityChanged: () -> Void
     private let onAccountDeleted: () -> Void
     private let onLoggedOut: () -> Void
+    /// Settings offers "Delete account" directly, so the sheet has to be able
+    /// to open on the confirmation step instead of the profile.
+    private let startInDeleteFlow: Bool
 
     @AppStorage("tiko.userName") private var userName = ""
     @AppStorage("tiko.userEmail") private var userEmail = ""
@@ -1058,7 +1201,7 @@ public struct TikoAccountSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) {
+    public init(appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onClose: @escaping () -> Void, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}, startInDeleteFlow: Bool = false) {
         self.appName = appName
         self.appColor = appColor
         self._profilePrefs = ObservedObject(wrappedValue: profilePrefs)
@@ -1066,6 +1209,7 @@ public struct TikoAccountSheet: View {
         self.onIdentityChanged = onIdentityChanged
         self.onAccountDeleted = onAccountDeleted
         self.onLoggedOut = onLoggedOut
+        self.startInDeleteFlow = startInDeleteFlow
     }
 
     public var body: some View {
@@ -1089,6 +1233,7 @@ public struct TikoAccountSheet: View {
                 isSignedIn = true
                 signedInEmail = bundle.account?.email
                 if let email = bundle.account?.email { userEmail = email }
+                if startInDeleteFlow { deleteStage = .confirm }
                 await refreshIdentityBundle(accessToken: bundle.accessToken)
             }
         }
@@ -1166,7 +1311,7 @@ public struct TikoAccountSheet: View {
                             Text(signedInEmail ?? userEmail)
                                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                                 .foregroundStyle(.primary)
-                            Text(labels.verifiedAccount)
+                            Text(labels.manageAccount)
                                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                                 .foregroundStyle(appColor.palette.primary)
                             if let accountRoleTitle {
@@ -1815,7 +1960,9 @@ public struct TikoProfileMenuSheet: View {
 
 public struct TikoParentCodeEntrySheet: View {
     private let appColor: TikoAppColor
-    private let onParentMode: (TikoIdentityBundle) -> Void
+    /// Nil when the device-local gate answered — a guest device may hold a PIN
+    /// without ever having an identity bundle to hand back.
+    private let onParentMode: (TikoIdentityBundle?) -> Void
     private let onClose: () -> Void
 
     @State private var enteredCode = ""
@@ -1826,12 +1973,14 @@ public struct TikoParentCodeEntrySheet: View {
     @State private var resetOtp = ""
     @State private var resetOtpSent = false
     @State private var resetError: String? = nil
+    /// Only used by the local gate, which has no address on file to mail.
+    @State private var resetEmail = ""
     @AppStorage("tiko.language") private var languageID = "en"
 
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
+    public init(appColor: TikoAppColor, onParentMode: @escaping (TikoIdentityBundle?) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
         self.onParentMode = onParentMode
         self.onClose = onClose
@@ -1842,7 +1991,7 @@ public struct TikoParentCodeEntrySheet: View {
 
         TikoPopupCard(
             title: showingResetFlow ? "Reset PIN" : labels.parentMode,
-            subtitle: showingResetFlow ? "Enter the code sent to your email." : labels.parentModeSubtitle,
+            subtitle: resetSubtitle(labels: labels),
             icon: showingResetFlow ? "envelope.fill" : "lock.fill",
             appColor: appColor,
             onClose: onClose
@@ -1853,6 +2002,14 @@ public struct TikoParentCodeEntrySheet: View {
                 pinEntryContent(labels: labels)
             }
         }
+    }
+
+    private func resetSubtitle(labels: TikoIdentityLabels) -> String {
+        guard showingResetFlow else { return labels.parentModeSubtitle }
+        if !resetOtpSent && TikoParentGate.isLocalChildModeActive {
+            return "Enter an email you can open. We will send a code that clears the PIN."
+        }
+        return "Enter the code sent to your email."
     }
 
     @ViewBuilder
@@ -1869,6 +2026,7 @@ public struct TikoParentCodeEntrySheet: View {
                     let filtered = String(new.filter { $0.isNumber }.prefix(4))
                     if filtered != new { enteredCode = filtered }
                 }
+                .accessibilityIdentifier("tiko.parentPin.entry")
 
             if let error {
                 Text(error)
@@ -1892,17 +2050,26 @@ public struct TikoParentCodeEntrySheet: View {
                 .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("tiko.parentPin.submit")
             .disabled(enteredCode.count != 4 || isLoading)
 
             if failedAttempts >= 3 {
                 Button {
-                    Task { await sendResetOtp() }
+                    if TikoParentGate.isLocalChildModeActive {
+                        // No account, so there is no address on file yet — ask
+                        // for one rather than mailing nowhere.
+                        showingResetFlow = true
+                        resetOtpSent = false
+                    } else {
+                        Task { await sendResetOtp() }
+                    }
                 } label: {
                     Text("Forgot PIN? Reset via email")
                         .font(.system(size: 14, weight: .heavy, design: .rounded))
                         .foregroundStyle(appColor.palette.primary)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.forgot")
                 .disabled(isLoading)
             }
         }
@@ -1911,7 +2078,45 @@ public struct TikoParentCodeEntrySheet: View {
     @ViewBuilder
     private func resetFlowContent(labels: TikoIdentityLabels) -> some View {
         VStack(spacing: 12) {
-            if !resetOtpSent {
+            if !resetOtpSent && TikoParentGate.isLocalChildModeActive {
+                // A local PIN was never mailed anywhere, so recovery starts by
+                // asking for an inbox the parent can open — something a child
+                // cannot do, which is the whole point of the gate.
+                TextField(labels.emailPlaceholder, text: $resetEmail)
+                    .font(.system(size: 17, weight: .semibold))
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.emailAddress)
+                    .padding(15)
+                    .background(Color(.systemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .accessibilityIdentifier("tiko.parentPin.resetEmail")
+
+                if let resetError {
+                    Text(resetError)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+
+                Button {
+                    Task { await sendLocalResetCode(labels: labels) }
+                } label: {
+                    Group {
+                        if isLoading { ProgressView().tint(.white) }
+                        else { Text(labels.sendSignInCode) }
+                    }
+                    .font(.system(size: 17, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 15)
+                    .background(appColor.palette.primary)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.resetSend")
+                .disabled(isLoading)
+            } else if !resetOtpSent {
                 Text("Sending code to your email…")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.secondary)
@@ -1956,6 +2161,26 @@ public struct TikoParentCodeEntrySheet: View {
         }
     }
 
+    /// Recovery for a PIN the server never held: mail a code to whatever inbox
+    /// the parent names. Verifying it also attaches the address, so the next
+    /// child-mode session is server-backed and recoverable by default.
+    private func sendLocalResetCode(labels: TikoIdentityLabels) async {
+        let email = resetEmail.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !email.isEmpty, email.contains("@") else {
+            resetError = labels.invalidEmail
+            return
+        }
+        isLoading = true
+        resetError = nil
+        do {
+            try await identityClient.requestRecoveryEmail(email: email, accessToken: (try? sessionStore.load())?.accessToken)
+            resetOtpSent = true
+        } catch {
+            resetError = labels.sendCodeError
+        }
+        isLoading = false
+    }
+
     private func sendResetOtp() async {
         isLoading = true
         error = nil
@@ -1983,6 +2208,10 @@ public struct TikoParentCodeEntrySheet: View {
             let token = (try? sessionStore.load())?.accessToken
             let bundle = try await identityClient.verifyOtp(otp: resetOtp, accessToken: token)
             try sessionStore.save(bundle)
+            // A verified inbox is proof enough for the local gate too: drop the
+            // PIN it was holding rather than leaving the parent locked out with
+            // a now-verified account.
+            TikoParentGate.clearLocalPin()
             // Server already reset to parent mode and cleared the PIN.
             // Refresh to get the clean bundle.
             let refreshed = try await identityClient.getSession(accessToken: bundle.accessToken ?? "")
@@ -2000,6 +2229,24 @@ public struct TikoParentCodeEntrySheet: View {
         guard enteredCode.count == 4 else { return }
         isLoading = true
         error = nil
+
+        // The device-local gate wins while it is active, even if the parent has
+        // since verified an email — the server holds no PIN that could unlock
+        // this session, so only the local one can.
+        if TikoParentGate.isLocalChildModeActive {
+            guard TikoParentGate.verifyLocalPin(enteredCode) else {
+                failedAttempts += 1
+                error = "Incorrect PIN. Please try again."
+                enteredCode = ""
+                isLoading = false
+                return
+            }
+            TikoParentGate.leaveLocalChildMode()
+            onParentMode(try? sessionStore.load())
+            isLoading = false
+            return
+        }
+
         do {
             let storedBundle = try sessionStore.load()
             var activeBundle = try await recoverParentModeSession(from: storedBundle)
@@ -2086,7 +2333,9 @@ public struct TikoParentCodeEntrySheet: View {
 
 public struct TikoCreateParentCodeSheet: View {
     private let appColor: TikoAppColor
-    private let onChildMode: (TikoIdentityBundle) -> Void
+    /// Nil when the device-local gate took the PIN — see
+    /// `TikoParentCodeEntrySheet.onParentMode`.
+    private let onChildMode: (TikoIdentityBundle?) -> Void
     private let onClose: () -> Void
 
     @State private var code = ""
@@ -2097,7 +2346,7 @@ public struct TikoCreateParentCodeSheet: View {
     private let identityClient = TikoIdentityClient()
     private let sessionStore = TikoDeviceSessionStore()
 
-    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle) -> Void, onClose: @escaping () -> Void) {
+    public init(appColor: TikoAppColor, onChildMode: @escaping (TikoIdentityBundle?) -> Void, onClose: @escaping () -> Void) {
         self.appColor = appColor
         self.onChildMode = onChildMode
         self.onClose = onClose
@@ -2127,6 +2376,7 @@ public struct TikoCreateParentCodeSheet: View {
                             let filtered = String(new.filter { $0.isNumber }.prefix(4))
                             if filtered != new { code = filtered }
                         }
+                        .accessibilityIdentifier("tiko.parentPin.new")
                 }
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -2144,6 +2394,14 @@ public struct TikoCreateParentCodeSheet: View {
                             let filtered = String(new.filter { $0.isNumber }.prefix(4))
                             if filtered != new { confirmCode = filtered }
                         }
+                        .accessibilityIdentifier("tiko.parentPin.confirm")
+                }
+
+                if usesLocalGate {
+                    Text("This PIN is stored on this device. If you forget it, you can clear it with a code sent to any email you own.")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
                 }
 
                 if let error {
@@ -2168,9 +2426,14 @@ public struct TikoCreateParentCodeSheet: View {
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("tiko.parentPin.save")
                 .disabled(code.count != 4 || confirmCode.count != 4 || isLoading)
             }
         }
+    }
+
+    private var usesLocalGate: Bool {
+        TikoParentGate.usesLocalGate(try? sessionStore.load())
     }
 
     private func saveCode() async {
@@ -2181,6 +2444,16 @@ public struct TikoCreateParentCodeSheet: View {
         }
         isLoading = true
         error = nil
+
+        // No verified email means the server will refuse the PIN, so keep it on
+        // the device instead of denying child mode altogether.
+        if usesLocalGate {
+            TikoParentGate.configureLocalPin(code)
+            onChildMode(try? sessionStore.load())
+            isLoading = false
+            return
+        }
+
         guard let initialBundle = (try? sessionStore.load()),
               let token = initialBundle.accessToken else {
             error = "No active session."
@@ -2277,12 +2550,20 @@ public extension View {
     func tikoSettingsPopup<SettingsContent: View>(
         isPresented: Binding<Bool>,
         appColor: TikoAppColor,
+        accountEmail: String? = nil,
+        onChildMode: (() -> Void)? = nil,
+        onAccount: (() -> Void)? = nil,
+        onDeleteAccount: (() -> Void)? = nil,
         @ViewBuilder appSettings: @escaping () -> SettingsContent
     ) -> some View {
         tikoPopup(isPresented: isPresented) {
             TikoSettingsSheet(
                 appColor: appColor,
                 onClose: { isPresented.wrappedValue = false },
+                accountEmail: accountEmail,
+                onChildMode: onChildMode,
+                onAccount: onAccount,
+                onDeleteAccount: onDeleteAccount,
                 appSettings: appSettings
             )
         }
@@ -2292,7 +2573,7 @@ public extension View {
         tikoSettingsPopup(isPresented: isPresented, appColor: appColor) { EmptyView() }
     }
 
-    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
+    func tikoAccountPopup(isPresented: Binding<Bool>, appName: String, appColor: TikoAppColor, profilePrefs: TikoProfilePreferences, startInDeleteFlow: Bool = false, onIdentityChanged: @escaping () -> Void = {}, onAccountDeleted: @escaping () -> Void = {}, onLoggedOut: @escaping () -> Void = {}) -> some View {
         // Non-dismissible by drag / outside-tap: the account sheet hosts the
         // email + OTP login form, which on iPad was being dismissed mid-input
         // when the keyboard appeared (looked like the app "reverted back" and
@@ -2304,7 +2585,7 @@ public extension View {
             }, onIdentityChanged: {
                 isPresented.wrappedValue = false
                 onIdentityChanged()
-            }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut)
+            }, onAccountDeleted: onAccountDeleted, onLoggedOut: onLoggedOut, startInDeleteFlow: startInDeleteFlow)
         }
     }
 }

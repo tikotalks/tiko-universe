@@ -5,17 +5,17 @@
   "project": "apps/radio/ios/TikoRadio.xcodeproj",
   "iosDir": "apps/radio/ios",
   "bundleId": "mt.tiko.radio",
-  "appleId": "6793059280",
-  "appStoreId": "6793059280",
-  "appStoreUrl": "https://apps.apple.com/app/id6793059280",
+  "appleId": "",
+  "appStoreId": "",
+  "appStoreUrl": "",
   "validation": {
     "script": "apps/radio/ios/scripts/validate-local.sh"
   },
   "screenshots": {
     "outputDir": "/Users/silvandiepen/Projects/Tiko/apps/radio",
     "configuration": "Debug",
-    "eraseBeforeCapture": false,
-    "defaultWaitSeconds": 8,
+    "eraseBeforeCapture": true,
+    "defaultWaitSeconds": 2,
     "baseLaunchArgs": [
       "--screenshot-mode"
     ],
@@ -29,13 +29,13 @@
     "devices": [
       {
         "name": "iPhone 17 Pro Max",
-        "os": "26.2",
+        "os": "26.5",
         "displayType": "APP_IPHONE_67",
         "createIfMissing": true
       },
       {
         "name": "iPad Pro 13-inch (M5)",
-        "os": "26.2",
+        "os": "26.5",
         "displayType": "APP_IPAD_PRO_13",
         "createIfMissing": true
       }
@@ -77,7 +77,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 8
+        "waitSeconds": 15
       },
       {
         "id": "library-dark",
@@ -95,7 +95,7 @@
         "colorModes": [
           "dark"
         ],
-        "waitSeconds": 8
+        "waitSeconds": 15
       },
       {
         "id": "now-playing-light",
@@ -113,7 +113,7 @@
         "colorModes": [
           "light"
         ],
-        "waitSeconds": 8
+        "waitSeconds": 25
       },
       {
         "id": "settings-light",
@@ -140,7 +140,7 @@
     "configuration": "Release",
     "archivePath": "artifacts/archives/radio/TikoRadio.xcarchive",
     "exportPath": "artifacts/archives/radio/export",
-    "exportOptionsPlist": "release/ExportOptions.plist",
+    "exportOptionsPlist": null,
     "allowProvisioningUpdates": true
   },
   "upload": {

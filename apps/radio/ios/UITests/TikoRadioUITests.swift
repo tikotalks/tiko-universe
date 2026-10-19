@@ -129,8 +129,8 @@ final class TikoRadioUITests: XCTestCase {
         music.tap()
 
         // A sample track tile inside the collection must be present and tappable.
-        let track = element(withIdentifier: "Twinkle Twinkle Little Star")
-        XCTAssertTrue(track.waitForExistence(timeout: 15), "A track ('Twinkle Twinkle Little Star') should be present inside Music")
+        let track = element(withIdentifier: "Go Go Dodo")
+        XCTAssertTrue(track.waitForExistence(timeout: 15), "A track ('Go Go Dodo') should be present inside Music")
         XCTAssertTrue(waitUntilHittable(track, timeout: 10), "The track tile should be hittable")
         track.tap()
 
@@ -153,10 +153,10 @@ final class TikoRadioUITests: XCTestCase {
         // Retry the collection tap until its tracks appear — the LazyVGrid
         // occasionally needs a second tap when the first lands during the
         // splash fade under simulator load.
-        var track = element(withIdentifier: "Twinkle Twinkle Little Star")
+        var track = element(withIdentifier: "Go Go Dodo")
         for _ in 0..<5 {
             if music.isHittable { music.tap() }
-            track = element(withIdentifier: "Twinkle Twinkle Little Star")
+            track = element(withIdentifier: "Go Go Dodo")
             if track.waitForExistence(timeout: 8) { break }
         }
         XCTAssertTrue(track.exists, "A track should be present inside Music")
@@ -231,7 +231,7 @@ final class TikoRadioUITests: XCTestCase {
         XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
         animals.tap()
 
-        let track = element(withIdentifier: "Old MacDonald Had a Farm")
+        let track = element(withIdentifier: "Tomato Bird")
         XCTAssertTrue(track.waitForExistence(timeout: 15), "The Animals collection should list its sample track")
     }
 
@@ -241,13 +241,13 @@ final class TikoRadioUITests: XCTestCase {
         openMusicTrackPlayer()
 
         // The other Music sample track appears as a "More in collection" row.
-        let related = app.buttons["The Wheels on the Bus"]
+        let related = app.buttons["Beatle Beast"]
         XCTAssertTrue(related.waitForExistence(timeout: 10), "A related track should be listed under the player")
         XCTAssertTrue(waitUntilHittable(related, timeout: 10), "The related track row should be hittable")
         related.tap()
 
         // The player now shows the newly selected track, controls intact.
-        XCTAssertTrue(app.staticTexts["The Wheels on the Bus"].waitForExistence(timeout: 10), "Player switches to the related track")
+        XCTAssertTrue(app.staticTexts["Beatle Beast"].waitForExistence(timeout: 10), "Player switches to the related track")
         XCTAssertTrue(element(withIdentifier: "PlayPause").exists, "Playback controls remain after switching track")
     }
 
@@ -318,5 +318,73 @@ final class TikoRadioUITests: XCTestCase {
         // Popup dismissed → login card gone, app usable again.
         XCTAssertTrue(waitUntilGone(loginCardTitle, timeout: 10), "'Skip for now' should dismiss the login card")
         XCTAssertTrue(element(withIdentifier: "Music").waitForExistence(timeout: 10), "App should be usable after skipping login")
+    }
+
+    /// Tap `control` (once hittable) and wait for `expected` to appear, retrying
+    /// the tap a few times. SwiftUI occasionally drops the first tap while the
+    /// launch/splash transition is still settling under simulator load; a lost
+    /// tap otherwise leaves the app in its previous state and fails spuriously.
+    @discardableResult
+    private func tapUntil(_ control: XCUIElement, appears expected: XCUIElement, attempts: Int = 6) -> Bool {
+        for _ in 0..<attempts {
+            if expected.exists { return true }
+            guard waitUntilHittable(control, timeout: 10), control.exists else { break }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.4))
+            control.tap()
+            if expected.waitForExistence(timeout: 6) { return true }
+        }
+        return expected.exists
+    }
+
+    // MARK: - Guideline 2.3.6 / 5.1.1(v): the parent routes start in Settings
+
+    /// App Review declared they could not find the parental control the age
+    /// rating promises, nor a way to delete an account — both were behind the
+    /// header avatar, which renders as a picture. Settings is the first place
+    /// anyone looks, so both routes have to start there.
+    func testSettingsOffersTheParentalControlAndTheAccount() {
+        let settings = app.buttons["Settings"]
+        XCTAssertTrue(settings.waitForExistence(timeout: 25), "Settings button should exist in parent mode")
+
+        let childMode = app.buttons["tiko.settings.childMode"]
+        XCTAssertTrue(tapUntil(settings, appears: childMode), "Settings should offer Child mode")
+        XCTAssertTrue(app.buttons["tiko.settings.account"].exists, "Settings should offer the account")
+    }
+
+    /// A device that has never signed in must be able to set the PIN and lock
+    /// the app — that is the control the age rating declares.
+    func testAGuestCanLockTheAppWithAPinFromSettings() {
+        app.terminate()
+        app.launchArguments += ["--uitest-reset"]
+        app.launch()
+
+        let settings = app.buttons["Settings"]
+        XCTAssertTrue(settings.waitForExistence(timeout: 25), "Settings button should exist in parent mode")
+
+        let childMode = app.buttons["tiko.settings.childMode"]
+        XCTAssertTrue(tapUntil(settings, appears: childMode), "Settings should offer Child mode")
+
+        let newPin = app.textFields["tiko.parentPin.new"]
+        XCTAssertTrue(tapUntil(childMode, appears: newPin), "A guest reaches the PIN sheet, not an account wall")
+        newPin.tap()
+        newPin.typeText("1234")
+        let confirmPin = app.textFields["tiko.parentPin.confirm"]
+        confirmPin.tap()
+        confirmPin.typeText("1234")
+        app.buttons["tiko.parentPin.save"].tap()
+
+        // Child mode takes the parent-only header away, Settings included.
+        XCTAssertTrue(waitUntilGone(settings, timeout: 20), "Child mode should hide the parent-only header actions")
+
+        // And the PIN is what gets back out — otherwise the lock is a dead end,
+        // and every later test inherits a locked app.
+        let account = app.buttons["Account"]
+        let entry = app.textFields["tiko.parentPin.entry"]
+        XCTAssertTrue(tapUntil(account, appears: entry), "The account button asks for the PIN while in child mode")
+        entry.tap()
+        entry.typeText("1234")
+        app.buttons["tiko.parentPin.submit"].tap()
+
+        XCTAssertTrue(settings.waitForExistence(timeout: 20), "The correct PIN restores parent mode")
     }
 }
