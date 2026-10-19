@@ -1,19 +1,25 @@
-import type { SiteCopyOverride } from '..'
+import type { SiteCopyOverride } from '../..'
+import { hyPages } from './pages'
+import { hyAudiencePages } from './pages-audience'
+import { hyHome } from './home'
+import { hyApps, hyAppsPage, hyAppDetail, hyNotFound } from './apps'
+import { hyDocs } from './docs'
+import { hyPrivacy } from './privacy'
 
 /**
- * Armenian website copy.
+ * Armenian website copy — the whole site.
  *
- * Only the chrome is translated so far; the long-form page copy still falls
- * back to English leaf by leaf, which is what `overlayCopy` is for.
+ * NOTE: these strings have NOT been reviewed by a native Armenian speaker.
+ * Armenian has its own script and grammar that machine translation handles
+ * unevenly, and this is a product for children who already struggle to be
+ * understood — a clumsy translation is worse here than an honest English
+ * fallback. Please have them checked before treating them as done.
+ *
+ * `downloadOnCaption` deliberately stays English: Apple does not publish an
+ * Armenian App Store badge, and inventing one would misuse their lockup.
  */
-//
-// NOTE: these strings have NOT been reviewed by a native Armenian speaker.
-// Armenian has its own script and grammar that machine translation handles
-// unevenly, and this is a product for children who already struggle to be
-// understood — a clumsy translation is worse here than an honest English
-// fallback. Please have these checked before relying on them.
-//
 export const hy: SiteCopyOverride = {
+  ...({
   common: {
     skipToContent: 'Անցնել բովանդակությանը',
     languageLabel: 'Լեզու',
@@ -22,6 +28,7 @@ export const hy: SiteCopyOverride = {
     exploreApps: 'Դիտել հավելվածները',
     openOnWeb: 'Բացել վեբում',
     downloadAppStore: 'Ներբեռնել App Store-ից',
+    downloadOnCaption: 'Download on the',
     learnMore: 'Իմանալ ավելին',
     backToApps: 'Բոլոր հավելվածները',
     available: 'Հասանելի է',
@@ -54,4 +61,19 @@ export const hy: SiteCopyOverride = {
     trustPrinciples: 'Մեր սկզբունքները',
     philosophy: 'Փիլիսոփայություն',
   },
+} as SiteCopyOverride),
+  meta: {
+    home: 'TikoTalks — Գեղեցիկ, անվճար կրթական և հաղորդակցման հավելվածներ ամեն երեխայի համար',
+    apps: 'Հավելվածներ',
+    docs: 'Docs',
+    notFound: 'Էջը չի գտնվել',
+  },
+  home: hyHome,
+  appsPage: hyAppsPage,
+  appDetail: hyAppDetail,
+  notFound: hyNotFound,
+  apps: hyApps,
+  docs: hyDocs,
+  privacy: hyPrivacy,
+  pages: { ...hyPages, ...hyAudiencePages },
 }

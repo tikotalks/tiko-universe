@@ -39,7 +39,7 @@ const appSubItems = computed(() => {
 
 const navItems = computed(() => [
   { to: '/', label: 'Home', icon: 'ui/dashboard' },
-  { to: '/images', label: 'Images', icon: 'ui/image' },
+  { to: '/images', label: 'Image creator', icon: 'ui/image' },
   { to: '/stories', label: 'Stories', icon: 'ui/music-note-single' },
   { to: '/library', label: 'Library', icon: 'ui/folder' },
   { to: '/users', label: 'Users', icon: 'ui/user' },

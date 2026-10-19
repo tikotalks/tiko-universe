@@ -1,42 +1,48 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { tikoApps } from '../content/appUniverse'
+import { useApps } from '../content/useApps'
+import { useCopy } from '../i18n'
 import PageSection from '../components/sections/PageSection.vue'
 import AppCardGrid from '../components/sections/AppCardGrid.vue'
 import MediaStream from '../components/sections/MediaStream.vue'
 import CtaBanner from '../components/sections/CtaBanner.vue'
+
+const copy = useCopy()
+const apps = useApps()
+const page = computed(() => copy.value.appsPage)
 </script>
 
 <template>
   <div class="apps-page">
     <PageSection
-      eyebrow="The app universe"
-      title="Tiny apps. One clear job each."
-      intro="Tiko is not one giant app. It is a set of small, focused tools that open immediately and do one thing well. Pick the one that fits the moment."
+      :eyebrow="page.intro.eyebrow"
+      :title="page.intro.title"
+      :intro="page.intro.lede"
     >
-      <AppCardGrid :apps="tikoApps" />
+      <AppCardGrid :apps="apps" />
     </PageSection>
 
     <PageSection
-      eyebrow="From the Tiko library"
-      title="Thousands of clear, colourful images."
+      :eyebrow="page.media.eyebrow"
+      :title="page.media.title"
     >
       <MediaStream :limit="24" />
     </PageSection>
 
     <PageSection
-      eyebrow="On the way"
-      title="More tiny apps are coming."
-      intro="Cards, Sequence, and Timer are built around the same child-first contracts as the apps above. Each one opens fast and does one thing only."
+      :eyebrow="page.onTheWay.eyebrow"
+      :title="page.onTheWay.title"
+      :intro="page.onTheWay.lede"
     >
       <CtaBanner
         tone="primary"
-        title="Built on the same contracts."
-        body="Every Tiko app follows the same child-first promises — open fast, do one thing, speak any language."
+        :title="page.onTheWay.ctaTitle"
+        :body="page.onTheWay.ctaBody"
       >
         <template #actions>
           <RouterLink to="/docs/architecture" class="btn btn--light">
-            Read the architecture docs
+            {{ page.onTheWay.ctaLabel }}
           </RouterLink>
         </template>
       </CtaBanner>

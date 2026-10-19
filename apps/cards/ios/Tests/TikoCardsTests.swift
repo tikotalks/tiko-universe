@@ -429,7 +429,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat","pet"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items.first?.name, "cat")
         XCTAssertEqual(items.first?.fileName, "cat.png")
@@ -445,7 +445,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"2","file_name":"dog.png","title":"Dog","folder":"animals","tags":["dog"],"original_url":"https://data.tikocdn.org/uploads/cards/dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", color: "green"),
             CommunicationCard(id: "dog", title: "Dog", speech: "Dog", color: "green"),
@@ -467,7 +467,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", imageRef: "custom-ref", color: "green"),
         ])
@@ -491,7 +491,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"young-dog.png","title":"Young Dog","folder":"animals","tags":["puppy","dog"],"original_url":"https://data.tikocdn.org/uploads/cards/young-dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "puppy", title: "Puppy", speech: "Puppy", color: "green"),
         ])
@@ -508,7 +508,7 @@ final class TikoCardsTests: XCTestCase {
     // "Cat" never saw a candidate. Every default card rendered as a flat colour
     // block. These pin the matcher that replaced it.
 
-    private func items(_ titles: [String]) throws -> [TikoCards.TikoMediaItem] {
+    private func items(_ titles: [String]) throws -> [TikoMediaItem] {
         let entries = titles.enumerated().map { index, title in
             let slug = title.lowercased().replacingOccurrences(of: " ", with: "-")
             return """
@@ -516,7 +516,7 @@ final class TikoCardsTests: XCTestCase {
             """
         }
         return try JSONDecoder()
-            .decode(TikoCards.TikoMediaListResponse.self, from: Data("{\"data\":[\(entries.joined(separator: ","))]}".utf8))
+            .decode(TikoMediaListResponse.self, from: Data("{\"data\":[\(entries.joined(separator: ","))]}".utf8))
             .data
     }
 

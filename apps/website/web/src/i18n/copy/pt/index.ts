@@ -1,12 +1,14 @@
-import type { SiteCopyOverride } from '..'
+import type { SiteCopyOverride } from '../..'
+import { ptPages } from './pages'
+import { ptAudiencePages } from './pages-audience'
+import { ptHome } from './home'
+import { ptApps, ptAppsPage, ptAppDetail, ptNotFound } from './apps'
+import { ptDocs } from './docs'
+import { ptPrivacy } from './privacy'
 
-/**
- * Portuguese website copy.
- *
- * Only the chrome is translated so far; the long-form page copy still falls
- * back to English leaf by leaf, which is what `overlayCopy` is for.
- */
+/** Portuguese website copy — the whole site. */
 export const pt: SiteCopyOverride = {
+  ...({
   "common": {
     "skipToContent": "Ir para o conteúdo",
     "languageLabel": "Idioma",
@@ -15,6 +17,7 @@ export const pt: SiteCopyOverride = {
     "exploreApps": "Ver as apps",
     "openOnWeb": "Abrir no navegador",
     "downloadAppStore": "Descarregar na App Store",
+    "downloadOnCaption": "Transferir na",
     "learnMore": "Saber mais",
     "backToApps": "Todas as apps",
     "available": "Disponível",
@@ -46,4 +49,19 @@ export const pt: SiteCopyOverride = {
     "trustPrinciples": "Os nossos princípios",
     "philosophy": "Filosofia"
   }
+} as SiteCopyOverride),
+  meta: {
+    home: 'TikoTalks — Aplicações bonitas e gratuitas de educação e comunicação para todas as crianças',
+    apps: 'Aplicações',
+    docs: 'Docs',
+    notFound: 'Página não encontrada',
+  },
+  home: ptHome,
+  appsPage: ptAppsPage,
+  appDetail: ptAppDetail,
+  notFound: ptNotFound,
+  apps: ptApps,
+  docs: ptDocs,
+  privacy: ptPrivacy,
+  pages: { ...ptPages, ...ptAudiencePages },
 }

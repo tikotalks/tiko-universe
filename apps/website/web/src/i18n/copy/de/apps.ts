@@ -1,0 +1,273 @@
+import type { SiteCopy } from '../..'
+
+/** Die `/apps`-Seite, die Detailseite einer App und die 404-Seite. */
+export const deAppsPage: SiteCopy['appsPage'] = {
+  intro: {
+    eyebrow: 'Das App-Universum',
+    title: 'Kleine Apps. Je eine klare Aufgabe.',
+    lede: 'Tiko ist keine große App. Es ist eine Reihe kleiner, fokussierter Werkzeuge, die sofort öffnen und eine Sache gut machen. Nehmen Sie das, was zum Moment passt.',
+  },
+  media: {
+    eyebrow: 'Aus der Tiko-Bibliothek',
+    title: 'Tausende klare, bunte Bilder.',
+  },
+  onTheWay: {
+    eyebrow: 'In Arbeit',
+    title: 'Es kommen weitere kleine Apps.',
+    lede: 'Cards, Sequence und Timer folgen denselben kindgerechten Grundsätzen wie die Apps oben. Jede öffnet schnell und tut genau eine Sache.',
+    ctaTitle: 'Auf denselben Verträgen gebaut.',
+    ctaBody: 'Jede Tiko-App hält dieselben kindgerechten Zusagen ein — schnell offen, eine Aufgabe, jede Sprache.',
+    ctaLabel: 'Architektur-Doku lesen',
+  },
+}
+
+export const deAppDetail: SiteCopy['appDetail'] = {
+  notFound: {
+    eyebrow: 'Nicht gefunden',
+    title: 'App nicht gefunden.',
+    body: 'Es gibt keine Tiko-App mit diesem Namen.',
+    backLabel: 'Zurück zu allen Apps',
+  },
+  hero: {
+    brandPrefix: 'Tiko',
+    openLabel: '{app} öffnen',
+    comingSoon: 'Demnächst',
+    iconAlt: 'App-Symbol von {app}',
+  },
+  features: {
+    eyebrow: 'Was sie tut',
+    title: 'Für eine klare Aufgabe gebaut.',
+  },
+  screenshots: {
+    eyebrow: 'Auf dem Gerät',
+    title: '{app} auf einem echten Bildschirm.',
+    lede: 'Aufgenommen auf einem iPhone, im hellen und im dunklen Modus. Nichts davon ist ein Mockup.',
+  },
+  moment: {
+    eyebrow: 'Der menschliche Moment',
+    imageAlt: 'Ein ruhiger Moment mit {app}',
+    whySmallTitle: 'Warum sie klein bleibt',
+    calmTitle: 'Wie sie ruhig bleibt',
+  },
+  useWhen: {
+    eyebrow: 'Einsatzfälle',
+    title: 'Wann Sie zu {app} greifen',
+  },
+  cta: {
+    openWeb: 'Jetzt im Web öffnen.',
+    onAppStore: 'Jetzt im App Store.',
+    comingSoon: 'Demnächst.',
+    allAppsLabel: 'Alle Apps',
+  },
+  mediaLibrary: {
+    eyebrow: 'Eingebaute Bildbibliothek',
+    title: 'Tiko-Media-Bilder, bereit für Cards.',
+    lede: 'Cards kann mit klaren, gut erkennbaren Bildern aus Tiko Media starten. Stöbern Sie in der öffentlichen Bibliothek oder nutzen Sie die Bilder direkt in Kartensets.',
+    browseLabel: 'Tiko Media ansehen',
+    fallbackImageTitle: 'Tiko-Media-Bild',
+  },
+  downloadLabel: '{app} im App Store laden',
+}
+
+export const deNotFound: SiteCopy['notFound'] = {
+  eyebrow: 'Seite nicht gefunden',
+  title: 'Diese Seite gibt es hier nicht.',
+  lede: 'Der Link ist vielleicht alt, oder die Seite ist umgezogen. Jede Tiko-App ist unten einen Tipp entfernt.',
+  primaryLabel: 'Apps entdecken',
+  secondaryLabel: 'Zurück zur Startseite',
+  appsEyebrow: 'Jetzt offen',
+  appsTitle: 'Apps, die Sie heute benutzen können.',
+}
+
+/** Pro App, nach Slug. App-Namen werden nicht übersetzt. */
+export const deApps: SiteCopy['apps'] = {
+  'yes-no': {
+    shortSummary: 'Zwei riesige Tasten. Eine klare Antwort. Sofort.',
+    headline: 'Eine klare Frage. Eine klare Antwort.',
+    description: 'Yes No gibt Kindern zwei riesige, unübersehbare Auswahlmöglichkeiten auf einem Bildschirm. Kein Durcheinander, kein Scrollen, kein Konto. Öffnen, die Frage sehen, die Antwort antippen.',
+    platformNotes: 'Jetzt im Web und im App Store für iPhone und iPad. Android behält dieselbe einfache Form mit zwei Auswahlmöglichkeiten.',
+    useWhen: [
+      'ein Kind schnell antworten können muss',
+      'eine Betreuungsperson eine einfache Frage stellen möchte',
+      'Sprechen oder Tippen ohne komplizierten Bildschirm passieren soll',
+    ],
+    moment: 'Der denkbar einfachste Moment — eine Frage, zwei riesige Auswahlmöglichkeiten und nichts zwischen dem Kind und der Antwort.',
+    whySmall: 'Yes No bleibt winzig, weil zwei Auswahlmöglichkeiten der ganze Punkt sind. Es soll keine Umfrage, kein Bedienfeld und keine Verhaltensdokumentation werden.',
+    calmDetail: 'Große Flächen, starker Kontrast, Sprachausgabe und kein Kontoschritt halten den Antwortmoment beim Kind.',
+    features: [
+      { title: 'Zwei riesige Tasten', body: 'Ja und Nein füllen den Bildschirm. Unmöglich zu übersehen, leicht zu treffen.' },
+      { title: 'Sprachausgabe', body: 'Jede Antwort wird laut ausgesprochen, damit alle im Raum sie hören.' },
+      { title: 'Antwortverlauf', body: 'Betreuende können frühere Antworten nachlesen, ohne das Kind zu stören.' },
+      { title: 'Funktioniert offline', body: 'Für die Grundfunktion braucht es kein Netz. Öffnen und tippen, mehr nicht.' },
+    ],
+    captions: [],
+  },
+  type: {
+    shortSummary: 'Einen Gedanken tippen und ihn sofort laut hören.',
+    headline: 'Einen Gedanken tippen. Ihn gesprochen hören.',
+    description: 'Type ist eine ablenkungsfreie Texteingabe für Momente, in denen ein Kind schriftlich kommunizieren möchte. Jede Nachricht lässt sich per Tastendruck vorlesen.',
+    platformNotes: 'Jetzt im Web und im App Store für iPhone und iPad. Android folgt mit demselben ruhigen, fokussierten Erlebnis.',
+    useWhen: [
+      'ein Kind eine Nachricht tippen möchte',
+      'gespeicherte Sätze helfen würden',
+      'die Sprachausgabe einfach und schnell erreichbar bleiben soll',
+    ],
+    moment: 'Manche Gedanken tippt man leichter, als man sie sagt — und manche getippten Gedanken verdienen eine Stimme im Raum.',
+    whySmall: 'Type hält Schreiben und Sprechen an einem ruhigen Ort zusammen, statt zur Textverarbeitung oder Messaging-App zu werden.',
+    calmDetail: 'Die App macht die Texteingabe offensichtlich, hält die Sprachausgabe einen Tipp entfernt und vermeidet Bedienelemente, die mit dem Satz konkurrieren.',
+    features: [
+      { title: 'Klares Textfeld', body: 'Ein Feld, eine Taste. Nachricht tippen und sprechen lassen, ohne Menüs.' },
+      { title: 'Satzbibliothek', body: 'Speichern Sie Sätze, die oft vorkommen, damit sie einen Tipp entfernt bereitstehen.' },
+      { title: 'Stimmenauswahl', body: 'Wählen Sie eine Stimme, die zum Kind und zum Moment passt.' },
+      { title: 'Tastaturfreundlich', body: 'Funktioniert mit Bildschirmtastaturen und externer Hardware gleichermaßen.' },
+    ],
+    captions: [],
+  },
+  cards: {
+    shortSummary: 'Schöne Bildkarten. Eine antippen und sie sprechen hören.',
+    headline: 'Bilder, die für sich sprechen.',
+    description: 'Cards zeigt vertraute Bilder in einem einfachen Raster. Tippen Sie eine Karte an, um ihren Namen zu hören. Wählen Sie eingebaute Kategorien oder stellen Sie ein eigenes Set für jeden Ablauf und jede Situation zusammen.',
+    platformNotes: 'Kommt als fokussiertes Karten-Erlebnis — schöne Bilder, ein Tipp zum Sprechen.',
+    useWhen: [
+      'Bilder schneller kommunizieren als Text',
+      'Auswahlmöglichkeiten sichtbar und leicht antippbar sein sollen',
+      'eine fertige Bildbibliothek Vorbereitungszeit spart',
+    ],
+    moment: 'Ein vertrautes Bild macht eine Wahl leicht. Antippen, hören, weiter.',
+    whySmall: 'Cards konzentriert sich auf sichtbare Auswahl, nicht auf ein kompliziertes Verwaltungssystem vor dem Kind.',
+    calmDetail: 'Quadratische Karten, klare Beschriftungen und erkennbare Bilder machen Suchen und Antippen vorhersehbar.',
+    features: [
+      { title: 'Bildkarten', body: 'Karte antippen und den Namen hören. Bilder machen Auswahl schneller erkennbar.' },
+      { title: 'Eingebaute Kategorien', body: 'Tiere, Essen, Gefühle, Körper, Formen, Farben, Verkehr, Zahlen und Buchstaben stehen bereit.' },
+      { title: 'Eigene Karten', body: 'Fügen Sie Karten mit Namen, Bild und eigener Sprachausgabe für jedes Wort hinzu.' },
+      { title: 'Offline zuerst', body: 'Karten und Bilder kommen aus dem lokalen Speicher, damit die App auch ohne Netz nutzbar bleibt.' },
+    ],
+    captions: [],
+  },
+  sequence: {
+    shortSummary: 'Abläufe Schritt für Schritt. Immer klar, immer vorwärts.',
+    headline: 'Ein Schritt nach dem anderen, immer klar.',
+    description: 'Sequence macht aus jedem Ablauf eine klare Liste von Schritten. Der aktuelle Schritt steht immer groß in der Mitte. Antippen führt weiter. Nie raten, was als Nächstes kommt.',
+    platformNotes: 'Kommt für Web und nativ — der nächste Schritt immer sichtbar, immer einen Tipp entfernt.',
+    useWhen: [
+      'ein Ablauf eine klare Reihenfolge braucht',
+      'der nächste Schritt immer sichtbar sein soll',
+      'Vorhersehbarkeit Übergänge leichter macht',
+    ],
+    moment: 'Jeder Ablauf wird leichter, wenn der nächste Schritt schon sichtbar ist, statt im Kopf einer anderen Person zu stecken.',
+    whySmall: 'Sequence ist kein Projektplaner. Es zeigt den aktuellen Schritt, die nächste Bewegung und gerade genug Fortschritt zur Orientierung.',
+    calmDetail: 'Ein Schritt bleibt in der Mitte, der Fortschritt bleibt einfach, und Bilder machen den Ablauf leichter wiedererkennbar.',
+    features: [
+      { title: 'Ein Schritt, bildschirmfüllend', body: 'Der aktuelle Schritt ist immer das Größte auf dem Bildschirm.' },
+      { title: 'Fortschrittsbalken', body: 'Eine einfache Anzeige zeigt, wie weit der Ablauf gekommen ist.' },
+      { title: 'Eigene Abläufe', body: 'Bauen Sie jede Reihenfolge: Morgenablauf, Wechsel in der Klasse, Anziehen.' },
+      { title: 'Bild pro Schritt', body: 'Jeder Schritt kann ein Bild bekommen, damit er sofort erkennbar ist.' },
+    ],
+    captions: [],
+  },
+  timer: {
+    shortSummary: 'Ein großer, klarer Countdown. Sehen Sie genau, wie viel Zeit bleibt.',
+    headline: 'Zeit, die man wirklich sehen kann.',
+    description: 'Timer macht das Vergehen von Zeit sichtbar und ruhig. Ein großer Countdown zeigt genau, wie viel übrig ist. Kein aufschreckendes Piepen, nur ein leises visuelles Ende.',
+    platformNotes: 'Kommt als ein fokussierter Bildschirm — eine Sache, schön gemacht, im Web, unter iOS und Android.',
+    useWhen: [
+      'Übergänge einen sichtbaren Endpunkt brauchen',
+      'Warten weniger abstrakt wirkt, wenn die Zeit zu sehen ist',
+      'der Bildschirm nur eine Sache tun soll',
+    ],
+    moment: 'Zeit fühlt sich echt an, wenn man sie schrumpfen sieht.',
+    whySmall: 'Timer bleibt beim Countdown, statt zu Kalender, Weckersammlung oder Produktivitäts-App zu werden.',
+    calmDetail: 'Eine große Zahl, sichtbarer Fortschritt und ein sanftes Ende halten Zeit greifbar, ohne Anspannung hinzuzufügen.',
+    features: [
+      { title: 'Großer Countdown', body: 'Die Zeit füllt den Bildschirm. Keine kleinen Ziffern, keine versteckten Uhren.' },
+      { title: 'Sichtbarer Fortschritt', body: 'Ein Ring oder Balken schrumpft, während die Zeit vergeht, und macht sie greifbar.' },
+      { title: 'Sanftes Endsignal', body: 'Ein ruhiges Bild und ein optionaler weicher Ton zeigen an, dass die Zeit um ist.' },
+      { title: 'Schnelle Voreinstellungen', body: 'Gängige Zeiten wie 5, 10 oder 15 Minuten mit einem Tipp setzen.' },
+    ],
+    captions: [],
+  },
+  talk: {
+    shortSummary: 'Wörter antippen, einen Satz bauen und ihn gesprochen hören.',
+    headline: 'Sätze bauen. Die eigene Stimme finden.',
+    description: 'Talk ist eine ruhige Kommunikations-App, Wort für Wort. Tippen Sie Wörter an, um auf einer klaren Leiste einen Satz zu bauen, und lassen Sie ihn dann sprechen. Für Kinder, die ihre Stimme finden — ein Wort nach dem anderen.',
+    platformNotes: 'Jetzt im Web. iOS und Android folgen mit demselben ruhigen, fokussierten Erlebnis.',
+    useWhen: [
+      'ein Kind Sprache aufbaut, Wort für Wort',
+      'ein ganzer Satz ein paar Tipps kosten darf, keine Tastatur',
+      'ein ruhiges, vorhersehbares Wortraster mehr hilft als ein voller Bildschirm',
+    ],
+    moment: 'Jedes Wort, das ein Kind wählt, ist ein kleiner Akt des Sagens, wer es ist. Talk hält den Weg vom Gedanken zur Stimme so kurz und sanft wie möglich.',
+    whySmall: 'Talk bleibt beim Bauen und Sprechen eines Satzes. Es ist keine Chat-App, kein Feed und kein Allzweck-Tablet.',
+    calmDetail: 'Ein vorhersehbares Wortraster, eine klare Satzleiste und eine einzige Sprechtaste halten den Fokus auf der Stimme des Kindes — nicht auf der Oberfläche.',
+    features: [
+      { title: 'Wortraster', body: 'Tippen Sie Wörter an, um sie der Satzleiste hinzuzufügen. Kategorien halten Verwandtes beieinander.' },
+      { title: 'Satzleiste', body: 'Sehen Sie den Satz Wort für Wort entstehen, bevor Sie ihn sprechen lassen.' },
+      { title: 'Laut sprechen', body: 'Eine Taste spricht den ganzen Satz mit klarer Stimme.' },
+      { title: 'Funktioniert offline', body: 'Die Kern-Wortpakete liegen lokal, damit Talk ohne Netz funktioniert.' },
+    ],
+    captions: [],
+  },
+  say: {
+    shortSummary: 'Karte sehen, Wort hören, nachsprechen, feiern.',
+    headline: 'Ruhiges Sprechenüben, ein Wort nach dem anderen.',
+    description: 'Say ist eine App zum Sprechenüben. Kategorie wählen, eine große freundliche Karte sehen, ihr Wort hören und nachsprechen. Ein richtiges Wort löst eine fröhliche Feier aus, und die nächste Karte erscheint von selbst.',
+    platformNotes: 'Jetzt im App Store für iPhone und iPad. Android und Web folgen mit demselben ruhigen, fokussierten Erlebnis.',
+    useWhen: [
+      'ein Kind seine ersten Wörter übt',
+      'ein verfehltes Wort einen weiteren ruhigen Versuch bedeutet, keinen Fehlerton',
+      'ein vertrautes Bild das Wort leichter erreichbar macht',
+    ],
+    moment: 'Ein Wort zu üben sollte sich anfühlen, als würde man angefeuert — nie, als würde man geprüft.',
+    whySmall: 'Say übt Wörter. Es ist kein Therapieprogramm, kein Fortschritts-Dashboard und kein Punktesystem — es gibt keinen Fehlerton, kein rotes Kreuz und nirgends eine Punktzahl.',
+    calmDetail: 'Eine große Karte nach der anderen, das Wort in freundlicher Stimme, und „Überspringen“ immer in Reichweite, damit kein Kind hängen bleibt.',
+    features: [
+      { title: 'Sechs Bildkategorien', body: 'Tiere, Essen, Fahrzeuge, Körper, Farben und Zahlen stehen zum Üben bereit.' },
+      { title: 'Jede Karte anpassbar', body: 'Was zu sehen ist, was gesagt wird und welche Wörter als richtig gelten, bestimmen Sie.' },
+      { title: 'Zuhören auf dem Gerät', body: 'Die Spracherkennung läuft auf dem Gerät, wo es unterstützt wird. Aufnahmen werden nie gespeichert oder hochgeladen.' },
+      { title: 'Sechs gesprochene Sprachen', body: 'Spricht und hört auf Englisch, Niederländisch, Französisch, Spanisch, Deutsch und Maltesisch.' },
+    ],
+    captions: ['Kategorie wählen', 'Eine Karte, ein Wort'],
+  },
+  sum: {
+    shortSummary: 'Rechnen, das spricht — und nie „falsch“ sagt.',
+    headline: 'Jede Zahl gesprochen. Jede Antwort eine Wahl.',
+    description: 'Sum ist eine sprechende Rechen-App für Kinder, und sie ist kein Taschenrechner: Das Ergebnis wird nie angezeigt. Jede Taste wird laut gesprochen, und die Antwort ist immer eine Wahl zwischen drei großen Kacheln.',
+    platformNotes: 'Jetzt im App Store für iPhone und iPad. Android und Web folgen mit demselben ruhigen, fokussierten Erlebnis.',
+    useWhen: [
+      'Zählen und Rechnen gehört und nicht nur gesehen werden soll',
+      'ein Fehlgriff bedeutet, die Aufgabe noch einmal zu hören, keinen Fehlerton',
+      'Eltern begrenzen möchten, wie groß die Zahlen werden',
+    ],
+    moment: 'Eine Rechenaufgabe behält man leichter, wenn man sie hören kann — „drei… plus… fünf…“ — statt sie vom Bildschirm abzulesen.',
+    whySmall: 'Sum übt eine Aufgabe nach der anderen. Es ist kein Lehrplan, kein Serienzähler und kein Zeugnis.',
+    calmDetail: 'Wählt man die richtige Kachel, feiert der Bildschirm mit; wählt man eine andere, sagt Sum einfach die Aufgabe noch einmal. Kein Fehlerton, kein rotes Kreuz, kein Druck.',
+    features: [
+      { title: 'Ein sprechendes Tastenfeld', body: 'Jede Zahl und jedes Zeichen wird in der Sprache des Kindes vorgelesen.' },
+      { title: 'Die Antwort ist eine Wahl', body: 'Drei Kacheln — eine richtige, zwei clevere Beinaherichtige. Nie ein leeres Feld zum Scheitern.' },
+      { title: 'Alle vier Rechenarten', body: 'Plus, minus, mal und geteilt durch, mit einer Höchstzahl, die Eltern festlegen können.' },
+      { title: 'Drei Wege zu antworten', body: 'Kachel wählen, Zahl tippen oder laut sagen. Nur Letzteres nutzt das Mikrofon.' },
+    ],
+    captions: ['Schwierigkeit wählen', 'Drei Kacheln, eine richtige', 'Das sprechende Tastenfeld'],
+  },
+  first: {
+    shortSummary: 'Zuerst, dann, fertig. Ein Bildablauf, der spricht.',
+    headline: 'Ein Schritt nach dem anderen, laut gesprochen.',
+    description: 'First macht aus einem Ablauf Bilder, denen ein Kind selbst folgen kann. Sie bauen die Schritte; Ihr Kind sieht ein großes Bild nach dem anderen, hört es gesprochen und hakt es mit einem Tipp ab.',
+    platformNotes: 'Jetzt im App Store für iPhone und iPad. Android und Web folgen mit demselben ruhigen, fokussierten Erlebnis.',
+    useWhen: [
+      'ein Ablauf ohne begleitende Erwachsenenstimme funktionieren soll',
+      'ein Kind sehen soll, was jetzt passiert und was als Nächstes kommt',
+      'überhaupt kein Mikrofon, keine Kamera und keine Berechtigungsabfrage gewünscht ist',
+    ],
+    moment: 'Ein Ablauf hört auf, eine Verhandlung zu sein, sobald der nächste Schritt schon auf dem Bildschirm steht statt im Kopf einer anderen Person.',
+    whySmall: 'First zeigt den Schritt, bei dem ein Kind gerade ist. Es ist kein Planer, keine Uhr und kein Belohnungsplan — es gibt keine Timer und keine Punkte.',
+    calmDetail: 'Schritte werden der Reihe nach abgehakt, ein Tipp nach vorn spricht diesen Schritt nur aus, und der letzte Haken lässt sich immer zurücknehmen.',
+    features: [
+      { title: 'Ein großer Schritt nach dem anderen', body: 'Ein Bild, ein kurzer Titel, in der Sprache des Kindes gesprochen, sobald er an der Reihe ist.' },
+      { title: 'Acht fertige Abläufe', body: 'Morgen, Schlafenszeit, Rausgehen, Essen, Baden, Aufräumen, Schultag und eine Zuerst/Dann-Tafel.' },
+      { title: 'Ihre Worte, Ihre Bilder', body: 'Jeder Ablauf und jeder Schritt ist änderbar — inklusive Fotos der echten Schuhe oder Tasche des Kindes.' },
+      { title: 'Gar keine Berechtigungen', body: 'Kein Mikrofon, keine Kamera, keine Werbung, keine Konten. Funktioniert nach dem ersten Öffnen offline.' },
+    ],
+    captions: ['Ablauf wählen', 'Ein Schritt, bildschirmfüllend', 'Den Ablauf abschließen'],
+  },
+}
