@@ -52,6 +52,7 @@ export function realizeWith(
   const isQuestion = !!chunks.question || chunks.invertedCopula === true
   let needsCopula = !chunks.verb && !!chunks.subject && (!!predicate || isQuestion)
   const subjectHead = chunks.subject?.kind === 'np' ? chunks.subject.head : undefined
+  const subjectPronoun = chunks.subject?.kind === 'np' ? chunks.subject.pronoun : undefined
 
   const ctx: SentenceContext = {
     verb: chunks.verb,
@@ -65,10 +66,14 @@ export function realizeWith(
     negated: chunks.negated,
     isQuestion,
     needsCopula,
-    subjectGender: subjectHead?.features.gender,
+    // A noun says its own gender; a pronoun says it too, and "ella" says it as
+    // plainly as "la manzana" does. Reading only the head left every sentence
+    // about a girl agreeing masculine: "Ella está cansado".
+    subjectGender: subjectHead?.features.gender ?? subjectPronoun?.features.gender,
     subjectPlural: chunks.subject?.kind === 'np'
       ? chunks.subject.determiner?.features.forcesNumber === 'pl'
       : undefined,
+    subjectIsPronoun: chunks.subject?.kind === 'np' ? !!chunks.subject.pronoun : undefined,
     subjectAnimate: chunks.subject?.kind === 'np'
       ? !!chunks.subject.pronoun || subjectHead?.features.animate === true
       : undefined,
@@ -91,6 +96,21 @@ export function realizeWith(
     ctx.verb = undefined
     needsCopula = true
   }
+
+  /**
+   * A noun completing a copula is a **predicate nominative**, not an object: "das
+   * ist ein Arzt", never "das ist einen Arzt". It was reaching the languages in
+   * the object's role, so every language that declines an object declined it —
+   * which is a fact about the role it was given, not about German, and so it is
+   * fixed here rather than in each language that noticed.
+   *
+   * Only the first such phrase, and only a noun-headed one. A predicate *pronoun*
+   * is a separate question that languages answer differently — English says "that
+   * is me", not "that is I" — and nothing here should decide it for them.
+   */
+  const predicateNounPhrase = needsCopula
+    ? chunks.complements.find((phrase) => phrase.kind === 'np' && !!phrase.head)
+    : undefined
 
   const plan: NegationPlan = chunks.negated ? rules.negation(ctx) : { kind: 'none' }
 
@@ -145,11 +165,17 @@ export function realizeWith(
 
       // Each adjective may override the language's default position.
       const fallbackPosition = rules.adjectivePosition ?? 'before'
+      // To a language, a `predicate` adjective is the bare one after a copula —
+      // "she is big" — which takes a predicative form and agrees with the subject.
+      // An adjective inside a predicate noun phrase is attributive to its own
+      // noun, nominative like the phrase around it: "she is a big doctor" is
+      // built exactly as "the big doctor" is.
+      const adjectiveCtx: PhraseContext = role === 'predicate' ? { ...phraseCtx, role: 'subject' } : phraseCtx
       const emitAdjectives = (where: 'before' | 'after'): void => {
         for (const adjective of np.adjectives) {
           const position = adjective.features.adjectivePosition ?? fallbackPosition
           if (position !== where) continue
-          push(builder, rules.adjective(adjective, np, phraseCtx), adjective.id)
+          push(builder, rules.adjective(adjective, np, adjectiveCtx), adjective.id)
         }
       }
       emitAdjectives('before')
@@ -256,7 +282,7 @@ export function realizeWith(
         return
       }
       default:
-        emitNounPhrase(phrase, 'object')
+        emitNounPhrase(phrase, phrase === predicateNounPhrase ? 'predicate' : 'object')
     }
   }
 

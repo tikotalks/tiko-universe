@@ -1,6 +1,6 @@
 import type { Features, SelectedWord } from '../features'
 import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
-import { formFor, isSensation, note, type LanguageRules } from '../profile'
+import { formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Luxembourgish. German's shape with most of German's difficulty removed: three
@@ -87,7 +87,7 @@ export const luxembourgish: LanguageRules = {
     const determiner = np.determiner
     const head = np.head
     const gender = head?.features.gender
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     // "keen Apel": an indefinite phrase carries the negation itself, as in German
     // and Dutch.
@@ -136,7 +136,7 @@ export const luxembourgish: LanguageRules = {
     // masculine and -e elsewhere.
     if (ctx.role === 'predicate') return adjective.text
     const gender = np.head?.features.gender
-    const plural = np.determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     if (plural) return `${adjective.text}${adjective.text.endsWith('e') ? '' : 'e'}`
     return gender === 'masculine' ? `${adjective.text}en` : `${adjective.text}e`
   },

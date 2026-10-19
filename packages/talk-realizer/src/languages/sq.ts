@@ -2,7 +2,7 @@ import type { Features, SelectedWord } from '../features'
 import { extractObjectClitic } from '../morphology/clitic'
 import { applyExperiencer } from '../morphology/romance'
 import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
-import { agreesWith, formFor, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, note, type LanguageRules } from '../profile'
 
 /**
  * Albanian. Its own branch of Indo-European, with two features this package
@@ -155,7 +155,7 @@ export const albanian: LanguageRules = {
 
   determiner(np, ctx) {
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     if (determiner) {
       const kind = determiner.features.determinerKind

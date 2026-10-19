@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Italian. Two things beyond the shared Romance machinery:
@@ -105,7 +105,7 @@ export const italian: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     // The article agrees with whatever word comes next — adjective included.
     const next = (np.adjectives[0]?.text ?? head?.text ?? '')
@@ -150,7 +150,12 @@ export const italian: LanguageRules = {
       note(ctx.builder, 'no article: mass noun')
       return null
     }
-    if (plural) return { text: definite, from: null }
+    if (plural) {
+      // Italian leaves a bare plural bare: "voglio scarpe". The definite article
+      // that used to stand here says the opposite of indefinite.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: indefiniteArticle(next, feminine), from: null }
   },
 

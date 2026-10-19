@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { formFor, isSensation, note, type LanguageRules } from '../profile'
+import { formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * West Frisian. An official language of the Netherlands, and the closest living
@@ -74,7 +74,7 @@ export const frisian: LanguageRules = {
     const determiner = np.determiner
     const head = np.head
     const neuter = head?.features.gender === 'neuter'
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     // "gjin apel": a negated indefinite phrase carries the negation itself.
     if (ctx.negateHere) {

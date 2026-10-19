@@ -1,4 +1,4 @@
-import { formFor, isSensation, note, type LanguageRules, type SentenceContext } from '../profile'
+import { formFor, isPlural, isSensation, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Dutch. Three rules carry the weight, and each is one that plain tile
@@ -138,7 +138,7 @@ export const dutch: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     if (determiner) {
       const kind = determiner.features.determinerKind
@@ -181,7 +181,7 @@ export const dutch: LanguageRules = {
     const head = np.head
     if (!head) return adjective.text
     const inflected = adjective.features.attributive ?? `${adjective.text}e`
-    const plural = np.determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const kind = np.determiner?.features.determinerKind
     const definite = kind === 'definite' || kind === 'demonstrative'
       || np.determiner?.features.pronounCase === 'poss'

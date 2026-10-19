@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Portuguese. Closest to Spanish here, with two differences that matter:
@@ -84,7 +84,7 @@ export const portuguese: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     const definite = plural ? (feminine ? 'as' : 'os') : (feminine ? 'a' : 'o')
 
@@ -113,7 +113,12 @@ export const portuguese: LanguageRules = {
       note(ctx.builder, 'no article: mass noun')
       return null
     }
-    if (plural) return { text: feminine ? 'umas' : 'uns', from: null }
+    if (plural) {
+      // Portuguese leaves a bare plural bare: "quero sapatos", not "quero uns
+      // sapatos", which counts a pair rather than naming the thing.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: feminine ? 'uma' : 'um', from: null }
   },
 

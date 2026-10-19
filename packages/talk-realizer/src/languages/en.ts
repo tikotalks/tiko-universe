@@ -1,5 +1,5 @@
 import type { NounPhrase, Word } from '../chunk'
-import { formFor, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
+import { formFor, isPlural, note, type LanguageRules, type PhraseContext, type SentenceContext } from '../profile'
 
 /**
  * English. Little morphology, but two rules that concatenation always misses:
@@ -79,8 +79,9 @@ export const english: LanguageRules = {
     if (np.determiner) return { text: np.determiner.text, from: np.determiner.id }
     const head = np.head
     if (!head) return null
-    // With no determiner there is no quantifier, so the phrase is singular.
-    const plural = false
+    // No quantifier here, but the noun itself can be plural — "glasses",
+    // "headphones", "scissors" — and "a" belongs to none of them.
+    const plural = isPlural(np)
     if (ctx.afterPreposition && head.features.institutional) {
       note(ctx.builder, `no article: "${head.text}" is institutional after a preposition`)
       return null
@@ -89,7 +90,11 @@ export const english: LanguageRules = {
       note(ctx.builder, 'no article: mass noun')
       return null
     }
-    if (head.features.proper || plural) return null
+    if (plural) {
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
+    if (head.features.proper) return null
     const next = np.adjectives[0] ?? head
     const article = startsWithVowelSound(next) ? 'an' : 'a'
     note(ctx.builder, `article "${article}": indefinite countable singular`)
