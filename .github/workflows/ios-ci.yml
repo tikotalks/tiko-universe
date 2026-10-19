@@ -150,6 +150,26 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      # TikoCore is built from Kotlin and never committed, so an app that links it
+      # (today: Write) needs it built before its project can resolve.
+      - name: Check for TikoCore
+        id: tikocore
+        run: |
+          if grep -q 'tikokotlinkit' '${{ matrix.path }}/Project.yml'; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Java
+        if: steps.tikocore.outputs.needed == 'true'
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build TikoCore
+        if: steps.tikocore.outputs.needed == 'true'
+        run: ./gradlew --no-daemon :tikokotlinkit:assembleTikoCoreReleaseXCFramework
+
       - name: Generate project
         working-directory: ${{ matrix.path }}
         run: xcodegen generate
