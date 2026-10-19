@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useBemm } from 'bemm'
+import { fitzgeraldCategory, fitzgeraldColors, fitzgeraldInk } from '@tiko/data'
 import { SilIcon as Icon } from '@tiko/ui'
 import type { WordTile } from '@tiko/talk-types'
 
 const bemm = useBemm('sentence-bar', { return: 'string', includeBaseClass: true })
 
 defineProps<{
+  fitzgeraldKey?: boolean
   words: WordTile[]
   /**
    * The sentence the tiles make — "I am sad because I want mum" — as the realizer
@@ -33,6 +35,7 @@ const emit = defineEmits<{
         v-for="(word, index) in words"
         :key="`${word.id}-${index}`"
         :class="bemm('word')"
+        :style="fitzgeraldKey ? { backgroundColor: fitzgeraldColors[fitzgeraldCategory(word.pos)], color: fitzgeraldInk } : undefined"
         type="button"
         :aria-label="`Remove ${word.text}`"
         @click="emit('removeWord', index)"

@@ -55,6 +55,7 @@ const i18n = createI18n({ app: appId, language: normalizeTikoLanguage(stored.lan
 const language = ref<TikoLanguage>(normalizeTikoLanguage(stored.language))
 const colorMode = ref<TikoColorMode>(normalizeTikoColorMode(stored.colorMode))
 const hideDefaultCollections = ref(stored.hideDefaultCollections ?? false)
+const fitzgeraldKey = ref(stored.fitzgeraldKey === true)
 const showAnimations = ref(stored.showAnimations ?? true)
 const cardSizeIndex = ref(clampIndex(stored.cardSizeIndex ?? 1))
 const labelSizeIndex = ref(clampIndex(stored.labelSizeIndex ?? 1))
@@ -96,6 +97,7 @@ const settingsRuntime = useTikoAppSettingsRuntime<typeof appId, CardsSettings>({
     language: language.value,
     colorMode: colorMode.value,
     hideDefaultCollections: hideDefaultCollections.value,
+    fitzgeraldKey: fitzgeraldKey.value,
     showAnimations: showAnimations.value,
     cardSizeIndex: cardSizeIndex.value,
     labelSizeIndex: labelSizeIndex.value,
@@ -140,6 +142,7 @@ const labels = computed(() => {
       none: i18n.t('common.none'),
       settings: i18n.t('common.settings'),
       hideDefaultSets: i18n.t('cards.settings.hideDefaultSets'),
+      fitzgeraldKey: i18n.t(tikoI18nKeys.common.fitzgeraldKey),
       showAnimations: i18n.t('cards.settings.showAnimations'),
       cardSize: i18n.t('cards.settings.cardSize'),
       labelSize: i18n.t('cards.settings.labelSize'),
@@ -360,6 +363,7 @@ function renderPopup(kind: PopupKind) {
     language: language.value,
     colorMode: colorMode.value,
     hideDefaultCollections: hideDefaultCollections.value,
+    fitzgeraldKey: fitzgeraldKey.value,
     showAnimations: showAnimations.value,
     cardSizeIndex: cardSizeIndex.value,
     labelSizeIndex: labelSizeIndex.value,
@@ -368,6 +372,7 @@ function renderPopup(kind: PopupKind) {
     'onUpdate:language': (value: TikoLanguage) => { language.value = value },
     'onUpdate:colorMode': (value: TikoColorMode) => { colorMode.value = value },
     'onUpdate:hideDefaultCollections': (value: boolean) => { hideDefaultCollections.value = value },
+    'onUpdate:fitzgeraldKey': (value: boolean) => { fitzgeraldKey.value = value },
     'onUpdate:showAnimations': (value: boolean) => { showAnimations.value = value },
     'onUpdate:cardSizeIndex': (value: number) => { cardSizeIndex.value = clampIndex(value) },
     'onUpdate:labelSizeIndex': (value: number) => { labelSizeIndex.value = clampIndex(value) },
@@ -384,6 +389,7 @@ function writeStored(state: PersistedCards) {
     language: language.value,
     colorMode: colorMode.value,
     hideDefaultCollections: hideDefaultCollections.value,
+    fitzgeraldKey: fitzgeraldKey.value,
     showAnimations: showAnimations.value,
     cardSizeIndex: cardSizeIndex.value,
     labelSizeIndex: labelSizeIndex.value,
@@ -395,6 +401,7 @@ function clampIndex(value: number) {
 }
 
 function applyRemoteSettings(settings: CardsSettings) {
+  if (typeof settings.fitzgeraldKey === 'boolean') fitzgeraldKey.value = settings.fitzgeraldKey
   language.value = normalizeTikoLanguage(settings.language)
   colorMode.value = normalizeTikoColorMode(settings.colorMode)
   hideDefaultCollections.value = typeof settings.hideDefaultCollections === 'boolean'
@@ -422,7 +429,7 @@ useTikoI18nRuntime({
 
 useTikoColorModeEffect(colorMode)
 
-watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => cards.persist({
+watch([language, colorMode, fitzgeraldKey, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => cards.persist({
   language: language.value,
   colorMode: colorMode.value,
   hideDefaultCollections: hideDefaultCollections.value,
@@ -431,7 +438,7 @@ watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeInde
   labelSizeIndex: labelSizeIndex.value,
 }))
 
-watch([language, colorMode, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => {
+watch([language, colorMode, fitzgeraldKey, hideDefaultCollections, showAnimations, cardSizeIndex, labelSizeIndex], () => {
   void settingsRuntime.persistSettingsRemote()
 })
 
@@ -473,7 +480,7 @@ onMounted(async () => {
   >
     <section :class="appBemm('', { editing: cards.editMode.value })">
       <div v-if="cards.loadingCollections.value && !visibleItems.length" :class="appBemm('loading')">{{ labels.loadingCards }}</div>
-      <CardsBoard
+      <CardsBoard :fitzgerald-key="fitzgeraldKey"
         v-else-if="visibleItems.length"
         v-model:page="page"
         :items="visibleItems"

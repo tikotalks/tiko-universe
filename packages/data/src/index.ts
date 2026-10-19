@@ -80,6 +80,7 @@ export interface TypeState extends JsonObject {
 }
 
 export interface CardsTile {
+  fitzgeraldCategory?: import('./fitzgerald').FitzgeraldCategory
   id: string
   title: string
   speech: string
@@ -99,7 +100,10 @@ export interface CardsCollection {
   cards: CardsTile[]
 }
 
+export { fitzgeraldCategories, fitzgeraldCategory, fitzgeraldColors, fitzgeraldInk, isFitzgeraldCategory, type FitzgeraldCategory } from './fitzgerald'
+
 export interface CardsSettings {
+  fitzgeraldKey?: boolean
   language?: string
   colorMode?: 'light' | 'dark' | 'system'
   hiddenDefaults?: string[]

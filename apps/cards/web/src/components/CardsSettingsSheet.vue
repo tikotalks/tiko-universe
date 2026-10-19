@@ -11,6 +11,7 @@ import type { TikoLanguage, TikoLanguageOption } from '@tiko/i18n'
 defineProps<{
   language: TikoLanguage
   languages: TikoLanguageOption[]
+  fitzgeraldKey: boolean
   colorMode: TikoColorMode
   hideDefaultCollections: boolean
   showAnimations: boolean
@@ -18,6 +19,7 @@ defineProps<{
   labelSizeIndex: number
   labels: {
     settings: string
+    fitzgeraldKey: string
     hideDefaultSets: string
     showAnimations: string
     cardSize: string
@@ -39,6 +41,7 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
+  'update:fitzgeraldKey': [value: boolean]
   'update:language': [value: TikoLanguage]
   'update:colorMode': [value: TikoColorMode]
   'update:hideDefaultCollections': [value: boolean]
@@ -50,6 +53,7 @@ const emit = defineEmits<{
 
 <template>
   <TikoSheet :title="labels.settings" icon="settings">
+    <TikoToggleRow :model-value="fitzgeraldKey" :label="labels.fitzgeraldKey" @update:model-value="emit('update:fitzgeraldKey', $event)" />
     <TikoSettingsPanel
       :language="language"
       :languages="languages"

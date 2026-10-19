@@ -128,7 +128,7 @@ final class CardsStore: ObservableObject {
         Task { await persistCollection(id: id, title: trimmed, color: color, order: order, parentID: parentID, imageURL: imageURL) }
     }
 
-    func addCard(title: String, speech: String, color: String? = nil, imageURL: URL? = nil, to collectionID: String) {
+    func addCard(title: String, speech: String, color: String? = nil, fitzgeraldCategory: String? = nil, imageURL: URL? = nil, to collectionID: String) {
         let trimmed = title.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty,
               let index = collections.firstIndex(where: { $0.id == collectionID }) else { return }
@@ -136,11 +136,11 @@ final class CardsStore: ObservableObject {
         let spokenText = speech.trimmingCharacters(in: .whitespaces).isEmpty ? trimmed : speech.trimmingCharacters(in: .whitespaces)
         let resolvedColor = color ?? collections[index].color
         let order = collections[index].cards.count
-        let card = CommunicationCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, order: order)
+        let card = CommunicationCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, order: order, fitzgeraldCategory: fitzgeraldCategory)
         collections[index].cards.append(card)
         if let imageURL { cardImages[id] = imageURL }
         persistLocalUserCollections()
-        Task { await persistCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, order: order, imageURL: imageURL, collectionID: collectionID) }
+        Task { await persistCard(id: id, title: trimmed, speech: spokenText, color: resolvedColor, fitzgeraldCategory: fitzgeraldCategory, order: order, imageURL: imageURL, collectionID: collectionID) }
     }
 
     func reorderCollection(draggingID: String, targetID: String) {
@@ -189,12 +189,13 @@ final class CardsStore: ObservableObject {
         }
     }
 
-    func updateCard(id: String, title: String, speech: String, color: String, imageURL: URL?, inCollectionID: String) {
+    func updateCard(id: String, title: String, speech: String, color: String, fitzgeraldCategory: String? = nil, imageURL: URL?, inCollectionID: String) {
         guard let ci = collections.firstIndex(where: { $0.id == inCollectionID }),
               let ji = collections[ci].cards.firstIndex(where: { $0.id == id }) else { return }
         collections[ci].cards[ji].title = title
         collections[ci].cards[ji].speech = speech
         collections[ci].cards[ji].color = color
+        collections[ci].cards[ji].fitzgeraldCategory = fitzgeraldCategory
         if let imageURL {
             cardImages[id] = imageURL
         } else {
@@ -202,7 +203,7 @@ final class CardsStore: ObservableObject {
             collections[ci].cards[ji].imageRef = nil
         }
         persistLocalUserCollections()
-        Task { await persistUpdateCard(id: id, title: title, speech: speech, color: color, order: collections[ci].cards[ji].order, imageURL: imageURL, collectionID: inCollectionID) }
+        Task { await persistUpdateCard(id: id, title: title, speech: speech, color: color, fitzgeraldCategory: fitzgeraldCategory, order: collections[ci].cards[ji].order, imageURL: imageURL, collectionID: inCollectionID) }
     }
 
     func reorderCard(draggingID: String, targetID: String, inCollectionID: String) {
@@ -221,6 +222,7 @@ final class CardsStore: ObservableObject {
                     title: card.title,
                     speech: card.speech,
                     color: card.color,
+                    fitzgeraldCategory: card.fitzgeraldCategory,
                     order: card.order,
                     imageURL: imageURL(for: card),
                     collectionID: inCollectionID
@@ -244,13 +246,13 @@ final class CardsStore: ObservableObject {
         }
     }
 
-    private func persistCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL?, collectionID: String) async {
+    private func persistCard(id: String, title: String, speech: String, color: String, fitzgeraldCategory: String? = nil, order: Int, imageURL: URL?, collectionID: String) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
             lastPersistError = "No session token"
             return
         }
         do {
-            let saved = try await contentClient.createCard(id: id, title: title, speech: speech, color: color, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+            let saved = try await contentClient.createCard(id: id, title: title, speech: speech, color: color, fitzgeraldCategory: fitzgeraldCategory, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
             applySavedCard(saved, collectionID: collectionID)
             persistLocalUserCollections()
         } catch {
@@ -273,13 +275,13 @@ final class CardsStore: ObservableObject {
         }
     }
 
-    private func persistUpdateCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL?, collectionID: String) async {
+    private func persistUpdateCard(id: String, title: String, speech: String, color: String, fitzgeraldCategory: String? = nil, order: Int, imageURL: URL?, collectionID: String) async {
         guard let token = try? TikoDeviceSessionStore().load()?.accessToken else {
             lastPersistError = "No session token"
             return
         }
         do {
-            let saved = try await contentClient.updateCard(id: id, title: title, speech: speech, color: color, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
+            let saved = try await contentClient.updateCard(id: id, title: title, speech: speech, color: color, fitzgeraldCategory: fitzgeraldCategory, order: order, imageURL: imageURL, collectionID: collectionID, sessionToken: token)
             applySavedCard(saved, collectionID: collectionID)
         } catch {
             lastPersistError = "Failed to save card: \(error.localizedDescription)"
@@ -321,7 +323,7 @@ final class CardsStore: ObservableObject {
         Task {
             for (i, card) in toMove.enumerated() {
                 await persistDeleteCard(id: card.id, collectionID: fromCollectionID)
-                await persistCard(id: card.id, title: card.title, speech: card.speech, color: card.color, order: startOrder + i, imageURL: imageURL(for: card), collectionID: toCollectionID)
+                await persistCard(id: card.id, title: card.title, speech: card.speech, color: card.color, fitzgeraldCategory: card.fitzgeraldCategory, order: startOrder + i, imageURL: imageURL(for: card), collectionID: toCollectionID)
             }
         }
     }
@@ -331,7 +333,7 @@ final class CardsStore: ObservableObject {
         for ji in collections[ci].cards.indices where ids.contains(collections[ci].cards[ji].id) {
             let card = collections[ci].cards[ji]
             collections[ci].cards[ji].color = color
-            Task { await persistUpdateCard(id: card.id, title: card.title, speech: card.speech, color: color, order: card.order, imageURL: imageURL(for: card), collectionID: inCollectionID) }
+            Task { await persistUpdateCard(id: card.id, title: card.title, speech: card.speech, color: color, fitzgeraldCategory: card.fitzgeraldCategory, order: card.order, imageURL: imageURL(for: card), collectionID: inCollectionID) }
         }
         persistLocalUserCollections()
     }

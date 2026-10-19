@@ -65,7 +65,7 @@ actor CardsContentClient {
     }
 
     /// Adds a card to a user collection and persists it server-side.
-    func createCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
+    func createCard(id: String, title: String, speech: String, color: String, fitzgeraldCategory: String? = nil, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(collectionID)/cards") else {
             throw URLError(.badURL)
         }
@@ -75,6 +75,7 @@ actor CardsContentClient {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         var payload: [String: Any] = ["id": id, "title": title, "speech": speech, "color": color, "order": order]
+        if let fitzgeraldCategory { payload["fitzgeraldCategory"] = fitzgeraldCategory }
         if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -104,7 +105,7 @@ actor CardsContentClient {
         return try JSONDecoder().decode(SingleCollectionResponse.self, from: data).data
     }
 
-    func updateCard(id: String, title: String, speech: String, color: String, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
+    func updateCard(id: String, title: String, speech: String, color: String, fitzgeraldCategory: String? = nil, order: Int, imageURL: URL? = nil, collectionID: String, sessionToken: String) async throws -> CommunicationCard {
         guard let url = URL(string: "\(Self.baseURL)/cards/collections/\(collectionID)/cards/\(id)") else {
             throw URLError(.badURL)
         }
@@ -114,6 +115,7 @@ actor CardsContentClient {
         request.setValue("Bearer \(sessionToken)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         var payload: [String: Any] = ["title": title, "speech": speech, "color": color, "order": order]
+        if let fitzgeraldCategory { payload["fitzgeraldCategory"] = fitzgeraldCategory }
         if let imageRef = try await imageRefPayload(from: imageURL, sessionToken: sessionToken) { payload["imageRef"] = imageRef }
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -173,6 +175,7 @@ actor CardsContentClient {
                 "title": card.title,
                 "speech": card.speech,
                 "color": card.color,
+                "fitzgeraldCategory": card.fitzgeraldCategory ?? "miscellaneous",
                 "order": 0,
             ]
             if let imageRef = card.imageRef { cardPayload["imageRef"] = imageRef }

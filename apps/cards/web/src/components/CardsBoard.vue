@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { fitzgeraldColors, isFitzgeraldCategory } from '@tiko/data'
 import { TikoTileBoard } from '@tiko/ui'
 import type { CardsGridItem } from '../types'
 import { colorValue, isUserOwned } from '../composables/useCardsStore'
 import { imageForCard, imageForCollection } from '../composables/cardsMedia'
 
 const props = defineProps<{
+  fitzgeraldKey?: boolean
   items: CardsGridItem[]
   columns: number
   itemsPerPage: number
@@ -53,6 +55,7 @@ function title(item: CardsGridItem) {
 }
 
 function background(item: CardsGridItem) {
+  if (props.fitzgeraldKey && item.kind === 'card') return fitzgeraldColors[isFitzgeraldCategory(item.card.fitzgeraldCategory) ? item.card.fitzgeraldCategory : 'miscellaneous']
   return colorValue(item.kind === 'collection' ? item.collection.color : item.card.color)
 }
 

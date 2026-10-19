@@ -49,7 +49,7 @@ class MemoryD1 {
       id: '__default_animals_dog', app_id: 'cards', type: 'card', parent_id: '__default_animals', title: 'Dog',
       subtitle: null, body: null, speech: 'Dog', color_token: 'green',
       icon: null, image_ref: null, sort_order: 1, is_default: 1, is_published: 1,
-      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"collectionId":"__default_animals"}',
+      owner_user_id: null, owner_child_id: null, source_item_id: null, metadata_json: '{"collectionId":"__default_animals","fitzgeraldCategory":"thing"}',
     },
     {
       id: 'yes-no-set-yes-no', app_id: 'yes-no', type: 'answer_set', parent_id: null, title: 'Yes / No',
@@ -564,5 +564,25 @@ describe('content-api worker', () => {
     expect((await parseJson(invalidJson)).error.code).toBe('method_not_allowed')
     expect(unknownMethod.status).toBe(405)
     expect((await parseJson(unknownMethod)).error.code).toBe('method_not_allowed')
+  })
+})
+
+
+describe('Fitzgerald content contract', () => {
+  it('returns authored category independently of the collection colour', async () => {
+    const response = await worker.fetch(new Request('https://content.test/v1/cards/collections'), makeEnv() as never)
+    const body = await parseJson(response)
+    const dog = body.data.collections.flatMap((collection: { cards: Row[] }) => collection.cards).find((card: Row) => card.id === '__default_animals_dog')
+    expect(dog.fitzgeraldCategory).toBe('thing')
+    expect(dog.color).toBe('green')
+  })
+
+  it('rejects unsupported classification values before saving', async () => {
+    mockUserSession()
+    const response = await worker.fetch(new Request('https://content.test/v1/cards/collections/user_food/cards', {
+      method: 'POST', headers: { authorization: 'Bearer session', 'content-type': 'application/json' },
+      body: JSON.stringify({ title: 'Water', fitzgeraldCategory: 'purple' }),
+    }), makeEnv() as never)
+    expect(response.status).toBe(400)
   })
 })
