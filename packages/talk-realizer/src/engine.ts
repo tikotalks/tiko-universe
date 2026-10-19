@@ -165,11 +165,17 @@ export function realizeWith(
 
       // Each adjective may override the language's default position.
       const fallbackPosition = rules.adjectivePosition ?? 'before'
+      // To a language, a `predicate` adjective is the bare one after a copula —
+      // "she is big" — which takes a predicative form and agrees with the subject.
+      // An adjective inside a predicate noun phrase is attributive to its own
+      // noun, nominative like the phrase around it: "she is a big doctor" is
+      // built exactly as "the big doctor" is.
+      const adjectiveCtx: PhraseContext = role === 'predicate' ? { ...phraseCtx, role: 'subject' } : phraseCtx
       const emitAdjectives = (where: 'before' | 'after'): void => {
         for (const adjective of np.adjectives) {
           const position = adjective.features.adjectivePosition ?? fallbackPosition
           if (position !== where) continue
-          push(builder, rules.adjective(adjective, np, phraseCtx), adjective.id)
+          push(builder, rules.adjective(adjective, np, adjectiveCtx), adjective.id)
         }
       }
       emitAdjectives('before')
