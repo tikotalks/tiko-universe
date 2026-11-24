@@ -463,6 +463,28 @@ describe('media-api worker', () => {
     expect(body.data.map((item: { id: string }) => item.id)).toContain('media_cat')
   })
 
+  it('answers a search best match first, and keeps the named order when a sort is given', async () => {
+    const env = makeEnv()
+    env.MEDIA_DB.media.length = 0
+    env.MEDIA_DB.media.push(
+      mediaRow({ id: 'cave', title: 'Carved Cave Hall', description: 'A hall carved into rock.', tags: '[]', created_at: '2026-06-03T00:00:00.000Z' }),
+      mediaRow({ id: 'police', title: 'Police Car', description: null, tags: JSON.stringify(['car']), created_at: '2026-06-02T00:00:00.000Z' }),
+      mediaRow({ id: 'car', title: 'Car', description: null, tags: JSON.stringify(['vehicle']), created_at: '2026-06-01T00:00:00.000Z' }),
+    )
+
+    const ranked = await parseJson(await worker.fetch(new Request('https://media.test/v1/media?search=car&limit=10'), env as never))
+    expect(ranked.data.map((item: { id: string }) => item.id)).toEqual(['car', 'police', 'cave'])
+    expect(ranked.meta).toMatchObject({ total: 3, page: 1, limit: 10 })
+
+    // The page is cut from the ranked list, not ranked after the cut.
+    const secondPage = await parseJson(await worker.fetch(new Request('https://media.test/v1/media?search=car&limit=1&page=2'), env as never))
+    expect(secondPage.data.map((item: { id: string }) => item.id)).toEqual(['police'])
+
+    // A caller that names a sort gets that order, untouched by relevance.
+    const sorted = await parseJson(await worker.fetch(new Request('https://media.test/v1/media?search=car&sort=created_at&limit=10'), env as never))
+    expect(sorted.data.map((item: { id: string }) => item.id)).toEqual(['cave', 'police', 'car'])
+  })
+
   it('searches media by category', async () => {
     const env = makeEnv()
     env.MEDIA_DB.media.push(mediaRow({

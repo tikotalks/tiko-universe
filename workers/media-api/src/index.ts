@@ -249,6 +249,104 @@ function likeClause(column: string): string {
   return `${column} LIKE ? ESCAPE '\\'`
 }
 
+// ---------------------------------------------------------------------------
+// Search relevance
+// ---------------------------------------------------------------------------
+
+/** How many matches a search ranks. Past this the tail keeps its upload order. */
+const SEARCH_RANK_WINDOW = 1000
+
+function searchWords(value: unknown): string[] {
+  return String(value ?? '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean)
+}
+
+/** "cars" and "car", "boxes" and "box", "berries" and "berry" are the same word to someone searching. */
+function singular(word: string): string {
+  if (word.length > 4 && word.endsWith('ies')) return `${word.slice(0, -3)}y`
+  if (word.length > 4 && /(?:ch|sh|ss|x|z)es$/.test(word)) return word.slice(0, -2)
+  if (word.length > 3 && word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1)
+  return word
+}
+
+function listValues(value: unknown): string[] {
+  if (Array.isArray(value)) return value.map(item => String(item).toLowerCase())
+  if (typeof value !== 'string' || !value) return []
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed)) return parsed.map(item => String(item).toLowerCase())
+  } catch { /* a bare category string */ }
+  return [value.toLowerCase()]
+}
+
+/**
+ * How well one library item answers a search, higher is better.
+ *
+ * The WHERE clause decides what matches at all; it is deliberately generous,
+ * because half a word is how people search. This decides what comes first.
+ * Without it a search for "car" listed whatever was uploaded last among
+ * everything whose description happened to contain "carved" — a cave, a
+ * mountain and a goat ahead of every car in the library.
+ *
+ * The order of trust is the order of how deliberately the word was put there:
+ * the title names the picture, a tag describes it, a category files it, and a
+ * description merely mentions things.
+ */
+export function mediaSearchScore(
+  item: { title?: unknown; name?: unknown; tags?: unknown; categories?: unknown; folder?: unknown; description?: unknown },
+  query: string,
+): number {
+  const wanted = searchWords(query).map(singular)
+  if (wanted.length === 0) return 0
+  const phrase = wanted.join(' ')
+
+  const title = searchWords(item.title || item.name).map(singular)
+  const tags = listValues(item.tags).map(tag => searchWords(tag).map(singular).join(' '))
+  const categories = listValues(item.categories ?? item.folder).map(category => searchWords(category).map(singular).join(' '))
+  const description = searchWords(item.description).map(singular)
+
+  // The picture *is* the thing searched for.
+  if (title.join(' ') === phrase) return 100
+
+  const titleHasAll = wanted.every(word => title.includes(word))
+  if (titleHasAll) {
+    // "Police car" is a car; "car wash" is not. In an English title the last
+    // word is the thing and the words before it describe it.
+    const isHeadNoun = title.at(-1) === wanted.at(-1)
+    // A short title is about the word; a long one only includes it.
+    return (isHeadNoun ? 88 : 80) - Math.min(title.length - wanted.length, 6)
+  }
+
+  if (tags.includes(phrase)) return 70
+  if (categories.includes(phrase)) return 60
+
+  // Half-typed words: "ca" on the way to "cat" or "car".
+  const lastWord = wanted.at(-1) ?? ''
+  const earlierWords = wanted.slice(0, -1)
+  const prefixIn = (words: string[]) =>
+    earlierWords.every(word => words.includes(word)) && words.some(word => word.startsWith(lastWord))
+  if (title.length > 0 && prefixIn([title[0]])) return 55
+  if (prefixIn(title)) return 50
+  if (tags.some(tag => prefixIn(tag.split(' ')))) return 40
+  if (categories.some(category => prefixIn(category.split(' ')))) return 30
+
+  if (wanted.every(word => description.includes(word))) return 20
+  if (prefixIn(description)) return 10
+  // Matched in the middle of a word somewhere ("scarf" for "car").
+  return 1
+}
+
+/** Best answer first; among equals the shorter, then the alphabetically earlier title. */
+export function rankMediaSearch<T extends Record<string, unknown>>(rows: T[], query: string): T[] {
+  return rows
+    .map((row, index) => ({ row, index, score: mediaSearchScore(row, query) }))
+    .sort((a, b) =>
+      b.score - a.score
+      || String(a.row.title ?? '').length - String(b.row.title ?? '').length
+      || String(a.row.title ?? '').localeCompare(String(b.row.title ?? ''))
+      || a.index - b.index)
+    .map(entry => entry.row)
+}
+
 function firstCategory(value: unknown): string | undefined {
   const categories = parseStringArray(value)
   return categories[0]
@@ -821,6 +919,9 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const tags = url.searchParams.get('tags')?.split(',').map(t => t.trim()).filter(Boolean)
     const sort = url.searchParams.get('sort') || 'created_at'
     const order = url.searchParams.get('order')?.toLowerCase() === 'asc' ? 'ASC' : 'DESC'
+    // A search with no sort of its own is answered best-match first. A caller
+    // that names a sort (the admin library, a category page) keeps that order.
+    const rankByRelevance = !!search && !url.searchParams.has('sort')
     const includePrivate = url.searchParams.get('private') === 'true'
     const includeInactive = url.searchParams.get('includeInactive') === 'true'
     const includeHidden = url.searchParams.get('includeHidden') === 'true'
@@ -887,16 +988,27 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
 
     const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : ''
 
+    // Relevance cannot be an ORDER BY the database understands, so a ranked
+    // search reads the matches (a window of them), ranks them here and then
+    // takes the page out of the ranked list.
     const rows = await env.MEDIA_DB.prepare(
       `SELECT id, filename AS file_name, file_size, mime_type, width, height, '' AS alt_text, title,
               description, categories AS folder, tags, is_private, is_active, is_hidden, owner_user_id, original_url, thumbnail_url, medium_url, created_at, updated_at
        FROM media
        ${where}
-       ORDER BY ${safeSort} ${order}
+       ORDER BY ${rankByRelevance ? `(${likeClause('title')}) DESC, ` : ''}${safeSort} ${order}
        LIMIT ? OFFSET ?`,
     )
-      .bind(...values, limit, offset)
+      .bind(
+        ...values,
+        // Two letters can match half the library. Titles that start with what
+        // was typed go into the window first, so the cut never drops them.
+        ...(rankByRelevance ? [`${escapeLike(search)}%`, SEARCH_RANK_WINDOW, 0] : [limit, offset]),
+      )
       .all<Record<string, unknown>>()
+    const pageRows = rankByRelevance
+      ? rankMediaSearch(rows.results, search).slice(offset, offset + limit)
+      : rows.results
 
     const countRow = await env.MEDIA_DB.prepare(
       `SELECT COUNT(*) AS count FROM media ${where}`,
@@ -905,7 +1017,7 @@ async function handleListMedia(request: Request, env: Env): Promise<Response> {
     const total = countRow?.count ?? 0
 
     return json({
-      data: rows.results.map(rowToMediaItem),
+      data: pageRows.map(rowToMediaItem),
       meta: {
         total,
         page,
