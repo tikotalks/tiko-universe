@@ -811,6 +811,26 @@ public struct TikoSettingsSizeRow: View {
     }
 }
 
+/// How much of the screen a popup card's content may take.
+@MainActor
+enum TikoPopupMetrics {
+    /// The card's own header, its padding and a margin to the screen edges.
+    static let cardChrome: CGFloat = 170
+
+    /// The tallest a card's content can be and still leave the whole card on
+    /// screen. `sizeClass` is not used in the sum; passing it is what makes a
+    /// view ask again after a rotation.
+    static func tallestContent(sizeClass: UserInterfaceSizeClass?) -> CGFloat {
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+            .first(where: \.isKeyWindow)
+        guard let window else { return 480 }
+        let usable = window.bounds.height - window.safeAreaInsets.top - window.safeAreaInsets.bottom
+        return max(200, usable - cardChrome)
+    }
+}
+
 public struct TikoSettingsSheet<AppSettings: View>: View {
     private let appColor: TikoAppColor
     private let onClose: () -> Void
@@ -828,6 +848,10 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
     @State private var showingColorModePicker = false
     @State private var showingSurfacePicker = false
     @State private var showingSupport = false
+    /// How tall the rows are when nothing holds them back.
+    @State private var rowsHeight: CGFloat = 0
+    // Read only so the height limit is worked out again when the device turns.
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     public init(
         appColor: TikoAppColor,
@@ -857,6 +881,12 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
             appColor: appColor,
             onClose: onClose
         ) {
+            // The list grows with every section an app adds, and on a phone it
+            // outgrew the screen: the title and close button left the top, the
+            // last rows left the bottom, and nothing scrolled. The rows now sit
+            // in a scroll view that is as tall as they are until the screen
+            // runs out, so the header always stays where it can be reached.
+            ScrollView {
             VStack(spacing: 16) {
                 TikoSettingsSection(title: "Tiko") {
                     TikoSettingsActionRow(
@@ -897,6 +927,11 @@ public struct TikoSettingsSheet<AppSettings: View>: View {
 
                 appSettings
             }
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { rowsHeight = $0 }
+            }
+            .scrollIndicators(.hidden)
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(height: min(rowsHeight, TikoPopupMetrics.tallestContent(sizeClass: verticalSizeClass)))
         }
         .tikoPopup(isPresented: $showingSupport) {
             TikoSupportSheet(appColor: appColor) { showingSupport = false }
@@ -2526,9 +2561,14 @@ extension View {
 }
 
 public extension View {
+    /// `scrolls` is for a card with a scrolling list inside. Dragging such a
+    /// card must scroll the list, so it gives up drag-to-dismiss — the gesture
+    /// sits on the whole card and takes the drag the list needs. A tap beside
+    /// the card and its close button still dismiss it.
     func tikoPopup<PopupContent: View>(
         isPresented: Binding<Bool>,
         dismissible: Bool = true,
+        scrolls: Bool = false,
         @ViewBuilder content: @escaping () -> PopupContent
     ) -> some View {
         popup(isPresented: isPresented) {
@@ -2541,7 +2581,7 @@ public extension View {
                 .animation(.spring(response: 0.32, dampingFraction: 0.86))
                 .closeOnTapOutside(dismissible)
                 .closeOnTap(false)
-                .dragToDismiss(dismissible)
+                .dragToDismiss(dismissible && !scrolls)
                 .backgroundColor(.black.opacity(0.22))
                 .useKeyboardSafeArea(true)
         }
@@ -2556,7 +2596,7 @@ public extension View {
         onDeleteAccount: (() -> Void)? = nil,
         @ViewBuilder appSettings: @escaping () -> SettingsContent
     ) -> some View {
-        tikoPopup(isPresented: isPresented) {
+        tikoPopup(isPresented: isPresented, scrolls: true) {
             TikoSettingsSheet(
                 appColor: appColor,
                 onClose: { isPresented.wrappedValue = false },

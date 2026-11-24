@@ -18,6 +18,9 @@ final class TikoYesNoUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        // A simulator keeps the orientation it was last left in, and these
+        // tests are written for an upright phone.
+        XCUIDevice.shared.orientation = .portrait
         app = XCUIApplication()
         // Launch in the app's deterministic, offline scene so the built-in
         // Yes / No set is shown without any network dependency. This does not
@@ -230,83 +233,129 @@ final class TikoYesNoUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Yes"].exists, "The board should still be present after answering")
     }
 
-    // MARK: - Req 6 / 7 (UI): a typed sentence can be entered and cleared
+    // MARK: - Question panel helpers
 
-    func testTypedSentenceCanBeEnteredAndCleared() {
-        // The board must be up first (splash gone).
+    private var questionBar: XCUIElement { element(withIdentifier: "YesNoQuestionButton") }
+    private var questionPanelTitle: XCUIElement { app.staticTexts["Question"] }
+
+    /// Waits for the board, then opens the question panel from the question bar.
+    private func openQuestionPanel() {
         XCTAssertTrue(app.buttons["Yes"].waitForExistence(timeout: 20), "Board should be present")
         XCTAssertTrue(waitUntilHittable(app.buttons["Yes"], timeout: 10), "Board should be interactive")
+        let opened = tap(questionBar, until: questionPanelTitle)
+        XCTAssertTrue(opened, "Tapping the question should open the question panel")
+        settle(0.6)
+    }
 
-        let field = element(withIdentifier: "YesNoSentenceField")
-        XCTAssertTrue(field.waitForExistence(timeout: 10), "The sentence field should exist")
-        XCTAssertTrue(waitUntilHittable(field, timeout: 5), "The sentence field should be hittable")
+    /// The panel's field, typed into once it is hittable.
+    private func typeInQuestionField(_ text: String) {
+        let field = element(withIdentifier: "YesNoQuestionField")
+        XCTAssertTrue(field.waitForExistence(timeout: 10), "The question field should exist")
+        XCTAssertTrue(waitUntilHittable(field, timeout: 5), "The question field should be hittable")
         field.tap()
-        field.typeText("I want water")
+        field.typeText(text)
+    }
 
-        if let value = field.value as? String {
-            XCTAssertTrue(value.contains("I want water"), "Typed sentence should be present in the field, was: \(value)")
+    // MARK: - Req 6 (UI): Return sets the typed question and closes the panel
+
+    func testReturnSetsTheQuestionAndClosesThePanel() {
+        openQuestionPanel()
+        typeInQuestionField("I want water\n")
+
+        XCTAssertTrue(waitUntilGone(questionPanelTitle, timeout: 10), "Return should close the question panel")
+        XCTAssertTrue(waitUntilGone(app.keyboards.firstMatch, timeout: 10), "Return should close the keyboard")
+        XCTAssertTrue(
+            button(containing: "I want water").waitForExistence(timeout: 5),
+            "The typed question should now be the question on the board"
+        )
+    }
+
+    // MARK: - Req 6 (UI): a tap beside the panel sets the question too
+
+    func testTapBesideThePanelSetsTheQuestion() {
+        openQuestionPanel()
+        typeInQuestionField("Are you tired")
+
+        // The dimmed board above the panel. Not the status bar: a tap there
+        // belongs to the system and never reaches the app.
+        let beside = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+        for _ in 0..<5 {
+            if !questionPanelTitle.exists { break }
+            beside.tap()
+            if waitUntilGone(questionPanelTitle, timeout: 3) { break }
         }
 
-        // The clear button wipes the field back to its placeholder.
-        let clear = element(withIdentifier: "YesNoClearSentenceButton")
-        XCTAssertTrue(clear.waitForExistence(timeout: 5), "Clear button should exist")
-        XCTAssertTrue(waitUntilHittable(clear, timeout: 5), "Clear button should be hittable")
+        XCTAssertTrue(waitUntilGone(questionPanelTitle, timeout: 10), "A tap beside the panel should close it")
+        XCTAssertTrue(
+            button(containing: "Are you tired").waitForExistence(timeout: 5),
+            "A tap beside the panel should keep what was typed as the question"
+        )
+    }
+
+    // MARK: - Req 7 (UI): the field can be cleared
+
+    func testQuestionFieldCanBeCleared() {
+        openQuestionPanel()
+        typeInQuestionField("I want water")
+
+        let clear = element(withIdentifier: "YesNoQuestionClearButton")
+        XCTAssertTrue(clear.waitForExistence(timeout: 5), "Clear button should exist once something is typed")
         clear.tap()
 
+        let field = element(withIdentifier: "YesNoQuestionField")
         if let value = field.value as? String {
-            XCTAssertFalse(value.contains("I want water"), "Sentence should be cleared, but field still read: \(value)")
+            XCTAssertFalse(value.contains("I want water"), "Question should be cleared, but the field still read: \(value)")
         }
     }
 
-    // MARK: - Req 12 (UI): question history starts empty
+    // MARK: - Req 12 (UI): with no earlier questions the panel says so
 
-    func testHistoryActionShowsEmptyState() {
-        // The board must be interactive (splash gone) before the header is tapped.
-        XCTAssertTrue(app.buttons["Yes"].waitForExistence(timeout: 20), "Board should be present")
-        XCTAssertTrue(waitUntilHittable(app.buttons["Yes"], timeout: 10), "Board should be interactive")
-
-        // The history popup opens; with a reset (clean) launch it shows the empty state.
-        let opened = tap(app.buttons["History"], until: app.staticTexts["Question history"])
-        XCTAssertTrue(opened, "History popup should be presented")
-        XCTAssertTrue(app.staticTexts["No questions yet"].waitForExistence(timeout: 5), "Fresh history should show its empty state")
+    func testQuestionPanelStartsWithoutEarlierQuestions() {
+        openQuestionPanel()
+        XCTAssertFalse(app.staticTexts["Earlier questions"].exists, "A clean launch has no earlier questions")
+        XCTAssertTrue(
+            app.staticTexts["Questions appear here after you ask them with Yes or No."].waitForExistence(timeout: 5),
+            "The panel should explain where earlier questions come from"
+        )
     }
 
-    // MARK: - Req 12 (UI): answering records the question and it can be re-selected
+    // MARK: - Req 12 (UI): an asked question is offered again and can be picked
 
-    func testAnsweringRecordsQuestionInHistory() {
-        // The default sentence spoken/recorded when answering with an empty field.
-        let recorded = "Do you want to go eat?"
+    func testAskedQuestionCanBePickedAgain() {
+        // Set a question of our own, answer it, then replace it.
+        openQuestionPanel()
+        typeInQuestionField("I want water\n")
+        XCTAssertTrue(waitUntilGone(questionPanelTitle, timeout: 10), "Return should close the question panel")
 
         let yes = app.buttons["Yes"]
-        XCTAssertTrue(yes.waitForExistence(timeout: 20), "YES button should be present")
         XCTAssertTrue(waitUntilHittable(yes, timeout: 10), "YES button should be hittable")
         yes.tap()
         settle(0.5)
 
-        // Open the history popup (retry through the present animation).
-        let opened = tap(app.buttons["History"], until: app.staticTexts["Question history"])
-        XCTAssertTrue(opened, "History popup should be presented")
+        openQuestionPanel()
+        let clear = element(withIdentifier: "YesNoQuestionClearButton")
+        XCTAssertTrue(clear.waitForExistence(timeout: 5), "Clear button should exist")
+        clear.tap()
+        typeInQuestionField("Are you tired\n")
+        XCTAssertTrue(waitUntilGone(questionPanelTitle, timeout: 10), "Return should close the question panel")
 
-        // The just-answered question is now in history; re-select it. Retry the
-        // tap through the popup's present animation until the popup dismisses.
-        let recordedRow = button(containing: recorded)
-        XCTAssertTrue(recordedRow.waitForExistence(timeout: 10), "Answering should record the question '\(recorded)' in history")
-        settle(0.5)
-        let historyTitle = app.staticTexts["Question history"]
+        // The first question is now an earlier one; pick it back.
+        openQuestionPanel()
+        XCTAssertTrue(app.staticTexts["Earlier questions"].waitForExistence(timeout: 5), "Earlier questions should be listed")
+        let earlier = button(containing: "I want water")
+        XCTAssertTrue(earlier.waitForExistence(timeout: 10), "The earlier question should be offered")
         for _ in 0..<5 {
-            if !historyTitle.exists { break }
-            if recordedRow.exists, recordedRow.isHittable { recordedRow.tap() }
-            if waitUntilGone(historyTitle, timeout: 3) { break }
+            if !questionPanelTitle.exists { break }
+            if earlier.exists, earlier.isHittable { earlier.tap() }
+            if waitUntilGone(questionPanelTitle, timeout: 3) { break }
             settle(0.4)
         }
 
-        // Re-selecting it dismisses the popup and loads it back into the field.
-        XCTAssertTrue(waitUntilGone(historyTitle, timeout: 10), "Selecting a question should close the history popup")
-        let field = element(withIdentifier: "YesNoSentenceField")
-        XCTAssertTrue(field.waitForExistence(timeout: 5), "The sentence field should exist")
-        if let value = field.value as? String {
-            XCTAssertTrue(value.contains(recorded), "Re-selected question should populate the sentence field, was: \(value)")
-        }
+        XCTAssertTrue(waitUntilGone(questionPanelTitle, timeout: 10), "Picking an earlier question should close the panel")
+        XCTAssertTrue(
+            button(containing: "I want water").waitForExistence(timeout: 5),
+            "The picked question should be the question on the board"
+        )
     }
 
     // MARK: - Req 10 / 11 (UI): settings exposes the answer options
@@ -320,6 +369,31 @@ final class TikoYesNoUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Answer style"].waitForExistence(timeout: 5), "Settings should offer 'Answer style'")
         XCTAssertTrue(app.staticTexts["Answer tiles"].waitForExistence(timeout: 5), "Settings should offer 'Answer tiles'")
         XCTAssertTrue(app.staticTexts["Label size"].waitForExistence(timeout: 5), "Settings should offer 'Label size'")
+    }
+
+    // MARK: - Settings stays on screen and scrolls when it is taller than the window
+
+    /// TIKO-094: on a phone the settings list outgrew the screen, the close
+    /// button left the top and the last rows the bottom, and nothing scrolled.
+    func testSettingsFitsTheScreenAndScrolls() {
+        XCTAssertTrue(app.buttons["Yes"].waitForExistence(timeout: 20), "Board should be present")
+        openSettings()
+
+        let close = app.buttons["Close"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5), "Settings should have its close button")
+        XCTAssertTrue(waitUntilHittable(close, timeout: 5), "The close button must stay on screen")
+
+        // The last row is reached by flicking the rows up, as a thumb would.
+        let lastRow = app.staticTexts["Label size"]
+        XCTAssertTrue(app.staticTexts["Language"].waitForExistence(timeout: 5), "Settings should list its first row")
+        let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+        let to = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
+        for _ in 0..<4 where !lastRow.isHittable {
+            from.press(forDuration: 0, thenDragTo: to, withVelocity: .fast, thenHoldForDuration: 0)
+            settle(0.6)
+        }
+        XCTAssertTrue(lastRow.isHittable, "The last settings row must be reachable by scrolling")
+        XCTAssertTrue(close.isHittable, "Scrolling the rows must not move the close button away")
     }
 
     // NOTE: the answer-style picker (a second popup opened on top of the settings

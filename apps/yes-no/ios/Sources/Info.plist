@@ -20,6 +20,10 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Tiko Yes-No uses the microphone so you can say a question instead of typing it. Audio is not stored.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Tiko Yes-No uses speech recognition to turn the question you say into text.</string>
 	<key>TikoKeychainAccessGroup</key>
 	<string>$(AppIdentifierPrefix)org.tiko.identity</string>
 	<key>UILaunchScreen</key>
