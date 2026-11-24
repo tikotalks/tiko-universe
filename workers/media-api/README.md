@@ -140,3 +140,9 @@ The authoritative contract still needs to be added to `docs/api/openapi.yaml`. U
 ## Next work
 
 The verified, prioritized backlog and its acceptance criteria live in [Media API audit and to-do list](../../docs/plans/2026-08-25-media-api-audit.md).
+
+## Search order
+
+`GET /v1/media?search=<text>` answers best match first: a title that is the word, then a title that contains it (the head noun before a modifier), then a tag, then a category, then half-typed word starts, then a description that mentions it. Singular and plural are the same word. The scoring is `mediaSearchScore` in `src/index.ts`, tested in `tests/media-search-ranking.test.ts`.
+
+A request that names a `sort` keeps that order and is not ranked. Ranking reads a window of 1000 matches, filled with titles that start with the search text first; past the window the tail keeps its upload order.

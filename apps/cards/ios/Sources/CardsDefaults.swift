@@ -1,194 +1,67 @@
 import Foundation
 
-// Offline fallback only — authoritative defaults come from content.tikoapi.org/v1/cards/collections.
-let defaultCardCollections: [CardCollection] = [
-    CardCollection(id: "__default_animals", title: "Animals", color: "green", order: 1, mediaCategories: ["animals"], cards: [
-        CommunicationCard(id: "__default_animals_cat", title: "Cat", speech: "Cat", color: "green"),
-        CommunicationCard(id: "__default_animals_dog", title: "Dog", speech: "Dog", color: "green"),
-        CommunicationCard(id: "__default_animals_bird", title: "Bird", speech: "Bird", color: "green"),
-        CommunicationCard(id: "__default_animals_fish", title: "Fish", speech: "Fish", color: "green"),
-        CommunicationCard(id: "__default_animals_horse", title: "Horse", speech: "Horse", color: "green"),
-        CommunicationCard(id: "__default_animals_elephant", title: "Elephant", speech: "Elephant", color: "green"),
-        CommunicationCard(id: "__default_animals_lion", title: "Lion", speech: "Lion", color: "green"),
-        CommunicationCard(id: "__default_animals_monkey", title: "Monkey", speech: "Monkey", color: "green"),
-        CommunicationCard(id: "__default_animals_rabbit", title: "Rabbit", speech: "Rabbit", color: "green"),
-        CommunicationCard(id: "__default_animals_bear", title: "Bear", speech: "Bear", color: "green"),
-        CommunicationCard(id: "__default_animals_cow", title: "Cow", speech: "Cow", color: "green"),
-        CommunicationCard(id: "__default_animals_pig", title: "Pig", speech: "Pig", color: "green"),
-    ]),
-    CardCollection(id: "__default_food", title: "Food", color: "orange", order: 2, mediaCategories: ["food"], cards: [
-        CommunicationCard(id: "__default_food_apple", title: "Apple", speech: "Apple", color: "orange"),
-        CommunicationCard(id: "__default_food_banana", title: "Banana", speech: "Banana", color: "orange"),
-        CommunicationCard(id: "__default_food_bread", title: "Bread", speech: "Bread", color: "orange"),
-        CommunicationCard(id: "__default_food_rice", title: "Rice", speech: "Rice", color: "orange"),
-        CommunicationCard(id: "__default_food_pasta", title: "Pasta", speech: "Pasta", color: "orange"),
-        CommunicationCard(id: "__default_food_pizza", title: "Pizza", speech: "Pizza", color: "orange"),
-        CommunicationCard(id: "__default_food_soup", title: "Soup", speech: "Soup", color: "orange"),
-        CommunicationCard(id: "__default_food_carrot", title: "Carrot", speech: "Carrot", color: "orange"),
-        CommunicationCard(id: "__default_food_egg", title: "Egg", speech: "Egg", color: "orange"),
-        CommunicationCard(id: "__default_food_potato", title: "Potato", speech: "Potato", color: "orange"),
-        CommunicationCard(id: "__default_food_tomato", title: "Tomato", speech: "Tomato", color: "orange"),
-        CommunicationCard(id: "__default_food_cheese", title: "Cheese", speech: "Cheese", color: "orange"),
-    ]),
-    CardCollection(id: "__default_snacks", title: "Snacks", color: "orange", order: 3, mediaCategories: ["snacks", "food-snacks"], cards: [
-        CommunicationCard(id: "__default_snacks_cookie", title: "Cookie", speech: "Cookie", color: "orange"),
-        CommunicationCard(id: "__default_snacks_chips", title: "Chips", speech: "Chips", color: "orange"),
-        CommunicationCard(id: "__default_snacks_crackers", title: "Crackers", speech: "Crackers", color: "orange"),
-        CommunicationCard(id: "__default_snacks_popcorn", title: "Popcorn", speech: "Popcorn", color: "orange"),
-        CommunicationCard(id: "__default_snacks_nuts", title: "Nuts", speech: "Nuts", color: "orange"),
-        CommunicationCard(id: "__default_snacks_yogurt", title: "Yogurt", speech: "Yogurt", color: "orange"),
-        CommunicationCard(id: "__default_snacks_fruit", title: "Fruit", speech: "Fruit", color: "orange"),
-        CommunicationCard(id: "__default_snacks_chocolate", title: "Chocolate", speech: "Chocolate", color: "orange"),
-        CommunicationCard(id: "__default_snacks_pretzels", title: "Pretzels", speech: "Pretzels", color: "orange"),
-        CommunicationCard(id: "__default_snacks_granola", title: "Granola Bar", speech: "Granola Bar", color: "orange"),
-    ]),
-    CardCollection(id: "__default_drinks", title: "Drinks", color: "blue", order: 4, mediaCategories: ["drinks"], cards: [
-        CommunicationCard(id: "__default_drinks_water", title: "Water", speech: "Water", color: "blue"),
-        CommunicationCard(id: "__default_drinks_milk", title: "Milk", speech: "Milk", color: "blue"),
-        CommunicationCard(id: "__default_drinks_juice", title: "Juice", speech: "Juice", color: "blue"),
-        CommunicationCard(id: "__default_drinks_tea", title: "Tea", speech: "Tea", color: "blue"),
-        CommunicationCard(id: "__default_drinks_coffee", title: "Coffee", speech: "Coffee", color: "blue"),
-        CommunicationCard(id: "__default_drinks_lemonade", title: "Lemonade", speech: "Lemonade", color: "blue"),
-        CommunicationCard(id: "__default_drinks_soda", title: "Soda", speech: "Soda", color: "blue"),
-        CommunicationCard(id: "__default_drinks_smoothie", title: "Smoothie", speech: "Smoothie", color: "blue"),
-        CommunicationCard(id: "__default_drinks_hot_chocolate", title: "Hot Chocolate", speech: "Hot Chocolate", color: "blue"),
-    ]),
-    CardCollection(id: "__default_colors", title: "Colors", color: "purple", order: 5, mediaCategories: ["colors"], cards: [
-        CommunicationCard(id: "__default_colors_red", title: "Red", speech: "Red", color: "purple"),
-        CommunicationCard(id: "__default_colors_blue", title: "Blue", speech: "Blue", color: "purple"),
-        CommunicationCard(id: "__default_colors_green", title: "Green", speech: "Green", color: "purple"),
-        CommunicationCard(id: "__default_colors_yellow", title: "Yellow", speech: "Yellow", color: "purple"),
-        CommunicationCard(id: "__default_colors_orange", title: "Orange", speech: "Orange", color: "purple"),
-        CommunicationCard(id: "__default_colors_purple", title: "Purple", speech: "Purple", color: "purple"),
-        CommunicationCard(id: "__default_colors_pink", title: "Pink", speech: "Pink", color: "purple"),
-        CommunicationCard(id: "__default_colors_black", title: "Black", speech: "Black", color: "purple"),
-        CommunicationCard(id: "__default_colors_white", title: "White", speech: "White", color: "purple"),
-        CommunicationCard(id: "__default_colors_brown", title: "Brown", speech: "Brown", color: "purple"),
-        CommunicationCard(id: "__default_colors_grey", title: "Grey", speech: "Grey", color: "purple"),
-    ]),
-    CardCollection(id: "__default_emotions", title: "Emotions", color: "red", order: 6, mediaCategories: ["emotions", "feelings"], cards: [
-        CommunicationCard(id: "__default_emotions_happy", title: "Happy", speech: "Happy", color: "red"),
-        CommunicationCard(id: "__default_emotions_sad", title: "Sad", speech: "Sad", color: "red"),
-        CommunicationCard(id: "__default_emotions_angry", title: "Angry", speech: "Angry", color: "red"),
-        CommunicationCard(id: "__default_emotions_scared", title: "Scared", speech: "Scared", color: "red"),
-        CommunicationCard(id: "__default_emotions_surprised", title: "Surprised", speech: "Surprised", color: "red"),
-        CommunicationCard(id: "__default_emotions_tired", title: "Tired", speech: "Tired", color: "red"),
-        CommunicationCard(id: "__default_emotions_excited", title: "Excited", speech: "Excited", color: "red"),
-        CommunicationCard(id: "__default_emotions_calm", title: "Calm", speech: "Calm", color: "red"),
-        CommunicationCard(id: "__default_emotions_confused", title: "Confused", speech: "Confused", color: "red"),
-        CommunicationCard(id: "__default_emotions_loved", title: "Loved", speech: "Loved", color: "red"),
-        CommunicationCard(id: "__default_emotions_worried", title: "Worried", speech: "Worried", color: "red"),
-        CommunicationCard(id: "__default_emotions_bored", title: "Bored", speech: "Bored", color: "red"),
-    ]),
-    CardCollection(id: "__default_transport", title: "Transport", color: "gray", order: 7, mediaCategories: ["transport", "vehicles"], cards: [
-        CommunicationCard(id: "__default_transport_car", title: "Car", speech: "Car", color: "gray"),
-        CommunicationCard(id: "__default_transport_bus", title: "Bus", speech: "Bus", color: "gray"),
-        CommunicationCard(id: "__default_transport_train", title: "Train", speech: "Train", color: "gray"),
-        CommunicationCard(id: "__default_transport_plane", title: "Plane", speech: "Plane", color: "gray"),
-        CommunicationCard(id: "__default_transport_bike", title: "Bike", speech: "Bike", color: "gray"),
-        CommunicationCard(id: "__default_transport_boat", title: "Boat", speech: "Boat", color: "gray"),
-        CommunicationCard(id: "__default_transport_truck", title: "Truck", speech: "Truck", color: "gray"),
-        CommunicationCard(id: "__default_transport_motorcycle", title: "Motorcycle", speech: "Motorcycle", color: "gray"),
-        CommunicationCard(id: "__default_transport_helicopter", title: "Helicopter", speech: "Helicopter", color: "gray"),
-        CommunicationCard(id: "__default_transport_taxi", title: "Taxi", speech: "Taxi", color: "gray"),
-    ]),
-    CardCollection(id: "__default_body", title: "Body", color: "brown", order: 8, mediaCategories: ["body", "body-parts"], cards: [
-        CommunicationCard(id: "__default_body_head", title: "Head", speech: "Head", color: "brown"),
-        CommunicationCard(id: "__default_body_arms", title: "Arms", speech: "Arms", color: "brown"),
-        CommunicationCard(id: "__default_body_legs", title: "Legs", speech: "Legs", color: "brown"),
-        CommunicationCard(id: "__default_body_hands", title: "Hands", speech: "Hands", color: "brown"),
-        CommunicationCard(id: "__default_body_feet", title: "Feet", speech: "Feet", color: "brown"),
-        CommunicationCard(id: "__default_body_eyes", title: "Eyes", speech: "Eyes", color: "brown"),
-        CommunicationCard(id: "__default_body_ears", title: "Ears", speech: "Ears", color: "brown"),
-        CommunicationCard(id: "__default_body_nose", title: "Nose", speech: "Nose", color: "brown"),
-        CommunicationCard(id: "__default_body_mouth", title: "Mouth", speech: "Mouth", color: "brown"),
-        CommunicationCard(id: "__default_body_hair", title: "Hair", speech: "Hair", color: "brown"),
-        CommunicationCard(id: "__default_body_fingers", title: "Fingers", speech: "Fingers", color: "brown"),
-        CommunicationCard(id: "__default_body_toes", title: "Toes", speech: "Toes", color: "brown"),
-    ]),
-    CardCollection(id: "__default_numbers", title: "Numbers", color: "blue", order: 9, mediaCategories: ["numbers"], cards: [
-        CommunicationCard(id: "__default_numbers_1", title: "1", speech: "one", color: "blue"),
-        CommunicationCard(id: "__default_numbers_2", title: "2", speech: "two", color: "blue"),
-        CommunicationCard(id: "__default_numbers_3", title: "3", speech: "three", color: "blue"),
-        CommunicationCard(id: "__default_numbers_4", title: "4", speech: "four", color: "blue"),
-        CommunicationCard(id: "__default_numbers_5", title: "5", speech: "five", color: "blue"),
-        CommunicationCard(id: "__default_numbers_6", title: "6", speech: "six", color: "blue"),
-        CommunicationCard(id: "__default_numbers_7", title: "7", speech: "seven", color: "blue"),
-        CommunicationCard(id: "__default_numbers_8", title: "8", speech: "eight", color: "blue"),
-        CommunicationCard(id: "__default_numbers_9", title: "9", speech: "nine", color: "blue"),
-        CommunicationCard(id: "__default_numbers_10", title: "10", speech: "ten", color: "blue"),
-    ]),
-    CardCollection(id: "__default_letters", title: "Letters", color: "teal", order: 10, mediaCategories: ["letters", "alphabet"], cards:
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".map { l in
-            CommunicationCard(id: "__default_letters_\(l.lowercased())", title: String(l), speech: String(l), color: "teal")
+/// The default vocabulary, as bundled in the app.
+///
+/// `CardsDefaultVocabulary.json` is generated from `packages/cards-vocabulary`
+/// by `tools/generate-cards-vocabulary.mjs`, the same run that writes what the
+/// content API serves — so the copy shown without a connection is the one shown
+/// with it, not a second list that someone has to remember to keep in step.
+enum CardsDefaults {
+    private struct Vocabulary: Decodable {
+        let collections: [CardCollection]
+        /// Media id → the address of the picture a card is pinned to.
+        let images: [String: String]
+        /// Locale → item id → its words in that language.
+        let translations: [String: [String: Words]]
+    }
+
+    private struct Words: Decodable {
+        let title: String
+        let speech: String?
+    }
+
+    private static let vocabulary: Vocabulary = {
+        guard let url = Bundle.main.url(forResource: "CardsDefaultVocabulary", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode(Vocabulary.self, from: data) else {
+            // The file is generated and bundled at build time; without it the app
+            // would open on an empty grid, which is worth failing loudly for in
+            // development and impossible to reach in a shipped build.
+            assertionFailure("CardsDefaultVocabulary.json is missing from the app bundle or does not decode")
+            return Vocabulary(collections: [], images: [:], translations: [:])
         }
-    ),
-    CardCollection(id: "__default_actions", title: "Actions", color: "magenta", order: 11, mediaCategories: ["actions", "verbs"], cards: [
-        CommunicationCard(id: "__default_actions_eat", title: "Eat", speech: "Eat", color: "magenta"),
-        CommunicationCard(id: "__default_actions_drink", title: "Drink", speech: "Drink", color: "magenta"),
-        CommunicationCard(id: "__default_actions_sleep", title: "Sleep", speech: "Sleep", color: "magenta"),
-        CommunicationCard(id: "__default_actions_play", title: "Play", speech: "Play", color: "magenta"),
-        CommunicationCard(id: "__default_actions_walk", title: "Walk", speech: "Walk", color: "magenta"),
-        CommunicationCard(id: "__default_actions_run", title: "Run", speech: "Run", color: "magenta"),
-        CommunicationCard(id: "__default_actions_sit", title: "Sit", speech: "Sit", color: "magenta"),
-        CommunicationCard(id: "__default_actions_stand", title: "Stand", speech: "Stand", color: "magenta"),
-        CommunicationCard(id: "__default_actions_go", title: "Go", speech: "Go", color: "magenta"),
-        CommunicationCard(id: "__default_actions_stop", title: "Stop", speech: "Stop", color: "magenta"),
-        CommunicationCard(id: "__default_actions_help", title: "Help", speech: "Help", color: "magenta"),
-        CommunicationCard(id: "__default_actions_come", title: "Come", speech: "Come", color: "magenta"),
-    ]),
-    CardCollection(id: "__default_people", title: "People", color: "orange", order: 12, mediaCategories: ["people", "family"], cards: [
-        CommunicationCard(id: "__default_people_mom", title: "Mom", speech: "Mom", color: "orange"),
-        CommunicationCard(id: "__default_people_dad", title: "Dad", speech: "Dad", color: "orange"),
-        CommunicationCard(id: "__default_people_sister", title: "Sister", speech: "Sister", color: "orange"),
-        CommunicationCard(id: "__default_people_brother", title: "Brother", speech: "Brother", color: "orange"),
-        CommunicationCard(id: "__default_people_grandma", title: "Grandma", speech: "Grandma", color: "orange"),
-        CommunicationCard(id: "__default_people_grandpa", title: "Grandpa", speech: "Grandpa", color: "orange"),
-        CommunicationCard(id: "__default_people_baby", title: "Baby", speech: "Baby", color: "orange"),
-        CommunicationCard(id: "__default_people_friend", title: "Friend", speech: "Friend", color: "orange"),
-        CommunicationCard(id: "__default_people_teacher", title: "Teacher", speech: "Teacher", color: "orange"),
-        CommunicationCard(id: "__default_people_doctor", title: "Doctor", speech: "Doctor", color: "orange"),
-        CommunicationCard(id: "__default_people_myself", title: "Myself", speech: "Myself", color: "orange"),
-    ]),
-    CardCollection(id: "__default_places", title: "Places", color: "cyan", order: 13, mediaCategories: ["places", "locations"], cards: [
-        CommunicationCard(id: "__default_places_home", title: "Home", speech: "Home", color: "cyan"),
-        CommunicationCard(id: "__default_places_school", title: "School", speech: "School", color: "cyan"),
-        CommunicationCard(id: "__default_places_park", title: "Park", speech: "Park", color: "cyan"),
-        CommunicationCard(id: "__default_places_store", title: "Store", speech: "Store", color: "cyan"),
-        CommunicationCard(id: "__default_places_hospital", title: "Hospital", speech: "Hospital", color: "cyan"),
-        CommunicationCard(id: "__default_places_library", title: "Library", speech: "Library", color: "cyan"),
-        CommunicationCard(id: "__default_places_beach", title: "Beach", speech: "Beach", color: "cyan"),
-        CommunicationCard(id: "__default_places_restaurant", title: "Restaurant", speech: "Restaurant", color: "cyan"),
-        CommunicationCard(id: "__default_places_playground", title: "Playground", speech: "Playground", color: "cyan"),
-        CommunicationCard(id: "__default_places_toilet", title: "Toilet", speech: "Toilet", color: "cyan"),
-        CommunicationCard(id: "__default_places_bedroom", title: "Bedroom", speech: "Bedroom", color: "cyan"),
-        CommunicationCard(id: "__default_places_kitchen", title: "Kitchen", speech: "Kitchen", color: "cyan"),
-    ]),
-    CardCollection(id: "__default_clothing", title: "Clothing", color: "lime", order: 14, mediaCategories: ["clothing", "clothes"], cards: [
-        CommunicationCard(id: "__default_clothing_shirt", title: "Shirt", speech: "Shirt", color: "lime"),
-        CommunicationCard(id: "__default_clothing_pants", title: "Pants", speech: "Pants", color: "lime"),
-        CommunicationCard(id: "__default_clothing_shoes", title: "Shoes", speech: "Shoes", color: "lime"),
-        CommunicationCard(id: "__default_clothing_socks", title: "Socks", speech: "Socks", color: "lime"),
-        CommunicationCard(id: "__default_clothing_jacket", title: "Jacket", speech: "Jacket", color: "lime"),
-        CommunicationCard(id: "__default_clothing_dress", title: "Dress", speech: "Dress", color: "lime"),
-        CommunicationCard(id: "__default_clothing_hat", title: "Hat", speech: "Hat", color: "lime"),
-        CommunicationCard(id: "__default_clothing_coat", title: "Coat", speech: "Coat", color: "lime"),
-        CommunicationCard(id: "__default_clothing_gloves", title: "Gloves", speech: "Gloves", color: "lime"),
-        CommunicationCard(id: "__default_clothing_scarf", title: "Scarf", speech: "Scarf", color: "lime"),
-        CommunicationCard(id: "__default_clothing_boots", title: "Boots", speech: "Boots", color: "lime"),
-    ]),
-    CardCollection(id: "__default_nature", title: "Nature", color: "green", order: 15, mediaCategories: ["nature", "weather"], cards: [
-        CommunicationCard(id: "__default_nature_sun", title: "Sun", speech: "Sun", color: "green"),
-        CommunicationCard(id: "__default_nature_rain", title: "Rain", speech: "Rain", color: "green"),
-        CommunicationCard(id: "__default_nature_cloud", title: "Cloud", speech: "Cloud", color: "green"),
-        CommunicationCard(id: "__default_nature_tree", title: "Tree", speech: "Tree", color: "green"),
-        CommunicationCard(id: "__default_nature_flower", title: "Flower", speech: "Flower", color: "green"),
-        CommunicationCard(id: "__default_nature_grass", title: "Grass", speech: "Grass", color: "green"),
-        CommunicationCard(id: "__default_nature_snow", title: "Snow", speech: "Snow", color: "green"),
-        CommunicationCard(id: "__default_nature_wind", title: "Wind", speech: "Wind", color: "green"),
-        CommunicationCard(id: "__default_nature_mountain", title: "Mountain", speech: "Mountain", color: "green"),
-        CommunicationCard(id: "__default_nature_river", title: "River", speech: "River", color: "green"),
-        CommunicationCard(id: "__default_nature_star", title: "Star", speech: "Star", color: "green"),
-        CommunicationCard(id: "__default_nature_moon", title: "Moon", speech: "Moon", color: "green"),
-    ]),
-]
+        return decoded
+    }()
+
+    /// The default collections in `languageCode`. A word with no translation
+    /// stays English rather than being guessed at.
+    static func collections(languageCode: String = "en") -> [CardCollection] {
+        let language = languageCode.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map { $0.lowercased() } ?? "en"
+        guard let words = vocabulary.translations[language] else { return vocabulary.collections }
+        return vocabulary.collections.map { collection in
+            var localized = collection
+            if let title = words[collection.id]?.title { localized.title = title }
+            localized.cards = collection.cards.map { card in
+                guard let entry = words[card.id] else { return card }
+                var translated = card
+                translated.title = entry.title
+                translated.speech = entry.speech ?? entry.title
+                return translated
+            }
+            return localized
+        }
+    }
+
+    /// Where the picture behind a pinned media id lives, when the vocabulary
+    /// knows it. Lets a default card show its picture without first asking a
+    /// server to resolve the id.
+    static func pictureURL(forImageRef imageRef: String) -> URL? {
+        vocabulary.images[imageRef].flatMap(URL.init(string:))
+    }
+
+    /// The locales the bundled vocabulary is translated into, besides English.
+    static var translatedLanguages: [String] { vocabulary.translations.keys.sorted() }
+}
+
+/// The default collections in English.
+var defaultCardCollections: [CardCollection] { CardsDefaults.collections() }

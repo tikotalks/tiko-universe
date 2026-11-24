@@ -3,25 +3,31 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		15FAE225F184B9D39B355C7E /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = B20D2B2A0E9CCE351AF793B1 /* TikoKit */; };
 		21153A4DF82A8D00EE5FDC21 /* TikoCardsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */; };
+		3322213C1F056583CFBB40D5 /* FitzgeraldCodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AFF7E56B92710D86BEEC493 /* FitzgeraldCodingTests.swift */; };
 		3C508D24ABEA832402D0E2E0 /* CardsSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88155D1FB1BE44E213E7DB3F /* CardsSpeechService.swift */; };
 		451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */; };
 		5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */; };
 		645AF976521D81281F153392 /* CardsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752D7B95F673E108C9D9D5A1 /* CardsModels.swift */; };
 		6AC686C92CEB4CE025CF8FFF /* CardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F976EA464A8D7FD09CFC50E /* CardsView.swift */; };
+		7A17F5F363CC1453534AF483 /* CardsSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9A1FE5C519DB8301D19359 /* CardsSearch.swift */; };
 		86ABF5ED50BB5062BFF3D7BB /* CardsAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */; };
 		8B846865CC584EFAC8D9099A /* TikoCardsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFA1CF0F5F678380B63C376 /* TikoCardsUITests.swift */; };
+		9F7D6A57237E7E2D5F4FD118 /* CardsEditingAndSearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3BA139904AC9B769B7A82A /* CardsEditingAndSearchTests.swift */; };
 		ABE08360C6F7E9C38471E301 /* TikoCardsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */; };
 		B9A3D901CA10CADDA7063413 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FA7FFD1DFF5814BA01498262 /* PrivacyInfo.xcprivacy */; };
 		BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A42348432F2BFF126FFBE /* CardsMediaClient.swift */; };
 		C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAEDE295147575574F99882 /* CardsStore.swift */; };
+		CE7CB603C310DD4406BD38DF /* CardsDefaultVocabulary.json in Resources */ = {isa = PBXBuildFile; fileRef = 212F76C84976EA6F8FC4D8BE /* CardsDefaultVocabulary.json */; };
 		CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */; };
 		E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B173082F6A106521659C40 /* CardsContentClient.swift */; };
+		EC2213154F7D9FF4853B62A5 /* CardsBoardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4EAE3AF6D0516655B1A1770 /* CardsBoardLayout.swift */; };
+		ECB3E24094BA52F488872026 /* CardsLocalEdits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E620D4354A2A35348A803B /* CardsLocalEdits.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +51,10 @@
 		0C3D2678AD8AA655C17E7D44 /* TikoCards.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoCards.entitlements; sourceTree = "<group>"; };
 		1F976EA464A8D7FD09CFC50E /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
 		207A42348432F2BFF126FFBE /* CardsMediaClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsMediaClient.swift; sourceTree = "<group>"; };
+		20E620D4354A2A35348A803B /* CardsLocalEdits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsLocalEdits.swift; sourceTree = "<group>"; };
+		212F76C84976EA6F8FC4D8BE /* CardsDefaultVocabulary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CardsDefaultVocabulary.json; sourceTree = "<group>"; };
 		440E1EA00776E4B4C4B2BF15 /* TikoCards.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoCards.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AFF7E56B92710D86BEEC493 /* FitzgeraldCodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitzgeraldCodingTests.swift; sourceTree = "<group>"; };
 		524C104FBEF1095D1213B1BC /* TikoCardsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsApp.swift; sourceTree = "<group>"; };
 		59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsTests.swift; sourceTree = "<group>"; };
 		752D7B95F673E108C9D9D5A1 /* CardsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsModels.swift; sourceTree = "<group>"; };
@@ -55,12 +64,15 @@
 		95F09D7E01A4D0827C2183DE /* TikoCardsUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoCardsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9696034586F8E01566BDD1DC /* TikoCardsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoCardsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsDefaults.swift; sourceTree = "<group>"; };
+		B4EAE3AF6D0516655B1A1770 /* CardsBoardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsBoardLayout.swift; sourceTree = "<group>"; };
 		BA81DB944EFAC2BEB232F5E5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BF3BA139904AC9B769B7A82A /* CardsEditingAndSearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsEditingAndSearchTests.swift; sourceTree = "<group>"; };
 		E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsImageCache.swift; sourceTree = "<group>"; };
 		E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsAppConfig.swift; sourceTree = "<group>"; };
 		EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EBAEDE295147575574F99882 /* CardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsStore.swift; sourceTree = "<group>"; };
 		EBFA1CF0F5F678380B63C376 /* TikoCardsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoCardsUITests.swift; sourceTree = "<group>"; };
+		ED9A1FE5C519DB8301D19359 /* CardsSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsSearch.swift; sourceTree = "<group>"; };
 		FA7FFD1DFF5814BA01498262 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +110,8 @@
 		64096A06A3B5B38D11E2D152 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				BF3BA139904AC9B769B7A82A /* CardsEditingAndSearchTests.swift */,
+				4AFF7E56B92710D86BEEC493 /* FitzgeraldCodingTests.swift */,
 				59DD41843CC3101D47DCA6D8 /* TikoCardsTests.swift */,
 			);
 			path = Tests;
@@ -126,11 +140,15 @@
 			children = (
 				EAABAA67B164E6D6DD4EF4DD /* Assets.xcassets */,
 				E9CB42D014C3BD083A309E34 /* CardsAppConfig.swift */,
+				B4EAE3AF6D0516655B1A1770 /* CardsBoardLayout.swift */,
 				89B173082F6A106521659C40 /* CardsContentClient.swift */,
 				A0C8F33C9BB9324491B5711F /* CardsDefaults.swift */,
+				212F76C84976EA6F8FC4D8BE /* CardsDefaultVocabulary.json */,
 				E3992ADC372502C3CF3EB431 /* CardsImageCache.swift */,
+				20E620D4354A2A35348A803B /* CardsLocalEdits.swift */,
 				207A42348432F2BFF126FFBE /* CardsMediaClient.swift */,
 				752D7B95F673E108C9D9D5A1 /* CardsModels.swift */,
+				ED9A1FE5C519DB8301D19359 /* CardsSearch.swift */,
 				88155D1FB1BE44E213E7DB3F /* CardsSpeechService.swift */,
 				EBAEDE295147575574F99882 /* CardsStore.swift */,
 				1F976EA464A8D7FD09CFC50E /* CardsView.swift */,
@@ -224,7 +242,6 @@
 				};
 			};
 			buildConfigurationList = AB3573FE9C716479B83824AF /* Build configuration list for PBXProject "TikoCards" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -236,7 +253,8 @@
 			packageReferences = (
 				DE5F8478300E024D50DD432D /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
 			);
-			preferredProjectObjectVersion = 54;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 682AF43EDAC51ACFA2C530E0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -253,6 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFA37503A1451C2C7EBCACD2 /* Assets.xcassets in Resources */,
+				CE7CB603C310DD4406BD38DF /* CardsDefaultVocabulary.json in Resources */,
 				B9A3D901CA10CADDA7063413 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,11 +306,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				86ABF5ED50BB5062BFF3D7BB /* CardsAppConfig.swift in Sources */,
+				EC2213154F7D9FF4853B62A5 /* CardsBoardLayout.swift in Sources */,
 				E0C38A9E661265F40153CF99 /* CardsContentClient.swift in Sources */,
 				5EBE9C3308BE11EFD67702F1 /* CardsDefaults.swift in Sources */,
 				451F1AF25BE73DD4F8BC91E6 /* CardsImageCache.swift in Sources */,
+				ECB3E24094BA52F488872026 /* CardsLocalEdits.swift in Sources */,
 				BD465427281F4B31F8A20D40 /* CardsMediaClient.swift in Sources */,
 				645AF976521D81281F153392 /* CardsModels.swift in Sources */,
+				7A17F5F363CC1453534AF483 /* CardsSearch.swift in Sources */,
 				3C508D24ABEA832402D0E2E0 /* CardsSpeechService.swift in Sources */,
 				C10DDF329DCF42F8DE76218D /* CardsStore.swift in Sources */,
 				6AC686C92CEB4CE025CF8FFF /* CardsView.swift in Sources */,
@@ -303,6 +325,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F7D6A57237E7E2D5F4FD118 /* CardsEditingAndSearchTests.swift in Sources */,
+				3322213C1F056583CFBB40D5 /* FitzgeraldCodingTests.swift in Sources */,
 				21153A4DF82A8D00EE5FDC21 /* TikoCardsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,13 +361,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.cards;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -494,13 +518,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoCards.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.cards;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
