@@ -31,13 +31,36 @@ suite verifies. Each requirement notes how it is covered:
 
 ## Built-in content
 
-5. A catalog of built-in default collections is available offline and matches the
-   web Cards categories, in order (Animals, Food, Snacks, Drinks, Colors,
-   Emotions, Transport, Body, Numbers, Letters, Actions, People, Places,
-   Clothing, Nature). **[unit]** (`testDefaultCollectionsMatchWebCardsCategories`)
-6. Each default collection is non-empty and maps to the media categories used to
-   hydrate its pictures. **[unit]** (`testDefaultCollectionsContainSpeakableCards`,
-   `testMediaCategoryMapMatchesWebCardsContract`)
+The default vocabulary is authored once, in `packages/cards-vocabulary`, and
+generated into both the content API's seed and `CardsDefaultVocabulary.json`,
+the copy bundled in the app. See that package's README.
+
+5. The bundled vocabulary is shown at once on launch, in the app's language,
+   before any network answer: 25 root categories ordered by how much a child needs them (Quick words, Feelings, People, Food, Body, Home, Clothes, Toys and play, Animals, Places, School, Health, Transport, Nature, Sensory, Music, Sports, Baby, Colours, Numbers, Letters, Shapes, Celebrations, Stories, Space) and 28
+   sub-categories under them (Food alone has ten: Breakfast, Lunch, Dinner,
+   Bread, Fruit, Vegetables, Snacks, Sweets, Sauces and extras, Drinks; People
+   has Family and Jobs). **[unit]** (`testDefaultVocabularyRootCategoriesInOrder`,
+   `testDefaultVocabularyHasSubCategoriesUnderExistingParents`,
+   `testFoodIsSplitByMealAndKind`, `testFamilyIsAGroupInsidePeople`,
+   `testThereIsASensoryCategory`, `testLoadOfflineDefaultsFollowsTheLanguage`)
+   **[ui]** (`testCategoryOpensItsSubCategories`, `testFoodOpensOntoMeals`)
+5a. Moving between boards slides the way the move reads: a board one goes
+    deeper into arrives from the right, and going back brings the previous board
+    in from the left. The header icon is the way back, one board at a time, and
+    is named "Back" for VoiceOver. **[ui]** (`testBackReturnsToTheParentBoard`
+    — the route; the slide direction itself is **[manual]**)
+6. Every default card is pinned to one picture in the media library, chosen by
+   a person, and no default card searches for its picture at run time. The
+   colour cards have no picture on purpose: the tile colour is the picture.
+   Every default category has a tile picture, Colours included. **[unit]**
+   (`testEveryDefaultCardIsPinnedToAPictureOrIsAColour`,
+   `testEveryDefaultCollectionHasATilePicture`)
+6a. Every default card has a Fitzgerald category, and a quick word speaks the
+    whole need ("Help" says "I need help"). **[unit]**
+    (`testEveryDefaultCardHasAFitzgeraldCategory`, `testQuickWordsSpeakASentence`)
+6b. The vocabulary is translated where a person has translated it (Dutch); any
+    other language shows the English words rather than guessed ones. **[unit]**
+    (`testDefaultVocabularyIsTranslatedIntoDutch`, `testALanguageWithoutATranslationStaysEnglish`)
 7. Collections and cards round-trip losslessly through Codable (persistence to
    UserDefaults as JSON). **[unit]** (`testDefaultCollectionsRoundTripJSON`,
    `testCardColorRoundTrips`)
@@ -53,7 +76,33 @@ suite verifies. Each requirement notes how it is covered:
 10. Collections can be nested (a collection may have a `parentID`). **[unit]**
     (`testAddNestedCollectionKeepsParent`) **[manual]** (nested navigation UI)
 11. Cards and collections can be edited, deleted, reordered, moved and recoloured.
-    **[manual]** (editor UI; store methods exercised indirectly)
+    **[unit]** (store methods) **[manual]** (reorder, move and bulk actions in the UI)
+
+## Finding and laying out cards
+
+11a. A board lays its tiles out in one of two ways, chosen in Settings
+     ("Scroll through cards"): swipeable pages (the default — nothing moves
+     under a finger), or one grid that scrolls. The tiles are the same either
+     way. **[ui]** (`testScrollModeShowsEveryCategoryInOneGrid`)
+11b. Search, from the header, finds cards and categories anywhere by a typed
+     word: whole words before half-typed ones, case and accents ignored, what a
+     card says included, the same thing filed twice shown once. A found card
+     speaks; a found category opens, with Back leading up through its parent.
+     **[unit]** (`CardsEditingAndSearchTests`, search section) **[ui]**
+     (`testSearchFindsACardAndOpensACategory`)
+
+## Editing the default cards
+
+11c. In edit mode every card and category is offered for editing, the default
+     ones included; a tap opens its editor, filled in with that item. **[ui]**
+     (`testEditModeLetsADefaultCardBeEdited`)
+11d. A change to a default card or category (name, spoken text, colour, picture,
+     or removing it) is kept on the device, laid over whatever vocabulary is
+     current, so it survives a relaunch with no account and no connection, and
+     untouched cards keep following the language. A family's own cards keep
+     their pictures the same way. Settings offers "Restore defaults" once
+     something was changed; it leaves the family's own cards alone. **[unit]**
+     (`CardsEditingAndSearchTests`, editing section)
 
 ## Content-editing access (admin)
 
@@ -63,9 +112,10 @@ suite verifies. Each requirement notes how it is covered:
 
 ## Media / images
 
-13. Card pictures are fetched from the media service and CDN-resized for tiles;
-    Tiko CDN uploads use Cloudflare image resizing. **[unit]**
-    (`testCDNURLUsesImageResizingForTikoUploads`)
+13. A default card's picture is loaded straight from the media CDN, resized for
+    a tile, with no content API in between; a family's own upload goes through
+    the content API. **[unit]** (`testCDNURLUsesImageResizingForTikoUploads`,
+    `testImageURLForADefaultCardIsItsPinnedPicture`, `testImageURLForCardUsesContentImageRef`)
 14. If media is unreachable, cards remain usable as coloured text tiles (offline
     fallback). **[unit]** (`testDefaultCollectionsContainSpeakableCards`)
     **[manual]** (live network fallback)
@@ -102,12 +152,14 @@ suite verifies. Each requirement notes how it is covered:
 
 ### Coverage summary
 
-- **Unit (XCTest):** requirements 1, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14 — the
-  card / collection model, colour + speech fallbacks, the built-in offline
-  catalog, custom collection/card creation & persistence, admin gating and CDN
-  image resizing.
-- **UI (XCUITest):** requirements 1, 2, 17, 18, 19 — launch usability without an
-  account, opening a collection and tapping a picture card, "Skip for now", and
-  the non-dismissible login-popup regression (shared TikoKit login).
-- **Manual / not yet automated:** 10 (nav UI), 11, 14 (live), 15, 16, 20, 21, 22.
+- **Unit (XCTest):** requirements 1, 3, 4, 5, 6, 6a, 6b, 7, 8, 9, 10, 12, 13, 14 —
+  the card / collection model, colour + speech fallbacks, the bundled default
+  vocabulary (its tree, pinned pictures, Fitzgerald categories and Dutch),
+  custom collection/card creation & persistence, admin gating and image
+  addresses.
+- **UI (XCUITest):** requirements 1, 2, 5, 10, 17, 18, 19 — launch usability
+  without an account, opening a collection and tapping a picture card, a
+  category opening onto its sub-categories and those onto cards, "Skip for
+  now", and the non-dismissible login-popup regression (shared TikoKit login).
+- **Manual / not yet automated:** 11, 14 (live), 15, 16, 20, 21, 22.
   These need additional UI coverage in future iterations.
