@@ -1,8 +1,23 @@
 // @vitest-environment node
+import { createRequire } from 'node:module'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import worker from '../workers/media-api/src/index'
 
 type Row = Record<string, unknown>
+
+const { DatabaseSync } = createRequire(import.meta.url)('node:sqlite') as typeof import('node:sqlite')
+
+/** The rows a SQL boolean expression over the media columns keeps, as SQLite (and so D1) decides it. */
+function sqliteFilter(rows: Row[], clause: string, values: string[]): Row[] {
+  const columns = ['title', 'description', 'name', 'filename', 'tags', 'categories']
+  const database = new DatabaseSync(':memory:')
+  database.exec(`CREATE TABLE media (position INTEGER, ${columns.map(column => `${column} TEXT`).join(', ')})`)
+  const insert = database.prepare(`INSERT INTO media VALUES (?, ${columns.map(() => '?').join(', ')})`)
+  rows.forEach((row, position) => insert.run(position, ...columns.map(column => (row[column] == null ? null : String(row[column])))))
+  const kept = database.prepare(`SELECT position FROM media WHERE ${clause} ORDER BY position`).all(...values)
+  database.close()
+  return kept.map(entry => rows[Number(entry.position)])
+}
 
 // SQLite LIKE with ESCAPE '\': `%` and `_` are wildcards unless backslash-escaped.
 function likeMatches(subject: string, pattern: string): boolean {
@@ -248,16 +263,24 @@ class MemoryD1 {
       valueIndex += 1
       filtered = filtered.filter(row => row.user_id === userId)
     }
-    if (normalized.includes('title LIKE ? ESCAPE') && normalized.includes('description LIKE ? ESCAPE')) {
-      // Prose columns take `%term%`; tags/categories take `%"term%`. Apply each
-      // bound pattern to its own column so the anchoring is actually tested.
-      const searchClause = normalized.slice(normalized.indexOf('(title LIKE ?'))
-      const patternCount = (searchClause.slice(0, searchClause.indexOf(')')).match(/LIKE \?/g) ?? []).length
+    // The search filter is real SQL (workers/media-api/src/search.ts), so it is
+    // run by a real SQLite rather than re-implemented here.
+    const searchStart = normalized.indexOf("(COALESCE(title, '') || ' '")
+    if (searchStart >= 0) {
+      let start = searchStart
+      while (normalized[start - 1] === '(') start -= 1
+      let depth = 0
+      let end = start
+      for (; end < normalized.length; end += 1) {
+        if (normalized[end] === '(') depth += 1
+        if (normalized[end] === ')') depth -= 1
+        if (depth === 0) break
+      }
+      const clause = normalized.slice(start, end + 1)
+      const patternCount = (clause.match(/\?/g) ?? []).length
       const patterns = values.slice(valueIndex, valueIndex + patternCount).map(String)
       valueIndex += patternCount
-      const columns = ['title', 'description', 'name', 'filename', 'tags', 'categories']
-      filtered = filtered.filter(row => columns.some((column, index) =>
-        likeMatches(String(row[column] ?? ''), patterns[index] ?? '')))
+      filtered = sqliteFilter(filtered, clause, patterns)
     }
 
     if (normalized.includes('categories LIKE ?')) {

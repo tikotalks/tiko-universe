@@ -93,4 +93,55 @@ describe('media search ranking', () => {
     const library = [item('Zebra Car'), item('Blue Car'), item('Red Car')]
     expect(titles(library, 'car')).toEqual(['Red Car', 'Blue Car', 'Zebra Car'])
   })
+
+  // TIKO-108: searches that found nothing, or the wrong thing, on the live library.
+  it('counts another form of the word, below the word itself', () => {
+    const running = mediaSearchScore(item('Boy Running'), 'run')
+    expect(running).toBeGreaterThan(mediaSearchScore(item('Knee', { tags: JSON.stringify(['run']) }), 'run'))
+    expect(running).toBeLessThan(mediaSearchScore(item('Boy Run'), 'run'))
+    expect(mediaSearchScore(item('Stationary Bike'), 'biking')).toBeGreaterThan(80)
+    expect(mediaSearchScore(item('Baked Potato'), 'bake')).toBeGreaterThan(70)
+    // A tag in another form of the word still says what the picture shows.
+    expect(mediaSearchScore(item('Fork', { tags: JSON.stringify(['eating']) }), 'eat')).toBeGreaterThan(60)
+  })
+
+  it('does not take a different word for a form of the searched one', () => {
+    // "care" is not "car", "king" is not "k", "red" is not "r".
+    expect(mediaSearchScore(item('Care'), 'car')).toBeLessThan(60)
+    expect(mediaSearchScore(item('King'), 'kings')).toBe(100)
+    expect(mediaSearchScore(item('Speed Boat'), 'spe')).toBeLessThan(60)
+  })
+
+  it('knows plurals no rule finds', () => {
+    expect(mediaSearchScore(item('Foot'), 'feet')).toBe(100)
+    expect(mediaSearchScore(item('Children'), 'child')).toBe(100)
+    expect(mediaSearchScore(item('Tooth'), 'teeth')).toBe(100)
+  })
+
+  it('finds the words of a search wherever they are, in any order', () => {
+    const titleAndTag = mediaSearchScore(item('Boy', { tags: JSON.stringify(['happy', 'child']) }), 'happy boy')
+    expect(titleAndTag).toBeGreaterThan(60)
+    expect(titleAndTag).toBeLessThan(mediaSearchScore(item('Happy Boy'), 'happy boy'))
+    // A word inside a longer tag.
+    expect(mediaSearchScore(item('Thor', { tags: JSON.stringify(['Norse mythology']) }), 'mythology')).toBeGreaterThan(60)
+    // Only one of the two words is not an answer.
+    expect(mediaSearchScore(item('Boy', { tags: JSON.stringify(['child']) }), 'happy boy')).toBeLessThan(20)
+  })
+
+  it('reads words written together and apart as the same', () => {
+    expect(mediaSearchScore(item('Firetruck'), 'fire truck')).toBe(100)
+    expect(mediaSearchScore(item('Fire Truck'), 'firetruck')).toBe(100)
+    expect(mediaSearchScore(item('Icecream Cone'), 'ice cream')).toBeGreaterThan(70)
+    expect(mediaSearchScore(item('Ice Cream Cone'), 'icecream')).toBeGreaterThan(70)
+    // "Brush teeth" is what a toothbrush is for.
+    expect(mediaSearchScore(item('Toothbrush'), 'brush teeth')).toBeGreaterThan(80)
+  })
+
+  it('lists an early tag before a late one', () => {
+    const library = [
+      item('Aaa', { tags: JSON.stringify(['kitchen', 'home', 'food']) }),
+      item('Zzz', { tags: JSON.stringify(['food', 'kitchen']) }),
+    ]
+    expect(titles(library, 'food')).toEqual(['Zzz', 'Aaa'])
+  })
 })
