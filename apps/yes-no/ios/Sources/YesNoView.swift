@@ -223,12 +223,17 @@ struct YesNoView: View {
 
     @StateObject private var i18n = TikoI18n(app: .yesNo)
     @StateObject private var store = YesNoStore()
+    @StateObject private var dictation = YesNoDictation()
+    @Environment(\.colorScheme) private var colorScheme
 
     @State private var history: [String] = []
     @State private var customAnswers: [YesNoAnswerTile] = []
     @State private var customAnswerSets: [YesNoAnswerSet] = []
     @State private var feedbackBackground: Color?
-    @State private var showingHistory = false
+    @State private var showingQuestionPanel = false
+    /// What is in the panel's field. It becomes the question when the panel
+    /// closes, whichever way it closes.
+    @State private var questionDraft = ""
     @State private var showingChoiceStyle = false
     @State private var showingTileEditor = false
     @State private var sentenceSpeechState: YesNoSpeechPlaybackState = .idle
@@ -245,22 +250,6 @@ struct YesNoView: View {
 
     private var darkShellBackground: Color {
         feedbackBackground ?? Color(red: 0.08, green: 0.055, blue: 0.095)
-    }
-
-    private var effectiveColorScheme: ColorScheme {
-        (TikoColorMode(rawValue: colorModeRawValue) ?? .light) == .dark ? .dark : .light
-    }
-
-    private var fieldBackground: Color {
-        effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.68)
-    }
-
-    private var clearButtonForeground: Color {
-        effectiveColorScheme == .dark ? .white.opacity(0.72) : Color(hex: 0x0b5a7a).opacity(0.65)
-    }
-
-    private var clearButtonBackground: Color {
-        effectiveColorScheme == .dark ? .white.opacity(0.12) : .white.opacity(0.36)
     }
 
     private var speakButtonBackground: Color {
@@ -286,7 +275,8 @@ struct YesNoView: View {
                 .progressViewStyle(.circular)
                 .tint(.white)
         case .playing:
-            Image(systemName: "waveform")
+            // A stop square, because that is what a tap does now.
+            Image(systemName: "stop.fill")
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
         case .idle:
@@ -298,6 +288,10 @@ struct YesNoView: View {
                 .font(.title2.weight(.bold))
                 .foregroundStyle(.white)
         }
+    }
+
+    private var isSpeakingSentence: Bool {
+        sentenceSpeechState == .generating || sentenceSpeechState == .playing
     }
 
     private var choiceStyle: TikoChoiceStyle {
@@ -349,10 +343,6 @@ struct YesNoView: View {
             appName: i18n.t("yesNo.settings.title"),
             backgroundColor: shellBackground,
             darkBackgroundColor: darkShellBackground,
-            actions: [
-                TikoHeaderAction(id: "history", label: i18n.t("yesNo.history.title"), systemImage: "clock", isActive: showingHistory)
-            ],
-            onAction: handleHeaderAction,
             onAccountDeleted: { resetLocalDataToDefaults() },
             onLoggedOut: { resetLocalDataToDefaults() },
             settingsContent: {
@@ -384,46 +374,30 @@ struct YesNoView: View {
             }
         ) {
             VStack(spacing: 22) {
-                TextField("Sentence", text: $sentence, axis: .vertical)
-                    .font(.system(.title2, design: .rounded).weight(.semibold))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 12)
-                    .foregroundStyle(.primary)
-                    .background(fieldBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .padding(.horizontal, 24)
-                    .accessibilityIdentifier("YesNoSentenceField")
+                YesNoQuestionBar(
+                    question: effectiveSentence,
+                    hint: i18n.t("yesNo.question.change"),
+                    onEdit: openQuestionPanel
+                )
+                .padding(.horizontal, 24)
 
-                HStack(spacing: 12) {
-                    Button(action: speakSentence) {
-                        speakButtonContent
-                            .frame(width: 56, height: 56)
-                            .background(speakButtonBackground)
-                            .clipShape(Circle())
-                            .shadow(
-                                color: speakButtonBackground.opacity(sentenceSpeechState == .idle ? 0.0 : 0.32),
-                                radius: sentenceSpeechState == .idle ? 0 : 10,
-                                y: sentenceSpeechState == .idle ? 0 : 4
-                            )
-                    }
-                    .disabled(!speechEnabled || sentenceSpeechState != .idle || effectiveSentence.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .accessibilityLabel("Speak sentence")
-                    .accessibilityIdentifier("YesNoSpeakButton")
-                    .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
-
-                    Button(action: { sentence = "" }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 16, weight: .heavy))
-                            .foregroundStyle(clearButtonForeground)
-                            .frame(width: 44, height: 44)
-                            .background(clearButtonBackground)
-                            .clipShape(Circle())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Clear sentence")
-                    .accessibilityIdentifier("YesNoClearSentenceButton")
+                Button(action: toggleSentenceSpeech) {
+                    speakButtonContent
+                        .frame(width: 56, height: 56)
+                        .background(speakButtonBackground)
+                        .clipShape(Circle())
+                        .shadow(
+                            color: speakButtonBackground.opacity(sentenceSpeechState == .idle ? 0.0 : 0.32),
+                            radius: sentenceSpeechState == .idle ? 0 : 10,
+                            y: sentenceSpeechState == .idle ? 0 : 4
+                        )
                 }
+                // Never disabled for being busy: a busy button is the one that
+                // has to answer a tap, or a slow connection looks like a hang.
+                .disabled(!speechEnabled)
+                .accessibilityLabel(i18n.t(isSpeakingSentence ? "yesNo.sentence.stop" : "yesNo.sentence.speak"))
+                .accessibilityIdentifier("YesNoSpeakButton")
+                .accessibilityValue(sentenceSpeechState == .generating ? "Generating" : sentenceSpeechState == .playing ? "Playing" : "")
 
                 TikoChoiceGrid(choices: effectiveChoices, style: choiceStyle, labelFont: labelFont, onSelect: selectChoice)
             }
@@ -432,12 +406,14 @@ struct YesNoView: View {
         .environmentObject(i18n)
         .onAppear {
             i18n.setLanguage(languageCode)
+            dictation.prepare(languageCode: languageCode)
             loadHistory()
             loadCustomAnswers()
             loadCustomAnswerSets()
         }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
+            dictation.prepare(languageCode: code)
             Task {
                 await store.fetchDefaults(languageCode: code)
             }
@@ -460,14 +436,24 @@ struct YesNoView: View {
                 }
             }
         }
-        .tikoPopup(isPresented: $showingHistory) {
-            QuestionHistorySheet(questions: history) { question in
-                sentence = question
-                showingHistory = false
-            } onClose: {
-                showingHistory = false
-            }
+        .tikoPopup(isPresented: $showingQuestionPanel, scrolls: true) {
+            YesNoQuestionPanel(
+                draft: $questionDraft,
+                previousQuestions: history,
+                languageCode: languageCode,
+                onWillListen: { speechService.stop() },
+                onDone: { showingQuestionPanel = false },
+                dictation: dictation
+            )
             .environmentObject(i18n)
+        }
+        .onChange(of: showingQuestionPanel) { _, showing in
+            // Return, a tap beside the panel, the close button and an earlier
+            // question all end here, so they cannot disagree about the result.
+            if !showing {
+                dictation.stop()
+                setQuestionFromDraft()
+            }
         }
         .tikoPopup(isPresented: $showingChoiceStyle) {
             ChoiceStyleSheet(selectedStyle: choiceStyle) { style in
@@ -503,11 +489,17 @@ struct YesNoView: View {
         }
     }
 
-    private func handleHeaderAction(_ id: String) {
-        switch id {
-        case "history": showingHistory.toggle()
-        default: break
-        }
+    private func openQuestionPanel() {
+        questionDraft = sentence
+        showingQuestionPanel = true
+    }
+
+    private func setQuestionFromDraft() {
+        sentence = questionDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        // A question that was set on purpose is worth offering again, asked or
+        // not. An emptied field falls back to the starter question, which is
+        // not the parent's and is only remembered once it is used.
+        if !sentence.isEmpty { rememberCurrentQuestion() }
     }
 
     private func selectChoice(_ choice: TikoAnswerChoice) {
@@ -519,9 +511,15 @@ struct YesNoView: View {
         }
     }
 
-    private func speakSentence() {
-        guard speechEnabled, sentenceSpeechState == .idle else { return }
+    /// One button, two jobs: speak the question, or stop the attempt that is
+    /// under way. Stopping returns it to idle, so the next tap tries again.
+    private func toggleSentenceSpeech() {
+        guard speechEnabled else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        if isSpeakingSentence {
+            speechService.stop()
+            return
+        }
         rememberCurrentQuestion()
         speechService.speak(effectiveSentence, languageCode: languageCode) { state in
             sentenceSpeechState = state
@@ -544,7 +542,7 @@ struct YesNoView: View {
         } else {
             base = choice.tone == .primary ? Color(hex: 0x93ee3f) : Color(hex: 0xef405d)
         }
-        let opacity = effectiveColorScheme == .dark ? 0.18 : 0.24
+        let opacity = colorScheme == .dark ? 0.18 : 0.24
         withAnimation(.easeInOut(duration: 0.18)) { feedbackBackground = base.opacity(opacity) }
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 650_000_000)
@@ -656,76 +654,6 @@ private struct ChoiceStyleSheet: View {
                     }
                     .buttonStyle(.plain)
                 }
-            }
-        }
-    }
-}
-
-// MARK: - Question history sheet
-
-private struct QuestionHistorySheet: View {
-    let questions: [String]
-    let onSelect: (String) -> Void
-    let onClose: () -> Void
-
-    @EnvironmentObject private var i18n: TikoI18n
-
-    var body: some View {
-        TikoPopupCard(
-            title: i18n.t("yesNo.history.popup.title"),
-            subtitle: i18n.t("yesNo.history.popup.subtitle"),
-            icon: "clock",
-            appColor: .yesNo,
-            onClose: onClose
-        ) {
-            if questions.isEmpty {
-                VStack(spacing: 10) {
-                    Image(systemName: "text.bubble")
-                        .font(.system(size: 34, weight: .bold))
-                        .foregroundStyle(Color(hex: 0x0b5a7a).opacity(0.45))
-                    Text(i18n.t("yesNo.question.empty"))
-                        .font(.system(size: 17, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.primary)
-                    Text(i18n.t("yesNo.question.hint"))
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 10) {
-                        ForEach(questions, id: \.self) { question in
-                            Button { onSelect(question) } label: {
-                                HStack(spacing: 12) {
-                                    Image(systemName: "questionmark.bubble.fill")
-                                        .font(.system(size: 17, weight: .bold))
-                                        .foregroundStyle(Color(hex: 0x93ee3f))
-                                        .frame(width: 34, height: 34)
-                                        .background(Color(hex: 0x93ee3f).opacity(0.14))
-                                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                                    Text(question)
-                                        .font(.system(size: 16, weight: .heavy, design: .rounded))
-                                        .foregroundStyle(.primary)
-                                        .multilineTextAlignment(.leading)
-                                    Spacer(minLength: 0)
-                                    Image(systemName: "arrow.up.left")
-                                        .font(.system(size: 12, weight: .bold))
-                                        .foregroundStyle(.secondary)
-                                }
-                                .padding(14)
-                                .background(Color(.systemBackground))
-                                .overlay { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.primary.opacity(0.08), lineWidth: 1) }
-                                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.vertical, 2)
-                }
-                .scrollIndicators(.hidden)
-                .frame(maxHeight: 430)
             }
         }
     }

@@ -59,6 +59,11 @@ public protocol TikoSpeechServicing: AnyObject {
 public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
     public var onAudioLevel: ((Float) -> Void)?
 
+    /// What kind of speech to expect. Practice listens for one word, which is
+    /// what `.confirmation` is tuned for; an app taking down a whole sentence
+    /// sets `.dictation`.
+    public var taskHint: SFSpeechRecognitionTaskHint = .confirmation
+
     private let voice = TikoVoiceService.shared
     private let audioEngine = AVAudioEngine()
     private var recognizer: SFSpeechRecognizer?
@@ -154,7 +159,7 @@ public final class TikoSpeechPracticeService: NSObject, TikoSpeechServicing {
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        request.taskHint = .confirmation
+        request.taskHint = taskHint
         request.contextualStrings = contextualWords
         if recognizer.supportsOnDeviceRecognition {
             request.requiresOnDeviceRecognition = true

@@ -29,13 +29,25 @@ suite verifies. Each requirement notes how it is covered:
    translations (e.g. Dutch "Ja"/"Nee"), falling back to the base label. **[unit]**
    (`testBuiltInTranslationsPresent`)
 
-## Typed sentence
+## The question
 
-6. The user can type a custom sentence and have it spoken via the speak button.
-   **[ui]** (`testTypedSentenceCanBeEnteredAndCleared` — typing into the field;
-   the speak button dispatch is unit-covered by the speech-service tests)
-7. The sentence can be cleared with a dedicated clear button. **[ui]**
-   (`testTypedSentenceCanBeEnteredAndCleared`)
+6. The board shows the question as a bar. Tapping it opens the question panel,
+   where a question is typed. **Return** sets it and closes the keyboard and the
+   panel; a tap beside the panel does the same. There is no cancel: every way
+   out leaves with what is in the field. **[ui]**
+   (`testReturnSetsTheQuestionAndClosesThePanel`,
+   `testTapBesideThePanelSetsTheQuestion`)
+7. The field can be cleared with a dedicated clear button. An emptied field falls
+   back to the starter question. **[ui]** (`testQuestionFieldCanBeCleared`)
+23. The question can be said instead of typed: the microphone in the panel puts
+    what it hears in the field and stops when the speaker pauses. The microphone
+    is not offered for a language with no recognizer, and a refused permission
+    is explained with a way to Settings. **[unit]** (`YesNoDictationTests`)
+    **[manual]** (a real microphone, on a device)
+24. The speak button reads the question aloud. Tapping it while it is preparing
+    or playing stops that attempt; tapping again starts a new one. It is never
+    disabled for being busy. **[unit]** (TikoKit
+    `testSupersededSpeakLeavesTheNewerCallAlone`) **[manual]** (the button)
 
 ## Answer sets & customisation
 
@@ -55,10 +67,10 @@ suite verifies. Each requirement notes how it is covered:
 
 ## History, language, appearance
 
-12. Recently used sentences are kept in a question history and can be re-selected.
-    **[ui]** (`testHistoryActionShowsEmptyState` — empty history state;
-    `testAnsweringRecordsQuestionInHistory` — answering records a question and it
-    can be re-selected back into the sentence field)
+12. Questions that were set or asked are kept (the latest twelve) and offered in
+    the question panel as earlier questions; picking one sets it. Typing narrows
+    the list. **[ui]** (`testQuestionPanelStartsWithoutEarlierQuestions`,
+    `testAskedQuestionCanBePickedAgain`)
 13. Language is selectable and drives localisation. **[unit]** (translation model) **[manual]** (picker UI)
 14. Colour mode (system / light / dark) is selectable. **[manual]**
 
@@ -88,15 +100,16 @@ suite verifies. Each requirement notes how it is covered:
 
 ### Coverage summary
 
-- **Unit (XCTest):** requirements 2, 3, 4, 5, 8, 9 (model), 10, 13 (model) — the
-  answer model, speech/label content, translations, the built-in catalog, the
-  Codable round-trips, the app config and the speech-service surface.
+- **Unit (XCTest):** requirements 2, 3, 4, 5, 8, 9 (model), 10, 13 (model), 23 —
+  the answer model, speech/label content, translations, the built-in catalog,
+  the Codable round-trips, the app config, the speech-service surface and
+  dictation against a scripted speech stack.
 - **UI (XCUITest):** requirements 1, 2, 3, 6, 7, 10, 11, 12, 15, 16, 17 — launch
   usability without an account, the two-answer board rendering, answering staying
-  usable, typed-sentence entry + clear, the settings answer options, question
-  history (empty state + record/re-select), "Skip for now", and the
-  non-dismissible login-popup regression.
+  usable, the question panel (Return, a tap beside it, clear, earlier questions),
+  the settings answer options, "Skip for now", and the non-dismissible
+  login-popup regression.
 - **Manual / not yet automated:** 9 (full editor UI), 13 (language picker UI), 14,
-  18, 19, 20, 21, 22, and the answer-style *picker* popup (stacked-popup flow —
-  unstable under the harness; catalog is unit-covered). These need additional
-  coverage in future iterations.
+  18, 19, 20, 21, 22, 23 (a real microphone), 24 (the button itself), and the
+  answer-style *picker* popup (stacked-popup flow — unstable under the harness;
+  catalog is unit-covered). These need additional coverage in future iterations.
