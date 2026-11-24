@@ -253,9 +253,10 @@ final class TikoCardsUITests: XCTestCase {
     // MARK: - Scroll mode shows a whole board in one scrolling grid
 
     func testScrollModeShowsEveryCategoryInOneGrid() {
-        // In pages mode the last category is two swipes away and not on screen.
+        // Pages mode lays the board out as pages (on a phone the later
+        // categories are swipes away; on an iPad they may all fit on one).
         XCTAssertTrue(element(withIdentifier: "Feelings").waitForExistence(timeout: 20), "The root grid should be present")
-        XCTAssertFalse(element(withIdentifier: "Letters").exists, "Pages mode shows one screenful")
+        XCTAssertFalse(app.scrollViews["CardsScrollBoard"].exists, "Pages mode is not a scrolling grid")
 
         // The setting is a stored preference; pass it the way the system does.
         app.terminate()
@@ -270,7 +271,7 @@ final class TikoCardsUITests: XCTestCase {
         for _ in 0..<8 where !(letters.exists && letters.isHittable) {
             from.press(forDuration: 0, thenDragTo: to, withVelocity: .fast, thenHoldForDuration: 0)
         }
-        XCTAssertTrue(letters.exists && letters.isHittable, "The last category is reached by scrolling down")
+        XCTAssertTrue(letters.exists && letters.isHittable, "A late category is reached in the one grid, by scrolling if it takes that")
     }
 
     // MARK: - Edit mode offers every card for editing, defaults included
