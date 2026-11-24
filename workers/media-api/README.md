@@ -43,7 +43,7 @@ All routes are under `/v1`. The configured client base URL is therefore `https:/
 
 | Parameter | Values | Default |
 | --- | --- | --- |
-| `search` | Free text over title, description, name, filename, tag prefixes, and category prefixes | none |
+| `search` | Free text; every word must be found on the item (see Search below) | none |
 | `type` | `image`, `audio`, or `video` | all |
 | `category` | One or more comma-separated exact categories | all |
 | `tags` | Comma-separated tags; all supplied tags must match | all |
@@ -141,8 +141,12 @@ The authoritative contract still needs to be added to `docs/api/openapi.yaml`. U
 
 The verified, prioritized backlog and its acceptance criteria live in [Media API audit and to-do list](../../docs/plans/2026-08-25-media-api-audit.md).
 
-## Search order
+## Search
 
-`GET /v1/media?search=<text>` answers best match first: a title that is the word, then a title that contains it (the head noun before a modifier), then a tag, then a category, then half-typed word starts, then a description that mentions it. Singular and plural are the same word. The scoring is `mediaSearchScore` in `src/index.ts`, tested in `tests/media-search-ranking.test.ts`.
+`GET /v1/media?search=<text>` is read word by word; both halves live in `src/search.ts`.
 
-A request that names a `sort` keeps that order and is not ranked. Ranking reads a window of 1000 matches, filled with titles that start with the search text first; past the window the tail keeps its upload order.
+**What matches** (`mediaSearchFilter`, the SQL). Every word of the search has to be found somewhere on the item, in any order and in any field, so "brush teeth" finds a picture titled "Toothbrush" tagged "teeth". Titles, descriptions, names and filenames match anywhere in a word; tags and categories match from the start of a word, so "pet" finds the tag "pets" but not "carpet". A word is also looked for in its other forms: plural and singular ("teeth" and "tooth"), and "-ing" / "-ed" ("biking" finds "bike"). Words written together or apart are the same ("ice cream" and "icecream"). At most five words are read.
+
+**What comes first** (`mediaSearchScore`). A title that is the search, then a title containing every word (the head noun before a modifier: "Police car" before "Car wash"), then the same in another form of the word ("Boy running" for "run"), then a tag that is the search (an early tag before a late one), then the words spread over title and tags, then a category, then half-typed word starts, then a description that mentions it. A request that names a `sort` keeps that order instead.
+
+Search is English only: titles, tags and descriptions are written in English and nothing translates the search. Tests: `tests/media-search-ranking.test.ts` (order), `tests/media-search-filter.test.ts` (the SQL, run on SQLite), `tests/media-api.test.ts` (the route).
