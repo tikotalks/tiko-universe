@@ -172,3 +172,26 @@ describe('Cards web iOS parity architecture', () => {
     expect(wrapper.get('.tiko-edit-badge').attributes('aria-label')).toBe('Edit translated')
   })
 })
+
+
+it('applies Fitzgerald colours without replacing custom colours or reordering cards', async () => {
+  const items = [
+    { id: 'one', kind: 'card' as const, collectionID: 'user_board', card: { id: 'one', title: 'I', speech: 'I', color: 'blue' as const, fitzgeraldCategory: 'person' as const } },
+    { id: 'two', kind: 'card' as const, collectionID: 'user_board', card: { id: 'two', title: 'Something', speech: 'Something', color: 'green' as const } },
+  ]
+  const wrapper = mount(CardsBoard, {
+    props: { items, fitzgeraldKey: false, columns: 2, itemsPerPage: 6, page: 0, reduceMotion: true,
+      editing: false, isAdmin: false, labelSize: 'medium', selectedCollectionIds: new Set<string>(), selectedCardIds: new Set<string>(),
+      collectionThumbnails: {}, cardImages: {}, contentBaseUrl: 'https://content.test/v1' },
+    global: { stubs: { TikoPagedTileGrid: { props: ['items'], template: '<div><slot v-for="item in items" name="item" :item="item" /></div>' } } },
+  })
+  const original = wrapper.findAll('.tiko-square-tile').map(tile => tile.attributes('style'))
+  await wrapper.setProps({ fitzgeraldKey: true })
+  const tiles = wrapper.findAll('.tiko-square-tile')
+  expect(tiles.map(tile => tile.attributes('aria-label'))).toEqual(['I', 'Something'])
+  expect(tiles[0].attributes('style')).toContain('rgb(255, 227, 139)')
+  expect(tiles[1].attributes('style')).toContain('rgb(241, 241, 241)')
+  await wrapper.setProps({ fitzgeraldKey: false })
+  expect(wrapper.findAll('.tiko-square-tile').map(tile => tile.attributes('style'))).toEqual(original)
+  expect(items[0].card.color).toBe('blue')
+})

@@ -130,6 +130,9 @@ public struct TikoAppHeader: View {
                     appIconContent
                 }
                 .buttonStyle(.plain)
+                // Every app uses the tappable icon as the way back; without a
+                // name VoiceOver read out the symbol's file name.
+                .accessibilityLabel("Back")
             } else {
                 appIconContent
             }

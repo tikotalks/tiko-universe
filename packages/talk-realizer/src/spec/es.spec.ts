@@ -20,6 +20,25 @@ const golden: Array<[string, string[], string]> = [
   ["gustar inverts the clause", ["i", "like", "bread"], "Me gusta el pan."],
   ["inverted verb agrees with the plural", ["i", "like", "two", "cookie"], "Me gustan dos galletas."],
   ["question is bracketed", ["what", "you", "want"], "¿Qué tú quieres?"],
+  ["predicate agrees with a noun subject", ["the", "apple", "is", "cold"], "La manzana está fría."],
+  ["a plural subject takes a plural predicate", ["they", "tired"], "Ellos están cansados."],
+  ["plural agreement inside the noun phrase", ["i", "want", "two", "dirty", "cookie"], "Yo quiero dos galletas sucias."],
+  ["an invariant adjective is left alone", ["i", "sad"], "Yo estoy triste."],
+
+  // A pronoun subject carries a gender of its own, and the predicate agrees with
+  // it. Reading only the noun-phrase head left every sentence about a girl
+  // masculine: "Ella está cansado".
+  ["predicate agrees with a feminine pronoun subject", ["she", "tired"], "Ella está cansada."],
+  ["and with a masculine one", ["he", "tired"], "Él está cansado."],
+  ["nothing to move in an invariant adjective", ["she", "happy"], "Ella está feliz."],
+
+  // The demonstrative agrees with its noun. It used to pass through as the
+  // masculine tile the pack ships: "este manzana".
+  ["demonstrative agrees", ["this", "apple"], "Esta manzana."],
+  ["the other demonstrative series too", ["that", "apple"], "Esa manzana."],
+  // "el agua" is an article-only rule, and it reaches nothing else in the phrase.
+  ["the article of a stressed-a noun is masculine", ["i", "want", "the", "water"], "Yo quiero el agua."],
+  ["its demonstrative is not", ["this", "water"], "Esta agua."],
 ]
 
 describe('Spanish realizer', () => {
@@ -28,4 +47,84 @@ describe('Spanish realizer', () => {
       expect(realize(select('es', ids), { locale: 'es' }).text).toBe(expected)
     })
   }
+
+  /**
+   * Every other language says why it put an article there. Spanish said nothing,
+   * so its articles arrived with no reason attached and a consumer reading the
+   * notes could not tell one from any other word the realizer inserted.
+   */
+  it('says why it inserted an article', () => {
+    const result = realize(select('es', ['i', 'want', 'apple']), { locale: 'es' })
+    expect(result.inserted).toEqual(['una'])
+    expect(result.notes.join(' ')).toContain('article "una"')
+  })
+
+  it('names the noun a demonstrative agreed with', () => {
+    const result = realize(select('es', ['this', 'water']), { locale: 'es' })
+    expect(result.notes.join(' ')).toContain('"esta": the demonstrative agrees with water')
+  })
+})
+
+/**
+ * Predicate agreement with the speaker. Every Spanish sentence a girl or a woman
+ * makes with an adjective in -o is wrong without this, and there is no tile in the
+ * selection that carries the answer — only the profile knows.
+ */
+describe('Spanish speaker agreement', () => {
+  const tired = (speakerGender?: 'masculine' | 'feminine') =>
+    realize(select('es', ['i', 'tired']), speakerGender ? { locale: 'es', speakerGender } : { locale: 'es' })
+
+  it('says "cansada" for a girl and "cansado" for a boy', () => {
+    expect(tired('feminine').text).toBe('Yo estoy cansada.')
+    expect(tired('masculine').text).toBe('Yo estoy cansado.')
+  })
+
+  it('agrees a negated predicate too', () => {
+    expect(realize(select('es', ['i', 'not', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo no estoy cansada.')
+  })
+
+  it('keeps the masculine when nobody said, and records that it had to assume', () => {
+    const assumed = tired()
+    expect(assumed.text).toBe('Yo estoy cansado.')
+    expect(assumed.notes.join(' ')).toContain('wrong for a girl')
+
+    // Told the answer, it says what it agreed with rather than warning about it.
+    expect(tired('feminine').notes.join(' ')).not.toContain('not recorded')
+  })
+
+  it('says nothing about an adjective that never moves', () => {
+    // "triste" and "feliz" are the same word for everyone: a warning here would be
+    // noise, and noise is what teaches a reader to skip the notes that matter.
+    for (const id of ['sad', 'happy']) {
+      const result = realize(select('es', ['i', id]), { locale: 'es' })
+      expect(result.notes.some((entry) => entry.includes('speaker'))).toBe(false)
+      expect(realize(select('es', ['i', id]), { locale: 'es', speakerGender: 'feminine' }).text)
+        .toBe(result.text)
+    }
+  })
+
+  it('leaves the first person plural masculine, because a group is not the speaker', () => {
+    const asWoman = realize(select('es', ['we', 'tired']), { locale: 'es', speakerGender: 'feminine' })
+    expect(asWoman.text).toBe('Nosotros estamos cansados.')
+  })
+
+  it('lets the third person keep its own gender, whoever is speaking', () => {
+    // The speaker's gender answers for "yo" and for nothing else: a woman saying
+    // "él está cansado" is not talking about herself.
+    expect(realize(select('es', ['she', 'tired']), { locale: 'es', speakerGender: 'masculine' }).text)
+      .toBe('Ella está cansada.')
+    expect(realize(select('es', ['he', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Él está cansado.')
+    expect(realize(select('es', ['i', 'tired']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo estoy cansada.')
+  })
+
+  it('agrees an attributive adjective with its noun, not with the speaker', () => {
+    // "manzana" is feminine whoever is holding the tablet.
+    expect(realize(select('es', ['i', 'want', 'big', 'apple']), { locale: 'es', speakerGender: 'feminine' }).text)
+      .toBe('Yo quiero una manzana grande.')
+    expect(realize(select('es', ['i', 'want', 'dirty', 'cookie']), { locale: 'es', speakerGender: 'masculine' }).text)
+      .toBe('Yo quiero una galleta sucia.')
+  })
 })

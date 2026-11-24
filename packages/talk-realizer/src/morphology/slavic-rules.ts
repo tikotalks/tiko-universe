@@ -187,6 +187,19 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
           note(ctx.builder, `"${form}": a plural predicate`)
           return form
         }
+        // With a pronoun subject these languages prefer the short form: "я
+        // счастлив", not "я счастливый". That is a fact about the subject being a
+        // pronoun, not about its gender being unknown — the two only looked alike
+        // while pronouns carried no gender.
+        //
+        // Deliberately the one curated form, which is the masculine short: these
+        // languages inflect it for gender too ("она устала") and the lexicon has
+        // nowhere to put that yet, so a feminine subject still reads as masculine
+        // here. That was already true and is not made better by this.
+        if (ctx.subjectIsPronoun && adjective.features.predicative) {
+          note(ctx.builder, `"${adjective.features.predicative}": predicative form`)
+          return adjective.features.predicative
+        }
         // With a noun subject the predicate agrees with it: "Яблоко большое".
         if (ctx.subjectGender) {
           const form = declineAdjective(
@@ -195,8 +208,6 @@ export function createSlavic(config: SlavicConfig): LanguageRules {
           note(ctx.builder, `"${form}": a predicate agreeing with the subject`)
           return form
         }
-        // With a pronoun subject the tiles carry no gender, and Russian prefers
-        // the short form there anyway: "я счастлив", not "я счастливый".
         if (adjective.features.predicative) {
           note(ctx.builder, `"${adjective.features.predicative}": predicative form`)
           return adjective.features.predicative

@@ -1,7 +1,7 @@
-import type { Features, SelectedWord } from '../features'
+import type { Features, Gender, SelectedWord } from '../features'
 import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, possessiveForm, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
  * Spanish. The pack stores infinitives, so conjugation is the main job; the
@@ -11,6 +11,20 @@ import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../p
  *
  * The copula is `estar`, because everything a child says with an adjective here
  * is a state: "estoy feliz", "estoy cansado".
+ *
+ * Determiners agree with the noun, each in its own way. The article has the "el
+ * agua" rule — a feminine noun beginning with a stressed "a" takes the masculine
+ * *article* — and that rule stops at the article: the demonstrative, the
+ * adjective and everything else still treat the noun as feminine. A plural noun
+ * takes no indefinite article at all, because Spanish leaves a bare plural bare.
+ *
+ * **A predicate adjective agrees with whoever it is said about**, and in the first
+ * person that is the speaker: "estoy cansado" from a boy, "estoy cansada" from a
+ * girl. Nothing in the selection carries that — the tile is "cansado" either way
+ * and the subject is the bare pronoun "yo" — so it comes from `speakerGender`,
+ * which Tiko does not record yet. Until it does, `speakerGender` is absent, the
+ * masculine stands in, and every sentence where the ending would have moved says
+ * so in its notes rather than passing silently.
  */
 const COPULA: Record<string, string> = {
   '1sg': 'estoy', '2sg': 'estás', '3sg': 'está', '1pl': 'estamos', '2pl': 'estáis', '3pl': 'están',
@@ -30,6 +44,45 @@ const HAVE: Record<string, string> = {
   '1sg': 'tengo', '2sg': 'tienes', '3sg': 'tiene', '1pl': 'tenemos', '2pl': 'tenéis', '3pl': 'tienen',
 }
 
+/**
+ * Whose gender a predicate adjective agrees with. In the first person it is the
+ * speaker; everywhere else it is the subject's own gender, which the noun already
+ * carries ("la manzana está fría").
+ *
+ * Deliberately the first person **singular** only. "Nosotros" is a group, and a
+ * group's gender is not the speaker's — a woman speaking for a mixed group still
+ * says "estamos cansados" — and the pack's tile is the masculine "nosotros", so
+ * agreeing the plural adjective with the speaker would only make it disagree with
+ * the pronoun standing next to it. The masculine default is the less wrong answer
+ * there until the selection itself says who "we" are.
+ */
+function predicateGender(ctx: PhraseContext, subjectGender: Gender | undefined): Gender | undefined {
+  if (ctx.person === 1 && ctx.number === 'sg') return ctx.speakerGender
+  return subjectGender
+}
+
+/**
+ * A demonstrative agrees with its noun in gender and number: "esta manzana",
+ * "estos zapatos". The packs cite it in the masculine singular ("este", "ese"),
+ * and both series build the rest by trading that final -e for -a, -os and -as.
+ *
+ * It agrees with the noun's **own** gender. "el agua" is an article-only rule —
+ * a stressed initial "a" takes the masculine *article* so that two a-sounds do
+ * not run together — and it reaches nothing else in the phrase: "esta agua", and
+ * "el agua fría" with a feminine adjective.
+ *
+ * Deliberately only the two series the packs ship. "Aquel" is irregular
+ * ("aquella", "aquellos") and the -e rule would spell it "aquela"; a curated
+ * `feminine` or `pluralForm` wins here, which is where that belongs.
+ */
+function demonstrativeForm(features: Features, text: string, feminine: boolean, plural: boolean): string {
+  if (feminine) {
+    const singular = features.feminine ?? text.replace(/e$/, 'a')
+    return plural ? pluralize(singular, 'es') : singular
+  }
+  return plural ? (features.pluralForm ?? text.replace(/e$/, 'os')) : text
+}
+
 export const spanish: LanguageRules = {
   profile: {
     language: 'es',
@@ -45,7 +98,7 @@ export const spanish: LanguageRules = {
       'estoy', 'estás', 'está', 'estamos', 'están', 'estaba', 'estaban',
       'no', 'me', 'te', 'le', 'nos', 'les', 'al', 'del',
     ],
-    notes: 'Subject pronouns are kept because the child chose them, though Spanish normally drops them. The copula is always estar.',
+    notes: 'Subject pronouns are kept because the child chose them, though Spanish normally drops them. The copula is estar for a state and ser for an inherent quality. A predicate adjective in the first person singular agrees with the SPEAKER\'s gender, which Tiko does not record: without speakerGender the masculine stands in and the sentence says so in its notes. The first person plural is left masculine on purpose — a group\'s gender is not the speaker\'s.',
   },
 
   induce(word: SelectedWord): Features {
@@ -94,7 +147,7 @@ export const spanish: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     // "el agua", not "la agua": a stressed initial "a" takes the masculine
     // article in the singular, while the noun itself stays feminine.
@@ -111,6 +164,11 @@ export const spanish: LanguageRules = {
       }
       if (determiner.features.pronounCase === 'poss') {
         return { text: possessiveForm(determiner.features, determiner.text, feminine), from: determiner.id }
+      }
+      if (kind === 'demonstrative') {
+        const form = demonstrativeForm(determiner.features, determiner.text, feminine, plural)
+        note(ctx.builder, `"${form}": the demonstrative agrees with ${head?.id ?? 'the noun'}`)
+        return { text: form, from: determiner.id }
       }
       return {
         text: quantifierPhrase(determiner.features, determiner.text, 'es', feminine, plural),
@@ -133,8 +191,17 @@ export const spanish: LanguageRules = {
       note(ctx.builder, 'no article: mass noun')
       return null
     }
-    if (plural) return { text: feminine ? 'unas' : 'unos', from: null }
-    return { text: feminine && !stressedA ? 'una' : 'un', from: null }
+    if (plural) {
+      // Spanish leaves a bare plural bare: "necesito gafas", not "necesito unas
+      // gafas", which counts a pair rather than naming the thing.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
+    const article = feminine && !stressedA ? 'una' : 'un'
+    note(ctx.builder, stressedA
+      ? `article "${article}": "${head.text}" is feminine, but a stressed initial "a" takes the masculine article`
+      : `article "${article}": indefinite ${feminine ? 'feminine' : 'masculine'} singular`)
+    return { text: article, from: null }
   },
 
   adjectivePosition: 'after',
@@ -144,7 +211,29 @@ export const spanish: LanguageRules = {
     const sensation = ctx.role === 'predicate' ? isSensation(ctx) : undefined
     if (sensation && ctx.tense === 'present') return sensation
     const { gender, plural } = agreesWith(np, ctx)
-    return agreeAdjective(adjective.features, adjective.text, 'es', gender, plural ? 'pl' : 'sg')
+    const number = plural ? 'pl' : 'sg'
+    if (ctx.role !== 'predicate') {
+      return agreeAdjective(adjective.features, adjective.text, 'es', gender, number)
+    }
+
+    const agreed = agreeAdjective(
+      adjective.features, adjective.text, 'es', predicateGender(ctx, gender), number,
+    )
+    // Only the first person has nothing in the selection to agree with, and only an
+    // adjective whose ending actually moves is affected: "triste" and "feliz" are
+    // the same word for everyone, and a note about them would be noise that trains
+    // the reader to skip the ones that matter.
+    if (ctx.person === 1 && ctx.number === 'sg') {
+      const masculine = agreeAdjective(adjective.features, adjective.text, 'es', 'masculine', number)
+      const feminine = agreeAdjective(adjective.features, adjective.text, 'es', 'feminine', number)
+      if (masculine !== feminine) {
+        note(ctx.builder, ctx.speakerGenderAssumed
+          ? `"${agreed}" agrees with the speaker's gender, which is not recorded: `
+            + 'masculine assumed, and this sentence is wrong for a girl'
+          : `"${agreed}": the predicate adjective agrees with the speaker, who is ${ctx.speakerGender}`)
+      }
+    }
+    return agreed
   },
 
   noun(head, np) {

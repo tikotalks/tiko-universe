@@ -3,19 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */; };
+		130600A62DCF5FC843FEE3A5 /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 36DE9702C91167BE186DDFA5 /* TikoSpeechKit */; };
 		2BF1E91528BDF2CC5A5DD228 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C29DD0F7C2038B0621DDB76E /* Assets.xcassets */; };
 		2EE9175E29F28F467782D280 /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = D7247D1EFCE9E72267767EB4 /* TikoKit */; };
 		629A1978303D3BC9CAA97D70 /* TikoYesNoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133D3D2D7AC17B903D1A4C77 /* TikoYesNoUITests.swift */; };
+		96610F9129306E3DA20A0A32 /* TikoSpeechKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9B1B142CA89AFBFCC775A9E7 /* TikoSpeechKit */; };
 		A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */; };
 		AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C99E9A160668D93E2D88752 /* YesNoView.swift */; };
+		B451F36C502D5917F23CDC05 /* YesNoQuestionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AB987E6B26D38321A794898 /* YesNoQuestionPanel.swift */; };
+		C18691D31145ECEC0D1AF50E /* YesNoDictationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B463E892EF53A2382F6FCE9 /* YesNoDictationTests.swift */; };
 		C31BF34E6E940946F38A5CB7 /* YesNoAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */; };
 		E12D28C0AF2CC81C15B5790F /* TikoKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED94DA5FDFB546A53D31506 /* TikoKit */; };
 		EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */; };
+		EF1EC5E1FEC7FC4151B0A8DA /* YesNoDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA0B0558B08BE030D6BEB59 /* YesNoDictation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,14 +44,17 @@
 		0A03A3830F9E9D0D41C10399 /* tikokit-ios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "tikokit-ios"; path = "../../../packages/tikokit-ios"; sourceTree = SOURCE_ROOT; };
 		133D3D2D7AC17B903D1A4C77 /* TikoYesNoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoUITests.swift; sourceTree = "<group>"; };
 		216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2AB987E6B26D38321A794898 /* YesNoQuestionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoQuestionPanel.swift; sourceTree = "<group>"; };
 		2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TikoYesNo.entitlements; sourceTree = "<group>"; };
 		3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoTests.swift; sourceTree = "<group>"; };
+		6B463E892EF53A2382F6FCE9 /* YesNoDictationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoDictationTests.swift; sourceTree = "<group>"; };
 		7357E5FCD5F592CEE258CE95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C99E9A160668D93E2D88752 /* YesNoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoView.swift; sourceTree = "<group>"; };
 		ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoSpeechService.swift; sourceTree = "<group>"; };
 		C29DD0F7C2038B0621DDB76E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5DF4B04108334360E51DCC3 /* TikoYesNoUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TikoYesNoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoAppConfig.swift; sourceTree = "<group>"; };
+		DBA0B0558B08BE030D6BEB59 /* YesNoDictation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YesNoDictation.swift; sourceTree = "<group>"; };
 		EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TikoYesNoApp.swift; sourceTree = "<group>"; };
 		FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TikoYesNo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -57,6 +65,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E12D28C0AF2CC81C15B5790F /* TikoKit in Frameworks */,
+				96610F9129306E3DA20A0A32 /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +74,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EE9175E29F28F467782D280 /* TikoKit in Frameworks */,
+				130600A62DCF5FC843FEE3A5 /* TikoSpeechKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +108,8 @@
 				2B19C1507B00190FDAF8CB2A /* TikoYesNo.entitlements */,
 				EF6BBD658EE7F2E3FFB60F4D /* TikoYesNoApp.swift */,
 				CFF1B4E75F0388887506E441 /* YesNoAppConfig.swift */,
+				DBA0B0558B08BE030D6BEB59 /* YesNoDictation.swift */,
+				2AB987E6B26D38321A794898 /* YesNoQuestionPanel.swift */,
 				ACA4B1596AEF26381F6234C3 /* YesNoSpeechService.swift */,
 				7C99E9A160668D93E2D88752 /* YesNoView.swift */,
 			);
@@ -108,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				3C1243037126C3062F4D62D8 /* TikoYesNoTests.swift */,
+				6B463E892EF53A2382F6FCE9 /* YesNoDictationTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -149,6 +162,7 @@
 			name = TikoYesNo;
 			packageProductDependencies = (
 				D7247D1EFCE9E72267767EB4 /* TikoKit */,
+				36DE9702C91167BE186DDFA5 /* TikoSpeechKit */,
 			);
 			productName = TikoYesNo;
 			productReference = FB09AA6545AC873DBC2EE38E /* TikoYesNo.app */;
@@ -169,6 +183,7 @@
 			name = TikoYesNoTests;
 			packageProductDependencies = (
 				2ED94DA5FDFB546A53D31506 /* TikoKit */,
+				9B1B142CA89AFBFCC775A9E7 /* TikoSpeechKit */,
 			);
 			productName = TikoYesNoTests;
 			productReference = 216C3B420E05057458B4A8FF /* TikoYesNoTests.xctest */;
@@ -214,7 +229,6 @@
 				};
 			};
 			buildConfigurationList = 676F314800A5D68895D75953 /* Build configuration list for PBXProject "TikoYesNo" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -226,7 +240,8 @@
 			packageReferences = (
 				E0F946F340B00437C6A255AA /* XCLocalSwiftPackageReference "../../../packages/tikokit-ios" */,
 			);
-			preferredProjectObjectVersion = 54;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D161094920912CD4DE1A244F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -277,6 +292,8 @@
 			files = (
 				EC6CE986289B68B4B9EF34F6 /* TikoYesNoApp.swift in Sources */,
 				C31BF34E6E940946F38A5CB7 /* YesNoAppConfig.swift in Sources */,
+				EF1EC5E1FEC7FC4151B0A8DA /* YesNoDictation.swift in Sources */,
+				B451F36C502D5917F23CDC05 /* YesNoQuestionPanel.swift in Sources */,
 				A28C1B0D174587280817DCA0 /* YesNoSpeechService.swift in Sources */,
 				AEF826E4C08B5590BC419989 /* YesNoView.swift in Sources */,
 			);
@@ -295,6 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05A0DFBE3E8BEF5F79148D2B /* TikoYesNoTests.swift in Sources */,
+				C18691D31145ECEC0D1AF50E /* YesNoDictationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,13 +476,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.yesno;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -511,13 +529,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Sources/TikoYesNo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				INFOPLIST_FILE = Sources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = mt.tiko.yesno;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -593,6 +611,14 @@
 		2ED94DA5FDFB546A53D31506 /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TikoKit;
+		};
+		36DE9702C91167BE186DDFA5 /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
+		};
+		9B1B142CA89AFBFCC775A9E7 /* TikoSpeechKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TikoSpeechKit;
 		};
 		D7247D1EFCE9E72267767EB4 /* TikoKit */ = {
 			isa = XCSwiftPackageProductDependency;

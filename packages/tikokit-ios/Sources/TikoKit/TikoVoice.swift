@@ -20,8 +20,19 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
     private let atlasSpeechURL = URL(string: "https://api.tikotalks.com/v1/atlas/speech")!
     private let synthesizer = AVSpeechSynthesizer()
     private var player: AVAudioPlayer?
+    private var utterance: AVSpeechUtterance?
     private var playbackContinuation: CheckedContinuation<Void, Never>?
     private let cacheDirectory: URL
+
+    /// Counts every `speak` and `stop`. A `speak` that wakes up from a fetch or
+    /// from playback and finds the count moved on has been superseded: it ends
+    /// there, without touching the player, the state handler or the caller's
+    /// state, all of which now belong to the newer call.
+    private var generation = 0
+
+    /// How long Atlas gets before the device voice takes over. The default is
+    /// a minute, which on a weak connection reads as a button that hangs.
+    static let atlasTimeout: TimeInterval = 10
 
     private var stateHandler: ((TikoSpeechPlaybackState) -> Void)?
 
@@ -53,26 +64,37 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         stop()
+        let token = generation
         stateHandler = onStateChange
         TikoSpeech.configurePlaybackSession()
         isSpeaking = true
-        defer { isSpeaking = false; stateHandler = nil }
+        defer {
+            if token == generation {
+                isSpeaking = false
+                stateHandler = nil
+            }
+        }
 
         let locale = TikoSpeech.languageCode(for: languageCode)
         var data = cachedAudio(text: trimmed, locale: locale)
         if data == nil {
             notify(.generating)
             data = try? await fetchAndCache(text: trimmed, locale: locale)
+            guard token == generation else { return }
         }
         if let data {
             notify(.playing)
-            if await play(data: data) {
+            let played = await play(data: data)
+            guard token == generation else { return }
+            if played {
                 notify(.idle)
                 return
             }
         }
         notify(.playing)
-        if await speakWithSynthesizer(trimmed, locale: locale) {
+        let spoke = await speakWithSynthesizer(trimmed, locale: locale)
+        guard token == generation else { return }
+        if spoke {
             notify(.idle)
             return
         }
@@ -100,15 +122,19 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         }
     }
 
+    /// Ends whatever is being spoken or fetched, and tells its caller so. A
+    /// fetch that is still under way finishes quietly and keeps its audio for
+    /// next time; it no longer plays.
     public func stop() {
+        generation += 1
         player?.stop()
-        player = nil
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
         resumePlayback()
         isSpeaking = false
         notify(.idle)
+        stateHandler = nil
     }
 
     private func notify(_ state: TikoSpeechPlaybackState) {
@@ -140,6 +166,7 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         accessToken: String?
     ) throws -> URLRequest {
         var request = URLRequest(url: atlasSpeechURL)
+        request.timeoutInterval = atlasTimeout
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         if let accessToken, !accessToken.isEmpty {
@@ -169,7 +196,9 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
               let audioURL = resolveAudioURL(raw) else {
             throw URLError(.badURL)
         }
-        let (audioData, audioResponse) = try await URLSession.shared.data(from: audioURL)
+        var audioRequest = URLRequest(url: audioURL)
+        audioRequest.timeoutInterval = Self.atlasTimeout
+        let (audioData, audioResponse) = try await URLSession.shared.data(for: audioRequest)
         guard let audioHTTP = audioResponse as? HTTPURLResponse, (200..<300).contains(audioHTTP.statusCode) else {
             throw URLError(.badServerResponse)
         }
@@ -216,6 +245,7 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
             utterance.voice = voice
             utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
             utterance.pitchMultiplier = 1.04
+            self.utterance = utterance
             synthesizer.speak(utterance)
         }
         return true
@@ -225,24 +255,38 @@ public final class TikoVoiceService: NSObject, AVAudioPlayerDelegate, AVSpeechSy
         playbackContinuation?.resume()
         playbackContinuation = nil
         player = nil
+        utterance = nil
+    }
+
+    /// The delegates report late, on a later turn of the main actor. By then a
+    /// stopped utterance may have been replaced, and its "cancelled" must not
+    /// end the one that replaced it.
+    private func playbackEnded(_ finished: ObjectIdentifier) {
+        let current = player.map(ObjectIdentifier.init) ?? utterance.map(ObjectIdentifier.init)
+        guard current == finished else { return }
+        resumePlayback()
     }
 
     // MARK: - Delegates
 
     public nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        Task { @MainActor in self.resumePlayback() }
+        let finished = ObjectIdentifier(player)
+        Task { @MainActor in self.playbackEnded(finished) }
     }
 
     public nonisolated func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        Task { @MainActor in self.resumePlayback() }
+        let finished = ObjectIdentifier(player)
+        Task { @MainActor in self.playbackEnded(finished) }
     }
 
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in self.resumePlayback() }
+        let finished = ObjectIdentifier(utterance)
+        Task { @MainActor in self.playbackEnded(finished) }
     }
 
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        Task { @MainActor in self.resumePlayback() }
+        let finished = ObjectIdentifier(utterance)
+        Task { @MainActor in self.playbackEnded(finished) }
     }
 
     // MARK: - Wire types

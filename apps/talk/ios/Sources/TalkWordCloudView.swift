@@ -150,9 +150,10 @@ private struct TalkCloudBubble: View {
     let appColor: TikoAppColor
     let onTap: () -> Void
 
+    @AppStorage("talk.fitzgeraldKey") private var fitzgeraldKey = false
     @Environment(\.colorScheme) private var colorScheme
 
-    private var posColor: Color { TalkPosColor.color(for: word.pos) }
+    private var posColor: Color { TalkPosColor.color(for: word.pos, fitzgeraldKey: fitzgeraldKey) }
 
     private var surfaceColor: Color {
         colorScheme == .dark ? Color(white: 0.16) : Color.white
@@ -167,7 +168,7 @@ private struct TalkCloudBubble: View {
         Button(action: onTap) {
             ZStack {
                 Circle()
-                    .fill(word.isCustom == true ? posColor.opacity(0.16) : surfaceColor.opacity(0.9))
+                    .fill(fitzgeraldKey ? posColor : (word.isCustom == true ? posColor.opacity(0.16) : surfaceColor.opacity(0.9)))
                     // Subtle part-of-speech colour as the ring.
                     .overlay(Circle().stroke(posColor.opacity(word.isCustom == true ? 0.7 : 0.4), lineWidth: 2.5))
                     .shadow(color: .black.opacity(colorScheme == .dark ? 0.3 : 0.1), radius: diameter * 0.06, y: 3)
@@ -177,7 +178,7 @@ private struct TalkCloudBubble: View {
                     TikoCachedRemoteImage(url: mediaURL) {
                         Text(word.text)
                             .font(.system(size: diameter * 0.16, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .primary)
                             .lineLimit(2).minimumScaleFactor(0.6).multilineTextAlignment(.center)
                     }
                     .frame(width: diameter * 0.75, height: diameter * 0.75)
@@ -188,17 +189,23 @@ private struct TalkCloudBubble: View {
                         Spacer()
                         Text(word.text)
                             .font(.system(size: diameter * 0.14, weight: .heavy, design: .rounded))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .primary)
                             .lineLimit(1).minimumScaleFactor(0.6)
                             .padding(.horizontal, diameter * 0.08)
                             .padding(.vertical, diameter * 0.03)
-                            .background(.regularMaterial, in: Capsule())
+                            .background {
+                                if fitzgeraldKey {
+                                    Capsule().fill(TikoFitzgerald.category(for: word.pos).color)
+                                } else {
+                                    Capsule().fill(.regularMaterial)
+                                }
+                            }
                     }
                     .padding(.bottom, diameter * 0.06)
                 } else {
                     Text(word.text)
                         .font(.system(size: diameter * 0.2, weight: .heavy, design: .rounded))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .primary)
                         .lineLimit(2)
                         .minimumScaleFactor(0.6)
                         .multilineTextAlignment(.center)

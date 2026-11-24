@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { isSensation, note, type LanguageRules } from '../profile'
+import { isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Papiamentu, in the Curaçao orthography. A creole with a Portuguese and Spanish
@@ -85,6 +85,11 @@ export const papiamentu: LanguageRules = {
     if (!head) return null
     if (head.features.mass || head.features.proper) {
       if (head.features.mass) note(ctx.builder, 'no article: mass noun')
+      return null
+    }
+    if (isPlural(np)) {
+      // "un" is the numeral "one", so it cannot stand in front of a plural noun.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
       return null
     }
     return { text: 'un', from: null }

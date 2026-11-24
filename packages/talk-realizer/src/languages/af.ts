@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { note, type LanguageRules } from '../profile'
+import { isPlural, note, type LanguageRules } from '../profile'
 
 /**
  * Afrikaans. The simplest Germanic language here — verbs do not inflect for
@@ -46,7 +46,7 @@ export const afrikaans: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
 
     if (determiner) {
       const kind = determiner.features.determinerKind

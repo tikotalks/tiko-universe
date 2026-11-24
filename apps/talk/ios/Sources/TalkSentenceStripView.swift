@@ -20,6 +20,7 @@ struct TalkSentenceStripView: View {
     let onSpeak: () -> Void
     let onClear: () -> Void
 
+    @AppStorage("talk.fitzgeraldKey") private var fitzgeraldKey = false
     @Environment(\.colorScheme) private var colorScheme
 
     private var surfaceColor: Color {
@@ -56,10 +57,10 @@ struct TalkSentenceStripView: View {
                             ForEach(words) { word in
                                 Text(word.text)
                                     .font(.system(.title3, design: .rounded).weight(.heavy))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .white)
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 8)
-                                    .background(TalkPosColor.color(for: word.pos))
+                                    .background(TalkPosColor.color(for: word.pos, fitzgeraldKey: fitzgeraldKey))
                                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                                     .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                                     .id(word.id)

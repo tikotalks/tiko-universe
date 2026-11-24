@@ -1,5 +1,5 @@
 import type { TikoColorMode } from '@tiko/ui'
-import type { TikoColorName } from '@tiko/data'
+import type { FitzgeraldCategory, TikoColorName } from '@tiko/data'
 
 export type SpeakStatus = 'idle' | 'speaking' | 'error'
 export type CardsItemKind = 'collection' | 'card'
@@ -16,6 +16,7 @@ export interface CardCollection {
 }
 
 export interface CommunicationCard {
+  fitzgeraldCategory?: FitzgeraldCategory
   id: string
   title: string
   speech: string
@@ -30,6 +31,7 @@ export interface CardsPayload {
 }
 
 export interface PersistedCards {
+  fitzgeraldKey?: boolean
   language?: string
   colorMode?: TikoColorMode
   hideDefaultCollections?: boolean
@@ -52,6 +54,7 @@ export interface CardsCollectionInput {
 }
 
 export interface CardsCardInput {
+  fitzgeraldCategory?: FitzgeraldCategory
   title: string
   speech: string
   color: TikoColorName

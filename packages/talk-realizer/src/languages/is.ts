@@ -1,6 +1,6 @@
 import type { Features, SelectedWord } from '../features'
 import { derivePerson, type Conjugation, type PersonKey } from '../morphology/persons'
-import { formFor, note, type LanguageRules, type PhraseContext } from '../profile'
+import { formFor, isPlural, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
  * Icelandic. It has what Swedish, Danish and Norwegian gave up: **four cases**, on
@@ -147,7 +147,7 @@ export const icelandic: LanguageRules = {
     // A plural predicate has its own endings: "við erum glaðir".
     const plural = ctx.role === 'predicate'
       ? ctx.number === 'pl' || ctx.subjectPlural === true
-      : np.determiner?.features.forcesNumber === 'pl'
+      : isPlural(np)
     if (plural) {
       const suffix = gender === 'feminine' ? 'ar' : gender === 'neuter' ? '' : 'ir'
       const form = `${stem}${suffix}`

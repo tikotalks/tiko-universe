@@ -11,6 +11,7 @@ type SpeechStatus = 'idle' | 'speaking' | 'ready' | 'fallback' | 'error'
 interface PersistedTalkState {
   language?: string
   colorMode?: TikoColorMode
+  fitzgeraldKey?: boolean
 }
 
 const storageKey = 'tiko:talk'
@@ -56,6 +57,7 @@ export function useTalkApp() {
   const stored = readJson<PersistedTalkState>(storageKey, {})
   const language = ref(detectLanguage(stored.language))
   const colorMode = ref<TikoColorMode>(toColorMode(stored.colorMode))
+  const fitzgeraldKey = ref(stored.fitzgeraldKey === true)
   const settingsOpen = ref(false)
   const activeCategoryId = ref<string | null>(null)
   const boardFilter = ref('')
@@ -206,8 +208,8 @@ export function useTalkApp() {
     }
   }
 
-  watch([language, colorMode], () => {
-    writeJson(storageKey, { language: language.value, colorMode: colorMode.value })
+  watch([language, colorMode, fitzgeraldKey], () => {
+    writeJson(storageKey, { language: language.value, colorMode: colorMode.value, fitzgeraldKey: fitzgeraldKey.value })
   }, { deep: true })
 
   watch(colorMode, applyTheme, { immediate: true })
@@ -219,6 +221,7 @@ export function useTalkApp() {
   return {
     language,
     colorMode,
+    fitzgeraldKey,
     settingsOpen,
     activeCategoryId,
     boardFilter,

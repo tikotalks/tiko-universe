@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useBemm } from 'bemm'
+import { fitzgeraldCategory, fitzgeraldColors, fitzgeraldInk } from '@tiko/data'
 import { motion, AnimatePresence } from 'motion-v'
 import { SilIcon as Icon } from '@tiko/ui'
 import { useWordCloudLayout, type VisualWordNode, type PositionedWordNode } from '../composables/useTalkPresentation'
@@ -8,6 +9,7 @@ import { useWordCloudLayout, type VisualWordNode, type PositionedWordNode } from
 const bemm = useBemm('word-cloud', { return: 'string', includeBaseClass: true })
 
 const props = defineProps<{
+  fitzgeraldKey?: boolean
   words: VisualWordNode[]
 }>()
 
@@ -40,6 +42,7 @@ function nodeStyle(node: PositionedWordNode) {
     marginLeft: `${-node.size / 2}px`,
     marginTop: `${-node.size / 2}px`,
     zIndex: node.zIndex,
+    ...(props.fitzgeraldKey ? { backgroundColor: fitzgeraldColors[fitzgeraldCategory(node.word.pos)], color: fitzgeraldInk } : {}),
     '--bubble-size': `${node.size}px`,
   }
 }

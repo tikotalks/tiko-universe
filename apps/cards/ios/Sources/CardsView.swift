@@ -2,15 +2,32 @@ import SwiftUI
 import TikoKit
 import UIKit
 
-private enum CardsSheet: String, Identifiable {
+/// A sheet, together with what it is about.
+///
+/// The card or collection travels inside the case. It used to sit in separate
+/// state set just before the sheet was asked for, and the sheet drew before
+/// that state had arrived: the editor opened as an empty white page.
+private enum CardsSheet: Identifiable {
     case add
-    case editCollection
-    case editCard
+    case editCollection(CardCollection)
+    case editCard(CommunicationCard, collectionID: String)
 
-    var id: String { rawValue }
+    var id: String {
+        switch self {
+        case .add: "add"
+        case .editCollection(let collection): "collection_\(collection.id)"
+        case .editCard(let card, _): "card_\(card.id)"
+        }
+    }
+
+    var isAdd: Bool {
+        if case .add = self { return true }
+        return false
+    }
 }
 
 struct CardsView: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     @StateObject private var store = CardsStore()
     private let speechService = CardsSpeechService()
 
@@ -19,18 +36,22 @@ struct CardsView: View {
     @AppStorage("cards.showAnimations") private var showAnimations = true
     @AppStorage("cards.cardSizeIndex") private var cardSizeIndex = 1
     @AppStorage("cards.labelSizeIndex") private var labelSizeIndex = 1
+    @AppStorage(CardsLayoutMode.storageKey) private var layoutModeRawValue = CardsLayoutMode.pages.rawValue
+    private var layoutMode: CardsLayoutMode { CardsLayoutMode(rawValue: layoutModeRawValue) ?? .pages }
+    @State private var isSearching = false
+    @State private var showingRestoreDefaults = false
     @StateObject private var i18n = TikoI18n(app: .cards)
     @State private var speakingCardID: String?
     @State private var collectionStack: [CardCollection] = []
+    /// Which way the last move between boards went, so the boards slide the
+    /// way the move reads: deeper in comes from the right, back comes from the left.
+    @State private var navigationDirection: NavigationDirection = .deeper
     @State private var collectionsPage = 0
     @State private var activeSheet: CardsSheet?
     @State private var isEditing = false
     @State private var draggingCollectionID: String?
     @State private var draggingCardID: String?
     @State private var isAdmin = false
-    @State private var editingCollection: CardCollection?
-    @State private var editingCard: CommunicationCard?
-    @State private var editingCardCollectionID: String?
     @State private var selectedCollectionIDs: Set<String> = []
     @State private var showingRootBulkActions = false
     @State private var showingRootBulkMove = false
@@ -44,6 +65,50 @@ struct CardsView: View {
     }
 
     private var currentCollection: CardCollection? { collectionStack.last }
+
+    /// A collection with its ancestors in front of it, outermost first.
+    private func path(to collection: CardCollection) -> [CardCollection] {
+        var path = [collection]
+        var seen: Set<String> = [collection.id]
+        while let parentID = path[0].parentID,
+              !seen.contains(parentID),
+              let parent = localizedCollections.first(where: { $0.id == parentID }) {
+            path.insert(parent, at: 0)
+            seen.insert(parentID)
+        }
+        return path
+    }
+
+    private enum NavigationDirection {
+        case deeper
+        case back
+    }
+
+    /// One transition for every board, turned by the direction of travel. Going
+    /// deeper, the new board arrives from the right and the old one leaves to
+    /// the left; going back is the mirror image. (Leading and trailing, so a
+    /// right-to-left language mirrors it again, as its own navigation does.)
+    private var boardTransition: AnyTransition {
+        let arriving: Edge = navigationDirection == .deeper ? .trailing : .leading
+        let leaving: Edge = navigationDirection == .deeper ? .leading : .trailing
+        return .asymmetric(
+            insertion: .move(edge: arriving).combined(with: .opacity),
+            removal: .move(edge: leaving).combined(with: .opacity)
+        )
+    }
+
+    /// Moves between boards. The board that is leaving keeps the transition it
+    /// was last drawn with, so the direction has to reach the screen one turn
+    /// before the stack changes — set both at once and the old board slides
+    /// out the way the *previous* move went.
+    private func navigate(_ direction: NavigationDirection, _ change: @escaping () -> Void) {
+        navigationDirection = direction
+        DispatchQueue.main.async {
+            withAnimation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0)) {
+                change()
+            }
+        }
+    }
 
     private var liveCurrentCollection: CardCollection? {
         guard let id = currentCollection?.id else { return nil }
@@ -80,21 +145,28 @@ struct CardsView: View {
     var body: some View {
         TikoAppShell(
             appConfig: CardsAppConfig.app,
-            appName: liveCurrentCollection?.title ?? i18n.t("cards.appName"),
-            onIconTap: !collectionStack.isEmpty ? {
+            appName: isSearching ? i18n.t("cards.search.title") : (liveCurrentCollection?.title ?? i18n.t("cards.appName")),
+            onIconTap: isSearching ? {
+                withAnimation(.spring(response: 0.3)) { isSearching = false }
+            } : !collectionStack.isEmpty ? {
                 if isEditing {
                     withAnimation(.spring(response: 0.25)) { isEditing = false }
                 } else {
-                    withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
-                        _ = collectionStack.popLast()
-                    }
+                    navigate(.back) { _ = collectionStack.popLast() }
                 }
             } : nil,
             actions: isEditing
                 ? [TikoHeaderAction(id: "done", label: "Done", systemImage: "checkmark")]
-                : [TikoHeaderAction(id: "add", label: "Add", systemImage: "plus")],
+                : isSearching
+                ? []
+                : [
+                    TikoHeaderAction(id: "search", label: i18n.t("cards.search.title"), systemImage: "magnifyingglass"),
+                    TikoHeaderAction(id: "add", label: "Add", systemImage: "plus"),
+                ],
             onAction: { id in
                 switch id {
+                case "search":
+                    withAnimation(.spring(response: 0.3)) { isSearching = true }
                 case "add":
                     refreshAdminStateFromStoredSession()
                     activeSheet = .add
@@ -110,8 +182,27 @@ struct CardsView: View {
                         appColor: .cards,
                         isOn: $hideDefaultCollections
                     )
+                    if store.hasLocalEditsToDefaults {
+                        TikoSettingsActionRow(
+                            title: i18n.t("cards.settings.restoreDefaults"),
+                            icon: "arrow.counterclockwise",
+                            appColor: .cards
+                        ) {
+                            showingRestoreDefaults = true
+                        }
+                    }
                 }
                 TikoSettingsSection(title: i18n.t("cards.settings.display")) {
+                    TikoSettingsToggleRow(
+                        title: i18n.t("cards.settings.scrollCards"),
+                        icon: "arrow.up.and.down",
+                        appColor: .cards,
+                        isOn: Binding(
+                            get: { layoutMode == .scroll },
+                            set: { layoutModeRawValue = ($0 ? CardsLayoutMode.scroll : .pages).rawValue }
+                        )
+                    )
+                    TikoSettingsToggleRow(title: "Fitzgerald Key", icon: "paintpalette", appColor: .cards, isOn: $fitzgeraldKey)
                     TikoSettingsToggleRow(
                         title: i18n.t("cards.settings.showAnimations"),
                         icon: "sparkles",
@@ -136,7 +227,23 @@ struct CardsView: View {
             }
         ) {
             Group {
-                if let collection = currentCollection {
+                if isSearching {
+                    CardsSearchView(
+                        collections: visibleCollections,
+                        store: store,
+                        speakingCardID: speakingCardID,
+                        labelFont: labelFont,
+                        cardSizeIndex: cardSizeIndex,
+                        onSpeak: speak,
+                        onOpen: { collection in
+                            isSearching = false
+                            // The whole path, so Back from a found category
+                            // leads up through its parent, not straight home.
+                            collectionStack = path(to: collection)
+                        }
+                    )
+                    .transition(.opacity)
+                } else if let collection = currentCollection {
                     let live = liveCurrentCollection ?? collection
                     CollectionDetailView(
                         collection: live,
@@ -148,29 +255,21 @@ struct CardsView: View {
                         store: store,
                         onSpeak: speak,
                         onEdit: { card in
-                            editingCard = card
-                            editingCardCollectionID = collection.id
-                            activeSheet = .editCard
+                            activeSheet = .editCard(card, collectionID: collection.id)
                         },
                         onEditCollection: { col in
-                            editingCollection = col
-                            activeSheet = .editCollection
+                            activeSheet = .editCollection(col)
                         },
                         onStartEditing: {
                             refreshAdminStateFromStoredSession()
                             withAnimation(.spring(response: 0.25)) { isEditing = true }
                         },
                         onNavigate: { sub in
-                            withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
-                                collectionStack.append(sub)
-                            }
+                            navigate(.deeper) { collectionStack.append(sub) }
                         }
                     )
                     .id(collection.id)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
+                    .transition(boardTransition)
                     .task(id: collection.id) {
                         await store.hydrateMedia(for: collection.id)
                     }
@@ -187,102 +286,89 @@ struct CardsView: View {
                         let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
                         let perPage = cols * rows
                         let rootCollections = visibleCollections.filter { $0.parentID == nil }
-                        let pages = rootCollections.chunked(into: perPage)
 
                         ZStack(alignment: .bottom) {
-                            TabView(selection: $collectionsPage) {
-                                ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, page in
-                                    LazyVGrid(
-                                        columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: cols),
-                                        spacing: 12
-                                    ) {
-                                        ForEach(page) { collection in
-                                            ZStack(alignment: .topTrailing) {
+                            CardsBoardLayout(
+                                items: rootCollections,
+                                columns: cols,
+                                perPage: perPage,
+                                mode: layoutMode,
+                                sideInset: sideInset,
+                                page: $collectionsPage
+                            ) { collection in
+                                ZStack(alignment: .topTrailing) {
+                                    SubCollectionTile(
+                                        collection: collection,
+                                        thumbnailURL: store.imageURL(for: collection),
+                                        labelFont: labelFont
+                                    )
+                                    .scaleEffect(isEditing ? 0.92 : 1.0)
+                                    .if(isEditing) { view in
+                                        view
+                                            .onDrag {
+                                                draggingCollectionID = collection.id
+                                                return NSItemProvider(object: collection.id as NSString)
+                                            } preview: {
                                                 SubCollectionTile(
                                                     collection: collection,
-                                                    thumbnailURL: store.imageURL(for: collection),
-                                                    labelFont: labelFont
+                                                    thumbnailURL: store.imageURL(for: collection)
                                                 )
-                                                .scaleEffect(isEditing ? 0.92 : 1.0)
-                                                .if(isEditing) { view in
-                                                    view
-                                                        .onDrag {
-                                                            draggingCollectionID = collection.id
-                                                            return NSItemProvider(object: collection.id as NSString)
-                                                        } preview: {
-                                                            SubCollectionTile(
-                                                                collection: collection,
-                                                                thumbnailURL: store.imageURL(for: collection)
-                                                            )
-                                                            .frame(width: 96, height: 96)
-                                                            .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
-                                                        }
-                                                        .onDrop(of: [.text], delegate: CollectionDropDelegate(
-                                                            targetID: collection.id,
-                                                            store: store,
-                                                            draggingID: $draggingCollectionID
-                                                        ))
-                                                }
-                                                .onTapGesture {
-                                                    guard !isEditing else { return }
-                                                    withAnimation(.spring(response: 0.38, dampingFraction: 0.85)) {
-                                                        collectionStack.append(collection)
-                                                    }
-                                                }
-
-                                                if isEditing && (isAdmin || collection.id.hasPrefix("user_")) {
-                                                    Button {
-                                                        editingCollection = collection
-                                                        activeSheet = .editCollection
-                                                    } label: {
-                                                        editBadge(isUserOwned: collection.id.hasPrefix("user_"))
-                                                    }
-                                                    .buttonStyle(.plain)
-                                                    .padding([.top, .trailing], 6)
-                                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
-                                                }
+                                                .frame(width: 96, height: 96)
+                                                .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
                                             }
-                                            .overlay(alignment: .topLeading) {
-                                                if isEditing {
-                                                    selectionBadge(selected: selectedCollectionIDs.contains(collection.id))
-                                                        .padding([.top, .leading], 6)
-                                                        .onTapGesture {
-                                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                                            withAnimation(.spring(response: 0.2)) {
-                                                                if selectedCollectionIDs.contains(collection.id) {
-                                                                    selectedCollectionIDs.remove(collection.id)
-                                                                } else {
-                                                                    selectedCollectionIDs.insert(collection.id)
-                                                                }
-                                                            }
-                                                        }
-                                                        .transition(.scale(scale: 0.3).combined(with: .opacity))
-                                                }
-                                            }
-                                            .contentShape(Rectangle())
-                                            .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                                let isChild = TikoParentGate.isChildModeActive
-                                                guard !isChild else { return }
-                                                refreshAdminStateFromStoredSession()
-                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                                withAnimation(.spring(response: 0.25)) { isEditing = true }
-                                            })
-                                            .animation(.spring(response: 0.25), value: isEditing)
+                                            .onDrop(of: [.text], delegate: CollectionDropDelegate(
+                                                targetID: collection.id,
+                                                store: store,
+                                                draggingID: $draggingCollectionID
+                                            ))
+                                    }
+                                    .onTapGesture {
+                                        // While editing, a tap is "change this one".
+                                        if isEditing {
+                                            activeSheet = .editCollection(collection)
+                                        } else {
+                                            navigate(.deeper) { collectionStack.append(collection) }
                                         }
                                     }
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                                    .padding(.leading, 12 + sideInset)
-                                    .padding(.trailing, 12 + sideInset)
-                                    .padding(.top, 12)
-                                    .padding(.bottom, pages.count > 1 ? 24 : 8)
-                                    .tag(pageIndex)
-                                }
-                            }
-                            .tabViewStyle(.page(indexDisplayMode: .never))
 
-                            if pages.count > 1 {
-                                PageDots(count: pages.count, current: collectionsPage)
-                                    .padding(.bottom, 4)
+                                    if isEditing {
+                                        Button {
+                                            activeSheet = .editCollection(collection)
+                                        } label: {
+                                            editBadge(isUserOwned: collection.id.hasPrefix("user_"))
+                                        }
+                                        .buttonStyle(.plain)
+                                        .accessibilityLabel("Edit \(collection.title)")
+                                        .padding([.top, .trailing], 6)
+                                        .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                    }
+                                }
+                                .overlay(alignment: .topLeading) {
+                                    if isEditing {
+                                        selectionBadge(selected: selectedCollectionIDs.contains(collection.id))
+                                            .padding([.top, .leading], 6)
+                                            .onTapGesture {
+                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                withAnimation(.spring(response: 0.2)) {
+                                                    if selectedCollectionIDs.contains(collection.id) {
+                                                        selectedCollectionIDs.remove(collection.id)
+                                                    } else {
+                                                        selectedCollectionIDs.insert(collection.id)
+                                                    }
+                                                }
+                                            }
+                                            .transition(.scale(scale: 0.3).combined(with: .opacity))
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                                .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                                    let isChild = TikoParentGate.isChildModeActive
+                                    guard !isChild else { return }
+                                    refreshAdminStateFromStoredSession()
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                    withAnimation(.spring(response: 0.25)) { isEditing = true }
+                                })
+                                .animation(.spring(response: 0.25), value: isEditing)
                             }
 
                             if selectedCollectionIDs.count > 0 && isEditing {
@@ -300,10 +386,7 @@ struct CardsView: View {
                             }
                         }
                     }
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .leading).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
-                    ))
+                    .transition(boardTransition)
                 }
             }
             .animation(showAnimations ? .spring(response: 0.38, dampingFraction: 0.85) : .linear(duration: 0), value: currentCollection?.id)
@@ -311,7 +394,7 @@ struct CardsView: View {
                 if TikoScreenshotMode.isActive {
                     // Deterministic, offline launch for UI tests / screenshots:
                     // populate the grid from the built-in defaults with no network.
-                    store.loadOfflineDefaults()
+                    store.loadOfflineDefaults(languageCode: languageCode)
                     syncCollectionsFromStore()
                     applyScreenshotScene()
                     // Content stays deterministic (built-in defaults), but the
@@ -333,7 +416,7 @@ struct CardsView: View {
             }
             .onChange(of: store.collections) { _, _ in syncCollectionsFromStore() }
         }
-        .sheet(item: $activeSheet, onDismiss: clearSheetContext) { sheet in
+        .sheet(item: $activeSheet) { sheet in
             cardsSheetContent(for: sheet)
                 .environmentObject(i18n)
                 .presentationDetents([.large])
@@ -369,6 +452,15 @@ struct CardsView: View {
             )
         }
         .environmentObject(i18n)
+        .alert(i18n.t("cards.settings.restoreDefaults"), isPresented: $showingRestoreDefaults) {
+            Button(i18n.t("cards.settings.restoreDefaults"), role: .destructive) {
+                store.restoreDefaults(languageCode: languageCode)
+                syncCollectionsFromStore()
+            }
+            Button(i18n.t("common.cancel"), role: .cancel) {}
+        } message: {
+            Text(i18n.t("cards.settings.restoreMessage"))
+        }
         .onAppear { i18n.setLanguage(languageCode) }
         .onChange(of: languageCode) { _, code in
             i18n.setLanguage(code)
@@ -419,35 +511,23 @@ struct CardsView: View {
         case .add:
             if let collection = currentCollection {
                 AddCardSheet(collection: collection, store: store, isPresented: Binding(
-                    get: { activeSheet == .add },
+                    get: { activeSheet?.isAdd == true },
                     set: { if !$0 { activeSheet = nil } }
                 ))
             } else {
                 AddCategorySheet(store: store, collections: visibleCollections.filter { $0.parentID == nil }, isPresented: Binding(
-                    get: { activeSheet == .add },
+                    get: { activeSheet?.isAdd == true },
                     set: { if !$0 { activeSheet = nil } }
                 ))
             }
-        case .editCollection:
-            if let collection = editingCollection {
-                EditCollectionSheet(collection: collection, allCollections: localizedCollections, store: store, isAdmin: isAdmin, onClose: {
-                    activeSheet = nil
-                })
-            }
-        case .editCard:
-            if let card = editingCard, let collectionID = editingCardCollectionID {
-                EditCardSheet(card: card, collectionID: collectionID, store: store, isAdmin: isAdmin, onClose: {
-                    activeSheet = nil
-                })
-            }
-        }
-    }
-
-    private func clearSheetContext() {
-        if activeSheet == nil {
-            editingCollection = nil
-            editingCard = nil
-            editingCardCollectionID = nil
+        case .editCollection(let collection):
+            EditCollectionSheet(collection: collection, allCollections: localizedCollections, store: store, isAdmin: isAdmin, onClose: {
+                activeSheet = nil
+            })
+        case .editCard(let card, let collectionID):
+            EditCardSheet(card: card, collectionID: collectionID, store: store, isAdmin: isAdmin, onClose: {
+                activeSheet = nil
+            })
         }
     }
 
@@ -568,7 +648,7 @@ private struct CollectionTile: View {
     }
 }
 
-private struct SubCollectionTile: View {
+struct SubCollectionTile: View {
     let collection: CardCollection
     let thumbnailURL: URL?
     let labelFont: Font
@@ -641,6 +721,8 @@ private struct CollectionDetailView: View {
     let onNavigate: (CardCollection) -> Void
 
     @State private var currentPage = 0
+    @AppStorage(CardsLayoutMode.storageKey) private var layoutModeRawValue = CardsLayoutMode.pages.rawValue
+    private var layoutMode: CardsLayoutMode { CardsLayoutMode(rawValue: layoutModeRawValue) ?? .pages }
     @State private var selectedCardIDs: Set<String> = []
     @State private var selectedCollectionIDs: Set<String> = []
     @State private var fullscreenCard: CommunicationCard?
@@ -675,149 +757,141 @@ private struct CollectionDetailView: View {
             let cardSize = (usableWidth - 24 - CGFloat(cols - 1) * 12) / CGFloat(cols)
             let rows = max(1, Int((usableHeight - 24) / (cardSize + 12)))
             let perPage = cols * rows
-            let pages = allItems.chunked(into: perPage)
 
             ZStack(alignment: .bottom) {
-                TabView(selection: $currentPage) {
-                    ForEach(Array(pages.enumerated()), id: \.offset) { pageIndex, pageItems in
-                        LazyVGrid(
-                            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: cols),
-                            spacing: 12
-                        ) {
-                            ForEach(pageItems) { item in
-                                switch item {
-                                case .subcollection(let sub):
-                                    ZStack(alignment: .topTrailing) {
-                                        SubCollectionTile(
-                                            collection: sub,
-                                            thumbnailURL: store.imageURL(for: sub),
-                                            labelFont: labelFont
-                                        )
-                                        .scaleEffect(isEditing ? 0.92 : 1.0)
-                                        .onTapGesture {
-                                            guard !isEditing else { return }
-                                            onNavigate(sub)
-                                        }
+                CardsBoardLayout(
+                    items: allItems,
+                    columns: cols,
+                    perPage: perPage,
+                    mode: layoutMode,
+                    sideInset: sideInset,
+                    bottomClearance: (!selectedCardIDs.isEmpty || !selectedCollectionIDs.isEmpty) && isEditing ? 84 : 0,
+                    page: $currentPage
+                ) { item in
+                    switch item {
+                    case .subcollection(let sub):
+                        ZStack(alignment: .topTrailing) {
+                            SubCollectionTile(
+                                collection: sub,
+                                thumbnailURL: store.imageURL(for: sub),
+                                labelFont: labelFont
+                            )
+                            .scaleEffect(isEditing ? 0.92 : 1.0)
+                            .onTapGesture {
+                                if isEditing { onEditCollection(sub) } else { onNavigate(sub) }
+                            }
 
-                                        if isEditing && (isAdmin || sub.id.hasPrefix("user_")) {
-                                            editBadge(isUserOwned: sub.id.hasPrefix("user_"))
-                                                .padding([.top, .trailing], 6)
-                                                .onTapGesture { onEditCollection(sub) }
-                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
+                            if isEditing {
+                                editBadge(isUserOwned: sub.id.hasPrefix("user_"))
+                                    .padding([.top, .trailing], 6)
+                                    .onTapGesture { onEditCollection(sub) }
+                                    .accessibilityElement()
+                                    .accessibilityLabel("Edit \(sub.title)")
+                                    .accessibilityAddTraits(.isButton)
+                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
+                            }
+                        }
+                        .overlay(alignment: .topLeading) {
+                            if isEditing {
+                                selectionBadge(selected: selectedCollectionIDs.contains(sub.id))
+                                    .padding([.top, .leading], 6)
+                                    .onTapGesture {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        withAnimation(.spring(response: 0.2)) {
+                                            if selectedCollectionIDs.contains(sub.id) {
+                                                selectedCollectionIDs.remove(sub.id)
+                                            } else {
+                                                selectedCollectionIDs.insert(sub.id)
+                                            }
                                         }
                                     }
-                                    .overlay(alignment: .topLeading) {
-                                        if isEditing {
-                                            selectionBadge(selected: selectedCollectionIDs.contains(sub.id))
-                                                .padding([.top, .leading], 6)
-                                                .onTapGesture {
-                                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                                    withAnimation(.spring(response: 0.2)) {
-                                                        if selectedCollectionIDs.contains(sub.id) {
-                                                            selectedCollectionIDs.remove(sub.id)
-                                                        } else {
-                                                            selectedCollectionIDs.insert(sub.id)
-                                                        }
-                                                    }
-                                                }
-                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                    .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                        let isChild = TikoParentGate.isChildModeActive
-                                        guard !isChild else { return }
-                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        onStartEditing()
-                                    })
-                                    .animation(.spring(response: 0.25), value: isEditing)
+                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                            let isChild = TikoParentGate.isChildModeActive
+                            guard !isChild else { return }
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            onStartEditing()
+                        })
+                        .animation(.spring(response: 0.25), value: isEditing)
 
-                                case .card(let card):
-                                    ZStack(alignment: .topTrailing) {
+                    case .card(let card):
+                        ZStack(alignment: .topTrailing) {
+                            CommunicationCardTile(
+                                card: card,
+                                imageURL: store.imageURL(for: card),
+                                isSpeaking: speakingCardID == card.id,
+                                isEditing: isEditing,
+                                labelFont: labelFont,
+                                onSpeak: { onSpeak(card) },
+                                onEdit: { onEdit(card) }
+                            )
+                            .scaleEffect(isEditing ? 0.92 : 1.0)
+                            .if(isEditing) { view in
+                                view
+                                    .onDrag {
+                                        draggingCardID = card.id
+                                        return NSItemProvider(object: card.id as NSString)
+                                    } preview: {
                                         CommunicationCardTile(
                                             card: card,
                                             imageURL: store.imageURL(for: card),
-                                            isSpeaking: speakingCardID == card.id,
-                                            isEditing: isEditing,
-                                            labelFont: labelFont,
-                                            onSpeak: { onSpeak(card) }
+                                            isSpeaking: false,
+                                            isEditing: false,
+                                            onSpeak: {}
                                         )
-                                        .scaleEffect(isEditing ? 0.92 : 1.0)
-                                        .if(isEditing) { view in
-                                            view
-                                                .onDrag {
-                                                    draggingCardID = card.id
-                                                    return NSItemProvider(object: card.id as NSString)
-                                                } preview: {
-                                                    CommunicationCardTile(
-                                                        card: card,
-                                                        imageURL: store.imageURL(for: card),
-                                                        isSpeaking: false,
-                                                        isEditing: false,
-                                                        onSpeak: {}
-                                                    )
-                                                    .frame(width: 96, height: 96)
-                                                    .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
-                                                }
-                                                .onDrop(of: [.text], delegate: CardDropDelegate(
-                                                    targetID: card.id,
-                                                    collectionID: collection.id,
-                                                    store: store,
-                                                    draggingID: $draggingCardID
-                                                ))
-                                        }
+                                        .frame(width: 96, height: 96)
+                                        .shadow(color: .black.opacity(0.22), radius: 14, x: 0, y: 8)
+                                    }
+                                    .onDrop(of: [.text], delegate: CardDropDelegate(
+                                        targetID: card.id,
+                                        collectionID: collection.id,
+                                        store: store,
+                                        draggingID: $draggingCardID
+                                    ))
+                            }
 
-                                        if isEditing && (isAdmin || card.id.hasPrefix("user_")) {
-                                            editBadge(isUserOwned: card.id.hasPrefix("user_"))
-                                                .padding([.top, .trailing], 6)
-                                                .onTapGesture { onEdit(card) }
-                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
-                                        }
-                                    }
-                                    .overlay(alignment: .topLeading) {
-                                        if isEditing && (isAdmin || card.id.hasPrefix("user_")) {
-                                            selectionBadge(selected: selectedCardIDs.contains(card.id))
-                                                .padding([.top, .leading], 6)
-                                                .onTapGesture {
-                                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                                    withAnimation(.spring(response: 0.2)) {
-                                                        if selectedCardIDs.contains(card.id) {
-                                                            selectedCardIDs.remove(card.id)
-                                                        } else {
-                                                            selectedCardIDs.insert(card.id)
-                                                        }
-                                                    }
-                                                }
-                                                .transition(.scale(scale: 0.3).combined(with: .opacity))
-                                        }
-                                    }
-                                    .contentShape(Rectangle())
-                                    .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
-                                        let isChild = TikoParentGate.isChildModeActive
-                                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        if isChild {
-                                            fullscreenCard = card
-                                        } else {
-                                            onStartEditing()
-                                        }
-                                    })
-                                    .animation(.spring(response: 0.25), value: isEditing)
-                                }
+                            if isEditing {
+                                editBadge(isUserOwned: card.id.hasPrefix("user_"))
+                                    .padding([.top, .trailing], 6)
+                                    .onTapGesture { onEdit(card) }
+                                    .accessibilityElement()
+                                    .accessibilityLabel("Edit \(card.title)")
+                                    .accessibilityAddTraits(.isButton)
+                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
                             }
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .padding(.leading, 12 + sideInset)
-                        .padding(.trailing, 12 + sideInset)
-                        .padding(.top, 12)
-                        .padding(.bottom, (!selectedCardIDs.isEmpty || !selectedCollectionIDs.isEmpty) && isEditing ? 84 : (pages.count > 1 ? 24 : 8))
-                        .tag(pageIndex)
+                        .overlay(alignment: .topLeading) {
+                            if isEditing {
+                                selectionBadge(selected: selectedCardIDs.contains(card.id))
+                                    .padding([.top, .leading], 6)
+                                    .onTapGesture {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        withAnimation(.spring(response: 0.2)) {
+                                            if selectedCardIDs.contains(card.id) {
+                                                selectedCardIDs.remove(card.id)
+                                            } else {
+                                                selectedCardIDs.insert(card.id)
+                                            }
+                                        }
+                                    }
+                                    .transition(.scale(scale: 0.3).combined(with: .opacity))
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .simultaneousGesture(LongPressGesture(minimumDuration: 0.5).onEnded { _ in
+                            let isChild = TikoParentGate.isChildModeActive
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            if isChild {
+                                fullscreenCard = card
+                            } else {
+                                onStartEditing()
+                            }
+                        })
+                        .animation(.spring(response: 0.25), value: isEditing)
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-
-                if pages.count > 1 {
-                    PageDots(count: pages.count, current: currentPage)
-                        .padding(.bottom, 4)
                 }
 
                 let totalSelected = selectedCardIDs.count + selectedCollectionIDs.count
@@ -1082,13 +1156,16 @@ private struct BulkColorSheet: View {
     }
 }
 
-private struct CommunicationCardTile: View {
+struct CommunicationCardTile: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     let card: CommunicationCard
     let imageURL: URL?
     let isSpeaking: Bool
     let isEditing: Bool
     let labelFont: Font
     let onSpeak: () -> Void
+    /// What a tap does while the board is being edited: open this card's editor.
+    let onEdit: (() -> Void)?
 
     init(
         card: CommunicationCard,
@@ -1096,7 +1173,8 @@ private struct CommunicationCardTile: View {
         isSpeaking: Bool,
         isEditing: Bool,
         labelFont: Font = Font.system(.caption, design: .rounded).weight(.heavy),
-        onSpeak: @escaping () -> Void
+        onSpeak: @escaping () -> Void,
+        onEdit: (() -> Void)? = nil
     ) {
         self.card = card
         self.imageURL = imageURL
@@ -1104,13 +1182,14 @@ private struct CommunicationCardTile: View {
         self.isEditing = isEditing
         self.labelFont = labelFont
         self.onSpeak = onSpeak
+        self.onEdit = onEdit
     }
 
     var body: some View {
-        Button(action: { if !isEditing { onSpeak() } }) {
+        Button(action: { if isEditing { onEdit?() } else { onSpeak() } }) {
             TikoSquareTile(
                 title: card.title,
-                background: cardColor(card.color),
+                background: (fitzgeraldKey ? (TikoFitzgerald(rawValue: card.fitzgeraldCategory ?? "") ?? .miscellaneous).color : cardColor(card.color)),
                 isActive: isSpeaking,
                 labelFont: labelFont
             ) {
@@ -1125,7 +1204,7 @@ private struct CommunicationCardTile: View {
     }
 }
 
-private struct CachedCardImage: View {
+struct CachedCardImage: View {
     let url: URL
 
     var body: some View {
@@ -1138,7 +1217,7 @@ private struct CachedCardImage: View {
     }
 }
 
-private struct PageDots: View {
+struct PageDots: View {
     let count: Int
     let current: Int
 
@@ -1160,6 +1239,7 @@ private struct PageDots: View {
 // MARK: - Fullscreen card (child mode)
 
 private struct FullscreenCardView: View {
+    @AppStorage("cards.fitzgeraldKey") private var fitzgeraldKey = false
     let card: CommunicationCard
     let imageURL: URL?
     let onClose: () -> Void
@@ -1169,7 +1249,7 @@ private struct FullscreenCardView: View {
 
     var body: some View {
         ZStack {
-            cardColor(card.color).ignoresSafeArea()
+            (fitzgeraldKey ? (TikoFitzgerald(rawValue: card.fitzgeraldCategory ?? "") ?? .miscellaneous).color : cardColor(card.color)).ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Spacer()
@@ -1196,7 +1276,7 @@ private struct FullscreenCardView: View {
 
                 Text(card.title)
                     .font(.system(size: 42, weight: .heavy, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(fitzgeraldKey ? TikoFitzgerald.ink : .white)
                     .multilineTextAlignment(.center)
                     .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                     .padding(.horizontal, 40)
@@ -1300,6 +1380,7 @@ private struct AddCardSheet: View {
 
     @State private var title = ""
     @State private var speech = ""
+    @State private var fitzgeraldCategory = "miscellaneous"
     @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
@@ -1330,6 +1411,11 @@ private struct AddCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
+                Picker("Fitzgerald category", selection: $fitzgeraldCategory) {
+                    ForEach(TikoFitzgerald.allCases) { category in
+                        Text(category.rawValue.capitalized).tag(category.rawValue)
+                    }
+                }
                 CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -1349,6 +1435,7 @@ private struct AddCardSheet: View {
                         title: title,
                         speech: speech,
                         color: selectedColor,
+                        fitzgeraldCategory: fitzgeraldCategory,
                         imageURL: selectedImageURL,
                         to: collection.id
                     )
@@ -1523,6 +1610,7 @@ private struct EditCardSheet: View {
 
     @State private var title: String
     @State private var speech: String
+    @State private var fitzgeraldCategory = "miscellaneous"
     @State private var selectedColor: String
     @State private var selectedImageURL: URL?
     @State private var showingImagePicker = false
@@ -1539,6 +1627,7 @@ private struct EditCardSheet: View {
         self.onClose = onClose
         self._title = State(initialValue: card.title)
         self._speech = State(initialValue: card.speech)
+        self._fitzgeraldCategory = State(initialValue: card.fitzgeraldCategory ?? "miscellaneous")
         self._selectedColor = State(initialValue: card.color)
         self._selectedImageURL = State(initialValue: store.imageURL(for: card))
     }
@@ -1558,7 +1647,8 @@ private struct EditCardSheet: View {
                             id: card.id,
                             title: title.isEmpty ? " " : title,
                             speech: speech,
-                            color: selectedColor
+                            color: selectedColor,
+                            fitzgeraldCategory: fitzgeraldCategory
                         ),
                         imageURL: selectedImageURL,
                         isSpeaking: false,
@@ -1581,6 +1671,11 @@ private struct EditCardSheet: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
 
+                Picker("Fitzgerald category", selection: $fitzgeraldCategory) {
+                    ForEach(TikoFitzgerald.allCases) { category in
+                        Text(category.rawValue.capitalized).tag(category.rawValue)
+                    }
+                }
                 CompactColorPicker(selectedColor: $selectedColor, label: i18n.t("cards.add.color"))
 
                 VStack(alignment: .leading, spacing: 7) {
@@ -1635,11 +1730,13 @@ private struct EditCardSheet: View {
             Text("This changes the default \"\(card.title)\" card for all users.")
         }
         .alert("Delete \"\(card.title)\"?", isPresented: $showingDeleteConfirmation) {
-            Button(isDefault ? "Delete for everyone" : "Delete", role: .destructive) { deleteCard() }
+            Button(isDefault && isAdmin ? "Delete for everyone" : "Delete", role: .destructive) { deleteCard() }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(isDefault
+            Text(isDefault && isAdmin
                 ? "This permanently deletes the default card \"\(card.title)\" for all users."
+                : isDefault
+                ? "This takes \"\(card.title)\" off this device. Restore defaults in Settings brings it back."
                 : "Are you sure you want to delete \"\(card.title)\"?")
         }
     }
@@ -1652,6 +1749,7 @@ private struct EditCardSheet: View {
             title: trimmedTitle,
             speech: trimmedSpeech.isEmpty ? trimmedTitle : trimmedSpeech,
             color: selectedColor,
+            fitzgeraldCategory: fitzgeraldCategory,
             imageURL: selectedImageURL,
             inCollectionID: collectionID
         )
@@ -2066,7 +2164,7 @@ private struct ImagePickerButton: View {
 
 // MARK: - Utilities
 
-private func cardColor(_ color: String) -> Color {
+func cardColor(_ color: String) -> Color {
     TikoColors.color(named: color) ?? TikoColors.color(named: "gray")!
 }
 
@@ -2077,7 +2175,7 @@ private extension View {
     }
 }
 
-private extension Array {
+extension Array {
     func chunked(into size: Int) -> [[Element]] {
         guard size > 0 else { return [self] }
         return stride(from: 0, to: count, by: size).map {

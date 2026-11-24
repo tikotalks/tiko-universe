@@ -2,7 +2,7 @@
 import { computed, onMounted } from 'vue'
 import { useBemm } from 'bemm'
 import { Popup } from '@sil/ui'
-import { TikoAppShell, TikoSettingsPanel } from '@tiko/ui'
+import { TikoAppShell, TikoSettingsPanel, TikoToggleRow } from '@tiko/ui'
 import { createI18n, defaultLanguage, tikoI18nKeys, tikoLanguageOptions, tikoLanguages, type TikoLanguage } from '@tiko/i18n'
 import TalkSentenceBar from './components/TalkSentenceBar.vue'
 import TalkWordCloud from './components/TalkWordCloud.vue'
@@ -98,6 +98,7 @@ onMounted(() => {
           @update:language="talk.language.value = $event"
           @update:color-mode="talk.colorMode.value = $event"
         />
+        <TikoToggleRow v-model="talk.fitzgeraldKey.value" :label="i18n.t(tikoI18nKeys.common.fitzgeraldKey)" />
         <p :class="bemm('settings-status')">
           Identity: {{ talk.identityStatus.value === 'ready' ? 'ready' : talk.identityStatus.value }}
           <span v-if="talk.identityError.value">({{ talk.identityError.value }})</span>
@@ -125,11 +126,11 @@ onMounted(() => {
       </section>
 
       <section :class="bemm('stage')" aria-label="Choose words">
-        <TalkWordCloud :words="talk.cloudWords.value" @select-word="talk.selectWordNode" />
+        <TalkWordCloud :fitzgerald-key="talk.fitzgeraldKey.value" :words="talk.cloudWords.value" @select-word="talk.selectWordNode" />
       </section>
 
       <div :class="bemm('sentence')">
-        <TalkSentenceBar
+        <TalkSentenceBar :fitzgerald-key="talk.fitzgeraldKey.value"
           :words="talk.strip.words.value"
           :sentence="talk.sentence.value"
           :can-speak="talk.canSpeak.value"

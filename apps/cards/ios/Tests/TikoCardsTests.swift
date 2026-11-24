@@ -3,48 +3,158 @@ import TikoKit
 @testable import TikoCards
 
 final class TikoCardsTests: XCTestCase {
-    func testDefaultCollectionsMatchWebCardsCategories() {
-        XCTAssertEqual(defaultCardCollections.map(\.id), [
-            "__default_animals",
+    // MARK: - The bundled default vocabulary (Req 5, 6)
+
+    /// The root grid, most needed first: what a child has to say, who and what
+    /// is around them every day, then the wider world, then the school subjects.
+    func testDefaultVocabularyRootCategoriesInOrder() {
+        let roots = defaultCardCollections.filter { $0.parentID == nil }.sorted { $0.order < $1.order }
+        XCTAssertEqual(roots.map(\.id), [
+            "__default_quick",
+            "__default_feelings",
+            "__default_people",
             "__default_food",
-            "__default_snacks",
-            "__default_drinks",
-            "__default_colors",
-            "__default_emotions",
-            "__default_transport",
             "__default_body",
+            "__default_home",
+            "__default_clothes",
+            "__default_toys",
+            "__default_animals",
+            "__default_places",
+            "__default_school",
+            "__default_health",
+            "__default_transport",
+            "__default_nature",
+            "__default_sensory",
+            "__default_music",
+            "__default_sports",
+            "__default_baby",
+            "__default_colours",
             "__default_numbers",
             "__default_letters",
-            "__default_actions",
-            "__default_people",
-            "__default_places",
-            "__default_clothing",
-            "__default_nature",
+            "__default_shapes",
+            "__default_celebrations",
+            "__default_stories",
+            "__default_space",
         ])
     }
 
+    func testDefaultVocabularyHasSubCategoriesUnderExistingParents() {
+        let ids = Set(defaultCardCollections.map(\.id))
+        let subs = defaultCardCollections.filter { $0.parentID != nil }
+        XCTAssertEqual(subs.count, 28)
+        XCTAssertTrue(subs.allSatisfy { ids.contains($0.parentID ?? "") }, "every sub-category hangs under a category that exists")
+        XCTAssertEqual(
+            Set(subs.filter { $0.parentID == "__default_animals" }.map(\.id)),
+            ["__default_pets", "__default_farm", "__default_wild", "__default_sea", "__default_birds", "__default_bugs"]
+        )
+    }
+
     func testDefaultCollectionsContainSpeakableCards() {
-        XCTAssertEqual(defaultCardCollections.count, 15)
-        XCTAssertGreaterThan(defaultCardCollections.flatMap(\.cards).count, 180)
-        XCTAssertTrue(defaultCardCollections.allSatisfy { !$0.cards.isEmpty })
-        XCTAssertTrue(defaultCardCollections.flatMap(\.cards).allSatisfy { !$0.speech.isEmpty })
+        let cards = defaultCardCollections.flatMap(\.cards)
+        XCTAssertEqual(defaultCardCollections.count, 53)
+        XCTAssertGreaterThan(cards.count, 1200)
+        XCTAssertTrue(cards.allSatisfy { !$0.speech.isEmpty })
+        XCTAssertEqual(Set(cards.map(\.id)).count, cards.count, "card ids are unique")
+        // A category is never an empty screen: it has cards, or categories in it.
+        for collection in defaultCardCollections where collection.cards.isEmpty {
+            XCTAssertTrue(defaultCardCollections.contains { $0.parentID == collection.id }, "\(collection.id) is empty")
+        }
+    }
+
+    /// No default card looks for its picture at run time: it is pinned to one
+    /// the vocabulary can address directly, or it is a colour card, whose tile
+    /// colour is the picture.
+    func testEveryDefaultCardIsPinnedToAPictureOrIsAColour() {
+        for collection in defaultCardCollections {
+            XCTAssertTrue(collection.mediaCategories.isEmpty, "\(collection.id) still asks for a media search")
+            for card in collection.cards {
+                guard let imageRef = card.imageRef else {
+                    XCTAssertEqual(collection.id, "__default_colours", "\(card.id) has no picture")
+                    XCTAssertEqual(card.color, card.title.lowercased())
+                    continue
+                }
+                XCTAssertNotNil(CardsDefaults.pictureURL(forImageRef: imageRef), "\(card.id) is pinned to a picture the bundle cannot address")
+            }
+        }
+    }
+
+    func testEveryDefaultCollectionHasATilePicture() {
+        // Colours included: its cards are plain colour tiles, so the collection
+        // names a picture of its own.
+        for collection in defaultCardCollections {
+            let imageRef = try? XCTUnwrap(collection.imageRef, "\(collection.id) has no tile picture")
+            if let imageRef { XCTAssertNotNil(CardsDefaults.pictureURL(forImageRef: imageRef)) }
+        }
+    }
+
+    /// Food is ten shelves, a meal each among them, not one long list.
+    func testFoodIsSplitByMealAndKind() {
+        let food = defaultCardCollections.filter { $0.parentID == "__default_food" }.sorted { $0.order < $1.order }
+        XCTAssertEqual(food.map(\.id), [
+            "__default_breakfast", "__default_lunch", "__default_dinner", "__default_bakery", "__default_fruit",
+            "__default_vegetables", "__default_snacks", "__default_sweets", "__default_sauces", "__default_drinks",
+        ])
+        XCTAssertTrue(food.allSatisfy { $0.cards.count >= 13 }, "every food shelf is well stocked")
+    }
+
+    func testFamilyIsAGroupInsidePeople() throws {
+        let family = try XCTUnwrap(defaultCardCollections.first { $0.id == "__default_family" })
+        XCTAssertEqual(family.parentID, "__default_people")
+        XCTAssertTrue(family.cards.contains { $0.title == "Mom" })
+        XCTAssertTrue(family.cards.contains { $0.title == "Grandpa" })
+        let people = try XCTUnwrap(defaultCardCollections.first { $0.id == "__default_people" })
+        XCTAssertFalse(people.cards.contains { $0.title == "Mom" }, "family members live in Family, not twice")
+    }
+
+    func testThereIsASensoryCategory() throws {
+        let sensory = try XCTUnwrap(defaultCardCollections.first { $0.id == "__default_sensory" })
+        XCTAssertNil(sensory.parentID)
+        XCTAssertGreaterThan(sensory.cards.count, 20)
+        XCTAssertTrue(sensory.cards.contains { $0.title == "Fidget spinner" })
+    }
+
+    func testEveryDefaultCardHasAFitzgeraldCategory() {
+        for card in defaultCardCollections.flatMap(\.cards) {
+            XCTAssertNotNil(TikoFitzgerald(rawValue: card.fitzgeraldCategory ?? ""), "\(card.id): \(card.fitzgeraldCategory ?? "nil")")
+        }
+    }
+
+    /// A quick word says the whole need, not just its label.
+    func testQuickWordsSpeakASentence() throws {
+        let quick = try XCTUnwrap(defaultCardCollections.first { $0.id == "__default_quick" })
+        let help = try XCTUnwrap(quick.cards.first { $0.id == "__default_quick_help" })
+        XCTAssertEqual(help.title, "Help")
+        XCTAssertEqual(help.speech, "I need help")
+    }
+
+    func testDefaultVocabularyIsTranslatedIntoDutch() throws {
+        let dutch = CardsDefaults.collections(languageCode: "nl")
+        XCTAssertEqual(dutch.map(\.id), defaultCardCollections.map(\.id), "a translation changes words, never structure")
+        let pets = try XCTUnwrap(dutch.first { $0.id == "__default_pets" })
+        XCTAssertEqual(pets.title, "Huisdieren")
+        let dog = try XCTUnwrap(pets.cards.first { $0.id == "__default_pets_dog" })
+        XCTAssertEqual(dog.title, "Hond")
+        XCTAssertEqual(dog.speech, "Hond")
+        let help = try XCTUnwrap(dutch.first { $0.id == "__default_quick" }?.cards.first { $0.id == "__default_quick_help" })
+        XCTAssertEqual(help.speech, "Ik heb hulp nodig")
+        // The same English word, two meanings, two Dutch words.
+        XCTAssertEqual(dutch.first { $0.id == "__default_colours" }?.cards.first { $0.id == "__default_colours_orange" }?.title, "Oranje")
+        // Nothing is left half-translated: every Dutch word differs from, or is
+        // deliberately the same as, the English one, and none is missing.
+        let dutchSensory = try XCTUnwrap(dutch.first { $0.id == "__default_sensory" })
+        XCTAssertEqual(dutchSensory.title, "Prikkels")
+        XCTAssertEqual(dutch.first { $0.id == "__default_fruit" }?.cards.first { $0.id == "__default_fruit_orange" }?.title, "Sinaasappel")
+    }
+
+    func testALanguageWithoutATranslationStaysEnglish() {
+        XCTAssertEqual(CardsDefaults.collections(languageCode: "hy"), defaultCardCollections)
+        XCTAssertEqual(CardsDefaults.collections(languageCode: "nl-BE").first?.title, CardsDefaults.collections(languageCode: "nl").first?.title)
     }
 
     func testDefaultCollectionsRoundTripJSON() throws {
         let data = try JSONEncoder().encode(defaultCardCollections)
         let decoded = try JSONDecoder().decode([CardCollection].self, from: data)
         XCTAssertEqual(decoded, defaultCardCollections)
-    }
-
-    func testMediaCategoryMapMatchesWebCardsContract() {
-        let animals = defaultCardCollections.first { $0.id == "__default_animals" }
-        XCTAssertEqual(animals?.mediaCategories, ["animals"])
-        let food = defaultCardCollections.first { $0.id == "__default_food" }
-        XCTAssertEqual(food?.mediaCategories, ["food"])
-        let emotions = defaultCardCollections.first { $0.id == "__default_emotions" }
-        XCTAssertEqual(emotions?.mediaCategories, ["emotions", "feelings"])
-        let letters = defaultCardCollections.first { $0.id == "__default_letters" }
-        XCTAssertEqual(letters?.mediaCategories, ["letters", "alphabet"])
     }
 
     func testCDNURLUsesImageResizingForTikoUploads() throws {
@@ -198,6 +308,16 @@ final class TikoCardsTests: XCTestCase {
             defaultCardCollections.sorted { $0.order < $1.order }.map(\.id)
         )
         XCTAssertTrue(store.collections.contains { $0.id == "__default_animals" && $0.title == "Animals" })
+    }
+
+    @MainActor
+    func testLoadOfflineDefaultsFollowsTheLanguage() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        store.loadOfflineDefaults(languageCode: "nl")
+
+        XCTAssertTrue(store.collections.contains { $0.id == "__default_animals" && $0.title == "Dieren" })
     }
 
     /// Offline defaults are merged with any locally-owned user collections that
@@ -410,6 +530,20 @@ final class TikoCardsTests: XCTestCase {
         XCTAssertEqual(url?.absoluteString, "\(CardsContentClient.baseURL)/content/images/abc-123")
     }
 
+    /// A picture the vocabulary pins is loaded straight from the media CDN,
+    /// resized for a tile, with no content API in between.
+    @MainActor
+    func testImageURLForADefaultCardIsItsPinnedPicture() throws {
+        let (store, suiteName) = try makeIsolatedStore()
+        defer { UserDefaults().removePersistentDomain(forName: suiteName) }
+
+        let dog = try XCTUnwrap(defaultCardCollections.first { $0.id == "__default_pets" }?.cards.first { $0.id == "__default_pets_dog" })
+        let imageRef = try XCTUnwrap(dog.imageRef)
+        let pinned = try XCTUnwrap(CardsDefaults.pictureURL(forImageRef: imageRef))
+        XCTAssertEqual(store.imageURL(for: dog), CardsMediaMatcher.resizedCDNURL(pinned))
+        XCTAssertFalse(store.imageURL(for: dog)?.absoluteString.contains("content.tikoapi.org") ?? true)
+    }
+
     @MainActor
     func testImageURLForCardWithoutImageRefIsNil() throws {
         let (store, suiteName) = try makeIsolatedStore()
@@ -429,7 +563,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat","pet"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         XCTAssertEqual(items.count, 1)
         XCTAssertEqual(items.first?.name, "cat")
         XCTAssertEqual(items.first?.fileName, "cat.png")
@@ -445,7 +579,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"2","file_name":"dog.png","title":"Dog","folder":"animals","tags":["dog"],"original_url":"https://data.tikocdn.org/uploads/cards/dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", color: "green"),
             CommunicationCard(id: "dog", title: "Dog", speech: "Dog", color: "green"),
@@ -467,7 +601,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"cat.png","title":"Cat","folder":"animals","tags":["cat"],"original_url":"https://data.tikocdn.org/uploads/cards/cat.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "cat", title: "Cat", speech: "Cat", imageRef: "custom-ref", color: "green"),
         ])
@@ -491,7 +625,7 @@ final class TikoCardsTests: XCTestCase {
           {"id":"1","file_name":"young-dog.png","title":"Young Dog","folder":"animals","tags":["puppy","dog"],"original_url":"https://data.tikocdn.org/uploads/cards/young-dog.png"}
         ]}
         """.utf8)
-        let items = try JSONDecoder().decode(TikoCards.TikoMediaListResponse.self, from: json).data
+        let items = try JSONDecoder().decode(TikoMediaListResponse.self, from: json).data
         let collection = CardCollection(id: "c", title: "Animals", color: "green", order: 0, cards: [
             CommunicationCard(id: "puppy", title: "Puppy", speech: "Puppy", color: "green"),
         ])
@@ -508,7 +642,7 @@ final class TikoCardsTests: XCTestCase {
     // "Cat" never saw a candidate. Every default card rendered as a flat colour
     // block. These pin the matcher that replaced it.
 
-    private func items(_ titles: [String]) throws -> [TikoCards.TikoMediaItem] {
+    private func items(_ titles: [String]) throws -> [TikoMediaItem] {
         let entries = titles.enumerated().map { index, title in
             let slug = title.lowercased().replacingOccurrences(of: " ", with: "-")
             return """
@@ -516,7 +650,7 @@ final class TikoCardsTests: XCTestCase {
             """
         }
         return try JSONDecoder()
-            .decode(TikoCards.TikoMediaListResponse.self, from: Data("{\"data\":[\(entries.joined(separator: ","))]}".utf8))
+            .decode(TikoMediaListResponse.self, from: Data("{\"data\":[\(entries.joined(separator: ","))]}".utf8))
             .data
     }
 

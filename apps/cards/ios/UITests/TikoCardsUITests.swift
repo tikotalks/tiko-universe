@@ -102,7 +102,7 @@ final class TikoCardsUITests: XCTestCase {
 
     func testAppIsUsableWithoutLogin() {
         // The built-in picture-card collections must be present on launch, with no
-        // sign-in. "Animals" is the first default collection.
+        // sign-in. "Animals" is one of the default collections.
         let animals = element(withIdentifier: "Animals")
         XCTAssertTrue(animals.waitForExistence(timeout: 20), "A collection ('Animals') should be present on launch without login")
         XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "The collection tile should become hittable (splash gone)")
@@ -114,36 +114,56 @@ final class TikoCardsUITests: XCTestCase {
     // MARK: - Req 3 / 17 (Cards core): a picture card is present and tappable
 
     func testCollectionOpensAndCardIsTappable() {
-        // Open the "Animals" collection.
-        let animals = element(withIdentifier: "Animals")
-        XCTAssertTrue(animals.waitForExistence(timeout: 20), "Animals collection should be present")
-        XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
-        animals.tap()
+        // "Feelings" holds its cards directly.
+        let feelings = element(withIdentifier: "Feelings")
+        XCTAssertTrue(feelings.waitForExistence(timeout: 20), "Feelings collection should be present")
+        XCTAssertTrue(waitUntilHittable(feelings, timeout: 10), "Feelings collection should be hittable")
+        feelings.tap()
 
-        // A picture card inside the collection must be present (e.g. "Cat") and
+        // A picture card inside the collection must be present (e.g. "Happy") and
         // interactive — tapping it (tap-to-speak) must not crash or require login.
-        let cat = element(withIdentifier: "Cat")
-        XCTAssertTrue(cat.waitForExistence(timeout: 15), "A picture card ('Cat') should be present inside the Animals collection")
-        XCTAssertTrue(waitUntilHittable(cat, timeout: 10), "The card should be hittable (tap-to-speak)")
-        cat.tap()
+        let happy = element(withIdentifier: "Happy")
+        XCTAssertTrue(happy.waitForExistence(timeout: 15), "A picture card ('Happy') should be present inside Feelings")
+        XCTAssertTrue(waitUntilHittable(happy, timeout: 10), "The card should be hittable (tap-to-speak)")
+        happy.tap()
 
         // The app keeps working after speaking a card.
-        XCTAssertTrue(element(withIdentifier: "Cat").exists, "App should keep working after tapping a card")
+        XCTAssertTrue(element(withIdentifier: "Happy").exists, "App should keep working after tapping a card")
     }
 
     // MARK: - Req 2: a collection renders its full set of picture cards
 
     func testCollectionRendersMultipleCards() {
+        let feelings = element(withIdentifier: "Feelings")
+        XCTAssertTrue(feelings.waitForExistence(timeout: 20), "Feelings collection should be present")
+        XCTAssertTrue(waitUntilHittable(feelings, timeout: 10), "Feelings collection should be hittable")
+        feelings.tap()
+
+        // Several distinct cards from the bundled vocabulary must render.
+        for title in ["Happy", "Sad", "Angry"] {
+            let card = element(withIdentifier: title)
+            XCTAssertTrue(card.waitForExistence(timeout: 15), "Card '\(title)' should render inside Feelings")
+        }
+    }
+
+    // MARK: - Req 10: a category opens onto its sub-categories, and those onto cards
+
+    func testCategoryOpensItsSubCategories() {
         let animals = element(withIdentifier: "Animals")
         XCTAssertTrue(animals.waitForExistence(timeout: 20), "Animals collection should be present")
         XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
         animals.tap()
 
-        // Several distinct animal cards from the offline defaults must render.
-        for title in ["Cat", "Dog", "Bird"] {
-            let card = element(withIdentifier: title)
-            XCTAssertTrue(card.waitForExistence(timeout: 15), "Card '\(title)' should render inside Animals")
-        }
+        // Animals is a shelf of smaller sets, not one long list.
+        let pets = element(withIdentifier: "Pets")
+        XCTAssertTrue(pets.waitForExistence(timeout: 15), "Animals should show its 'Pets' sub-category")
+        XCTAssertTrue(element(withIdentifier: "Farm animals").exists, "Animals should show its 'Farm animals' sub-category")
+        XCTAssertTrue(waitUntilHittable(pets, timeout: 10), "The sub-category should be hittable")
+        pets.tap()
+
+        let dog = element(withIdentifier: "Dog")
+        XCTAssertTrue(dog.waitForExistence(timeout: 15), "Pets should show its cards ('Dog')")
+        XCTAssertFalse(app.buttons["Cow"].exists, "A farm animal must not appear inside Pets")
     }
 
     // MARK: - Req 2 / 3: category navigation shows category-scoped cards
@@ -151,16 +171,132 @@ final class TikoCardsUITests: XCTestCase {
     /// Opening a *different* collection shows that collection's own cards and not
     /// another collection's — proving the grid is category-scoped, not a flat list.
     func testDifferentCollectionShowsItsOwnCards() {
+        let body = element(withIdentifier: "Body")
+        XCTAssertTrue(body.waitForExistence(timeout: 20), "Body collection should be present on launch")
+        XCTAssertTrue(waitUntilHittable(body, timeout: 10), "Body collection should be hittable")
+        body.tap()
+
+        // Body's own cards are present…
+        let head = element(withIdentifier: "Head")
+        XCTAssertTrue(head.waitForExistence(timeout: 15), "A body card ('Head') should render inside Body")
+        // …and a card from elsewhere is not shown inside Body.
+        XCTAssertFalse(app.buttons["Happy"].exists, "A Feelings card ('Happy') must not appear inside the Body collection")
+    }
+
+    // MARK: - Food is shelves by meal, each with its own cards
+
+    func testFoodOpensOntoMeals() {
         let food = element(withIdentifier: "Food")
         XCTAssertTrue(food.waitForExistence(timeout: 20), "Food collection should be present on launch")
         XCTAssertTrue(waitUntilHittable(food, timeout: 10), "Food collection should be hittable")
         food.tap()
 
-        // Food's own cards are present…
-        let apple = element(withIdentifier: "Apple")
-        XCTAssertTrue(apple.waitForExistence(timeout: 15), "A food card ('Apple') should render inside Food")
-        // …and an animals-only card is not shown inside Food.
-        XCTAssertFalse(app.buttons["Cat"].exists, "An Animals card ('Cat') must not appear inside the Food collection")
+        let breakfast = element(withIdentifier: "Breakfast")
+        XCTAssertTrue(breakfast.waitForExistence(timeout: 15), "Food should show a 'Breakfast' shelf")
+        XCTAssertTrue(element(withIdentifier: "Dinner").exists, "Food should show a 'Dinner' shelf")
+        XCTAssertTrue(waitUntilHittable(breakfast, timeout: 10), "The shelf should be hittable")
+        breakfast.tap()
+
+        XCTAssertTrue(element(withIdentifier: "Pancakes").waitForExistence(timeout: 15), "Breakfast should show its cards ('Pancakes')")
+    }
+
+    // MARK: - Going back returns to the board one came from
+
+    func testBackReturnsToTheParentBoard() {
+        let animals = element(withIdentifier: "Animals")
+        XCTAssertTrue(animals.waitForExistence(timeout: 20), "Animals collection should be present")
+        XCTAssertTrue(waitUntilHittable(animals, timeout: 10), "Animals collection should be hittable")
+        animals.tap()
+        let pets = element(withIdentifier: "Pets")
+        XCTAssertTrue(pets.waitForExistence(timeout: 15), "Animals should show 'Pets'")
+        XCTAssertTrue(waitUntilHittable(pets, timeout: 10), "'Pets' should be hittable")
+        pets.tap()
+        XCTAssertTrue(element(withIdentifier: "Dog").waitForExistence(timeout: 15), "Pets should show 'Dog'")
+
+        // The header icon is the way back, one board at a time.
+        let back = app.buttons["Back"]
+        XCTAssertTrue(back.waitForExistence(timeout: 5), "A board inside another shows a way back")
+        back.tap()
+        XCTAssertTrue(element(withIdentifier: "Farm animals").waitForExistence(timeout: 10), "Back from Pets is Animals")
+        XCTAssertFalse(app.buttons["Dog"].exists, "Pets' cards are gone after going back")
+        back.tap()
+        XCTAssertTrue(element(withIdentifier: "Feelings").waitForExistence(timeout: 10), "Back from Animals is the root grid")
+    }
+
+    // MARK: - Search finds a card and a category from anywhere
+
+    func testSearchFindsACardAndOpensACategory() {
+        XCTAssertTrue(element(withIdentifier: "Feelings").waitForExistence(timeout: 20), "The root grid should be present")
+        let search = app.buttons["Search"]
+        XCTAssertTrue(search.waitForExistence(timeout: 10), "The header should offer Search")
+        XCTAssertTrue(waitUntilHittable(search, timeout: 10), "Search should be hittable")
+        search.tap()
+
+        let field = app.textFields["CardsSearchField"]
+        XCTAssertTrue(field.waitForExistence(timeout: 10), "Search should show its field")
+        field.tap()
+        field.typeText("pets")
+
+        // The category is among the answers; opening it shows its cards.
+        let pets = element(withIdentifier: "Pets")
+        XCTAssertTrue(pets.waitForExistence(timeout: 10), "Searching 'pets' should find the Pets category")
+        pets.tap()
+        XCTAssertTrue(element(withIdentifier: "Dog").waitForExistence(timeout: 15), "Opening the found category shows its cards")
+
+        // Back from a found category goes up to its parent, not straight home.
+        let back = app.buttons["Back"]
+        XCTAssertTrue(back.waitForExistence(timeout: 5), "A found category has a way back")
+        back.tap()
+        XCTAssertTrue(element(withIdentifier: "Farm animals").waitForExistence(timeout: 10), "Back from Pets is Animals")
+    }
+
+    // MARK: - Scroll mode shows a whole board in one scrolling grid
+
+    func testScrollModeShowsEveryCategoryInOneGrid() {
+        // Pages mode lays the board out as pages (on a phone the later
+        // categories are swipes away; on an iPad they may all fit on one).
+        XCTAssertTrue(element(withIdentifier: "Feelings").waitForExistence(timeout: 20), "The root grid should be present")
+        XCTAssertFalse(app.scrollViews["CardsScrollBoard"].exists, "Pages mode is not a scrolling grid")
+
+        // The setting is a stored preference; pass it the way the system does.
+        app.terminate()
+        app.launchArguments += ["-cards.layoutMode", "scroll"]
+        app.launch()
+
+        XCTAssertTrue(element(withIdentifier: "Feelings").waitForExistence(timeout: 20), "The root grid should be present")
+        XCTAssertTrue(app.scrollViews["CardsScrollBoard"].waitForExistence(timeout: 10), "Scroll mode lays the board out as one scrolling grid")
+        let letters = element(withIdentifier: "Letters")
+        let from = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+        let to = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))
+        for _ in 0..<8 where !(letters.exists && letters.isHittable) {
+            from.press(forDuration: 0, thenDragTo: to, withVelocity: .fast, thenHoldForDuration: 0)
+        }
+        XCTAssertTrue(letters.exists && letters.isHittable, "A late category is reached in the one grid, by scrolling if it takes that")
+    }
+
+    // MARK: - Edit mode offers every card for editing, defaults included
+
+    func testEditModeLetsADefaultCardBeEdited() {
+        let feelings = element(withIdentifier: "Feelings")
+        XCTAssertTrue(feelings.waitForExistence(timeout: 20), "Feelings collection should be present")
+        XCTAssertTrue(waitUntilHittable(feelings, timeout: 10), "Feelings collection should be hittable")
+        feelings.tap()
+        let happy = element(withIdentifier: "Happy")
+        XCTAssertTrue(happy.waitForExistence(timeout: 15), "Feelings should show 'Happy'")
+
+        // A long press is how a parent enters edit mode.
+        happy.press(forDuration: 1.0)
+        XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 10), "A long press should enter edit mode")
+
+        // While editing, a tap on a card opens its editor instead of speaking
+        // it — for a default card as much as for one of the family's own.
+        XCTAssertTrue(app.buttons["Edit Happy"].waitForExistence(timeout: 5), "A default card should be marked as editable")
+        happy.tap()
+        XCTAssertTrue(app.staticTexts["Edit card"].waitForExistence(timeout: 10), "The card editor should open")
+        // And it opens on this card, not on an empty page.
+        let name = app.textFields.firstMatch
+        XCTAssertTrue(name.waitForExistence(timeout: 5), "The editor should show the card's name field")
+        XCTAssertEqual(name.value as? String, "Happy", "The editor should be filled in with the card being edited")
     }
 
     // MARK: - Req 17: REGRESSION — login popup survives email input

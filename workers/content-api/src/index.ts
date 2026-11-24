@@ -51,6 +51,7 @@ interface R2Object {
 type JsonRecord = Record<string, unknown>
 
 interface CardTile {
+  fitzgeraldCategory?: string
   id: string
   title: string
   speech: string
@@ -68,6 +69,11 @@ interface CardCollection {
   imageRef?: string
   parentID?: string | null
   cards: CardTile[]
+}
+
+const FITZGERALD_CATEGORIES = new Set(['person', 'action', 'thing', 'describing', 'social', 'miscellaneous'])
+function asFitzgeraldCategory(value: unknown): string | undefined {
+  return typeof value === 'string' && FITZGERALD_CATEGORIES.has(value) ? value : undefined
 }
 
 const TIKO_COLOR_NAMES = new Set(['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'brown', 'black', 'white', 'gray', 'beige', 'cyan', 'teal', 'navy', 'lime', 'magenta', 'maroon', 'gold', 'silver'])
@@ -616,6 +622,7 @@ async function mapCardsContentItems(items: LocalizedContentItem[]): Promise<Card
         id: card.id,
         title: card.title,
         speech: card.speech ?? card.title,
+        fitzgeraldCategory: asFitzgeraldCategory(card.metadata.fitzgeraldCategory),
         color: asColorToken(card.color_token, asColorToken(collection.color_token)),
         order: card.sort_order,
         ...(card.image_ref ? { imageRef: card.image_ref } : {}),
@@ -956,13 +963,13 @@ async function putAdminCardsCollections(
             tile.id,
             tile.title,
             tile.id,
-            JSON.stringify({ collectionId: col.id }),
+            JSON.stringify({ collectionId: col.id, fitzgeraldCategory: tile.fitzgeraldCategory }),
             col.id,
 	            tile.speech,
 	            asColorToken(tile.color, asColorToken(col.color)),
 	            asImageRef(tile.imageRef) ?? null,
 	            tile.order ?? 0,
-	            JSON.stringify({ collectionId: col.id }),
+	            JSON.stringify({ collectionId: col.id, fitzgeraldCategory: tile.fitzgeraldCategory }),
           ))
       }
     }
@@ -1478,13 +1485,15 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
   if (segments[2] === 'collections' && segments[4] === 'cards' && segments.length === 5) {
     const collectionId = segments[3]
     const isDefault = !collectionId.startsWith('user_')
-    let body: { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
+    let body: { id?: unknown; title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; fitzgeraldCategory?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
+    if (body.fitzgeraldCategory !== undefined && !asFitzgeraldCategory(body.fitzgeraldCategory)) return error(request, env, 'bad_request', 'Invalid Fitzgerald category', 400)
+    const fitzgeraldCategory = asFitzgeraldCategory(body.fitzgeraldCategory)
     const color = asColorToken(body.color, 'orange')
     const order = typeof body.order === 'number' ? body.order : 0
 
@@ -1506,16 +1515,16 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
         id,
         title,
         id,
-        JSON.stringify({ collectionId }),
+        JSON.stringify({ collectionId, fitzgeraldCategory }),
         collectionId,
         speech,
         color,
         imageRef,
         order,
-        JSON.stringify({ collectionId }),
+        JSON.stringify({ collectionId, fitzgeraldCategory }),
       ).run()
       await invalidateCardsCache(env)
-      const newCard: CardTile = { id, title, speech, color, order, ...(imageRef ? { imageRef } : {}) }
+      const newCard: CardTile = { id, title, speech, color, order, fitzgeraldCategory, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: newCard }, 201)
     }
 
@@ -1530,7 +1539,7 @@ async function handlePostCards(request: Request, env: Env, segments: string[]): 
     const resolvedColor = asColorToken(body.color, collection.color)
     const resolvedOrder = order || collection.cards.length
     const imageRef = asImageRef(body.imageRef)
-    const newCard: CardTile = { id, title, speech, color: resolvedColor, order: resolvedOrder, ...(imageRef ? { imageRef } : {}) }
+    const newCard: CardTile = { id, title, speech, fitzgeraldCategory, color: resolvedColor, order: resolvedOrder, ...(imageRef ? { imageRef } : {}) }
 
     const alreadyExists = collection.cards.some(c => c.id === id)
     const updatedCollection = { ...collection, cards: alreadyExists ? collection.cards : [...collection.cards, newCard] }
@@ -1883,13 +1892,15 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardId = segments[5]
     const isDefault = !collectionId.startsWith('user_')
 
-    let body: { title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown }
+    let body: { title?: unknown; speech?: unknown; color?: unknown; order?: unknown; imageRef?: unknown; fitzgeraldCategory?: unknown }
     try { body = (await request.json()) as typeof body } catch {
       return error(request, env, 'bad_request', 'Request body must be valid JSON', 400)
     }
     const title = typeof body.title === 'string' ? body.title.trim() : ''
     if (!title) return error(request, env, 'bad_request', 'title is required', 400)
     const speech = typeof body.speech === 'string' && body.speech.trim() ? body.speech.trim() : title
+    if (body.fitzgeraldCategory !== undefined && !asFitzgeraldCategory(body.fitzgeraldCategory)) return error(request, env, 'bad_request', 'Invalid Fitzgerald category', 400)
+    const fitzgeraldCategory = asFitzgeraldCategory(body.fitzgeraldCategory)
     const color = asColorToken(body.color)
     const order = typeof body.order === 'number' && Number.isFinite(body.order) ? Math.max(0, Math.round(body.order)) : undefined
 
@@ -1900,11 +1911,15 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
       const imageRef = asImageRef(body.imageRef) ?? null
       await env.CONTENT_DB.prepare(
         `UPDATE content_items
-         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), updated_at = datetime('now')
+         SET title = ?, speech = ?, color_token = ?, image_ref = ?, sort_order = COALESCE(?, sort_order), metadata_json = json_patch(COALESCE(metadata_json, '{}'), ?), updated_at = datetime('now')
          WHERE id = ? AND app_id = 'cards' AND type = 'card'`,
-      ).bind(title, speech, color, imageRef, order ?? null, cardId).run()
+      ).bind(title, speech, color, imageRef, order ?? null, JSON.stringify({ fitzgeraldCategory }), cardId).run()
       await invalidateCardsCache(env)
-      const updatedCard: CardTile = { id: cardId, title, speech, color, order: order ?? 0, ...(imageRef ? { imageRef } : {}) }
+      const stored = await env.CONTENT_DB.prepare(
+        "SELECT metadata_json FROM content_items WHERE id = ? AND app_id = 'cards' AND type = 'card'",
+      ).bind(cardId).first<{ metadata_json: string | null }>()
+      const resolvedCategory = fitzgeraldCategory ?? asFitzgeraldCategory(parseJsonRecord(stored?.metadata_json).fitzgeraldCategory)
+      const updatedCard: CardTile = { id: cardId, title, speech, color, fitzgeraldCategory: resolvedCategory, order: order ?? 0, ...(imageRef ? { imageRef } : {}) }
       return json(request, env, { success: true, data: updatedCard })
     }
 
@@ -1916,7 +1931,7 @@ async function handlePutCards(request: Request, env: Env, segments: string[]): P
     const cardIdx = collection.cards.findIndex(c => c.id === cardId)
     if (cardIdx === -1) return error(request, env, 'not_found', 'Card not found', 404)
     const existingCard = collection.cards[cardIdx]
-    const updatedCard: CardTile = { ...existingCard, title, speech, color, order: order ?? existingCard.order }
+    const updatedCard: CardTile = { ...existingCard, title, speech, color, fitzgeraldCategory: fitzgeraldCategory ?? existingCard.fitzgeraldCategory, order: order ?? existingCard.order }
     const updatedCards = [...collection.cards]
     updatedCards[cardIdx] = updatedCard
     const updatedCollection: CardCollection = { ...collection, cards: updatedCards }
@@ -2041,13 +2056,13 @@ async function handlePromoteCollection(request: Request, env: Env, _segments: st
         tile.id,
         tile.title,
         tile.id,
-        JSON.stringify({ collectionId: id }),
+        JSON.stringify({ collectionId: id, fitzgeraldCategory: asFitzgeraldCategory(tile.fitzgeraldCategory) }),
         id,
 	        tile.speech,
 	        asColorToken(tile.color, asColorToken(col.color)),
 	        asImageRef(tile.imageRef) ?? null,
 	        tile.order ?? 0,
-        JSON.stringify({ collectionId: id }),
+        JSON.stringify({ collectionId: id, fitzgeraldCategory: asFitzgeraldCategory(tile.fitzgeraldCategory) }),
       ).run()
     }
   }

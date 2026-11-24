@@ -48,7 +48,7 @@ this generalises instead of enumerating.
 | **nl** Dutch | production | de/het gender, the attributive `-e`, niet vs geen, "ik heb honger" |
 | **de** German | production | three genders × two cases, weak/mixed/strong adjectives, kein vs nicht, dative verbs, **"mir ist kalt"** with no subject at all |
 | **fr** French | production | conjugation from infinitives, elision and contraction, the partitive, `ne … pas de`, "j'ai faim" |
-| **es** Spanish | production | stem-changing verbs, **ser vs estar** by quality or state, gustar inverting the clause, "el agua" not "la agua" |
+| **es** Spanish | production | stem-changing verbs, **ser vs estar** by quality or state, gustar inverting the clause, "el agua" not "la agua" — but "esta agua", because that rule is the article's alone |
 | **it** Italian | production | article allomorphy by sound (il/lo/l'/i/gli/le), piacere inverting, article before possessives |
 | **pt** Portuguese | production | conjugation, gostar carrying `de`, contractions (do/da/ao) |
 | **zh** Chinese | production | no articles at all, measure words for counting, 不 vs 没, 很 before a bare predicate |

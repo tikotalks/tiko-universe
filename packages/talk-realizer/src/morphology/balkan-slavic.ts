@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { extractObjectClitic } from '../morphology/clitic'
 import { derivePerson, type Conjugation, type PersonKey } from './persons'
-import { agreesWith, formFor, note, type LanguageRules, type PhraseContext } from '../profile'
+import { agreesWith, formFor, isPlural, note, type LanguageRules, type PhraseContext } from '../profile'
 
 /**
  * Bulgarian and Macedonian: Slavic vocabulary with almost none of the Slavic
@@ -163,7 +163,7 @@ export function createBalkanSlavic(config: BalkanSlavicConfig): LanguageRules {
     }
     if (determiner.features.pronounCase === 'poss') {
       const gender = np.head?.features.gender
-      const plural = determiner.features.forcesNumber === 'pl'
+      const plural = isPlural(np)
       const agreed = plural
         ? determiner.features.pluralForm
         : gender === 'feminine'

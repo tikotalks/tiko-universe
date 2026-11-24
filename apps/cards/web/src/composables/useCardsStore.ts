@@ -1,6 +1,6 @@
 import { computed, ref, type Ref } from 'vue'
 import { useTikoMedia } from '@tiko/media'
-import type { TikoColorName } from '@tiko/data'
+import { isFitzgeraldCategory, type TikoColorName } from '@tiko/data'
 import { tikoColors, tikoContentImageRefUrl } from '@tiko/ui'
 import type { CardCollection, CardsCardInput, CardsCollectionInput, CardsGridItem, CommunicationCard, PersistedCards } from '../types'
 import { createCardsApi, resolveContentBaseUrl } from './cardsApi'
@@ -149,6 +149,7 @@ export function useCardsStore(options: UseCardsStoreOptions) {
       id: createUserID(),
       title,
       speech: input.speech.trim() || title,
+      fitzgeraldCategory: input.fitzgeraldCategory,
       color: input.color,
       order: collection.cards.length,
       imageRef: input.imageRef,
@@ -423,6 +424,7 @@ export function normalizeCollection(collection: CardCollection): CardCollection 
     cards: (collection.cards ?? []).map((card, index) => ({
       ...card,
       speech: card.speech || card.title,
+      fitzgeraldCategory: isFitzgeraldCategory(card.fitzgeraldCategory) ? card.fitzgeraldCategory : undefined,
       color: normalizeColor(card.color, collectionColor),
       order: card.order ?? index,
     })),

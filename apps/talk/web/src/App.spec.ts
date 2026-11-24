@@ -141,3 +141,25 @@ describe('the language the board speaks', () => {
     expect(wrapper.text()).toContain('want')
   })
 })
+
+
+it('restores the Fitzgerald setting offline and colours words by grammar', async () => {
+  const values = new Map([['tiko:talk', JSON.stringify({ language: 'en', fitzgeraldKey: true })]])
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => values.get(key) ?? null,
+    setItem: (key: string, value: string) => values.set(key, value),
+    removeItem: (key: string) => values.delete(key),
+    clear: () => values.clear(),
+  })
+  const wrapper = mount(App)
+  await vi.waitFor(() => expect(wrapper.findAll('.word-cloud__bubble').length).toBeGreaterThan(0))
+  const pronoun = wrapper.findAll('.word-cloud__bubble').find(tile => tile.text().trim() === 'I')!
+  expect(pronoun.attributes('style')).toContain('background-color: rgb(255, 227, 139)')
+  await wrapper.get('button[aria-label="Settings"]').trigger('click')
+  const toggle = wrapper.findAll('.tiko-toggle-row').find(row => row.text().includes('Fitzgerald'))!
+  await toggle.get('input').setValue(false)
+  await flushPromises()
+  expect(JSON.parse(values.get('tiko:talk')!).fitzgeraldKey).toBe(false)
+  expect(pronoun.attributes('style')).not.toContain('background-color: rgb(255, 227, 139)')
+  wrapper.unmount()
+})

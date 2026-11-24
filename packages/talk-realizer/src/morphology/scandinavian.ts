@@ -1,5 +1,5 @@
 import type { Features, SelectedWord } from '../features'
-import { agreesWith, note, type LanguageRules, type SentenceContext } from '../profile'
+import { agreesWith, isPlural, note, type LanguageRules, type SentenceContext } from '../profile'
 
 /**
  * Swedish, Danish and Norwegian share one grammar with three sets of dials, so
@@ -128,7 +128,7 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
       const head = np.head
       const determiner = np.determiner
       const neuter = head?.features.gender === 'neuter'
-      const plural = determiner?.features.forcesNumber === 'pl'
+      const plural = isPlural(np)
 
       if (determiner) {
         const kind = determiner.features.determinerKind
@@ -180,7 +180,7 @@ export function createScandinavian(config: ScandinavianConfig): LanguageRules {
       const kind = np.determiner?.features.determinerKind
       const definite = kind === 'definite' || kind === 'demonstrative'
         || np.determiner?.features.pronounCase === 'poss'
-      const plural = np.determiner?.features.forcesNumber === 'pl'
+      const plural = isPlural(np)
 
       if (definite || plural) {
         const form = adjective.features.attributive ?? `${adjective.text}${config.adjectiveDefiniteEnding}`

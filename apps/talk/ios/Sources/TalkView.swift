@@ -8,6 +8,7 @@ struct TalkView: View {
     @State private var searchExpanded = false
     @State private var searchText = ""
     @FocusState private var searchFocused: Bool
+    @AppStorage("talk.fitzgeraldKey") private var fitzgeraldKey = false
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("tiko.language") private var languageCode = "en"
     @AppStorage("talk.nativeSpeechFallback") private var nativeSpeechFallback = true
@@ -41,6 +42,7 @@ struct TalkView: View {
             onAction: { _ in },
             settingsContent: {
                 TikoSettingsSection(title: "Talk") {
+                    TikoSettingsToggleRow(title: "Fitzgerald Key", icon: "paintpalette", appColor: .talk, isOn: $fitzgeraldKey)
                     TikoSettingsToggleRow(
                         title: "Word cloud layout",
                         icon: "circle.hexagongrid.fill",
@@ -173,7 +175,7 @@ struct TalkView: View {
                         // Same square tile as the Cards app items: image at 75% + label.
                         TikoSquareTile(
                             title: word.text,
-                            background: TalkPosColor.color(for: word.pos).opacity(0.22)
+                            background: TalkPosColor.color(for: word.pos, fitzgeraldKey: fitzgeraldKey).opacity(0.22)
                         ) {
                             if let image = word.image, let url = URL(string: TikoImageURL.resized(image, size: .small)) {
                                 TikoCachedRemoteImage(url: url) { Color.clear }

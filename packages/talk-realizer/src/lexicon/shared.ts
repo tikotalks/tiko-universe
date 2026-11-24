@@ -20,8 +20,15 @@ export const sharedStructure: Lexicon = {
   i: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'nom' },
   you: { pos: 'pronoun', person: 2, number: 'sg', pronounCase: 'nom' },
   we: { pos: 'pronoun', person: 1, number: 'pl', pronounCase: 'nom' },
-  he: { pos: 'pronoun', person: 3, number: 'sg', pronounCase: 'nom' },
-  she: { pos: 'pronoun', person: 3, number: 'sg', pronounCase: 'nom' },
+  /**
+   * "He" and "she" carry a gender, and it follows from the concept rather than
+   * from any one language's word for it — which is what makes it belong here.
+   * A predicate adjective agrees with the subject, so without it Spanish said
+   * "ella está cansado" and French "elle est content". A language whose third
+   * person does not distinguish gender simply never reads this.
+   */
+  he: { pos: 'pronoun', person: 3, number: 'sg', pronounCase: 'nom', gender: 'masculine' },
+  she: { pos: 'pronoun', person: 3, number: 'sg', pronounCase: 'nom', gender: 'feminine' },
   they: { pos: 'pronoun', person: 3, number: 'pl', pronounCase: 'nom' },
   me: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'acc' },
   my: { pos: 'pronoun', person: 1, number: 'sg', pronounCase: 'poss' },

@@ -1,7 +1,7 @@
 import type { Features, SelectedWord } from '../features'
 import { agreeAdjective, applyExperiencer, conjugateRegular, elide, induceGender, pluralize, quantifierPhrase } from '../morphology/romance'
 import { extractObjectClitic } from '../morphology/clitic'
-import { agreesWith, formFor, isSensation, note, type LanguageRules } from '../profile'
+import { agreesWith, formFor, isPlural, isSensation, note, type LanguageRules } from '../profile'
 
 /**
  * Galician. Closest to Portuguese, which is what its morphology reuses, with its
@@ -80,7 +80,7 @@ export const galician: LanguageRules = {
   determiner(np, ctx) {
     const head = np.head
     const determiner = np.determiner
-    const plural = determiner?.features.forcesNumber === 'pl'
+    const plural = isPlural(np)
     const feminine = head?.features.gender === 'feminine'
     const definite = plural ? (feminine ? 'as' : 'os') : (feminine ? 'a' : 'o')
 
@@ -120,7 +120,12 @@ export const galician: LanguageRules = {
       return null
     }
     if (ctx.afterPreposition && head.features.institutional) return null
-    if (plural) return { text: feminine ? 'unhas' : 'uns', from: null }
+    if (plural) {
+      // Galician leaves a bare plural bare: "quero zapatos", not "quero uns
+      // zapatos", which counts a pair rather than naming the thing.
+      note(ctx.builder, `no article: "${head.text}" is plural`)
+      return null
+    }
     return { text: feminine ? 'unha' : 'un', from: null }
   },
 
